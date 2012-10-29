@@ -1,4 +1,0 @@
-coherence-incubator
-===================
-
-Coherence Incubator
