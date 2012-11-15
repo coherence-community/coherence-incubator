@@ -71,10 +71,12 @@
                 <ul class="nav nav-list">
                     <li class="nav-header">Oracle Coherence Incubator</li>
                                 
-      <li class="active">
+      <li>
     
-            <a href="#"><i class="none"></i>Welcome</a>
-          </li>
+                          <a href="index.html" title="Welcome">
+          <i class="none"></i>
+        Welcome</a>
+            </li>
                   
       <li>
     
@@ -229,12 +231,10 @@
         Issue Tracking</a>
             </li>
                   
-      <li>
+      <li class="active">
     
-                          <a href="source-code.html" title="Source Code">
-          <i class="none"></i>
-        Source Code</a>
-            </li>
+            <a href="#"><i class="none"></i>Source Code</a>
+          </li>
                   
       <li>
     
@@ -290,135 +290,20 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h1>Oracle Coherence Incubator 11</h1>
+            <h2>Source Code</h2>
 
-<p><img src="images/incubator-logo-290x163.png" alt="Incubator" /></p>
+<p>The Source Code for the Oracle Coherence Incubator is hosted by github.com. <br />
+It can be found here: 
+<a href="https://github.com/coherence-community/coherence-incubator">https://github.com/coherence-community/coherence-incubator</a></p>
 
-<p>Version: 11.0.0-SNAPSHOT on 2012-11-15 07:50</p>
-
-<blockquote>
-  <p>  <strong>WORK IN PROGRESS</strong></p>
-  
-  <p>  This site is currently under construction.  Parts may be incomplete and 
-    inaccurate.</p>
-</blockquote>
-
-<p>The Oracle Coherence Incubator project consists of a collection of examples, organized
-as <a href="http://maven.apache.org/">Apache Maven</a> modules, demonstrating advanced uses 
-of <a href="http://www.oracle.com/technology/products/coherence/index.html">Oracle Coherence</a>.</p>
-
-<p>The modules themselves consist of a collection of common utilities, tools, 
-traditional software pattern implementations, third-party integrations, and 
-distributed computing solutions that of which may use be used as-is or for 
-inclusion into applications.</p>
-
-<p>Complete source code together with documentation is provided to aid in your 
-adoption, use and understanding.</p>
-
-<h2>What's New?</h2>
-
-<p>For the most part Oracle Coherence Incubator 11 remains functionally and 
-semantically compatible with the projects released as part of Oracle Coherence 
-Incubator 10.  Very few changes to the underlying project implementations have 
-occurred, apart from resolving minor defect fixes and any necessary dependency updates.  </p>
-
-<p>The most significant change however is in how the Oracle Coherence Incubator is
-now structured, build and organized.  In a nut shell, the following changes 
-have occurred: </p>
+<h4>Important:</h4>
 
 <ol>
-<li>Refactored all of the projects to be arranged in a single source tree, with 
-separate folders for each project and their associated examples.</li>
-<li>Restructured all of the projects follow typical <a href="http://maven.apache.org/">Apache Maven</a> 
-conventions.</li>
-<li>Completely re-wrote the build system to use <a href="http://maven.apache.org/">Apache Maven</a>
-instead of Apache Ant.</li>
-<li>Ratified and released all of the projects under a standard open source 
-license (CDDL).</li>
-<li>Formalized the mechanism and process for accepting contributions.</li>
-<li>Completely migrated the existing "closed" Atlassian Confluence-based 
-documentation to be part of the source tree, thus enabling contributions.</li>
-<li>Rationalized all projects to use a single Oracle Coherence Incubator version 
-number instead of individual version numbers.</li>
-<li>Migrated the source repository to GitHub.</li>
-<li>Migrated the issue tracking to java.net.</li>
-<li>Introduced "uber" jar generation support to produce the entire Oracle
-Coherence Incubator in a single jar.</li>
+<li><p>Source Code and Documentation is licensed under <a href="license.html">CDDL-1.0</a>.</p></li>
+<li><p><strong>Read-Only Access</strong> is provided to the public.</p></li>
+<li><p><strong>Pull Requests</strong> are never accepted.  </p></li>
+<li><p>Only submissions by official <a href="contributions.html">contributors</a> are accepted.</p></li>
 </ol>
-
-<p>For more detailed information concerning changes in this release please consult the 
-project <a href="history.html">history</a>.</p>
-
-<h2>Project Modules</h2>
-
-<p>The following <a href="http://maven.apache.org/">Apache Maven</a> Modules are defined
-by the Oracle Coherence Incubator.</p>
-
-<p><strong>The Complete Distribution Module:</strong></p>
-
-<p>Provides a distribution of all of the Oracle Coherence Incubator modules,
-without their third-party dependencies (like Coherence itself).</p>
-
-<p><a href="commons/index.html"><strong>The Commons Package:</strong></a></p>
-
-<p>Provides a collection of utility packages, classes and interfaces commonly 
-used to support the implementation of other Oracle Coherence Incubator modules.</p>
-
-<p><a href="commandpattern/index.html"><strong>The Command Pattern:</strong></a></p>
-
-<p>Provides a distributed implementation of the classic Command Pattern.</p>
-
-<p><strong>The Command Pattern Examples:</strong></p>
-
-<p>Provides example uses of the Command Pattern.</p>
-
-<p><a href="functorpattern/index.html"><strong>The Functor Pattern:</strong></a></p>
-
-<p>Provides a distributed implementation of the classic Functor Pattern.</p>
-
-<p><strong>The Functor Pattern Examples:</strong></p>
-
-<p>Provides example uses of the Functor Pattern.</p>
-
-<p><strong>The Processing Pattern:</strong></p>
-
-<p>Provides an mechanism to perform distributed, grid computing with Coherence.</p>
-
-<p><strong>The Processing Pattern Examples:</strong></p>
-
-<p>Provides example uses of the Processing Pattern.</p>
-
-<p><a href="messagingpattern/index.html"><strong>The Messaging Pattern:</strong></a></p>
-
-<p>Provides a simple implementation of Store and Forward Messaging.</p>
-
-<p><a href="eventdistributionpattern/index.html"><strong>The Event Distribution:</strong></a></p>
-
-<p>Provides a mechanism to distribute application events over multiple channels. 
-This is core infrastructure for the Push Replication Pattern, but may be used 
-directly with in applications for local or global event distribution.</p>
-
-<p><strong>The Push Replication Pattern:</strong></p>
-
-<p>Provides a mechanism to replicate cache entry events to other clusters and 
-devices (including other clusters separated by WANs).</p>
-
-<p><strong>The Push Replication Pattern Examples:</strong></p>
-
-<p>Provides example uses of the Push Replication Pattern.</p>
-
-<h2>Supported Coherence Versions</h2>
-
-<p>While most of the code may work fine with older Coherence releases, versions 
-of Coherence prior 3.7.1 are not officially supported.  All builds and routine
-testing only occurs on Coherence 3.7.1+.</p>
-
-<h2>Contributions</h2>
-
-<p>If you are interested in making contributions to the Oracle Coherence Incubator, 
-including defect fixes, documentation, new classes/interfaces/methods/packages 
-or tests, you should read the section on 
-<a href="contributions.html">Contributing to the Oracle Coherence Incubator</a>. </p>
 
                   </div>
             </div>

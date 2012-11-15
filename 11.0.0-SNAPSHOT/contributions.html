@@ -71,10 +71,12 @@
                 <ul class="nav nav-list">
                     <li class="nav-header">Oracle Coherence Incubator</li>
                                 
-      <li class="active">
+      <li>
     
-            <a href="#"><i class="none"></i>Welcome</a>
-          </li>
+                          <a href="index.html" title="Welcome">
+          <i class="none"></i>
+        Welcome</a>
+            </li>
                   
       <li>
     
@@ -243,12 +245,10 @@
         License</a>
             </li>
                   
-      <li>
+      <li class="active">
     
-                          <a href="contributions.html" title="Contributions">
-          <i class="none"></i>
-        Contributions</a>
-            </li>
+            <a href="#"><i class="none"></i>Contributions</a>
+          </li>
                   
       <li>
     
@@ -290,135 +290,171 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h1>Oracle Coherence Incubator 11</h1>
+            <h2>Contributing to the Oracle Coherence Incubator</h2>
 
-<p><img src="images/incubator-logo-290x163.png" alt="Incubator" /></p>
+<p>The following sections outline the requirements for making contributions to
+the Oracle Coherence Incubator.</p>
 
-<p>Version: 11.0.0-SNAPSHOT on 2012-11-15 07:50</p>
+<h4>Overview</h4>
 
-<blockquote>
-  <p>  <strong>WORK IN PROGRESS</strong></p>
-  
-  <p>  This site is currently under construction.  Parts may be incomplete and 
-    inaccurate.</p>
-</blockquote>
+<p>Developing code and documentation for the Oracle Coherence Incubator is a 
+<strong>big deal</strong>.  </p>
 
-<p>The Oracle Coherence Incubator project consists of a collection of examples, organized
-as <a href="http://maven.apache.org/">Apache Maven</a> modules, demonstrating advanced uses 
-of <a href="http://www.oracle.com/technology/products/coherence/index.html">Oracle Coherence</a>.</p>
+<p>While it may seemingly be a place to develop and possibly experiment with patterns
+or solutions, the fact of the matter is that the Coherence Community frequently 
+adopts the styles, approaches and implementations provided by the Oracle Coherence 
+Incubator, whether in total or in part, for use in production scenarios.  </p>
 
-<p>The modules themselves consist of a collection of common utilities, tools, 
-traditional software pattern implementations, third-party integrations, and 
-distributed computing solutions that of which may use be used as-is or for 
-inclusion into applications.</p>
+<p>Consequently every effort has to be made to ensure that projects are somewhat
+stable, not too experimental and offer a high-degree of reliability, scalability
+and stability, something that people can trust if they decide to branch or 
+become inspired by said projects on their own.</p>
 
-<p>Complete source code together with documentation is provided to aid in your 
-adoption, use and understanding.</p>
+<p>Foremostly the Oracle Coherence Incubator is not designed to be a "holding zone" 
+for individually or corporately developed utilities based on Coherence.  While
+these may be of interest to individuals, we carefully investigate utility of 
+these solutions before considering them for inclusion.  In most cases we 
+instead encourage developers to define their own "commons" projects.</p>
 
-<h2>What's New?</h2>
+<h4>Becoming a Contributor</h4>
 
-<p>For the most part Oracle Coherence Incubator 11 remains functionally and 
-semantically compatible with the projects released as part of Oracle Coherence 
-Incubator 10.  Very few changes to the underlying project implementations have 
-occurred, apart from resolving minor defect fixes and any necessary dependency updates.  </p>
+<p>Contributing to the Oracle Coherence Incubator can be done in various ways, each
+of which is valuable to the Coherence Community as a whole.  Contributions may 
+include helping out by answering questions on the forums, isolating and submitting 
+defects resolution requests, proposing or submitting defect resolutions (fixes), 
+suggesting or building enhancements, introducing new features and improving tests 
+and documentation.</p>
 
-<p>The most significant change however is in how the Oracle Coherence Incubator is
-now structured, build and organized.  In a nut shell, the following changes 
-have occurred: </p>
+<p>For all contributions that involve making a change to the source tree and thus
+releasing a new build of the Oracle Coherence Incubator, those primarily 
+being a defect fix, enhancement, new feature or documentation improvement, all 
+non-Oracle contributors must complete and sign the 
+<a href="http://oss.oracle.com/oca.pdf">Oracle Contributors Agreement</a>.</p>
 
-<ol>
-<li>Refactored all of the projects to be arranged in a single source tree, with 
-separate folders for each project and their associated examples.</li>
-<li>Restructured all of the projects follow typical <a href="http://maven.apache.org/">Apache Maven</a> 
-conventions.</li>
-<li>Completely re-wrote the build system to use <a href="http://maven.apache.org/">Apache Maven</a>
-instead of Apache Ant.</li>
-<li>Ratified and released all of the projects under a standard open source 
-license (CDDL).</li>
-<li>Formalized the mechanism and process for accepting contributions.</li>
-<li>Completely migrated the existing "closed" Atlassian Confluence-based 
-documentation to be part of the source tree, thus enabling contributions.</li>
-<li>Rationalized all projects to use a single Oracle Coherence Incubator version 
-number instead of individual version numbers.</li>
-<li>Migrated the source repository to GitHub.</li>
-<li>Migrated the issue tracking to java.net.</li>
-<li>Introduced "uber" jar generation support to produce the entire Oracle
-Coherence Incubator in a single jar.</li>
-</ol>
+<p>To do this, simply print out the form, fill in the necessary details, scan it 
+in and return via email to: oracle-ca_us [at] oracle [dot] com. </p>
 
-<p>For more detailed information concerning changes in this release please consult the 
-project <a href="history.html">history</a>.</p>
+<p><strong>Note 1:</strong> For the "Project Name:" please write "Oracle Coherence Incubator".</p>
 
-<h2>Project Modules</h2>
+<p><strong>Note 2:</strong> This is the same agreement used for making contributions to GlassFish and Java 
+itself.  If you already have executed this agreement then you're ready to 
+contribute to the Oracle Coherence Incubator.</p>
 
-<p>The following <a href="http://maven.apache.org/">Apache Maven</a> Modules are defined
-by the Oracle Coherence Incubator.</p>
+<p>Should you have any questions regarding this agreement, you should consult the
+<a href="http://www.oracle.com/technetwork/oca-faq-405384.pdf">Oracle Contributors Agreement FAQ</a></p>
 
-<p><strong>The Complete Distribution Module:</strong></p>
+<h4>Roles and Responsibilities</h4>
 
-<p>Provides a distribution of all of the Oracle Coherence Incubator modules,
-without their third-party dependencies (like Coherence itself).</p>
+<p>As mentioned above, there are quite a few ways to participate on projects that
+are part of the Oracle Coherence Incubator, and not all of them involve 
+contributing source code!  Simply using the software, participating on mailing 
+lists or forums, filing bug reports or enhancement requests are an incredibly 
+valuable form of participation.</p>
 
-<p><a href="commons/index.html"><strong>The Commons Package:</strong></a></p>
+<p>If one were to break down the forms of participation for the Oracle Coherence Incubator
+into a set of roles, the result would look something like this: </p>
 
-<p>Provides a collection of utility packages, classes and interfaces commonly 
-used to support the implementation of other Oracle Coherence Incubator modules.</p>
+<pre><code>Users, Contributors, Committers, Maintainers, and Project Leads.
+</code></pre>
 
-<p><a href="commandpattern/index.html"><strong>The Command Pattern:</strong></a></p>
+<p><strong>Users:</strong></p>
 
-<p>Provides a distributed implementation of the classic Command Pattern.</p>
+<p>Users are the people who use the software. Users are using the software, reporting 
+bugs, making feature requests and suggestions. This is by far the most important 
+category of people. Without users, there is no reason for the project.</p>
 
-<p><strong>The Command Pattern Examples:</strong></p>
+<p><em>How to become one:</em> Download the software and use it to build an application.</p>
 
-<p>Provides example uses of the Command Pattern.</p>
+<p><strong>Contributors:</strong></p>
 
-<p><a href="functorpattern/index.html"><strong>The Functor Pattern:</strong></a></p>
+<p>Contributors are individuals who contribute to an Oracle Coherence Incubator project, 
+but do not have write access to the source tree. Contributions can be in the form of 
+source code patches, new code, or bug reports, but could also include web site 
+content like articles, FAQs, or screenshots.</p>
 
-<p>Provides a distributed implementation of the classic Functor Pattern.</p>
+<p>A contributor who has sent in solid, useful source code patches on a project 
+can be elevated to Committer status by a Maintainer.</p>
 
-<p><strong>The Functor Pattern Examples:</strong></p>
+<p>Integration of a Contributor submissions done at the discretion of a Maintainer, 
+but this is an iterative, communicative process. Note that for code to be 
+integrated, a completed Oracle Contribution Agreement is required from 
+each contributor.</p>
 
-<p>Provides example uses of the Functor Pattern.</p>
+<p><em>How to become one:</em> Contribute in any of the ways described above: either code, 
+examples, web site updates, tests, bugs, and patches. If you're interested in 
+becoming a Committer to the source base, get the sources to the project, make 
+an improvement or fix a bug, and send that code to the developers mailing list 
+or attach it to the bug report in the project issue tracking system.</p>
 
-<p><strong>The Processing Pattern:</strong></p>
+<p><strong>Committers:</strong></p>
 
-<p>Provides an mechanism to perform distributed, grid computing with Coherence.</p>
+<p>Committers have write access to the source tree, either for the individual 
+modules they are working on, or in some cases global write permissions 
+everywhere in the source code management system.</p>
 
-<p><strong>The Processing Pattern Examples:</strong></p>
+<p>A Committer must first become a Contributor before they can be granted access
+to commit to the source tree.</p>
 
-<p>Provides example uses of the Processing Pattern.</p>
+<p>Rules for how to commit, once you have commit access, will vary by project and 
+module. Be sure to ask before you start making changes!</p>
 
-<p><a href="messagingpattern/index.html"><strong>The Messaging Pattern:</strong></a></p>
+<p><em>How to become one:</em> Submit some patches via email, and ask the Maintainer of 
+the code you've patched for commit access. The Maintainer will seek consensus 
+before granting Committer access, but their decisions are final.</p>
 
-<p>Provides a simple implementation of Store and Forward Messaging.</p>
+<p><strong>Maintainers:</strong></p>
 
-<p><a href="eventdistributionpattern/index.html"><strong>The Event Distribution:</strong></a></p>
+<p>Each module has one Maintainer, who has check-in permissions (either for that m
+odule or globally), and "manages" a group of Committers. They are responsible 
+for merging contributed patches, bug fixes, and new code from the development 
+branch of the source tree into the stable branch. Maintainers are responsible 
+for making sure that these contributions do not break the build.</p>
 
-<p>Provides a mechanism to distribute application events over multiple channels. 
-This is core infrastructure for the Push Replication Pattern, but may be used 
-directly with in applications for local or global event distribution.</p>
+<p>The Maintainer is also responsible for checking that everyone who contributes 
+code has submitted an Oracle Contribution Agreement.</p>
 
-<p><strong>The Push Replication Pattern:</strong></p>
+<p>A Maintainer is responsible for their module, and for granting check-in 
+privileges to Contributors. They also act as the "police force" of the module, 
+helping to ensure quality across the build.</p>
 
-<p>Provides a mechanism to replicate cache entry events to other clusters and 
-devices (including other clusters separated by WANs).</p>
+<p><em>How to become one:</em> </p>
 
-<p><strong>The Push Replication Pattern Examples:</strong></p>
+<ul>
+<li><p>Start a module (you need to have written some working code on your project 
+to do this, you'll also need to talk to the Project Lead).</p></li>
+<li><p>Have responsibility for that module handed over to you from the current Maintainer.</p></li>
+<li><p>Take over an abandoned project--sometimes someone starts something, but for 
+one reason or another can't continue to work on it. If it's interesting to you, 
+volunteer!</p></li>
+</ul>
 
-<p>Provides example uses of the Push Replication Pattern.</p>
+<p><strong>Project Lead:</strong></p>
 
-<h2>Supported Coherence Versions</h2>
+<p>Each project in the Oracle Coherence Incubator has an overall Project Lead. 
+The Project Leads are currently appointed by Oracle. They are responsible for 
+managing the entire project, helping to create policies by consensus that 
+ensure global quality.</p>
 
-<p>While most of the code may work fine with older Coherence releases, versions 
-of Coherence prior 3.7.1 are not officially supported.  All builds and routine
-testing only occurs on Coherence 3.7.1+.</p>
+<h4>Making a Contribution</h4>
 
-<h2>Contributions</h2>
+<p>All contributors are required to be a Committer in order to commit 
+contributions to the Oracle Coherence Incubator, including documentation.</p>
 
-<p>If you are interested in making contributions to the Oracle Coherence Incubator, 
-including defect fixes, documentation, new classes/interfaces/methods/packages 
-or tests, you should read the section on 
-<a href="contributions.html">Contributing to the Oracle Coherence Incubator</a>. </p>
+<p>To become a Committer you must first clearly demonstrate both 
+skill as a developer and be capable of strictly adhering to the quality
+and architectural requirements of the Oracle Coherence Incubator.   In order
+to demonstrate these abilities, it's best to get started by submitting patches
+or improvements via email and then asking the Maintainer or Project Lead to 
+review said changes, after which they may be accepted and submitted (either by 
+the Maintainer or Project Lead).</p>
+
+<p>Like all large projects, the Oracle Coherence Incubator employs strict coding
+guidelines.  For the most part these are easily automated using the preferred 
+tool called <a href="http://www.jindent.com">JIndent</a>.  A JIndent style-template for
+the Oracle Coherence Incubator is located in the documents folder of the 
+source tree.</p>
+
+<p><strong>Note:</strong> Oracle does not supply licenses for JIndent.</p>
 
                   </div>
             </div>
