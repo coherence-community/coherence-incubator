@@ -76,7 +76,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.oracle.coherence:coherence-incubator*</include>
+                                    <include>com.oracle.coherence.incubator:coherence-*</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
