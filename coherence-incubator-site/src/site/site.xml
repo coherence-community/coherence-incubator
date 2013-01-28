@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    File: site.xml
+ 
+    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+    
+    The contents of this file are subject to the terms and conditions of 
+    the Common Development and Distribution License 1.0 (the "License").
+
+    You may not use this file except in compliance with the License.
+
+    You can obtain a copy of the License by consulting the LICENSE.txt file
+    distributed with this file, or by consulting
+    or https://oss.oracle.com/licenses/CDDL
+
+    See the License for the specific language governing permissions
+    and limitations under the License.
+
+    When distributing the software, include this License Header Notice in each
+    file and include the License file LICENSE.txt.
+
+    MODIFICATIONS:
+    If applicable, add the following below the License Header, with the fields
+    enclosed by brackets [] replaced by your own identifying information:
+    "Portions Copyright [year] [name of copyright owner]"
+ -->
+<project name="The Oracle Coherence Incubator" xmlns="http://maven.apache.org/DECORATION/1.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd">
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.3.0</version>
+    </skin>
+    
+    <custom>
+        <fluidoSkin>
+            <topBarEnabled>false</topBarEnabled>
+            <sideBarEnabled>true</sideBarEnabled>
+            <topBarIcon>
+                <name>Oracle Coherence Incubator ${project.version}</name>
+                <href>index.html</href>
+            </topBarIcon>
+            <gitHub>
+                <projectId>coherence-community/coherence-incubator/</projectId>
+                <ribbonOrientation>right</ribbonOrientation>
+                <ribbonColor>red</ribbonColor>
+            </gitHub>
+        </fluidoSkin>
+    </custom>
+
+    <body>
+        <head>
+            <script type="text/javascript" src="js/site.js"></script>
+        </head>
+    
+        <menu name="Oracle Coherence Incubator">
+            <item name="Welcome" href="index.html"/>
+            <item name="History" href="history.html"/>
+        </menu>
+    
+        <menu name="Modules">
+            <item name="The Common Package" href="common/index.html">
+                <item name="Extensible Environments" href="common/extensible-environments-overview.html"/>
+                <item name="Cache Config Namespaces" href="common/extensible-environments-namespaces.html"/>
+                <item name="Custom Namespaces Tutorial" href="common/extensible-environments-tutorial.html"/>
+                <item name="The Coherence Namespace" href="common/coherence-namespace.html"/>
+                <item name="The Element Namespace" href="common/element-namespace.html"/>
+                <item name="The Filter Namespace" href="common/filter-namespace.html"/>
+                <item name="The JNDI Namespace" href="common/jndi-namespace.html"/>
+                <item name="The Instance Namespace*" href="common/instance-namespace.html"/>
+                <item name="The Value Namespace*" href="common/value-namespace.html"/>
+                <item name="Working with Amazon EC2" href="common/amazon-ec2-addressprovider.html"/>
+            </item>
+            <item name="The Command Pattern" href="commandpattern/index.html">
+                <!--  <item name="Examples" href="commandpattern/examples.html"/> -->
+            </item>
+            <item name="The Functor Pattern" href="functorpattern/index.html">
+                <!-- <item name="Examples" href="functorpattern/examples.html"/>  -->
+            </item>
+            <item name="The Processing Pattern" href="processingpattern/index.html"/>
+            <item name="The Messaging Pattern" href="messagingpattern/index.html"/>
+            <item name="The Event Distribution Pattern" href="eventdistributionpattern/index.html">
+                <item name="The Event Namespace" href="eventdistributionpattern/event-namespace.html"/>
+            </item>
+            <item name="The Push Replication Pattern" href="pushreplicationpattern/index.html"/>
+        </menu>
+    
+        <menu name="Development">
+            <item name="Forums" href="forums.html"/>
+            <item name="Issue Tracking" href="issue-tracking.html"/>
+            <item name="Source Code" href="source-code.html"/>
+            <item name="License" href="license.html"/>
+            <item name="Contributions" href="contributions.html"/>
+            <item name="Release Numbers" href="release-numbers.html"/>
+            <item name="Build Instructions" href="building.html"/>
+            <item name="Logging" href="logging.html"/>
+        </menu>
+    
+        <footer>
+            <div class="copyright">Copyright &#169; 2008-2013 Oracle Corporation. All rights reserved.</div>
+            <div class="version">Version ${project.version}: ${timestamp}</div>
+        </footer>
+    </body>
+</project>

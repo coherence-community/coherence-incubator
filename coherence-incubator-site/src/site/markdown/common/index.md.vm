@@ -1,0 +1,117 @@
+The Common Package
+------------------
+
+<h4>Overview</h4>
+
+Provides a collection of utility packages and classes commonly used to support 
+the implementation of other Oracle Coherence Incubator projects.
+
+<h4>Distribution</h4>
+
+The Oracle Coherence Incubator Common Package is distributed as a single jar 
+called: `coherence-common-${project.version}.jar`
+
+<h4>Contents</h4>
+
+Noteworthy packages, classes and interfaces:
+
+*   The `ExtensibleEnvironment` Class:
+
+    A replacement for the standard Coherence `ConfigurableCacheFactory` 
+    implementation, responsible for processing cache configurations, that 
+    allows developers to independently create custom configurations and 
+    runtime extensions to Coherence.
+
+*   The `com.oracle.coherence.common.events` Package:
+
+    A simple framework to enable the development of server-side synchronous 
+    and asynchronous event-based applications, embedded within Coherence.
+
+*   The `CoherenceLogHandler` Class:
+
+    A Java Log Handler that writes `java.util.logging.LogRecords` to the 
+    Coherence Logger.  This allows applications to use the standard 
+    `java.util.logging` framework, but have the log records appended 
+    asynchronously to the configured Coherence Logger.
+
+*   The `com.oracle.coherence.common.sequencegenerators` Package:
+
+    A set of interfaces and classes to simplify the creation of sequence numbers, 
+    either locally in a Java Virtual Machine, or across a cluster.
+
+*   The `com.oracle.coherence.common.processors` Package:
+
+    Containing a collection of useful new Entry Processors, including the 
+    `InvokeMethodProcessor` for remotely invoking methods through reflection.
+
+*   The `ObjectProxyFactory` Class:
+    
+    A class to enable the creation of local proxies of objects stored in a 
+    cache, thus allowing direct use of the said objects directly without 
+    knowing their location in a cluster and without using `EntryProcessors` 
+    for access.
+
+*   The `EC2AddressProvider` Class:
+    
+    A class to simplify and automate the dynamic formation a cluster on Amazon 
+    EC2, without needing multi-cast or manually specifying individual IP addresses.
+
+*   Several utility packages for the creation of different types of `Identifiers` 
+    (often useful for cache keys), handling `Tickets`, `Ranges`, `Tuples`, `Leases` 
+    and some customized `ThreadFactories`.
+
+<h3>Further Documentation</h3>
+
+<h4>Extensible Environments</h4>
+
+The Oracle Coherence Incubator provides a mechanism to support custom extension
+of Cache Configurations through the use of what we call `ExtensibleEnvironments`, 
+including the ability to introduce other cache configurations.  The following
+section provides information about said extensions.
+
+*   *[Background and Motivation](extensible-environments-overview.html)* 
+
+    An introduction to Coherence Configuration, the Configurable Cache Factory 
+    Coherence startup sequence.
+    
+*   *[Introduction to XML Namespaces](extensible-environments-namespaces.html)*
+
+    XML Namespaces and XML Namespaces in Cache Configurations.
+
+*   *[Creating Custom Cache Configuration Namespaces](extensible-environments-tutorial.html)*
+
+    A tutorial outlining how to create your own XML Cache Configuration 
+    Namespace for Coherence.
+    
+<h4>Cache Configuration Namespaces defined by the Coherence Incubator Common Package</h4>
+
+*   *[The Coherence Namespace](coherence-namespace.html)*:
+    The default and implicitly defined namespace for processing Coherence Cache 
+    Configuration elements.
+
+*   *[The Element Namespace](element-namespace.html)*:
+    A namespace enabling runtime transformation of XML elements in a cache 
+    configuration. ie: provides `<cache-config element:introduce-cache-config="...">` 
+    and other functionality.
+    
+*   *[The Filter Namespace](filter-namespace.html)*:
+    A utility namespace providing the ability to define Coherence Filters in
+    Cache Configurations.
+    
+*   *[The JNDI Namespace](jndi-namespace.html)*:
+    A utility namespace providing the ability to lookup resources from JNDI.
+
+*   *[The Instance Namespace](instance-namespace.html)* (deprecated):
+    A utility namespace providing the ability to specify how custom classes may 
+    be instantiated.
+
+*   *[The Value Namespace](value-namespace.html)* (deprecated): 
+     A utility namespace providing the ability to define strongly typed values.
+
+<h4>The Amazon EC2 Address Provider</h4>
+
+*   *[The Amazon EC2 AddressProvider](amazon-ec2-addressprovider.html)*
+
+    Amazon provides compute power on demand through its Elastic Compute Cloud (EC2). 
+    The `EC2AddressProvider` makes it easier to run a Coherence-based application 
+    on EC2.

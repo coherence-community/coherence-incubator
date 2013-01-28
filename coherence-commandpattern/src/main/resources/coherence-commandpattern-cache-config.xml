@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    File: coherence-commandpattern-cache-config.xml
+ 
+ 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ 	
+	The contents of this file are subject to the terms and conditions of 
+	the Common Development and Distribution License 1.0 (the "License").
+
+	You may not use this file except in compliance with the License.
+
+	You can obtain a copy of the License by consulting the LICENSE.txt file
+	distributed with this file, or by consulting
+	or https://oss.oracle.com/licenses/CDDL
+
+	See the License for the specific language governing permissions
+	and limitations under the License.
+
+	When distributing the software, include this License Header Notice in each
+	file and include the License file LICENSE.txt.
+
+	MODIFICATIONS:
+	If applicable, add the following below the License Header, with the fields
+	enclosed by brackets [] replaced by your own identifying information:
+	"Portions Copyright [year] [name of copyright owner]"
+	
+	Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
+ 	Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
+ -->
+<cache-config
+	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
+    
+    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+    element:introduce-cache-config="coherence-common-cache-config.xml">
+	
+	<caching-scheme-mapping>
+		<cache-mapping>
+			<cache-name>coherence.commandpattern.commands.colocated</cache-name>
+			<scheme-name>distributed-scheme-for-command-pattern</scheme-name>
+		</cache-mapping>
+
+		<cache-mapping>
+			<cache-name>coherence.commandpattern.commands.distributed</cache-name>
+			<scheme-name>distributed-scheme-for-command-pattern-distributed-commands</scheme-name>
+		</cache-mapping>
+
+		<cache-mapping>
+			<cache-name>coherence.commandpattern.contexts</cache-name>
+			<scheme-name>distributed-scheme-for-command-pattern</scheme-name>
+			<init-params>
+				<init-param>
+					<param-name>backing-map-listener-class-name</param-name>
+					<param-value>com.oracle.coherence.patterns.command.internal.ContextBackingMapListener</param-value>
+				</init-param>
+			</init-params>
+		</cache-mapping>
+	</caching-scheme-mapping>
+
+	<caching-schemes>
+		<distributed-scheme>
+			<scheme-name>distributed-scheme-with-backing-map-listener</scheme-name>
+			<service-name>DistributedCacheWithBackingMapListener</service-name>
+						
+			<backing-map-scheme>
+				<local-scheme>
+			        <listener> 
+			        	<class-scheme>
+			        		<class-name>{backing-map-listener-class-name com.oracle.coherence.common.backingmaplisteners.NullBackingMapListener}</class-name>
+			        		<init-params>
+			        			<init-param>
+			        				<param-type>com.tangosol.net.BackingMapManagerContext</param-type>
+			        				<param-value>{manager-context}</param-value>
+			        			</init-param>
+			        		</init-params>
+			        	</class-scheme>
+			        </listener>
+				</local-scheme>
+			</backing-map-scheme>
+		</distributed-scheme>
+
+		<distributed-scheme>
+			<scheme-name>distributed-scheme-for-command-pattern</scheme-name>
+			<scheme-ref>distributed-scheme-with-backing-map-listener</scheme-ref>
+			<service-name>DistributedCacheForCommandPattern</service-name>
+			<autostart>true</autostart>
+		</distributed-scheme>
+
+		<distributed-scheme>
+			<scheme-name>distributed-scheme-for-command-pattern-distributed-commands</scheme-name>
+			<scheme-ref>distributed-scheme-with-backing-map-listener</scheme-ref>
+			<service-name>DistributedCacheForCommandPatternDistributedCommands</service-name>
+			<autostart>true</autostart>
+		</distributed-scheme>
+	</caching-schemes>		
+</cache-config>
+		

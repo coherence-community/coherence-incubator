@@ -1,0 +1,307 @@
+The Filter Namespace
+-------------------
+
+The Filter Namespace provides the ability to declare Coherence Filters with in 
+a Cache Configuration.  It is typically used with other Namespaces that require 
+Filters to be specified.  In particular, the Filter Namespace is designed to 
+allow declarative specification of the Coherence filters as documented in the 
+[API](http://download.oracle.com/docs/cd/E15357_01/coh.360/e15725/com/tangosol/util/filter/package-summary.html).
+
+<h4>Namespace Content Handler</h4>
+
+The implementation is provided by the `com.oracle.coherence.environment.extensible.namespaces.FilterNamespaceContentHandler` 
+class.
+
+<h4>Declaration</h4>
+
+The common prefix used for this namespace in Cache Configurations is `filter`, 
+however as with all XML namespace declarations this can be defined arbitrarily 
+when declaring the namespace.
+
+To use the namespace you should declare it as follows:
+
+    <cache-config xmlns:filter="class://com.oracle.coherence.environment.extensible.namespaces.FilterNamespaceContentHandler">
+    
+       ...
+    
+    </cache-config>
+
+<h4>Elements</h4>
+
+The following section outlines the elements defined by this Namespace.  
+
+These are: [all](#all), [always](#always), [and](#and), [any](#any), [custom](#custom), 
+[never](#never), [not](#not), [or](#or), [present](#present), [where](#where) and
+[xor](#xor).
+
+------------------------------------------------------------------------------
+
+<a name="all"><h5>&lt;filter:all&gt;</h5></a>
+
+The `filter:all` element defines an `com.tangosol.util.filter.AllFilter`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce an `com.tangosol.util.filter.AllFilter`.
+
+*Child Elements:*
+
+This element requires zero or more child elements that each resolve to an 
+instance of a `com.tangosol.util.filter.Filter`.  Child elements are typically 
+from this namespace and may be nested.
+
+*Examples:*
+
+An empty `all` filter:
+
+    <filter:all/>
+
+A simple `all` filter:
+
+    <filter:all>
+        <filter:and>
+            ...
+        </filter:and>
+        <filter:or>
+            ...
+        </filter:or>
+    </filter:all>
+
+------------------------------------------------------------------------------
+
+<a name="always"><h5>&lt;filter:always&gt;</h5></a>
+
+The `filter:always` element defines an `com.tangosol.util.filter.AlwaysFilter`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce an `com.tangosol.util.filter.AlwaysFilter`.
+
+*Example:*
+
+An `always` filter:
+
+    <filter:always/>
+
+------------------------------------------------------------------------------
+
+<a name="and"><h5>&lt;filter:and&gt;</h5></a>
+
+The `filter:and` element defines an `com.tangosol.util.filter.AndFilter`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce an `com.tangosol.util.filter.AndFilter`.
+
+*Child Elements:*
+
+This element requires precisely two child elements that each resolve to an 
+instance of a `com.tangosol.util.filter.Filter`.  Child elements are typically 
+from this namespace and may be nested.
+
+*Examples:*
+
+A simple `and` filter:
+
+    <filter:and>
+        <filter:custom>...</filter:custom>
+        <filter:all>...</filter:all>
+    </filter:and>
+
+------------------------------------------------------------------------------
+
+<a name="any"><h5>&lt;filter:any&gt;</h5></a>
+
+The `filter:any` element defines an `com.tangosol.util.filter.AnyFilter`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce an `com.tangosol.util.filter.AnyFilter`.
+
+*Child Elements:*
+
+This element requires zero or more child elements that each resolve to an 
+instance of a `com.tangosol.util.filter.Filter`.  Child elements are typically 
+from this namespace and may be nested.
+
+*Examples:*
+
+An empty `any` filter:
+
+    <filter:any/>
+
+A simple `any` filter:
+
+    <filter:any>
+        <filter:and>
+            ...
+        </filter:and>
+        <filter:or>
+            ...
+        </filter:or>
+    </filter:any>
+
+------------------------------------------------------------------------------
+
+<a name="custom"><h5>&lt;filter:custom&gt;</h5></a>
+
+The `filter:custom` element defines a `com.tangosol.util.filter.Filter` based
+on a `ParameterizedBuilder<Filter>`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce a `com.tangosol.util.filter.Filter`.
+
+*Child Elements:*
+
+The child element of a `filter:custom` element must produce a 
+`ParameterizedBuilder<Filter>`.
+
+*Examples:*
+
+A simple `custom` filter:
+
+    <filter:custom>
+        <instance>
+            <class-name>MyCustomFilter</class-name>
+        </instance>
+    </filter:custom>
+
+------------------------------------------------------------------------------
+
+<a name="never"><h5>&lt;filter:never&gt;</h5></a>
+
+The `filter:never` element defines an `com.tangosol.util.filter.NeverFilter`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce a `com.tangosol.util.filter.NeverFilter`.
+
+*Child Elements:*
+
+(none)
+
+*Example:*
+
+A 'never' filter:
+
+    <filter:never/>
+
+------------------------------------------------------------------------------
+
+<a name="not"><h5>&lt;filter:not&gt;</h5></a>
+
+The `filter:not` element defines a `com.tangosol.util.filter.NotFilter`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce a `com.tangosol.util.filter.NotFilter`.
+
+*Child Elements:*
+
+This element requires precisely one child element, that of which resolves to an 
+instance of a `com.tangosol.util.filter.Filter`.  The child element is typically 
+from this namespace and may be nested.
+
+*Examples:*
+
+A simple `not` filter:
+
+    <filter:not>
+        <filter:and>
+            ...
+        </filter:and>
+    </filter:not>
+
+------------------------------------------------------------------------------
+
+<a name="or"><h5>&lt;filter:or&gt;</h5></a>
+
+The `filter:or` element defines an `com.tangosol.util.filter.OrFilter`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce an `com.tangosol.util.filter.OrFilter`.
+
+*Child Elements:*
+
+This element requires precisely two child elements that each resolve to an 
+instance of a `com.tangosol.util.filter.Filter`.  Child elements are typically 
+from this namespace and may be nested.
+
+*Examples:*
+
+A simple `or` filter:
+
+    <filter:or>
+        <filter:custom>...</filter:custom>
+        <filter:all>...</filter:all>
+    </filter:or>
+
+------------------------------------------------------------------------------
+
+<a name="present"><h5>&lt;filter:present&gt;</h5></a>
+
+The `filter:present` element defines a `com.tangosol.util.filter.PresentFilter`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce a `com.tangosol.util.filter.PresentFilter`.
+
+*Child Elements:*
+
+(none)
+
+*Example:*
+
+A 'present' filter:
+
+    <filter:present/>
+
+------------------------------------------------------------------------------
+
+<a name="where"><h5>&lt;filter:where&gt;</h5></a>
+
+The `filter:where` element defines a `com.tangosol.util.filter.Filter` based on 
+a user-defined [CohQL Where Clause](http://docs.oracle.com/cd/E15357_01/coh.360/e15723/api_cq.htm#CEGFGEBA).
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce a `com.tangosol.util.filter.Filter`.
+
+*Child Elements:*
+
+(none)
+
+*Example:*
+
+A 'where' filter:
+
+    <filter:where>value() like "%Gudday World%"</filter:where>
+
+------------------------------------------------------------------------------
+
+<a name="xor"><h5>&lt;filter:xor&gt;</h5></a>
+
+The `filter:xor` element defines an `com.tangosol.util.filter.XorFilter`.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce an `com.tangosol.util.filter.XorFilter`.
+
+*Child Elements:*
+
+This element requires precisely two child elements that each resolve to an 
+instance of a `com.tangosol.util.filter.Filter`.  Child elements are typically 
+from this namespace and may be nested.
+
+*Examples:*
+
+A simple `xor` filter:
+
+    <filter:xor>
+        <filter:custom>...</filter:custom>
+        <filter:all>...</filter:all>
+    </filter:xor>
+
+------------------------------------------------------------------------------

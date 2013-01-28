@@ -1,0 +1,1226 @@
+The Event Distribution Namespace
+--------------------------------
+
+The Event Namespace provides the ability to declare `EventDistributors` and associated 
+`EventChannels` with in a Cache Configuration.  It is typically used for configuring 
+the [Push Replication Pattern](../pushreplicationpattern/index.html).
+
+<h4>Namespace Content Handler</h4>
+
+The implementation is provided by the `com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler` 
+class.
+
+<h4>Declaration</h4>
+
+The common prefix used for this namespace in Cache Configurations is `event`, 
+however as with all XML namespace declarations this can be defined arbitrarily 
+when declaring the namespace.
+
+To use the namespace you should declare it as follows:
+
+    <cache-config xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler">
+    
+       ...
+    
+    </cache-config>
+
+<h4>Elements</h4>
+
+The following section outlines the elements defined by this namespace, the most
+important of which is the [&lt;event:distributor&gt;](#distributor) element, that 
+of which defines an `EventDistributor` to be used for distributing Events. 
+
+**Schema Outline:**
+
+The following xml schema provides a guide to the over all structure and main
+elements provided by this namespace.
+
+&lt;cache-config xmls:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"&gt;
+
+&nbsp;&nbsp;&nbsp;&nbsp;[&lt;event:distributor&gt;](#event-distributor)<sup>* ...</sup>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;event:distributor-name&gt;](#distributor-name)*expression*[&lt;/event:distributor-name&gt;](#distributor-name)<sup>1</sup>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;event:distributor-scheme/&gt;](#distributor-scheme)<sup>1 ...</sup>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;event:distribution-channels&gt;](#distribution-channels)<sup>1</sup>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;event:distribution-channel&gt;](#distribution-channel)<sup>* ...</sup>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;event:channel-name&gt;](#channel-name)*expression*[&lt;/event:channel-name&gt;](#channel-name)<sup>1</sup>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;event:channel-scheme/&gt;](#channel-scheme)<sup>1 ...</sup>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;event:transformer-scheme/&gt;](#transformer-scheme)<sup>0..1 ...</sup>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;/event:distribution-channel&gt;](#distribution-channel)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&lt;/event:distribution-channels&gt;](#distribution-channels)
+
+&nbsp;&nbsp;&nbsp;&nbsp;[&lt;/event:distributor&gt;](#event-distributor)
+
+&lt;/cache-config&gt;
+
+**Legend:**
+
+... = more details available (see reference for more information)   
+
+<sup>1</sup> = exactly one occurrence    
+
+<sup>0..1</sup> = optional
+
+<sup>?</sup> = one of (with in parent element)
+
+<sup>*</sup> = zero or more of
+
+<sup>+</sup> = one or more of
+
+**Reference:**
+
+The following elements are defined by this namespace. 
+
+*   [binaryentry-store-channel-scheme](#binaryentry-store-channel-scheme)
+*   [binaryentry-store-scheme](#binaryentry-store-scheme)
+*   [cachestore-channel-scheme](#cachestore-channel-scheme)
+*   [chained-transformer-scheme](#chained-transformer-scheme)
+*   [channel-name](#channel-name)
+*   [channel-external-name](#channel-external-name)
+*   [channel-scheme](#channel-scheme)
+*   [coalescing-transformer-scheme](#coalescing-transformer-scheme)
+*   [coherence-based-event-distributor-scheme](#coherence-based-event-distributor-scheme)
+*   [connection-factory-scheme](#connection-factory-scheme)
+*   [distribution-channel](#distribution-channel)
+*   [distribution-channels](#distribution-channels) 
+*   [distributor](#distributor)
+*   [distributor-external-name](#distributor-external-name) 
+*   [distributor-name](#distributor-name)
+*   [entry-filter](#entry-filter)
+*   [event-transformer](#event-transformer)
+*   [event-type-filter](#event-type-filter)
+*   [file-channel-scheme](#file-channel-scheme)
+*   [filtering-transformer-scheme](#filtering-transformer-scheme)
+*   [jms-based-event-distributor-scheme](#jms-based-event-distributor-scheme)
+*   [local-cache-channel-scheme](#local-cache-channel-scheme)
+*   [mutating-transformer-scheme](#mutating-transformer-scheme)
+*   [original-entry-filter](#original-entry-filter)
+*   [remote-channel-scheme](#remote-channel-scheme)
+*   [remote-cache-channel-scheme](#remote-cache-channel-scheme)
+*   [remote-cluster-channel-scheme](#remote-cluster-channel-scheme) 
+*   [stderr-channel-scheme](#stderr-channel-scheme)
+*   [transformer-scheme](#transformer-scheme).
+
+
+------------------------------------------------------------------------------
+
+<a name="binaryentry-store-channel-scheme"><h5>&lt;event:binaryentry-store-channel-scheme&gt;</h5></a>
+
+This element defines an `EventChannelBuilder` that will construct a `BinaryEntryStoreEventChannel` 
+when required.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce an `EventChannelBuilder`.
+
+*Child Elements:*
+
+The following element is required as a child of this element:
+
+*   [&lt;event:binaryentry-store-scheme&gt;](#binaryentry-store-scheme)
+
+    Defines an `ParameterizedBuilder` that creates a `BinaryCacheStore`.
+
+
+------------------------------------------------------------------------------
+
+<a name="binaryentry-store-scheme"><h5>&lt;event:binaryentry-store-scheme&gt;</h5></a>
+
+This element defines a `BinaryEntryStore`.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:binaryentry-store-channel-scheme&gt;](#binaryentry-store-channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce a `ParmeterizedBuilder<BinaryEntryStore>`.
+
+*Child Elements:*
+
+One of the following elements must be defined as a child of this element:
+    
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element, defining an `ParameterizedBuilder`
+    to be used for instantiating a custom `BinaryCacheStore` implementation.    
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element, defining an `ParameterizedBuilder`
+    to be used for instantiating a custom `BinaryCacheStore` implementation.    
+
+
+------------------------------------------------------------------------------
+
+<a name="cachestore-channel-scheme"><h5>&lt;event:cachestore-channel-scheme&gt;</h5></a>
+
+This element defines an `EventChannelBuilder` that will construct a `CacheStoreEventChannel` 
+when required.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce an `EventChannelBuilder`.
+
+*Child Elements:*
+
+The following element is required as a child of this element:
+
+*   [&lt;cachestore-scheme&gt;](http://download.oracle.com/docs/cd/E18686_01/coh.37/e18677/appendix_cacheconfig.htm#BABGFCCB)
+
+    A standard Oracle Coherence `<cachestore-scheme>` element, defining a `ParameterizedBuilder`
+    to be used for instantiating a custom `CacheStore` implementation.
+
+
+------------------------------------------------------------------------------
+
+<a name="chained-transformer-scheme"><h5>&lt;event:chained-transformer-scheme&gt;</h5></a>
+
+This element defines the type of `ParameterizedBuilder` that can realize an
+`EventIteratorTransformer`, that of which may be used applying multiple `EventIteratorTransformers`
+to a batch of events.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:transformer-scheme&gt;](#transformer-scheme) and
+[&lt;event:chained-transformer-scheme&gt;](#chained-transformer-scheme).
+
+*Element Type:*
+
+When processed this element produce a `ParameterizedBuilder<EventIteratorTransformer>`.
+
+*Child Elements:*
+
+Zero or more the following elements may be defined as a child element of this element:
+    
+*   [&lt;event:chained-transformer-scheme&gt;](#chained-transformer-scheme)
+
+    A `ParameterizedBuilder<EventIteratorTransformer>` that when realized applies
+    a chain of one or more transformers to a distribution batch.  Use this
+    if you require multiple transformers to be applied to a batch of events.
+
+*   [&lt;event:coalescing-transformer-scheme&gt;](#coalescing-transformer-scheme)
+
+    A `ParameterizedBuilder<EventIteratorTransformer>` that when realized will 
+    coalesce multiple events for the an entry occurring in an iteration, into a 
+    single event for the said entry.  Use this to optimize events in a batch,
+    reducing batch size and the amount of information to distribute.
+
+*   [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme)
+
+    A `ParameterizedBuilder<EventIteratorTransformer>` that when realized will 
+    apply a filter to each event in batch, possibly removing the said events
+    from the batch, thus preventing some events from being distributed.
+    
+*   [&lt;event:mutating-transformer-scheme&gt;](#mutating-transformer-scheme)
+
+    A `ParameterizedBuilder<EventIteratorTransformer>` that when realized will 
+    apply a mutator function to each event in an batch, possibly changing/removing/replacing 
+    each event.  Use this if you want to transform events prior to distribution.
+    
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element defining an `EventIteratorTransformer`.
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element defining an `EventIteratorTransformer`.
+
+
+*Example:*
+
+An transformer scheme that only allows distribution of coalesced INSERTED and UPDATED 
+events.
+
+    <event:transformer-scheme>
+       <event:chained-transformer-scheme>
+          <event:filtering-transformer-scheme>
+             <event:event-type-filter>INSERTED, UPDATED</event:event-type-filter>
+          </event:filtering-transformer-scheme>
+    
+          <event:coalescing-transformer-scheme/>
+       </event:chained-transformer-scheme>
+    </event:transformer-scheme>
+
+
+------------------------------------------------------------------------------
+
+<a name="channel-name"><h5>&lt;event:channel-name&gt;</h5></a>
+
+This element defines an `Expression` that when evaluated  will produce a `String` 
+representing the name of an `EventChannel` for an `EventChannelController`.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distribution-channel&gt;](#distribution-channel).
+
+*Element Type:*
+
+When processed this element will produce an `Expression`.
+
+*Example:*
+
+    <event:channel-name>{site-name}-{cache-name}</event:channel-name>   
+
+
+------------------------------------------------------------------------------
+
+<a name="channel-external-name"><h5>&lt;event:channel-external-name&gt;</h5></a>
+
+This element defines an `Expression` that when evaluated  will produce a `String` 
+representing an external resource name of an `EventChannel`.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distribution-channel&gt;](#distribution-channel).
+
+*Element Type:*
+
+When processed this element will produce an `Expression`.
+
+*Example:*
+
+    <event:channel-external-name>{site-name}-{cache-name}</event:channel-external-name>   
+
+
+>   External channel names are commonly used for defining a suitable durable 
+>   topic subscription names when using JMS-based Distributors.
+
+    
+------------------------------------------------------------------------------
+
+<h5><a name="channel-scheme">&lt;event:channel-scheme&gt;</a> and <a name="remote-channel-scheme">&lt;event:remote-channel-scheme&gt;</a></h5>
+
+This element defines a template from which to construct an `EventChannel` at runtime.  
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distribution-channel&gt;](#distribution-channel) and
+[&lt;remote-cluster-channel-scheme&gt;](#remote-cluster-channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce an `EventChannelBuilder`.
+
+*Child Elements:*
+
+One of following elements must be defined as child element this element:
+
+*   [&lt;event:binaryentry-store-channel-scheme&gt;](#binaryentry-store-channel-scheme)
+
+    Defines an `EventChannel` that writes events to a `BinaryCacheStore`.
+
+*   [&lt;event:cachestore-channel-scheme&gt;](#cachestore-channel-scheme)
+
+    Defines an `EventChannel` that writes events to a `CacheStore`.
+
+*   [&lt;event:file-channel-scheme&gt;](#file-channel-scheme)
+
+    Defines an `EventChannel` that writes events to a file.
+
+*   [&lt;event:local-cache-channel-scheme&gt;](#local-cache-channel-scheme)
+
+    Defines an `EventChannel` that replays cache events in a cache local to the
+    cluster.
+
+*   [&lt;event:remote-cache-channel-scheme&gt;](#remote-cache-channel-scheme)
+
+    Defines an `EventChannel` that replays cache events in a remote cache defined
+    by another cluster.
+
+*   [&lt;event:remote-cluster-channel-scheme&gt;](#remote-cluster-channel-scheme)
+
+    Defines an `EventChannel` that sends events to another cluster in which the
+    events are replayed using another `event:channel-scheme`.
+
+*   [&lt;event:stderr-channel-scheme&gt;](#stderr-channel-scheme)
+
+    Defines an `EventChannel` that logs events to stderr.
+    
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element, defining an `EventChannelBuilder`
+    to be used for instantiating a custom `EventChannel` implementation.    
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element, defining an `EventChannelBuilder`
+    to be used for instantiating a custom `EventChannel` implementation.    
+
+
+------------------------------------------------------------------------------
+
+<a name="coalescing-transformer-scheme"><h5>&lt;event:coalescing-transformer-scheme&gt;</h5></a>
+
+This element defines the type of `ParameterizedBuilder` that can realize an
+`EventIteratorTransformer`, that of which will coalesce entry events as they 
+occur in a batch of Events.
+
+For example, the following sequence of Events:
+
+    Insert<A, 1>, Insert<B, 2>, Update<B, 4>, Update<A, 3>, Remove<B>, Update<A, 4>, Insert<B, 3>
+
+will be transformed into:
+
+    Insert<A, 4>, Insert<B, 3>
+
+>   **IMPORTANT**
+>
+>   Care should be taken when using coalescing transformers, especially when the 
+>   destination represented by an EventChannel expects to see all Events 
+>   (transitions) between Entry mutations.  When using coalescing transformers,
+>   some events may be removed or re-written (as demonstrated above).
+
+*Used in:*
+
+This element is a child element of: [&lt;event:transformer-scheme&gt;](#transformer-scheme) and
+[&lt;event:chained-transformer-scheme&gt;](#chained-transformer-scheme).
+
+*Element Type:*
+
+When processed this element produce a `ParameterizedBuilder<EventIteratorTransformer>`.
+
+*Example:*
+
+    <event:transformer-scheme>
+       <event:coalescing-transformer-scheme/>
+    </event:transformer-scheme>
+
+
+------------------------------------------------------------------------------
+
+<a name="coherence-based-event-distributor-scheme"><h5>&lt;event:coherence-based-event-distributor-scheme&gt;</h5></a>
+
+This element defines an Oracle Coherence-based implementation of a `DistributorScheme`, 
+that of which will use Oracle Coherence for coordinating events to be distributed via
+`EventDistributionChannels`.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distributor-scheme&gt;](#distributor-scheme) 
+
+*Element Type:*
+
+When processed this element produce a `EventDistributorBuilder`.
+
+*Example:*
+
+    <event:distributor-scheme>
+       <event:coherence-based-event-distributor-scheme/>
+    </event:distributor-scheme>
+
+------------------------------------------------------------------------------
+
+<a name="connection-factory-scheme"><h5>&lt;event:connection-factory-scheme&gt;</h5></a>
+
+This element defines a `ParameterizedBuilder` for a `JMSConnectionFactory`.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:jms-based-event-distributor-scheme&gt;](#jms-based-event-distributor-scheme).
+
+*Element Type:*
+
+When processed this element will produce a `ParameterizedBuilder<JMSConnectionFactory>`.
+
+*Child Elements:*
+
+One of the following elements must be defined as a child of this element:
+    
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element defining a `JMSConnectionFactory`.    
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element defining a `JMSConnectionFactory`. 
+
+*   or an element from the [JNDI Namespace](../common/jndi-namespace.html).
+
+*Example:*
+
+Defining a connection factory based on a JNDI resource:
+
+    <event:connection-factory-scheme>
+        <jndi:resource>
+            <jndi:resource-name>ConnectionFactory</jndi:resource-name>
+            <init-params>
+                <init-param>
+                    <param-name>java.naming.factory.initial</param-name>
+                    <param-value>org.apache.activemq.jndi.ActiveMQInitialContextFactory</param-value>
+                </init-param>
+                
+                <init-param>
+                    <param-name>java.naming.provider.url</param-name>
+                    <param-value system-property="java.naming.provider.url"></param-value>
+                </init-param>
+            </init-params>
+        </jndi:resource> 
+    </event:connection-factory-scheme>
+
+------------------------------------------------------------------------------
+
+<a name="distribution-channel"><h5>&lt;event:distribution-channel&gt;</h5></a>
+
+This element defines a template from which to configure and construct an `EventChannel`.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distribution-channels&gt;](#distribution-channels).
+
+*Element Type:*
+
+When processed this element will produce an `EventChannelControllerDependenciesTemplate`.
+
+*Child Elements:*
+
+The following elements are permitted as child elements of this element:
+
+*   [&lt;event:channel-name&gt;](#channel-name) **(required)**
+
+    The proposed name of the `EventChannel`.
+    (the name may include the use of parameter macros)
+
+*   [&lt;event:channel-external-name&gt;](#channel-external-name) (optional)
+
+    The proposed name of the `EventChannel` when it needs to refer to externally
+    defined resources.  The default value is defined as `{site-name}:{cluster-name}:{distributor-name}:{channel-name}`
+    (the name may include the use of parameter macros)
+
+
+>   The &lt;event:channel-external-name&gt; is typically used to specify the name 
+>   of the durable subscription the `EventChannel` may be bound to when using a 
+>   JMS-based Event Distributor.
+
+*   &lt;event:starting-mode&gt; (optional)
+
+    The proposed mode in which to start the event distribution channel when it
+    is created.  The permitted modes include: `ENABLED`, `SUSPENDED`, `DISABLED`.  
+    The default is `ENABLED`.
+    
+*   &lt;event:distribution-delay&gt; (optional)
+
+    The number of milliseconds to wait between distributing batches of events,
+    the default value being `1000` milliseconds (ie: 1 second).
+    
+*   &lt;event:batch-size&gt; (optional)
+
+    The maximum number of events in each batch distributed using the `EventChannel`,
+    the default being `100` events.
+    
+*   &lt;event:restart-delay&gt; (optional)
+
+    The number of milliseconds to wait between failures to distribute a batch of 
+    events before attempting to re-distribute, the default being `10000` milliseconds
+    (ie: 10 seconds).
+    
+*   &lt;event:maximum-failures&gt; (optional)
+
+    The number of consecutive failures before an `EventChannel` is suspended for 
+    distributing events, the default value being `-1`. A value of `-1` means no limit.
+    
+*   [&lt;event:channel-scheme&gt;](#channel-scheme) **(required)**
+
+    The scheme specifying how to build an {{EventChannel}}.
+    
+*   [&lt;event:transformer-scheme&gt;](#transformer-scheme) (optional)
+
+    A `ParameterizedBuilder<EventIteratorTransformer>` that defines an `EventIteratorTransformer` 
+    which is capable of transforming an `Iterator` of events into an another `Iterator`
+    of events.
+
+
+------------------------------------------------------------------------------
+
+<a name="distribution-channels"><h5>&lt;event:distribution-channels&gt;</h5></a>
+
+This element defines the collection of `EventChannels` that will be used by an 
+`EventDistributor` to distribute events.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distributor&gt;](#distributor).
+
+*Element Type:*
+
+When processed this element will produce a `List<EventChannelControllerDependenciesTemplate>`.
+
+*Child Elements:*
+
+Zero or more the following elements may be defined as child elements of this element:
+
+*   [&lt;event:distribution-channel&gt;](#distribution-channel)
+
+    Defines an `EventChannel` that will be used to distribute events.
+    
+    
+------------------------------------------------------------------------------
+
+<a name="distributor"><h5>&lt;event:distributor&gt;</h5></a>
+
+This element defines a template from which to construct an `EventDistributor` at runtime.  
+
+*Used in:*
+
+This element is typically be defined as a child of a `<cache-config>` or `<cache-mapping>` 
+element with in an Oracle Coherence Cache Configuration file.
+
+*Element Type:*
+
+When processed this element will produce an `EventDistributorTemplate`.
+
+*Child Elements:*
+
+The following elements are permitted as child elements this element:
+
+*   [&lt;event:distributor-name&gt;](#distributor-name) **(required)**
+
+    The proposed name of the `EventDistributor`. 
+    (the name may include the use of parameter macros)
+    
+*   [&lt;event:distributor-external-name&gt;](#distributor-external-name) (optional)
+
+    The proposed name the `EventDistributor` will use when referring and registering
+    with external resources.  By default this is defined as `{cache-name}`.
+    (the name may include the use of parameter macros)
+    
+*   [&lt;event:distributor-scheme&gt;](#distributor-scheme) **(required)**
+
+    The scheme specifying the `EventDistributor` configuration.
+    
+*   [&lt;event:distribution-channels&gt;](#distribution-channels) **(required)**
+
+    The list of `EventChannel` definitions to attach to the constructed 
+    `EventDistributor`.
+
+
+------------------------------------------------------------------------------
+
+<a name="distributor-external-name"><h5>&lt;event:distributor-external-name&gt;</h5></a>
+
+This element defines an `Expression` that when evaluated  will produce a `String` 
+representing the name that an `EventDistributor` should use when referencing 
+external resources.
+
+*Used in:*
+
+This is a child element of: [&lt;event:distributor&gt;](#distributor).
+
+*Element Type:*
+
+When processed this element will produce an `Expression`.
+
+*Example:*
+
+Defining the name of an external resource to be associated with the distributor.
+
+    <event:distributor-external-name>{cluster-name}.{site-name}.{cache-name}</event:distributor-external-name>   
+
+
+>   External distributor names are commonly used for defining a suitable name 
+>   of a JMS Topic when using JMS-based Distributors.
+
+
+------------------------------------------------------------------------------
+
+<a name="distributor-name"><h5>&lt;event:distributor-name&gt;</h5></a>
+
+This element defines an `Expression` that when evaluated  will produce a `String` 
+representing the name of an `EventDistributor`.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distributor&gt;](#distributor).
+
+*Element Type:*
+
+When processed this element will produce an `Expression`.
+
+*Example:*
+
+Defining a distributor name for the configured site and cache name.
+
+    <event:distributor-name>{site-name}-{cache-name}</event:distributor-name>   
+
+------------------------------------------------------------------------------
+
+<a name="distributor-scheme"><h5>&lt;event:distributor-scheme&gt;</h5></a>
+
+This element defines the type of `EventDistributor` to use for event distribution.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distributor&gt;](#distributor).
+
+*Element Type:*
+
+When processed this element will produce an `EventDistributorBuilder`.
+
+*Child Elements:*
+
+One of the following elements must be defined as child element of this element:
+
+*   [&lt;event:coherence-based-event-distributor-scheme&gt;](#coherence-based-event-distributor-scheme)
+
+    Defines that a Coherence-based Event Distributor should be used for event 
+    distribution.
+    
+*   [&lt;event:jms-based-event-distributor-scheme&gt;](#jms-based-event-distributor-scheme)
+
+    Defines that a JMS-based Event Distributor should be used for event 
+    distribution.
+    
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element, defining an `EventDistributorBuilder`
+    to be used for instantiating a custom event distributor implementation.    
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element, defining an `EventDistributorBuilder`
+    to be used for instantiating a custom event distributor implementation.    
+
+
+------------------------------------------------------------------------------
+
+<a name="entry-filter"><h5>&lt;event:entry-filter&gt;</h5></a>
+
+This element defines a filter that may be used for filtering events based on
+the state of an entry. 
+
+*Used in:*
+
+This element is a child element of: [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme).
+
+*Element Type:*
+
+When processed this element produces a `ParameterizedBuilder<Filter>`.
+
+*Child Elements:*
+
+One of the following elements must be defined as a child element of this element:
+        
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element, defining a `Filter`
+    to be used for instantiating a custom `Filter`.    
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element, defining an `Filter>`
+    to be used for instantiating a custom `Filter`.    
+
+*   or any one of the filters defined by the [Filter Namespace](../common/filter-namespace.html).
+
+*Example:*
+
+    <event:transformer-scheme>
+       <event:filtering-transformer-scheme>
+          <event:entry-filter>
+             <filter:where>value() like "%hello%"</filter:where>
+          </event:entry-filter>
+       </event:filtering-transformer-scheme>
+    </event:transformer-scheme>
+    
+
+------------------------------------------------------------------------------
+
+<a name="event-transformer"><h5>&lt;event:event-transformer&gt;</h5></a>
+
+This element defines a `ParameterizedBuilder` for an `EventTransformer`.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:mutating-transformer-scheme&gt;](#mutating-transformer-scheme).
+
+*Element Type:*
+
+When processed this element will produce a `ParameterizedBuilder<EventTransformer>`.
+
+*Child Elements:*
+
+One of the following elements must be defined as a child of this element:
+    
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element defining a `EventTransformer`.    
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element defining a `EventTransformer`. 
+
+*Example:*
+
+A transformer to remove "original" values from entry events prior to them being
+distributed:
+
+    <event:transformer-scheme>
+       <event:mutating-transformer-scheme>
+          <event:event-transformer>
+             <class-scheme>
+                <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.EntryOptimizingEventTransformer</class-scheme>
+             </class-scheme>
+          </event:event-transformer>
+       </event:mutating-transformer-scheme>
+    </event:transformer-scheme>
+
+
+------------------------------------------------------------------------------
+
+<a name="event-type-filter"><h5>&lt;event:event-type-filter&gt;</h5></a>
+
+This element defines a `Filter` that may be used for filtering events based on
+their type, those being one or more comma separated values of `INSERTED`, `UPDATED`, `REMOVED`. 
+
+*Used in:*
+
+This element is a child element of: [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme).
+
+*Element Type:*
+
+When processed this element produces a `ParameterizedBuilder<Filter>`.
+
+*Examples:*
+
+Only distribute INSERTED and UPDATED events:
+
+    <event:transformer-scheme>
+       <event:filtering-transformer-scheme>
+          <event:event-type-filter>INSERTED, UPDATED</event:event-type-filter>
+       </event:filtering-transformer-scheme>
+    </event:transformer-scheme>
+
+Only distribute INSERTED and REMOVED events:
+
+    <event:transformer-scheme>
+       <event:filtering-transformer-scheme>
+          <event:event-type-filter>INSERTED, REMOVED</event:event-type-filter>
+       </event:filtering-transformer-scheme>
+    </event:transformer-scheme>
+
+Only distribute UPDATED events:
+
+    <event:transformer-scheme>
+       <event:filtering-transformer-scheme>
+          <event:event-type-filter>UPDATED</event:event-type-filter>
+       </event:filtering-transformer-scheme>
+    </event:transformer-scheme>
+
+
+------------------------------------------------------------------------------
+
+<a name="file-channel-scheme"><h5>&lt;event:file-channel-scheme&gt;</h5></a>
+
+This element defines an `EventChannelBuilder` that will construct a `FileEventChannel` 
+when required.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce an `EventChannelBuilder`.
+
+*Child Elements:*
+
+The following elements are permitted as child elements of this element:
+
+*   &lt;event:directory-name&gt; **(required)**
+
+    The name of the directory in which to write the events.
+    (the name may include the use of parameter macros)
+
+*   &lt;event:appending&gt; (optional)
+
+    A flag indicating if events should be appended to the file for the 
+    `EventChannel`.  The default is `false`.
+
+
+------------------------------------------------------------------------------
+
+<a name="filtering-transformer-scheme"><h5>&lt;event:filtering-transformer-scheme&gt;</h5></a>
+
+This element defines the type of `ParameterizedBuilder` that can realize an
+`EventIteratorTransformer`, that of which may be used applying filter events
+out of a batch of events.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:transformer-scheme&gt;](#transformer-scheme) and
+[&lt;event:chained-transformer-scheme&gt;](#chained-transformer-scheme).
+
+*Element Type:*
+
+When processed this element produces a `ParameterizedBuilder<EventIteratorTransformer>`.
+
+*Child Elements:*
+
+One of the following elements must be defined as a child element of this element:
+    
+*   [&lt;event:event-type-filter&gt;](#event-type-filter)
+
+    A `com.tangosol.util.filter.Filter` that evaluates if an Event is one of a 
+    set of specified event types, those being: `INSERTED`, `UPDATED` and/or `REMOVED`.
+
+*   [&lt;event:entry-filter&gt;](#entry-filter)
+
+    A `com.tangosol.util.filter.Filter` that evaluates if an event entry satisfies 
+    another (inner) defined `com.tangosol.util.filter.EntryFilter`.  Use this
+    to filter based on entry state (not event type).
+
+*   [&lt;event:original-entry-filter&gt;](#original-entry-filter)
+
+    A `com.tangosol.util.filter.Filter` that evaluates if an the original entry,
+    prior to the event occuring satisfies another (inner) defined `com.tangosol.util.filter.EntryFilter`.  
+    Use this to filter based on original entry state (not event type).
+    
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element defining an `EventIteratorTransformer`.
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element defining an `EventIteratorTransformer`.
+
+
+>   **IMPORTANT**
+>
+>   The type of objects provided to a custom filter are Events, not Cache Entries.  
+>   Consequently normal `com.tangosol.util.filter`s will not work by themselves 
+>   as these traditionally expect to operate on Cache Entries.  To use these Filters 
+>   you must wrap them in a either a [&lt;event:entry-filter&gt;](#event-entry-filter) 
+>   or [&lt;event:original-entry-filter&gt;](#event-original-entry-filter).
+
+*Examples:*
+
+Only distribute INSERTED and UPDATED events:
+
+    <event:transformer-scheme>
+       <event:filtering-transformer-scheme>
+          <event:event-type-filter>INSERTED, UPDATED</event:event-type-filter>
+       </event:filtering-transformer-scheme>
+    </event:transformer-scheme>
+
+Only distribute events where some Entry condition holds:
+
+    <event:transformer-scheme>
+       <event:filtering-transformer-scheme>
+          <event:entry-filter>
+             <filter:where>value() like "%hello%"</filter:where>
+          </event:entry-filter>
+       </event:filtering-transformer-scheme>
+    </event:transformer-scheme>
+
+
+------------------------------------------------------------------------------
+
+<a name="jms-based-event-distributor-scheme"><h5>&lt;event:jms-based-event-distributor-scheme&gt;</h5></a>
+
+This element defines an Java Messaging Service (JMS) based implementation of a `DistributorScheme`, 
+that of which will use JMS for coordinating events to be distributed via
+`EventDistributionChannels`.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distributor-scheme&gt;](#distributor-scheme) 
+
+*Element Type:*
+
+When processed this element produce a `EventDistributorBuilder`.
+
+*Child Elements:*
+
+The following element is a required child element of this element:
+
+*   [&lt;event:connection-factory-scheme&gt;](#connection-factory-scheme)
+
+    Defines a `JMSConnectionFactory` that the JMS-based Event Distributor can 
+    use to create JMS Connection Factories when required.
+
+
+*Example:*
+
+    <event:distributor-scheme>
+       <event:jms-based-event-distributor-scheme>
+          <event:connection-factory-scheme> ... </event:connection-factory-scheme>
+       </event:jms-based-event-distributor-scheme>
+    </event:distributor-scheme>
+
+------------------------------------------------------------------------------
+
+<a name="local-cache-channel-scheme"><h5>&lt;event:local-cache-channel-scheme&gt;</h5></a>
+
+This element defines an `EventChannelBuilder` that will construct a `LocalCacheEventChannel` 
+when required.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce an `EventChannelBuilder`.
+
+*Child Elements:*
+
+The following elements are permitted as child elements of this element:
+
+*   &lt;event:target-cache-name&gt;**(required)**
+
+    An expression that when evaluated will produce the name of the cache in 
+    which to "replay" events.
+    (the name may include the use of parameter macros)
+    
+*   [&lt;event:conflict-resolver-scheme&gt;](#conflict-resolver-scheme) (optional)
+
+    A `ParameterizedBuilder` realize a {{ConflictResolver}} to be used for
+    resolving potential conflicts between events and existing cache entries.
+    By default this is a `ParameterizedBuilder` for the `BruteForceConflictResolver`.
+
+
+------------------------------------------------------------------------------
+
+<a name="mutating-transformer-scheme"><h5>&lt;event:mutating-transformer-scheme&gt;</h5></a>
+
+This element defines an `EventIteratorTransformer` that will apply an `EventTransformer` 
+to each of the events in a batch, possibly mutating the said events before they 
+are distributed.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:transformer-scheme&gt;](#transformer-scheme) 
+
+*Element Type:*
+
+When processed this element produce a `ParameterizedBuilder<EventIteratorTransformer>`.
+
+*Child Elements:*
+
+The following element is a required child element of this element:
+
+*   [&lt;event:event-transformer&gt;](#event-transformer)
+
+    An `EventTransformer` that can transforms an individual event.
+
+
+*Examples:*
+
+Converting string-based entries in a batch into upper-case prior to them being distributed.
+
+    <event:transformer-scheme>
+       <event:mutating-transformer-scheme>
+          <event:event-transformer>
+             <class-scheme>
+                <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.UppercaseEntryEventTransformer</class-name>
+             </class-scheme>
+          </event:event-transformer>
+       </event:mutating-transformer-scheme>
+    <event:transformer-scheme>
+
+Optimize the entries in a batch by removing their original values prior to them being distributed.
+
+    <event:transformer-scheme>
+       <event:mutating-transformer-scheme>
+          <event:event-transformer>
+             <class-scheme>
+                <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.EntryOptimizingEventTransformer</class-name>
+             </class-scheme>
+          </event:event-transformer>
+       </event:mutating-transformer-scheme>
+    <event:transformer-scheme>
+
+
+------------------------------------------------------------------------------
+
+<a name="original-entry-filter"><h5>&lt;event:original-entry-filter&gt;</h5></a>
+
+This element defines a filter that may be used for filtering events based on
+the original state of an entry, prior to an event occurring on the said entry. 
+
+*Used in:*
+
+This element is a child element of: [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme).
+
+*Element Type:*
+
+When processed this element produces a `ParameterizedBuilder<Filter>`.
+
+*Child Elements:*
+
+One of the following elements must be defined as a child element of this element:
+        
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element, defining a `Filter`
+    to be used for instantiating a custom `Filter`.    
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element, defining an `Filter>`
+    to be used for instantiating a custom `Filter`.    
+
+*   or any one of the filters defined by the [Filter Namespace](../common/filter-namespace.html).
+
+*Example:*
+
+    <event:transformer-scheme>
+       <event:filtering-transformer-scheme>
+          <event:original-entry-filter>
+             <filter:where> key() > 100 </filter:where>
+          </event:original-entry-filter>
+       </event:filtering-transformer-scheme>
+    </event:transformer-scheme>
+
+------------------------------------------------------------------------------
+
+<a name="remote-cache-channel-scheme"><h5>&lt;event:remote-cache-channel-scheme&gt;</h5></a>
+
+This element defines an `EventChannelBuilder` that will construct a `RemoteCacheEventChannel` 
+when required.
+
+>   **WARNING**
+>
+>   It is highly recommended that you use a [&lt;event:remote-cluster-channel-scheme&gt;](#remote-cluster-channel-scheme) 
+>   instead of this element as remote cluster channels perform all event processing 
+>   in batches.  This channel will only perform simple updates, one at a time, 
+>   regardless of the configured batch size.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce a `EventChannelBuilder`.
+
+*Child Elements:*
+
+The following elements are permitted as child elements of this element:
+
+*   &lt;event:remote-cache-service-name&gt;**(required)**
+
+    The name of an \*Extend Remote Cache Service that connects to a remote 
+    cluster.
+    
+*   [&lt;event:conflict-resolver-scheme&gt;](#conflict-resolver-scheme) (optional)
+
+    A `ParameterizedBuilder` realize a {{ConflictResolver}} to be used for
+    resolving potential conflicts between events and existing cache entries.
+    By default this is a `ParameterizedBuilder` for the `BruteForceConflictResolver`.
+
+------------------------------------------------------------------------------
+
+<a name="remote-cluster-channel-scheme"><h5>&lt;event:remote-cluster-channel-scheme&gt;</h5></a>
+
+This element defines an `EventChannelBuilder` that will construct a `RemoteClusterEventChannel` 
+when required.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce a `EventChannelBuilder`.
+
+*Child Elements:*
+
+The following elements are required child elements of this element:
+
+*   &lt;event:remote-invocation-service-name&gt;
+
+    The name of an \*Extend Remote Invocation Service that connects to a remote 
+    cluster.
+    
+*   [&lt;event:remote-channel-scheme&gt;](#remote-channel-scheme)
+
+    The `EventChannelBuilder` to be used to construct an `EventChannel` in the 
+    remote cluster to replay events in the said remote cluster.
+
+
+------------------------------------------------------------------------------
+
+<a name="stderr-channel-scheme"><h5>&lt;event:stderr-channel-scheme&gt;</h5></a>
+
+This element defines an `EventChannelBuilder` that will construct a `StdErrEventChannel` 
+when required.
+
+*Used in:*
+
+This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce a `EventChannelBuilder`.
+
+------------------------------------------------------------------------------
+
+<a name="transformer-scheme"><h5>&lt;event:transformer-scheme&gt;</h5></a>
+
+This element defines the type of `ParameterizedBuilder` that can realize an
+`EventIteratorTransformer`, that of which may be used for transforming a batch
+of events (represented as an `Iterator`).
+
+*Used in:*
+
+This element is a child element of: [&lt;event:distribution-channel&gt;](#distribution-channel).
+
+*Element Type:*
+
+When processed this element will produce a `ParameterizedBuilder<EventIteratorTransformer>`.
+
+*Child Elements:*
+
+One of the following elements must be defined as child element of this element:
+    
+*   [&lt;event:chained-transformer-scheme&gt;](#chained-transformer-scheme)
+
+    A `ParameterizedBuilder<EventIteratorTransformer>` that when realized applies
+    a chain of one or more transformers to a distribution batch.  Use this
+    if you require multiple transformers to be applied to a batch of events.
+
+*   [&lt;event:coalescing-transformer-scheme&gt;](#coalescing-transformer-scheme)
+
+    A `ParameterizedBuilder<EventIteratorTransformer>` that when realized will 
+    coalesce multiple events for the an entry occurring in an iteration, into a 
+    single event for the said entry.  Use this to optimize events in a batch,
+    reducing batch size and the amount of information to distribute.
+
+*   [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme)
+
+    A `ParameterizedBuilder<EventIteratorTransformer>` that when realized will 
+    apply a filter to each event in batch, possibly removing the said events
+    from the batch, thus preventing some events from being distributed.
+    
+*   [&lt;event:mutating-transformer-scheme&gt;](#mutating-transformer-scheme)
+
+    A `ParameterizedBuilder<EventIteratorTransformer>` that when realized will 
+    apply a mutator function to each event in an batch, possibly changing/removing/replacing 
+    each event.  Use this if you want to transform events prior to distribution.
+    
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element defining an `EventIteratorTransformer`.
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element defining an `EventIteratorTransformer`.
+
+------------------------------------------------------------------------------

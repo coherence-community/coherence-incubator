@@ -1,0 +1,121 @@
+History
+-------
+
+The following sections outline Oracle Coherence Incubator changes in 
+reverse chronological order.
+
+<h3>Version ${project.version}: ${timestamp} </h3>
+
+<h4>Source and Documentation Contributors</h4>
+
+*   Jonathan Knight, Paul Mackin, Brian Oliver
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   Refactored all of the modules into a single source tree, with 
+    separate folders for each module and their associated examples.
+    
+*   Restructured all of the modules follow standard [Apache Maven](http://maven.apache.org/) 
+    conventions.
+    
+*   Completely re-wrote the build system to use [Apache Maven](http://maven.apache.org/)
+    instead of Apache Ant.
+    
+*   Ratified and released all of the modules under a standard open source 
+    license (CDDL).  This included changing all file headers to use standard
+    CDDL headers.  Templates for these headers are available in the 
+    "documents" folder.
+    
+*   Formalized the mechanism and process for accepting contributions.
+
+*   Completely migrated the existing "closed" Atlassian Confluence-based 
+    documentation to be part of the source tree, thus enabling contributions.
+    This included re-writing and updating parts of the documentation for this
+    release.  The documentation can be found in the `coherence-incubator-site` 
+    module.
+    
+*   Rationalized all modules to use a single Coherence Incubator version number
+    instead of individual version numbers.
+       
+*   Migrated the source repository to GitHub.
+
+*   Migrated the issue tracking to java.net.
+
+*   Introduced "uber" jar generation support to produce the entire Oracle
+    Coherence Incubator in a single jar.
+
+*   Introduced (extracted) individual "example" modules for the patterns
+    instead of using a single large example module.
+
+*   Introduced a dependency on the Oracle Tools project for tests. Re-wrote all
+    process-based tests to use this package.  This work was originally part of
+    the Oracle Coherence Incubator but is now a separate project.  This work
+    now includes signficiant contributions from the "Grid Man" project
+    (developed by Jonathan Knight). 
+
+*   Upgraded projects to use Oracle Coherence 3.7.1.5
+
+<h4>coherence-incubator-all</h4>
+
+*   Introduced the ability to generate a coherence-incubator-all-x.y.z.jar
+    that contains all of the Oracle Coherence Incubator compiled modules
+    without third-party libraries and without Oracle Coherence itself.  This
+    allows developers to use a single jar file in applications instead of 
+    having to specify individual jars.
+
+<h4>coherence-incubator-site (Documentation)</h4>
+
+*   Introduced during the migration and re-write of the original Oracle
+    Coherence Incubator 10 web-based documentation from http://oracle.coherence.com/.
+
+<h4>coherence-common</h4>
+
+*   Refactored the implementation of the Finite State Machines to correctly
+    adopt and use standard UML terminology.
+
+<h4>coherence-commandpattern</h4>
+
+*   No Changes
+
+<h4>coherence-commandpattern-examples</h4>
+
+*   Introduced by extracting examples from Oracle Coherence Incubator 10.
+
+<h4>coherence-functorpattern</h4>
+
+*   No Changes
+
+<h4>coherence-functorpattern-examples</h4>
+
+*   Introduced by extracting examples from Oracle Coherence Incubator 10.
+
+<h4>coherence-processingpattern</h4>
+
+*   No Changes
+
+<h4>coherence-processingpattern-examples</h4>
+
+*   Introduced by extracting examples from Oracle Coherence Incubator 10.
+
+<h4>coherence-messagingpattern</h4>
+
+*   Resolved potential Message memory leak 
+    (messages not being removed from the messages cache after being acknowledged)
+
+<h4>coherence-eventdistributionpattern</h4>
+
+*   Resolved potential and unnecessary hi-cpu usage when using 
+    Coherence-based Messaging distributors.
+
+*   Refactored tests to use Oracle Tools.
+
+<h4>coherence-pushreplicationpattern</h4>
+
+*   Refactored tests to use Oracle Tools.
+
+*   Resolved issue were calling NamedCache.getAll(...) on a cache that is being
+    used for Push Replication would throw an UnsupportedOperationException.
+
+<h4>coherence-pushreplicationpattern-examples</h4>
+
+*   Introduced by extracting examples from Oracle Coherence Incubator 10.

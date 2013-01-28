@@ -1,0 +1,304 @@
+The Command Pattern
+-------------------
+
+<h4>Overview</h4>
+
+Provides a distributed implementation of the classic 
+[Command Pattern (Wikipedia)](http://en.wikipedia.org/wiki/Command_pattern) 
+built using Oracle Coherence.
+
+<h4>Distribution</h4>
+
+The Oracle Coherence Incubator Command Pattern is distributed as a single jar 
+called: `coherence-commandpattern-${project.version}.jar`
+
+<h4>Details</h4>
+
+The Command Pattern advocates that:
+*   An action to be performed zero or more times at some point in the future 
+    should be represented as an object called a `Command`.
+    
+*   All necessary parameters required to perform the said action, should be 
+    encapsulated as attributes with in the said `Command`.
+    
+*   The `Command` must provide a mechanism to perform the action, typically 
+    represented by an `execute` method defined on the said `Command`.
+
+This implementation of the Command Pattern additionally advocates that:
+*   A `Command` may only be executed with in the scope of a target object, 
+    called a `Context`
+    
+*   To execute a `Command` it must be submitted to a `Context`
+
+*   Once submitted, `Commands` are executed asynchronously. That is, the 
+    submitter of the `Command` does not block or wait for the `Command` to be 
+    executed after it has been submitted.
+    
+*   `Commands` are executed one-at-a-time, in the order in which they arrive 
+    at their `Context`
+    
+*   A `Command` may not return a value to the application that submitted the 
+    said `Command`. If you require a `Command` that returns a value after 
+    execution, you need a `Functor` 
+    (see the [Functor Pattern](../functor-pattern/index.html).)
+
+<h4>Design</h4>
+
+The following diagram outlines the core classes and interfaces defined in this 
+implementation of the Command Pattern.
+
+![Command Pattern UML](../images/commandpattern/uml.png)
+
+The `Command` interface specifies the minimum requirements for Commands.  It 
+defines a single method called `execute` that is invoked by the internal 
+`CommandExecutor` when a `Command` is to be executed.  The `execute` method 
+requires a single parameter, called the `ExecutionEnvironment`.  The 
+`ExecutionEnvironment` provides valuable information to the `execute` method, 
+including the `Context` in which the `Command` is being executed.  To submit 
+`Commands` for execution by `CommandExecutor`s, you must use an implementation 
+of the `CommandSubmitter` interface (the `DefaultCommandSubmitter` class 
+provides the standard implementation).
+
+To define and register a `Context` about which you may submit `Command`s for 
+execution, use an implementation of the `ContextsManager` interface (the 
+`DefaultContextsManager` class provides the standard implementation).  Once a 
+`Context` is registered, you may use the returned `Identifier` to submit `Command`s 
+for execution with a `CommandSubmitter`.
+
+>   As `Context` and `Command` instances are stored in Coherence cluster members, 
+>   they both must be `Serializable` or better still, implement `ExternalizableLite` 
+>   or `PortableObject`.
+
+<h4>Command Pattern Usage Walkthrough</h4>
+
+<h5>Step 1: The Initial Environment</h5>
+
+![Step 1](../images/commandpattern/step-1.png)
+
+*   One Client Application
+*   Two Coherence Cache Servers
+*   All part of the same Coherence Cluster
+
+>   The Client Application may be external to the Coherence Cluster when using 
+>   Coherence Extend
+
+<h5>Step 2: Context Creation</h5>
+
+![Step 2](../images/commandpattern/step-2.png)
+
+*   The client application creates an instance of a `Context`
+
+<h5>Step 3: Context Registration</h5>
+
+![Step 3](../images/commandpattern/step-3.png)
+
+*   The client application registers the created `Context` using a `ContextsManager`
+
+*   The `ContextsManager` places the `Context` into a "primary partition" of the 
+    "contexts" Distributed Cache.
+    
+*   Coherence ensures a backup of the `Context` is made to a "backup partition" 
+    (on separate JVMs and different machines where possible)
+
+<h5>Step 4: Establishing the CommandExecutor (automatic)</h5>
+
+![Step 4](../images/commandpattern/step-4.png)
+
+*   When a `Context` is registered, an internal event establishes an appropriate 
+    `CommandExecutor` and necessary infrastructure.
+
+<h5>Step 5: Creating a Command</h5>
+
+![Step 5](../images/commandpattern/step-5.png)
+
+*   The client application creates an instance of a `Command`
+
+<h5>Step 6: Submitting a Command for execution</h5>
+
+![Step 6](../images/commandpattern/step-6.png)
+
+*   The client application uses a `CommandSubmitter` to submit a `Command` for 
+    execution with an identified `Context`
+    
+*   The submitted `Command` is placed into the "commands" Distributed Cache 
+    (and automatically backed up)
+    
+*   The submitted `Command` is then automatically queued (FIFO) and scheduled 
+    for asynchronous execution by the `CommandExecutor` for the `Context`
+
+>   An individual `Command` instance may be submitted any number of times for 
+>   execution to one or more `Contexts`. There is no need to create new 
+>   instances of the same `Command` if it needs to be submitted for execution 
+>   multiple times.
+
+<h5>Step 7: Numerous Command Submission</h5>
+
+![Step 7](../images/commandpattern/step-7.png)
+
+*   Multiple `Commands` may be submitted for execution at once.
+*   `Commands` are queued for execution (FIFO) in order of arrival at the `Context`
+
+<h5>Step 8: Commands are executed by the CommandExecutor (Asynchronously)</h5>
+
+![Step 8](../images/commandpattern/step-8.png)
+
+*   When `Commands` are queued for execution, an internal event notifies the 
+    `CommandExecutor` to start executing the `Commands`
+    
+*   For efficiency, the `CommandExecutor` may execute `Commands` in batches 
+    (but remaining in order).
+    
+<h5>Step 9: Commands Automatically Cleaned-up when Executed.</h5>
+
+![Step 9](../images/commandpattern/step-9.png)
+
+*   Once a `Command` has been executed, it is removed from the "commands" cache 
+    (as is the backup of the `Command`).
+    
+<h4>Example</h4>
+
+Let's start with a simple example where we use the Command Pattern to `setValue(T)` 
+on the `GenericContext`.
+
+First, we'll start by writing a simple `SetValueCommand` that extends `
+AbstractCommand` as seen here:
+
+    import java.io.DataInput;
+    import java.io.DataOutput;
+    import java.io.IOException;
+    
+    import com.oracle.coherence.patterns.command.Command;
+    import com.oracle.coherence.patterns.command.ExecutionEnvironment;
+    import com.tangosol.io.ExternalizableLite;
+    import com.tangosol.util.ExternalizableHelper;
+    
+    @SuppressWarnings("serial")
+    public class SetValueCommand<T> implements Command<GenericContext<T>>, ExternalizableLite {
+    
+      private T value;
+    
+      public SetValueCommand() {
+      }
+    
+      public SetValueCommand(T value) {
+        this.value = value;
+      }
+    
+      public void execute(ExecutionEnvironment<GenericContext<T>> executionEnvironment) {
+        GenericContext<T> context = executionEnvironment.getContext();
+        context.setValue(value);
+        executionEnvironment.setContext(context);
+      }
+    
+      @SuppressWarnings("unchecked")
+      public void readExternal(DataInput in) throws IOException {
+        this.value = (T)ExternalizableHelper.readObject(in);
+      }
+    
+      public void writeExternal(DataOutput out) throws IOException {
+        ExternalizableHelper.writeObject(out, value);
+      }
+    
+      public String toString() {
+        return String.format("SetValueCommand{value=%s}", value);
+      }
+    }
+
+Second, let's write a quick test that submits a number (`iCount`) of 
+`SetValueCommand` s on "mycontext" as seen here:
+
+    import com.oracle.coherence.common.identifiers.Identifier;
+    import com.oracle.coherence.patterns.command.CommandSubmitter;
+    import com.oracle.coherence.patterns.command.ContextsManager;
+    import com.oracle.coherence.patterns.command.DefaultCommandSubmitter;
+    import com.oracle.coherence.patterns.command.DefaultContextConfiguration;
+    import com.oracle.coherence.patterns.command.DefaultContextsManager;
+    import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStrategy;
+    import com.tangosol.net.CacheFactory;
+    
+    public class CommandPatternExample {
+      /**
+       * @param args
+       * @throws InterruptedException
+       */
+      public static void main(String[] args) throws InterruptedException {
+    
+        DefaultContextConfiguration contextConfiguration = new DefaultContextConfiguration(ManagementStrategy.DISTRIBUTED);
+        ContextsManager contextsManager = DefaultContextsManager.getInstance();
+    
+        Identifier contextIdentifier = contextsManager.registerContext("mycontext", new GenericContext<Long>(0L), contextConfiguration);
+    
+        CommandSubmitter commandSubmitter = DefaultCommandSubmitter.getInstance();
+    
+        commandSubmitter.submitCommand(contextIdentifier, new LoggingCommand("Commenced", 0));
+    
+        for (long i = 1; i <= 10000; i++) {
+          commandSubmitter.submitCommand(contextIdentifier, new SetValueCommand<Long>(i));
+        }
+    
+        commandSubmitter.submitCommand(contextIdentifier, new LoggingCommand("Completed", 0));
+        CacheFactory.shutdown();
+      }
+    }
+
+To run this test you will need to start a Coherence cache server, in this example 
+we use the `DefaultCacheServer` that ships with Coherence as seen here:
+
+    java -Dtangosol.coherence.cacheconfig=$PATH_TO/coherence-commandpattern-cacheconfig.xml \
+         com.tangosol.net.DefaultCacheServer
+
+Once the cache server is running you can start the `CommandPatternExample` as a 
+cache client as seen here:
+
+    java -Dtangosol.coherence.distributed.localstorage=false -Dtangosol.coherence.cacheconfig=$PATH_TO/coherence-commandpattern-cacheconfig.xml CommandPatternExample
+
+The `SetValueCommand.java`, `CommandPatternExample.java` and `coherence-commandpattern-cache-config.xml` 
+files are included in the source code distribution.
+
+<h4>Frequently Asked Questions</h4>
+
+**What is the relationship between the Functor Pattern, Command Pattern, 
+Entry Processors and the Invocation Service for performing work in a cluster?**
+
+The following table outlines the main differences.
+
+|| || Functor Pattern || Command Pattern || EntryProcessors || InvocationService ||
+| Processing Target | A Context | A Context | A Cache Entry | A Cluster Member |
+| Submission Behavior | Non-Blocking | Non-Blocking | Blocking | Blocking and Non-Blocking |
+| Execution Order | Order of Submission | Order of Submission | Order of Submission (unless using PriorityTasks) | Order of Submission |
+| Supports Return Values? \\
+(and re-throwing Exceptions) | Yes | No | Yes | Yes |
+| Guaranteed to Execute? \\
+(if Submitter terminates after submission) | Yes | Yes | Yes (submitter blocks) | Yes (for blocking), No (for non-blocking) |
+| Guaranteed to Execute? \\
+(if Target JVM terminates during execution) | Yes | Yes | Yes (submitter automatically retries) | No (retry up to developer) |
+| Submitted requests recoverable from disk? | Yes (when using Cache Store) | Yes (when using Cache Store) | No | No |
+| Request may be cancelled? | Yes | Yes | No | Yes (for non-blocking) |
+
+**What is a `ManagementStrategy`?**
+
+A `ManagementStrategy` defines how `Commands` are managed in a Coherence Cluster.  
+By default `Commands` are always co-located in the JVM that is hosting the `Context` 
+associated with the said `Commands`.  This provides instant access to the `Commands` 
+for a `CommandExecutor` but has the disadvantage of limiting the number of `Commands` 
+that may be queued for execution (before a JVM may run out of memory).  The alternative 
+is to use the `DISTRIBUTED` strategy, where the `Commands` are distributed across 
+the cluster and only retrieved for execution when required.  This provides the 
+advantage of enabling massive capacity (scaling to the size of the cluster and 
+beyond when disk storage is configured), but has the disadvantage that retrieving 
+`Commands` for execution may take longer.
+
+**How do I monitor the execution of `Commands`?**
+
+The Command Pattern `CommandExecutors` are JMX enabled by default.  In order 
+to monitor `Command` execution for a `Context`, simply enable JMX for Coherence 
+and look for the "CommandExecutors" in your JMX monitoring application 
+(ie: Something like JConsole).  All kinds of JMX information is available, 
+including Min, Max and Average Execution time, together with the number of 
+current `Commands` pending to be executed and those that have been executed.
+
+<h4>References and Additional Information</h4>
+
+*   [The Functor Pattern](../functorpattern/index.html)
+
+*   Wikipedia - [Command Pattern](http://en.wikipedia.org/wiki/Command_pattern)

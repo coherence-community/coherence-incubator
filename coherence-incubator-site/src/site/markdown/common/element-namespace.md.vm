@@ -1,0 +1,112 @@
+The Element Namespace
+---------------------
+
+The Element Namespace provides the ability to pre-process, introduce and 
+replace other Cache Configuration XML elements with in Cache Configurations.
+
+<h4>Backwards Compatibility</h4>
+
+1.  This namespace replaces the previously available `<introduce:config.. />` 
+    namespace, which is no longer available as part of Oracle Coherence 
+    Incubator 11.  The `<introduce:config.. />` and `<introduce-cache-config.. />` 
+    elements will no longer work, but may be replaced with the XML processing 
+    attribute `element:introduce-cache-config="..."`.
+
+2. This namespace must *explicitly* be declared in your configuration files.  
+   It is *not* implicitly defined as was the predecesor `<introduce:...>` namespace.
+
+<h4>Namespace Content Handler</h4>
+
+The implementation is provided by the `com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler` 
+class.
+
+<h4>Declaration</h4>
+
+The common prefix used for this namespace in Cache Configurations is `element`, 
+however as with all XML namespace declarations this can be defined arbitrarily 
+when declaring the namespace.
+
+To use the namespace you should declare it as follows:
+
+    <cache-config 
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler">
+    
+       ...
+    
+    </cache-config>
+
+<h4>Attributes</h4>
+
+The following section outlines the attributes defined by this Namespace.
+
+------------------------------------------------------------------------------
+
+<h5>element:introduce-cache-config</h5>
+
+Used to specify one or more Coherence Cache Configurations to introduce into a 
+`<cache-config>` XML element.
+
+*Notes:*
+
+1.  The introduction of cache configuration files occurs in the order in 
+    which they are defined by the attribute.
+    
+2.  Should an introduced file also specify an further cache configuration file
+    to introduce, that is introduced first (ie: recursively).
+
+3.  Identifiable elements introduced by introductions may be overridden
+    and replaced by later identifiable element introductions.
+
+*Restrictions:*
+
+This attribute may only be specified in `<cache-config>` XML elements.
+
+*Examples:*
+
+Introduce an additional cache configuration into a cache configuration:
+
+    <cache-config 
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        element:introduce-cache-config="other-cache-config.xml">
+    
+        ...
+    
+    </cache-config>
+
+Introduce multiple (comma separated) cache configurations into a cache 
+configuration:
+
+    <cache-config 
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        element:introduce-cache-config="cache-config-one.xml, cache-config-two.xml, cache-config-three.xml">
+        
+        ...
+    
+    </cache-config>
+
+------------------------------------------------------------------------------
+
+<h5>element:replace-with-file</h5>
+
+Use to specify that an XML element should be replaced by the contents of
+a specified file.
+
+*Restrictions:*
+
+While this attribute may be specified in any XML element, the root element
+of the specified file must be the same as the said XML element.
+
+*Examples:*
+
+Replace the contents of an XML element with the contents of a specified file:
+
+    <cache-config 
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler">
+    
+        <cache-scheme-mappings element:replace-with-file="cache-scheme-mappings.xml"/>
+        
+        ...
+    
+    </cache-config>
+
+------------------------------------------------------------------------------

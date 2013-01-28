@@ -1,0 +1,47 @@
+The Event Distribution Pattern
+------------------------------
+
+<h4>Overview</h4>
+
+The Event Distribution Pattern provides a simple mechanism distribute application 
+defined Events via one or more Event Channels.   Specifically the Event Distribution 
+Pattern allows the definition, construction and use of Event Distributors, that 
+of which have the responsibility of guaranteeing in-order asynchronous delivery 
+of Events via the defined Event Channels.
+
+There are several Event Distributor implementations, each based on different 
+internal technologies to provide Event delivery guarantees.  Levels of performance, 
+scalability and quality of service may differ between implementations.  As of writing, 
+there are two out-of-the-box Event Distributor implementations; one based on 
+Oracle Coherence itself (using the [Messaging Pattern](../messagingpattern/index.html), 
+another that leverages the Java Messaging Service (JMS) providers.
+
+Like Event Distributors, there are many Event Channels each of which provides 
+different capabilities and ultimate destinations for events being distributed.  
+Ultimately it's the responsibility of an Event Channel to perform the actual 
+distribution of Events.  Commonly used Event Channel implementations include:
+
+*   `FileEventChannel` - Writes Events to a File.
+
+*   `LocalCacheEventChannel` - Replays Events into a Cache hosted by the Cluster 
+    in which the Events occurred.
+    
+*   `RemoteCacheEventChannel` - Replays Events into a Remote Cache defined by
+    a Oracle Coherence \*Extend connection to a remote Cluster.
+    
+*   `RemoteClusterEventChannel` - Distributes Events to another Oracle Coherence
+    Cluster, again over an \*Extend connection (where by said Events may be further 
+    distributed locally).
+    
+*   `StdErrEventChannel` - Writes Events to stdout.
+
+Ultimately the purpose of this pattern is to provide an extensible, high-performance, 
+highly-available, general purpose scalable framework to distribute application 
+events occurring in one Coherence Cluster to one or more possibly distributed 
+Coherence Clusters, Caches or other Devices.  As such, the Event Distribution 
+Pattern is used as core infrastructure for the [Push Replication Pattern](../pushreplicationpattern/index.html).
+
+<h4>Distribution</h4>
+
+The Oracle Coherence Incubator Event Distribution Pattern is distributed as a 
+single jar called: `coherence-eventdistribution-pattern-${project.version}.jar`

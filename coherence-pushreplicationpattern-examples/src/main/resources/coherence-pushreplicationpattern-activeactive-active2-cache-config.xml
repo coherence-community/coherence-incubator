@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    File: coherence-pushreplicationpattern-activeactive-active2-cache-config.xml
+ 
+    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+    
+    The contents of this file are subject to the terms and conditions of 
+    the Common Development and Distribution License 1.0 (the "License").
+
+    You may not use this file except in compliance with the License.
+
+    You can obtain a copy of the License by consulting the LICENSE.txt file
+    distributed with this file, or by consulting
+    or https://oss.oracle.com/licenses/CDDL
+
+    See the License for the specific language governing permissions
+    and limitations under the License.
+
+    When distributing the software, include this License Header Notice in each
+    file and include the License file LICENSE.txt.
+
+    MODIFICATIONS:
+    If applicable, add the following below the License Header, with the fields
+    enclosed by brackets [] replaced by your own identifying information:
+    "Portions Copyright [year] [name of copyright owner]"
+    
+    Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
+ -->
+<cache-config xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler" 
+    xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+    xmlns:cr="class:com.oracle.coherence.environment.extensible.namespaces.InstanceNamespaceContentHandler">
+
+    <defaults>
+        <serializer>pof</serializer>
+    </defaults>
+    
+    <caching-schemes>
+        <caching-scheme-mapping>
+            <cache-mapping>
+                <cache-name>publishing-cache</cache-name>
+                <scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
+                
+                <event:distributor>
+                    <event:distributor-name>{cache-name}</event:distributor-name>
+                    <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
+                    
+                    <event:distributor-scheme>
+                        <event:coherence-based-distributor-scheme/>
+                    </event:distributor-scheme>
+                    
+                    <event:distribution-channels>
+                        <event:distribution-channel>
+                            <event:channel-name>Active2 Publisher</event:channel-name>
+                            <event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
+                            
+                            <event:channel-scheme>
+                                <event:remote-cluster-channel-scheme>
+                                    <event:remote-invocation-service-name>remote-site1</event:remote-invocation-service-name>
+                                    <event:remote-channel-scheme>
+                                        <event:local-cache-channel-scheme>
+                                            <event:target-cache-name>publishing-cache</event:target-cache-name>
+                                            <event:conflict-resolver-scheme>
+                                                <cr:class classname="com.oracle.coherence.patterns.pushreplication.examples.activeactive.ActiveActiveSumConflictResolver"/>
+                                            </event:conflict-resolver-scheme>
+                                        </event:local-cache-channel-scheme>
+                                    </event:remote-channel-scheme>
+                                </event:remote-cluster-channel-scheme>
+                            </event:channel-scheme>
+                        </event:distribution-channel>
+                    </event:distribution-channels>
+                </event:distributor>
+            </cache-mapping>
+        </caching-scheme-mapping>
+
+
+        <!--
+            The following scheme is required for each remote-site when
+            using a RemoteInvocationPublisher
+        -->
+        <remote-invocation-scheme>
+            <service-name>remote-site1</service-name>
+            <initiator-config>
+                <tcp-initiator>
+                    <remote-addresses>
+                        <socket-address>
+                            <address>localhost</address>
+                            <port>20001</port>
+                        </socket-address>
+                    </remote-addresses>
+                    <connect-timeout>2s</connect-timeout>
+                </tcp-initiator>
+                <outgoing-message-handler>
+                    <request-timeout>5s</request-timeout>
+                </outgoing-message-handler>
+            </initiator-config>
+        </remote-invocation-scheme>
+        
+        <distributed-scheme>
+            <scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
+            <service-name>DistributedCacheWithPublishingCacheStore</service-name>
+            
+            <backing-map-scheme>
+                <read-write-backing-map-scheme>
+                    <internal-cache-scheme>
+                        <local-scheme>
+                        </local-scheme>
+                    </internal-cache-scheme>
+                    <cachestore-scheme>
+                        <class-scheme>
+                            <class-name>com.oracle.coherence.patterns.pushreplication.PublishingCacheStore</class-name>
+                            <init-params>
+                                <init-param>
+                                    <param-type>java.lang.String</param-type>
+                                    <param-value>{cache-name}</param-value>
+                                </init-param>
+                            </init-params>
+                        </class-scheme>
+                    </cachestore-scheme>
+                </read-write-backing-map-scheme>
+            </backing-map-scheme>
+
+            <autostart>true</autostart>
+        </distributed-scheme>
+        
+        <proxy-scheme>
+            <service-name>ExtendTcpProxyService</service-name>
+            <acceptor-config>
+                <tcp-acceptor>
+                    <local-address>
+                        <address>localhost</address>
+                        <port>20002</port>
+                    </local-address>
+                </tcp-acceptor>
+            </acceptor-config>
+            <autostart>true</autostart>
+        </proxy-scheme>
+    </caching-schemes>
+</cache-config>
+

@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>coherence-incubator</artifactId>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <version>11.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>coherence-functorpattern</artifactId>
+
+    <name>Coherence Incubator Functor Pattern</name>
+
+    <description>
+        An distributed implementation of the classic Functor Pattern using
+        Oracle Coherence as the underlying infrastructure.
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.oracle.coherence</groupId>
+            <artifactId>coherence</artifactId>
+            <version>${oracle.coherence.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.coherence.incubator</groupId>
+            <artifactId>coherence-common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.coherence.incubator</groupId>
+            <artifactId>coherence-commandpattern</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+</project>

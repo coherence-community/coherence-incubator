@@ -1,0 +1,224 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.java</groupId>
+        <artifactId>jvnet-parent</artifactId>
+        <version>3</version>
+    </parent>
+
+    <artifactId>coherence-incubator</artifactId>
+    <groupId>com.oracle.coherence.incubator</groupId>
+    <version>11.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Coherence Incubator</name>
+
+    <description>
+        The Oracle Coherence Incubator provides a collection of common utilities,
+        software pattern implementations, integration examples, middle-ware and
+        distributed computing solutions demonstrating the use of Oracle Coherence.
+    </description>
+
+    <url>http://java.net/projects/cohinc</url>
+
+    <licenses>
+        <license>
+            <name>Common Development and Distribution License 1.0 ("CDDL")</name>
+            <url>http://opensource.org/licenses/CDDL-1.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Noah Arliss</name>
+            <organization>Oracle Corporation</organization>
+        </developer>
+
+        <developer>
+            <name>Paul Mackin</name>
+            <organization>Oracle Corporation</organization>
+        </developer>
+
+        <developer>
+            <name>Brian Oliver</name>
+            <organization>Oracle Corporation</organization>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:coherence-community/coherence-incubator.git</connection>
+        <developerConnection>scm:git:git@github.com:coherence-community/coherence-incubator.git</developerConnection>
+        <url>https://github.com/coherence-community/coherence-incubator.git</url>
+    </scm>
+
+    <modules>
+        <module>coherence-common</module>
+        
+        <module>coherence-commandpattern</module>
+        <module>coherence-commandpattern-examples</module>
+        
+        <module>coherence-functorpattern</module>
+        <module>coherence-functorpattern-examples</module>
+        
+        <module>coherence-processingpattern</module>
+        <module>coherence-processingpattern-examples</module>
+
+        <module>coherence-messagingpattern</module>
+        <module>coherence-eventdistributionpattern</module>
+
+        <module>coherence-pushreplicationpattern</module>
+        <module>coherence-pushreplicationpattern-examples</module>
+
+        <module>coherence-incubator-all</module>
+        <module>coherence-incubator-site</module>
+    </modules>
+
+    <properties>
+        <!-- source code repository information -->
+        <source.owner>coherence-community</source.owner>
+        <source.repository>coherence-incubator</source.repository>
+        <source.branch>develop-11</source.branch>
+
+        <!-- source encoding definition -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- plugin dependency versions (alphabetically) -->
+        <doxia.module.markdown.version>1.0</doxia.module.markdown.version>
+
+        <github.site.maven.plugin.version>0.7</github.site.maven.plugin.version>
+
+        <maven.compiler.plugin.version>2.3.2</maven.compiler.plugin.version>
+        <maven.deploy.plugin.version>2.7</maven.deploy.plugin.version>
+        <maven.enforcer.plugin.version>1.0.1</maven.enforcer.plugin.version>
+        <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
+        <maven.javadoc.plugin.version>2.8.1</maven.javadoc.plugin.version>
+        <maven.release.plugin.version>2.2.1</maven.release.plugin.version>
+        <maven.shade.plugin.version>1.7</maven.shade.plugin.version>
+        <maven.site.plugin.version>3.2</maven.site.plugin.version>
+        <maven.source.plugin.version>2.1.2</maven.source.plugin.version>
+        <maven.surefire.plugin.version>2.11</maven.surefire.plugin.version>
+
+        <!-- dependency versions (alphabetically) -->
+        <activemq.version>5.3.1</activemq.version>
+        <amazonaws.version>1.3.14</amazonaws.version>
+        <cglib.version>2.2.2</cglib.version>
+        <easymock.version>3.1</easymock.version>
+        <hamcrest.version>1.2</hamcrest.version>
+        <javax.jms.version>1.1</javax.jms.version>
+        <junit.version>4.10</junit.version>
+        <miglayout.version>3.6</miglayout.version>
+        <mockito.version>1.9.0</mockito.version>
+        <oracle.coherence.version>3.7.1.5</oracle.coherence.version>
+        <oracle.tools.version>0.0.7-SNAPSHOT</oracle.tools.version>
+        <powermock.version>1.4.12</powermock.version>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven.deploy.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven.javadoc.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven.enforcer.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-plugin-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.0.4</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>1.6.0</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <configuration>
+                    <argLine>-Xms800m -Xmx800m -XX:MaxPermSize=500m</argLine>
+                    <includes>
+                        <include>**/*FunctionalTest.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven.deploy.plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven.release.plugin.version}</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

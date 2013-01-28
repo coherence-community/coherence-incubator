@@ -1,0 +1,75 @@
+The JNDI Namespace
+------------------
+
+The Java Naming and Directory Interface (JNDI) Namespace provides the ability
+to lookup and reference resources defined by a JNDI context.
+
+<h4>Namespace Content Handler</h4>
+
+The implementation is provided by the `com.oracle.coherence.environment.extensible.namespaces.JNDINamespaceContentHandler` 
+class.
+
+<h4>Declaration</h4>
+
+The common prefix used for this namespace in Cache Configurations is `jndi`, 
+however as with all XML namespace declarations this can be defined arbitrarily 
+when declaring the namespace.
+
+To use the namespace you should declare it as follows:
+
+    <cache-config xmlns:jndi="class://com.oracle.coherence.environment.extensible.namespaces.JNDINamespaceContentHandler">
+    
+       ...
+    
+    </cache-config>
+
+<h4>Elements</h4>
+
+The following elements are defined by this namespace.
+
+------------------------------------------------------------------------------
+
+<a name="resource"><h5>&lt;jndi:resource&gt;</h5></a>
+
+Specifies how to lookup a resource using a JNDI reference. 
+
+*Element Type:*
+
+When processed this element will produce a `ParameterizedBuilder<?>`.
+
+*Child Elements:*
+
+The following elements are premitted as child elements for this element:
+
+*   &lt;jndi:resource-name&gt; **(required)**
+
+    A `java.lang.String` defining the JNDI resource to locate.     
+
+*   &lt;init-params&gt; (optional)
+
+    Used to define optional parameters for resolving the JNDI resource.
+
+*Examples:*
+
+Using JNDI to resolve a DNS record:
+
+    <jndi:resource>
+        <jndi:resource-name>dns:///www.oracle.com</jndi:resource-name>
+    </jndi:resource>
+        
+Using JNDI to resolve a JMS Connection Factory:
+
+    <jndi:resource>
+        <jndi:resource-name>ConnectionFactory</jndi:resource-name>
+        <init-params>
+            <init-param>
+                <param-name>java.naming.factory.initial</param-name>
+                <param-value>org.apache.activemq.jndi.ActiveMQInitialContextFactory</param-value>
+            </init-param>
+            
+            <init-param>
+                <param-name>java.naming.provider.url</param-name>
+                <param-value system-property="java.naming.provider.url"></param-value>
+            </init-param>
+        </init-params>
+    </jndi:resource> 

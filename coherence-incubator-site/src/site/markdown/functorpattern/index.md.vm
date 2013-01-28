@@ -1,0 +1,114 @@
+The Functor Pattern
+-------------------
+
+<h4>Overview</h4>
+
+Provides a distributed implementation of the classic 
+[Function Objects (Wikipedia)](http://en.wikipedia.org/wiki/Function_object) or 
+as it is also known, the Functor Pattern, built using Oracle Coherence.
+
+<h4>Distribution</h4>
+
+The Oracle Coherence Incubator Functor Pattern is distributed as a single jar 
+called: `coherence-functorpattern-${project.version}.jar`
+
+<h4>Details</h4>
+
+The Functor Pattern is an extension to the [Command Pattern](../commandpattern/index.html). Naturally this
+means the use and semantics of the Functor Pattern are mostly identical to those of the 
+Command Pattern, the only difference being that the Functor Pattern provides the
+ability to receive returned values (or re-throw exceptions) from submitted requests.  
+
+The mechanism to acquire return values, any exceptions and/or status of execution
+is provided through the use of [Java 5+ Futures](http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/Future.html).
+
+>   It is highly recommended that you understand the use of the 
+>   [Command Pattern](../commandpattern/index.html) before attempting to use
+>   the Functor Pattern.  
+
+As the Functor Pattern provides the ability to acquire return values it's a 
+useful alternative to Oracle Coherence `EntryProcessors` with the advantage that 
+`Functors` are executed asynchronously, instead of synchronously as is the case 
+with `EntryProcessors`. 
+
+<h4>Example</h4>
+
+Let's start with a simple example where we use the Functor Pattern to 
+asynchronously increment and return the value of a `Counter`.
+
+First, we'll start by writing a simple `Counter`.
+
+    import java.io.Serializable;
+    import com.oracle.coherence.patterns.command.Context;
+    
+    public class Counter implements Context, Serializable {
+      private long next;
+      public Counter(long initialValue) {
+        this.next = initialValue;
+      }
+        
+      public long next() {
+        return next++;
+      }
+        
+      public String toString() {
+        return String.format("Counter{next=%d}", next);
+      }
+    }
+
+Second, let's write a Functor that will increment the value of a `.Counter`.
+
+    import java.io.Serializable;
+    import com.oracle.coherence.patterns.command.ExecutionEnvironment;
+    import com.oracle.coherence.patterns.functor.Functor;
+    
+    public class NextValueFunctor implements Functor<Counter, Long>, Serializable {
+      private static final long serialVersionUID = 4841498972676821911L;
+    
+      public Long execute(ExecutionEnvironment<Counter> executionEnvironment) {
+        Counter counter = executionEnvironment.getContext();        
+        long next = counter.next();
+        executionEnvironment.setContext(counter);
+        return next;
+      }
+    }
+
+Lastly, let's write a simple example to test our Functor.
+
+    import java.util.concurrent.ExecutionException;
+    import java.util.concurrent.Future;
+    import com.oracle.coherence.common.identifiers.Identifier;
+    import com.oracle.coherence.patterns.command.ContextsManager;
+    import com.oracle.coherence.patterns.command.DefaultContextsManager;
+    import com.oracle.coherence.patterns.functor.DefaultFunctorSubmitter;
+    import com.oracle.coherence.patterns.functor.FunctorSubmitter;
+    import com.tangosol.net.CacheFactory;
+    
+    public class FunctorPatternExample {
+      public static void main(String[] args) throws InterruptedException, ExecutionException {
+        
+        ContextsManager contextsManager = DefaultContextsManager.getInstance();
+        Identifier contextIdentifier = contextsManager.registerContext("myCounter", new Counter(0));
+            
+        FunctorSubmitter functorSubmitter = DefaultFunctorSubmitter.getInstance();
+        functorSubmitter.submitCommand(contextIdentifier, new LoggingCommand("Commenced", 0));
+    
+        for (int i = 0; i < 50; i++) {
+          Future<Long> future = functorSubmitter.submitFunctor(contextIdentifier, new NextValueFunctor());
+          System.out.println(future.get());
+        }
+            
+        functorSubmitter.submitCommand(contextIdentifier, new LoggingCommand("Completed", 0));
+            
+        Thread.sleep(2000);
+            
+        Counter counter = (Counter)contextsManager.getContext(contextIdentifier);
+        System.out.println(counter);
+      }
+    }
+
+<h4>References and Additional Information</h4>
+
+*   The [Command Pattern](../commandpattern/index.html)
+
+*   Wikipedia - [Function Objects](http://en.wikipedia.org/wiki/Function_object)

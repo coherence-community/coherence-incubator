@@ -1,0 +1,172 @@
+Extensible Environments
+-----------------------
+
+One of the architectural components we've noticed developers introduce into 
+Coherence deployments is the requirement for short-lived applications that 
+perform some kind of initialization or maintenance of a cluster, prior to an 
+application officially starting to use a cluster.   For example one or more of 
+the following types of "setup/maintenance applications" are often seen 
+along-side cluster deployments;
+
+*   An application establishing domain-specific cache entry indexes,
+*   An application that preloads/warms cached information,
+*   An application that loads configuration into a cluster,
+*   An application that runs background/scheduled tasks against the cluster, or 
+*   An application that is designed explicitly to integrate with external systems 
+    (like reading messages from external queues/topics to keep caches up-to-date)
+
+While these applications are usually relatively simple to create and run, the 
+fact that they are often deployed and executed somewhat independently from a 
+cluster itself means their deployment may suffer operationally in two ways;
+
+1.  Their configuration is often independent of the cluster itself, leading to 
+    the maintenance of multiple but related configurations.  This may lead to
+    mis-configuration.
+2.  Their execution, deployment and management typically does not have the 
+    same high-availability characteristics of the cluster itself, thus leading 
+    to potential issues if their execution fails.  eg: If an application 
+    feeding data into a cluster fails, the recovery of said failures is often 
+    becomes manual (ie: human) effort, during which time there's the possibility 
+    that the cluster may "miss" updates from a feed.
+
+Consequently the primary goals for the introduction of Extensible Environments 
+into Coherence is to permit;
+
+1.  The consolidation of said application configuration where possible within a 
+    standard cache configuration file.
+2.  The embedding of said application into a running cluster such that failure 
+    of the said processing may be managed by Coherence itself - ie: in a 
+    high-availability and scalable environment - thus permitting a hands-free 
+    and automated recovery of failed any application logic.
+
+Taking inspiration from the work carried out by the [Apache Ant](http://ant.apache.org/) 
+project with [antlibs](http://ant.apache.org/manual/CoreTypes/antlib.html), 
+Coherence Common 1.6.0 introduced the concept of an Extensible Environment that 
+provided developers with the ability to create and use their own custom XML 
+Cache Configurations (as Namespaces) with in standard Coherence Cache 
+Configuration files.   
+
+For example, by using an Extensible Environment developers may declare cache 
+configurations for Coherence as follows;
+
+    <cache-config xmlns:run="class://RunNamespaceContentHandler">
+
+        <run:runnable classname="MyRunnable" every="10m"/>
+
+        ... regular cache configuration ...
+
+    </cache-config>
+
+In this fictitious example, the XML namespace "run" is declared as part of the 
+`cache-config` element thus making the use of the "run" namespace and it's 
+corresponding elements (ie: the "run:runnable" element) valid for use within 
+the cache configuration file.  How and what the "run:runnable" element does to 
+the Coherence Member is defined by the namespace content handler specified by 
+the URI `class://RunNamespaceContentHandler`.  The mechanics of this is 
+described in detail here [Introduction to XML Cache Configuration Namespaces](extenisble-environments-) 
+and in the [tutorial](extensible-environments-tutorial.html)
+
+>   In the above example the XML namespace "run" and it's associated XML namespace 
+>   content handler "RunNamespaceHandler" are *not shipped as part* of Coherence 
+>   itself.  It, like other namespaces, may be developed, supported and deployed 
+>   independently of Coherence itself and Oracle Engineering.
+
+The following sections of this document provide background concerning the 
+Coherence Bootstrap Procedure, the concept of a Configurable Cache Factory, 
+the Default Configuration Cache Factory (built into Coherence itself) and the 
+`ExtensibleEnvironment` class, a new Cache Configuration Factory that provides 
+support for XML Namespaces within standard Coherence Cache Configuration files.
+
+<h4>The Coherence Bootstrap Procedure</h4>
+
+When an application first makes use of Coherence API, say for example performing 
+a `CacheFactory.getCache(...)` call, if it hasn't done so already (due to say 
+`auto-start` declarations), Coherence will commence it's boot-strap procedure.  
+At the highest level this procedure simply involves locating and loading the 
+Coherence Operational Configuration so that the components within Coherence have 
+an appropriate configuration so that they may initialize themselves.  
+For example, the Coherence Operational Configuration determines how the internal 
+logging is configured, what underlying services are available, how the cluster 
+is established and maintained, how the cluster may be secured and so on.
+
+<h4>The Configurable Cache Factory</h4>
+
+One of the most important and perhaps interesting parts of the Coherence Operational 
+Configuration, at least for the purposes of this discussion, is in specifying 
+how Coherence should:
+
+*   load, define and manage Cache Configurations and 
+*   how to instantiate caches when our applications request them.  
+
+That is, like other bootstrap-requiring components mentioned above, the Coherence 
+Operational Configuration additionally provides the ability to (re)define the 
+central mechanism and behavior governing the interpretation of Coherence Cache 
+Configuration files, including the instantiation of caches defined with in said files.  
+
+With in Coherence the programmatic interface used to define the said cache 
+configuration behavior is called the `ConfigurableCacheFactory` and the 
+implementation used at runtime by Coherence is configured in the Coherence 
+Operational Configuration by the `configurable-cache-factory-config` element.
+
+>   While it may seem that the Coherence `CacheFactory` is responsible for 
+>   constructing the caches used by our applications, this responsibility is 
+>   internally delegated to the `ConfigurableCacheFactory`.  That is, for the 
+>   most part the `CacheFactory` implementation simply delegates it's semantics 
+>   to other core classes, including the configured `ConfigurableCacheFactory` 
+>   implementation.
+
+For example, the `tangosol-coherence-override.xml` file that ships as part of 
+Coherence Common specifies the use of the `ExtensibleEnvironment` to manage 
+cache configurations as follows;
+
+    <coherence>
+        <configurable-cache-factory-config>
+            <class-name>com.oracle.coherence.environment.extensible.ExtensibleEnvironment</class-name>
+            <init-params>
+                <init-param>
+                    <param-type>java.lang.String</param-type>
+                    <param-value system-property="tangosol.coherence.cacheconfig">coherence-cache-config.xml</param-value>
+                </init-param>
+            </init-params>
+        </configurable-cache-factory-config>
+    </coherence>
+
+>   Note that the above declaration specifies both default name for coherence 
+>   cache configuration file ie: `coherence-cache-config.xml` and the system-property 
+>   that may be used to override the location and name of said configuration file.
+
+Out of the box the default implementation of the `ConfigurableCacheFactory` 
+interface wired into the `coherence.jar` is called the `DefaultConfigurableCacheFactory`.  
+
+>   **WARNING** 
+>
+>   When using Coherence Common we override this wiring by embedding a 
+>   `tangosol-coherence-override.xml` file (as outlined above) in the `coherence-common-x.y.z.jar`,
+>   which forces the use of the `ExtensibleEnvironment` implementation as the 
+>   `ConfigurableCacheFactory`.  This *only* works however if the `coherence-common-x.y.z.jar`
+>   precedes the `coherence.jar` in your application classpath.
+
+<h4>The ExtensibleEnvironment Class</h4>
+
+The ability to configure and replace the `ConfigurableCacheFactory` implementation 
+Coherence uses to instantiate caches is very useful concept.  For the most part 
+it means developers have the ability to intercept, change, extend and override 
+the how cache configurations are presented to Coherence and while it seems 
+Coherence may already have more than enough configurability, being able to 
+completely replace how caches are configured has some significant advantages.  
+
+A good example of this is the `ExtensibleEnvironment` class, which simply 
+pre-processes the XML it was provided through the Coherence Bootstrap Procedure 
+to recursively resolve any foreign XML namespace XML elements.  In reality, 
+Coherence itself is oblivious to the fact that the cache configuration it 
+provided to the `ExtensibleEnvironment` had been changed.
+
+The `ExtensibleEnvironment` has proved itself in three important ways.  Firstly 
+it allowed developers, the Coherence Community to decompose large 
+configurations into smaller more manageable ones.  Secondly it allowed developers, 
+and again the Coherence Community to create independent "libraries" that contained 
+their own cache configurations to be "contributed" into the configuration of a 
+larger enterprise system - which obviously simplified things a lot in large systems.  
+Lastly it demonstrated to developers that they too could customize Coherence 
+behaviour even further through the use of simple changes in Operational Configuration.
+

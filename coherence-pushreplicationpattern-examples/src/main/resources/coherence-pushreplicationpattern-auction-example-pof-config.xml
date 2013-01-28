@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    File: coherence-pushreplicationpattern-auction-example-pof-config.xml
+ 
+    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+    
+    The contents of this file are subject to the terms and conditions of 
+    the Common Development and Distribution License 1.0 (the "License").
+
+    You may not use this file except in compliance with the License.
+
+    You can obtain a copy of the License by consulting the LICENSE.txt file
+    distributed with this file, or by consulting
+    or https://oss.oracle.com/licenses/CDDL
+
+    See the License for the specific language governing permissions
+    and limitations under the License.
+
+    When distributing the software, include this License Header Notice in each
+    file and include the License file LICENSE.txt.
+
+    MODIFICATIONS:
+    If applicable, add the following below the License Header, with the fields
+    enclosed by brackets [] replaced by your own identifying information:
+    "Portions Copyright [year] [name of copyright owner]"
+    
+    Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
+ -->
+<pof-config>
+    <user-type-list>
+        <include>coherence-pof-config.xml</include>
+        <include>coherence-common-pof-config.xml</include>
+        <include>coherence-messagingpattern-pof-config.xml</include>
+        <include>coherence-eventdistributionpattern-pof-config.xml
+        </include>
+
+        <user-type>
+            <type-id>1000</type-id>
+            <class-name>com.oracle.coherence.patterns.pushreplication.examples.auction.AuctionControl</class-name>
+        </user-type>
+
+        <user-type>
+            <type-id>1001</type-id>
+            <class-name>com.oracle.coherence.patterns.pushreplication.examples.auction.BiddingItem</class-name>
+        </user-type>
+
+        <user-type>
+            <type-id>1002</type-id>
+            <class-name>com.oracle.coherence.patterns.pushreplication.examples.auction.CustomerReference</class-name>
+        </user-type>
+
+        <user-type>
+            <type-id>1003</type-id>
+            <class-name>com.oracle.coherence.patterns.pushreplication.examples.auction.PlaceBidProcessor</class-name>
+        </user-type>
+
+    </user-type-list>
+</pof-config>
+

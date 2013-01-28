@@ -1,0 +1,20 @@
+<event:distributor-scheme>
+	<event:jms-based-distributor-scheme>
+		<event:connection-factory-scheme>
+			<jndi:resource>
+				<jndi:resource-name>ConnectionFactory</jndi:resource-name>
+				<init-params>
+					<init-param>
+						<param-name>java.naming.factory.initial</param-name>
+						<param-value>org.apache.activemq.jndi.ActiveMQInitialContextFactory</param-value>
+					</init-param>
+					
+					<init-param>
+						<param-name>java.naming.provider.url</param-name>
+						<param-value system-property="java.naming.provider.url"></param-value>
+					</init-param>
+				</init-params>
+			</jndi:resource> 
+		</event:connection-factory-scheme>
+	</event:jms-based-distributor-scheme>
+</event:distributor-scheme>

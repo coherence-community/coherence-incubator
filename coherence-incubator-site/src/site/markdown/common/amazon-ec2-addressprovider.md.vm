@@ -1,0 +1,101 @@
+Working with Amazon EC2
+-----------------------
+
+Amazon provides computing on demand through its [Elastic Compute Cloud](http://aws.amazon.com/ec2/) 
+(EC2) service. The EC2 service provides a varirty of Linux and Microsoft Windows 
+virtual machines on demand.
+ 
+<h4>Networking environment in the EC2 environment</h4>
+
+In the EC2 environment each virtual machine instance is dynamically assigned a 
+private IP address when it launches, that of which is only accessible with in 
+EC2. Private addresses can't be pre-determined or pre-defined before launching 
+an instance.  
+
+A dynamically defined public IP-address is also allocated to each instance when 
+they are launched, making it possible to connect to said instances from the 
+outside world (assuming you know the IP-address).  Each public IP-address is 
+mapped to the associated private IP using NAT dynamically. 
+
+Static public IP-addresses can be allocated (known as an Elastic IP) and mapped 
+(using NAT) to the private IP-address of each instance. See [EC2 documentation](http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/) 
+for further information.
+
+<h4>Well Known Addresses (WKA) and AddressProviders</h4>
+
+By default Coherence uses multi-cast networking technology to discover the Java 
+processes in which to form or join a Cluster.   Unfortunately in some network 
+environments, like that of Amazon's EC2 service, multi-cast is not available 
+or is undesirable. In such environments Coherence adopts the concept of 
+"Well-Known Addresses" (WKA), basically a list of known addresses, that can be used
+to form or join a cluster.
+
+Out of the box in Coherence, the WKAs can be described using an XML file or 
+provided as system properties to the process - see [well-known-addresses](http://coherence.oracle.com/display/COH35UG/well-known-addresses) 
+for more details.
+
+Coherence also allows a custom java class to be specified (called an `AddressProvider`)
+to dynamically and programmatically specify the WKAs to Coherence. Principally 
+this permits the strategy for determining WKAs to be plugged-in, thus allowing
+integration with other non-static-list sources of IP-address information.
+
+<h4>The EC2AddressProvider</h4>
+
+The `EC2AddressProvider` is an implementation of the `AddressProvider` interface
+which uses the Amazon Web services API for EC2 to provide Coherence with the 
+set of well known addresses currently running on EC2 (for a particular client). 
+
+The `EC2AddressProvider` queries EC2 to determine what instances are up and 
+running then finds all instances that have an "Elastic IP" assigned to it for a 
+given Amazon EC2 client. The instances with an Elastic IP assigned to it will be 
+selected as the WKA nodes in the Coherence cluster. 
+
+>   It is not the "Elastic IP" address itself that becomes the WKA IP, 
+>   instead the private IP-address of those instances are used.
+
+The default port used for the Elastic IP addresses in the WKA list is 8088, 
+however that can be overridden by using the system property: `tangosol.coherence.ec2addressprovider.port`
+
+<h4>Authentication with the Amazon EC2 API</h4>
+
+In order to make the calls in to the EC2 API, we need the access key and the 
+secret key for the AWS account we are using. There are two ways of specifying 
+the keys. One is to provide the access key and the secret key as Java system 
+properties like this:
+
+    -Dtangosol.coherence.ec2addressprovider.accesskey=YourAccessKey
+    -Dtangosol.coherence.ec2addressprovider.secretkey=YourSecretKey
+
+An alternative way is to provide an embedded properties file with the name 
+AwsCredentials.properties: (the name of the properties file can be overridden 
+with the property tangosol.coherence.ec2addressprovider.propertyfile). The 
+properties file need to contain the secret key and the access key for your 
+Amazon Web Services account.
+
+    secretKey=YourSecretKey
+    accessKey=YourAccessKey
+
+>   Please note the camel casing of the key in the properties file!
+
+<h4>How to enable the EC2AddressProvider</h4>
+
+The EC2AddressProvider is included in the `coherence-common.x.y.z.jar`
+and a ready made override file that enables the `EC2AddressProvider` provided 
+as a resource in the jar.
+
+    -Dtangosol.coherence.override=ec2addressprovider-override.xml
+
+
+<h4>Starting a Coherence cluster with the EC2AddressProvider</h4>
+
+Here is the recommended way of starting a Coherence cluster using EC2.
+
+*   Start an instance
+*   Associate an Elastic IP to that instance
+*   Start a Coherence application with the EC2AddressProvider on that instance
+*   Start other instances where Coherence auto-starts with the EC2AddressProvider
+
+<h4>Deployment requirements</h4>
+
+The `EC2AddressProvider` requires jars from the [AWS Java SDK](http://aws.amazon.com/sdkforjava/) 
+to be on the classpath.  Failure to provide these will result in runtime exceptions.

@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!DOCTYPE pof-config SYSTEM "pof-config.dtd">
+<!-- 
+	File: pof-config.xml
+ 
+	The contents of this file are subject to the terms and conditions of 
+	the Common Development and Distribution License 1.0 (the "License").
+ 
+	You may not use this file except in compliance with the License.
+ 
+	You can obtain a copy of the license by consulting the LICENSE.txt file
+	distributed with this file, or by consulting	
+ 	or https://oss.oracle.com/licenses/CDDL
+ 
+	See the License for the specific language governing permissions
+	and limitations under the License.
+ 
+	This notice may not be removed or altered.	
+	
+ 	Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
+ -->
+<pof-config>
+    <user-type-list>
+        <include>coherence-pof-config.xml</include>
+        <user-type>
+            <type-id>1000</type-id>
+            <class-name>com.oracle.coherence.common.serialization.BasicType</class-name>
+            <serializer>
+                <class-name>com.oracle.coherence.common.serialization.ReflectiveSerializer</class-name>
+            </serializer>
+        </user-type>
+        <user-type>
+            <type-id>1001</type-id>
+            <class-name>com.oracle.coherence.common.serialization.BaseType</class-name>
+            <serializer>
+                <class-name>com.oracle.coherence.common.serialization.ReflectiveSerializer</class-name>
+            </serializer>
+        </user-type>
+        <user-type>
+            <type-id>1002</type-id>
+            <class-name>com.oracle.coherence.common.serialization.SimpleType</class-name>
+            <serializer>
+                <class-name>com.oracle.coherence.common.serialization.ReflectiveSerializer</class-name>
+            </serializer>
+        </user-type>
+        <user-type>
+            <type-id>1003</type-id>
+            <class-name>com.oracle.coherence.common.serialization.VersionedType</class-name>
+            <serializer>
+                <class-name>com.oracle.coherence.common.serialization.ReflectiveSerializer</class-name>
+            </serializer>
+        </user-type>
+        <user-type>
+            <type-id>1004</type-id>
+            <class-name>com.oracle.coherence.common.serialization.CollectionType</class-name>
+            <serializer>
+                <class-name>com.oracle.coherence.common.serialization.ReflectiveSerializer</class-name>
+            </serializer>
+        </user-type>
+        <user-type>
+            <type-id>1005</type-id>
+            <class-name>com.oracle.coherence.common.serialization.NakedType</class-name>
+            <serializer>
+                <class-name>com.oracle.coherence.common.serialization.ReflectiveSerializer</class-name>
+            </serializer>
+        </user-type>
+        <user-type>
+            <type-id>1006</type-id>
+            <class-name>com.oracle.coherence.common.serialization.PortableObjectType</class-name>
+            <serializer>
+                <class-name>com.oracle.coherence.common.serialization.ReflectiveSerializer</class-name>
+            </serializer>
+        </user-type>
+        <user-type>
+            <type-id>1007</type-id>
+            <class-name>com.oracle.coherence.common.serialization.ComplexType</class-name>
+            <serializer>
+                <class-name>com.oracle.coherence.common.serialization.ReflectiveSerializer</class-name>
+            </serializer>
+        </user-type>
+    </user-type-list>
+</pof-config>

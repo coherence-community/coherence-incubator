@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	File: coherence-common-pof-config.xml
+ 
+ 	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ 	
+	The contents of this file are subject to the terms and conditions of 
+	the Common Development and Distribution License 1.0 (the "License").
+
+	You may not use this file except in compliance with the License.
+
+	You can obtain a copy of the License by consulting the LICENSE.txt file
+	distributed with this file, or by consulting
+	or https://oss.oracle.com/licenses/CDDL
+
+	See the License for the specific language governing permissions
+	and limitations under the License.
+
+	When distributing the software, include this License Header Notice in each
+	file and include the License file LICENSE.txt.
+
+	MODIFICATIONS:
+	If applicable, add the following below the License Header, with the fields
+	enclosed by brackets [] replaced by your own identifying information:
+	"Portions Copyright [year] [name of copyright owner]"
+	
+ 	Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
+ -->
+<pof-config>
+	<user-type-list>
+		<!-- coherence-common types -->
+		<user-type>
+			<type-id>10000</type-id>
+			<class-name>com.oracle.coherence.common.identifiers.StringBasedIdentifier</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10001</type-id>
+			<class-name>com.oracle.coherence.common.identifiers.UUIDBasedIdentifier</class-name>
+		</user-type>
+
+        <user-type>
+            <type-id>10002</type-id>
+            <class-name>com.oracle.coherence.common.identifiers.IntegerBasedIdentifier</class-name>
+        </user-type>
+
+        <user-type>
+            <type-id>10003</type-id>
+            <class-name>com.oracle.coherence.common.identifiers.LongBasedIdentifier</class-name>
+        </user-type>
+
+		<user-type>
+			<type-id>10009</type-id>
+			<class-name>com.oracle.coherence.common.cluster.SimpleClusterMetaInfo</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10010</type-id>
+			<class-name>com.oracle.coherence.common.ranges.ContiguousRange</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10011</type-id>
+			<class-name>com.oracle.coherence.common.ranges.SparseRange</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10012</type-id>
+			<class-name>com.oracle.coherence.common.ranges.InfiniteRange</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10020</type-id>
+			<class-name>com.oracle.coherence.common.ticketing.Ticket</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10021</type-id>
+			<class-name>com.oracle.coherence.common.ticketing.TicketBook</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10022</type-id>
+			<class-name>com.oracle.coherence.common.ticketing.TicketAggregator</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10030</type-id>
+			<class-name>com.oracle.coherence.common.tuples.Pair</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10031</type-id>
+			<class-name>com.oracle.coherence.common.tuples.Triple</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10040</type-id>
+			<class-name>com.oracle.coherence.common.leasing.Lease</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10050</type-id>
+			<class-name>com.oracle.coherence.common.sequencegenerators.ClusteredSequenceGenerator$State</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10051</type-id>
+			<class-name>com.oracle.coherence.common.sequencegenerators.ClusteredSequenceGenerator$GenerateSequenceNumberProcessor</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10060</type-id>
+			<class-name>com.oracle.coherence.common.util.Tristate</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10061</type-id>
+			<class-name>com.oracle.coherence.common.processors.InvokeMethodProcessor</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10062</type-id>
+			<class-name>com.oracle.coherence.common.processors.CreateRemoteObjectProcessor</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10063</type-id>
+			<class-name>com.oracle.coherence.common.util.Value</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10100</type-id>
+			<class-name>com.oracle.coherence.common.builders.VarArgsParameterizedBuilder</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10101</type-id>
+			<class-name>com.oracle.coherence.common.builders.ClassSchemeBasedParameterizedBuilder</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10102</type-id>
+			<class-name>com.oracle.coherence.common.builders.StaticFactoryClassSchemeBasedParameterizedBuilder</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10103</type-id>
+			<class-name>com.oracle.coherence.common.builders.JndiBasedParameterizedBuilder</class-name>
+		</user-type>
+
+        <user-type>
+            <type-id>10104</type-id>
+            <class-name>com.oracle.coherence.common.builders.NamedCacheSerializerBuilder</class-name>
+        </user-type>
+
+		<user-type>
+			<type-id>10110</type-id>
+			<class-name>com.oracle.coherence.configuration.parameters.Parameter</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10111</type-id>
+			<class-name>com.oracle.coherence.configuration.parameters.EmptyParameterProvider</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10112</type-id>
+			<class-name>com.oracle.coherence.configuration.parameters.SimpleParameterProvider</class-name>
+		</user-type>
+
+        <user-type>
+            <type-id>10113</type-id>
+            <class-name>com.oracle.coherence.configuration.parameters.ScopedParameterProvider</class-name>
+        </user-type>
+
+        <user-type>
+            <type-id>10114</type-id>
+            <class-name>com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider</class-name>
+        </user-type>
+
+		<user-type>
+			<type-id>10120</type-id>
+			<class-name>com.oracle.coherence.configuration.expressions.Constant</class-name>
+		</user-type>
+
+		<user-type>
+			<type-id>10121</type-id>
+			<class-name>com.oracle.coherence.configuration.expressions.MacroParameterExpression</class-name>
+		</user-type>
+	</user-type-list>
+</pof-config>
+ 

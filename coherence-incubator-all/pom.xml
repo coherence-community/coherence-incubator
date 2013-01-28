@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>coherence-incubator</artifactId>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <relativePath>../pom.xml</relativePath>
+        <version>11.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>coherence-incubator-all</artifactId>
+
+    <name>Coherence Incubator All (everything in one package)</name>
+
+    <description>
+        A distribution containing all Coherence Incubator modules in a single
+        package (excluding examples and third-party dependencies).
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.oracle.coherence.incubator</groupId>
+            <artifactId>coherence-common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.coherence.incubator</groupId>
+            <artifactId>coherence-commandpattern</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.coherence.incubator</groupId>
+            <artifactId>coherence-functorpattern</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.coherence.incubator</groupId>
+            <artifactId>coherence-messagingpattern</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.coherence.incubator</groupId>
+            <artifactId>coherence-eventdistributionpattern</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.coherence.incubator</groupId>
+            <artifactId>coherence-pushreplicationpattern</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.coherence.incubator</groupId>
+            <artifactId>coherence-processingpattern</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven.shade.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.oracle.coherence:coherence-incubator*</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

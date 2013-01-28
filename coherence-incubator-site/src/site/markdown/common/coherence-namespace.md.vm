@@ -1,0 +1,43 @@
+The Coherence Namespace
+-----------------------
+
+The Coherence Namespace is responsible for:
+
+*   Collecting built-in Coherence <[cache-config](http://coherence.oracle.com/display/COH35UG/cache-config)>
+    elements occurring in a Cache Configuration, and
+    
+*   Providing the collected elements to the `DefaultConfigurableCacheFactory` 
+    (parent of the `ExtensibleEnvironment`) so that caches may be appropriately 
+    provided to applications. 
+
+>   The Coherence Namespace is automatically defined as the *default* namespace 
+>   for Cache Configurations being processed by an `ExtensibleEnvironment`.  
+>   Thus no declaration is required to make use of this namespace.
+
+<h4>Namespace Content Handler</h4>
+
+The Coherence NamespaceContentHandler implementation is provided by the 
+`com.oracle.coherence.environment.extensible.namespaces.CoherenceNamespaceContentHandler` class.
+
+<h4>Declaration</h4>
+
+The Coherence Namespace is automatically and implicitly defined for all Cache 
+Configurations used by an `ExtensibleEnvironment`.  However for informational 
+purposes, the automatic and implicit definition is functionally equivalent to 
+the following;
+
+    <cache-config xmlns="class://com.oracle.coherence.environment.extensible.namespaces.CoherenceNamespaceContentHandler">
+    
+       ...
+    
+    </cache-config>
+
+>   **WARNING**
+>
+>   Any attempt to redefine the default namespace for a Cache Configuration 
+>   will result in a run-time error.
+
+<h4>Elements</h4>
+
+Documentation concerning the elements that are part of the Coherence Namespace
+can be found in the Coherence Developers Guide.

@@ -1,0 +1,87 @@
+The Instance Namespace
+----------------------
+
+>   **WARNING**
+>
+>   This namespace is now deprecated, simply because the same functionality
+>   can be achieved using the standard Coherence `class-scheme` and `instance`
+>   Cache Configuration elements.
+
+The Instance Namespace is used to specify how instances of classes to be created
+on demand.  It is typically used with in the context of other namespaces in 
+order to specify customized implementations.
+
+<h4>Namespace Content Handler</h4>
+
+The implementation is provided by the `com.oracle.coherence.environment.extensible.namespaces.InstanceNamespaceContentHandler` 
+class.
+
+<h4>Declaration</h4>
+
+The common prefix used for this namespace in Cache Configurations is `instance`, 
+however as with all XML namespace declarations this can be defined arbitrarily 
+when declaring the namespace.
+
+To use the namespace you should declare it as follows:
+
+    <cache-config xmlns:instance="class://com.oracle.coherence.environment.extensible.namespaces.InstanceNamespaceContentHandler">
+    
+       ...
+    
+    </cache-config>
+
+<h4>Elements</h4>
+
+The following element is defined by this Namespace.
+
+<a name="class"><h5>&lt;instance:class&gt;</h5></a>
+
+The `instance:class` element specifies how to create an instance of the specified 
+class. The constructor is matched against the parameters specified as child elements.
+
+*Resolved Element Type:*
+
+When processed this element will be resolved to produce a `ParameterizedBuilder<?>`.
+
+*Attributes:*
+
+The following attributes are permitted in the `instance:class` element.
+
+*   `classname` (required attribute)
+
+    A `java.lang.String` defining the name of the class to be instantiated.    
+
+*Child Elements:*
+
+Child elements from the [Instance Namespace](instance-namespace.html) and the 
+[Value Namespace](value-namespace.html) are valid elements in this Namespace.
+These are used as constructor parameters for the class specified by the
+`class-name` attribute.
+
+*Examples:*
+
+A simple no argument constructor class:
+
+    <instance:class classname="MyClass"/>
+    
+A class taking two parameters:
+
+    <instance:class classname="java.awt.Point">
+        <value:long>100</value:long>
+        <value:long>100</value:long>
+    </instance:class>
+
+A class with nested instances:
+
+    <instance:class classname="java.awt.Rectangle">
+        <instance:class classname="java.awt.Point">
+            <value:long>0</value:long>
+            <value:long>0</value:long>
+        </instance:class>
+        <instance:class classname="java.awt.Point">
+            <value:long>100</value:long>
+            <value:long>100</value:long>
+        </instance:class>
+    </instance:class>
+    
+
