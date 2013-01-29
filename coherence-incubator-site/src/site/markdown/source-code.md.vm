@@ -5,7 +5,18 @@ The Source Code for the Oracle Coherence Incubator is hosted by github.com.
 It can be found here: 
 [https://github.com/coherence-community/coherence-incubator](https://github.com/coherence-community/coherence-incubator)
 
-In the branch: **develop-11**
+The branching model adopted for development is as outlined by Vincent Driessen in
+[A successful Git branching model](http://nvie.com/posts/a-successful-git-branching-model)
+
+Active development is carried out in the branch: **develop-11**.  Nightly builds, snapshots
+and continuous integration typically occurs on this branch.  Snapshot releases from this
+branch are made available on [http://maven.java.net](http://maven.java.net) in the snapshot
+repository.
+
+Official Releases are made from the branch: **release-11** (once integrated from
+the development branch).  Each official release is tagged.   Official releases are
+published to [http://maven.java.net](http://maven.java.net) and Maven Central
+(after they are promoted).
 
 <h4>Important:</h4>
 
