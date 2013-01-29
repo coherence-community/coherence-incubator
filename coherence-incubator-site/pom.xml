@@ -19,8 +19,6 @@
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
-
-        <github.global.server>github</github.global.server>
     </properties>
 
     <build>
@@ -68,8 +66,8 @@
                     <message>${project.version} Site</message>
                     <path>${project.version}</path>
                     <merge>false</merge>
-                    <repositoryName>${project.repository}</repositoryName>
-                    <repositoryOwner>${project.owner}</repositoryOwner>
+                    <repositoryName>coherence-incubator</repositoryName>
+                    <repositoryOwner>coherence-community</repositoryOwner>
                 </configuration>
                 <executions>
                     <execution>
@@ -82,10 +80,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <scm>
-        <url>https://github.com/coherence-community/coherence-incubator</url>
-        <connection>scm:git:git@github.com:coherence-community/coherence-incubator.git</connection>
-        <developerConnection>scm:git:git@github.com:coherence-community/coherence-incubator.git</developerConnection>
-    </scm>
 </project>
