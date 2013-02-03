@@ -18,11 +18,11 @@ each based on different major revisions of [Oracle Coherence](http://www.oracle.
 Coherence Incubator 11 (for Coherence 3.7.1.x)
 ----------------------------------------------
 
+Latest Documentation: [http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/](http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/)
+
 Development Branch: [**develop-11**](https://github.com/coherence-community/coherence-incubator/tree/develop-11) 
 
 Release Branch: **release-11**  (not yet released)
-
-Snapshot Documentation: [http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/](http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/)
 
 Coherence Incubator 10 (legacy for Coherence 3.7.1.x)
 -----------------------------------------------------
