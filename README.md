@@ -11,7 +11,7 @@ Official information about this project including the definition, licensing, con
 Detailed project documentation for the latest snapshot release is available here:
 [http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/](http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/)
 
-> **NOTE**
+> **NOTE:**
 >
 > The [Apache Maven](http://maven.apache.org)-based releases for this project are published to: [maven.java.net](https://maven.java.net).
 >
