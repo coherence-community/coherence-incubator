@@ -85,7 +85,7 @@
         History</a>
             </li>
                               <li class="nav-header">Modules</li>
-                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                              
       <li>
     
                           <a href="../common/index.html" title="The Common Package">
@@ -149,10 +149,12 @@
         The Instance Namespace*</a>
             </li>
                       
-      <li class="active">
+      <li>
     
-            <a href="#"><i class="none"></i>The Value Namespace*</a>
-          </li>
+                          <a href="../common/value-namespace.html" title="The Value Namespace*">
+          <i class="none"></i>
+        The Value Namespace*</a>
+            </li>
                       
       <li>
     
@@ -176,7 +178,7 @@
           <i class="none"></i>
         The Functor Pattern</a>
             </li>
-                                                                                                  
+                                                                                                            
       <li>
     
                           <a href="../processingpattern/index.html" title="The Processing Pattern">
@@ -184,12 +186,10 @@
         The Processing Pattern</a>
                     <ul class="nav nav-list">
                       
-      <li>
+      <li class="active">
     
-                          <a href="../processingpattern/configuration.html" title="Configuration">
-          <i class="none"></i>
-        Configuration</a>
-            </li>
+            <a href="#"><i class="none"></i>Configuration</a>
+          </li>
                       
       <li>
     
@@ -313,207 +313,212 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h2>The Value Namespace</h2>
+            <h2>Configuring the Processing Pattern</h2>
 
-<blockquote>
-  <p>  <strong>WARNING</strong></p>
-  
-  <p>  This namespace is now deprecated, simply because the same functionality
-    can be achieved using the standard Coherence <code>class-scheme</code> and <code>instance</code>
-    Cache Configuration elements.</p>
-</blockquote>
+<p>The Processing Pattern is configured using Coherence Cache Configuration
+files with the addition of the following namespace:</p>
 
-<p>The Value Namespace provides the ability to declare XML element content that 
-will be interpreted as strongly typed values.  It is typically used with other 
-Namespaces where strongly typed values are required as parameters.</p>
+<pre><code>&lt;cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler"&gt;
+</code></pre>
 
-<h4>Namespace Content Handler</h4>
+<p>Configuration typically occurs using either Out-Of-The-Box Configurations or
+through explicit declarations based on the <a href="processing-namespace.html">Processing Pattern Namespace</a></p>
 
-<p>The implementation is provided by the <code>com.oracle.coherence.environment.extensible.namespaces.ValueNamespaceContentHandler</code> 
-class.</p>
+<h4>Out-Of-The-Box Configurations</h4>
 
-<h4>Declaration</h4>
+<p>Included in the processing pattern are a number of ready made, out-of-the-box
+configurations for different types of Coherence Members. These configurations can
+be used in two approaches:</p>
 
-<p>The common prefix used for this namespace in Cache Configurations is <code>value</code>, 
-however as with all XML namespace declarations this can be defined arbitrarily 
-when declaring the namespace.</p>
+<ul>
+<li><p>Introducing configuration files into existing configuration files
+using the <a href="../common/element-namespace.html">element:introduce-cache-config</a>
+feature.</p></li>
+<li><p>Directly specifying a Processing Pattern configuration file, using
+<code>-Dtangosol.coherence.cacheconfig=&lt;config file&gt;</code></p></li>
+</ul>
 
-<p>To use the namespace you should declare it as follows:</p>
+<h4>Default Processing Cluster Member Configuration</h4>
 
-<pre><code>&lt;cache-config xmlns:value="class://com.oracle.coherence.environment.extensible.namespaces.ValueNamespaceContentHandler"&gt;
+<p>The configuration file <code>coherence-processingpattern-cluster-processing-config.xml</code>
+as provided in the distribution defines a full fledged Processing Pattern Cluster Member
+that is configured with the following features:</p>
 
-   ...
+<ul>
+<li><p>A <code>LoggingDispatcher</code></p></li>
+<li><p>A <code>LocalExecutorDispatcher</code></p></li>
+<li><p>A <code>TaskDispatcher</code> with a <code>TaskDispatchPolicy</code> configured as an attribute
+matching and round robin policy.</p></li>
+<li><p>A default <code>GRID</code>-based <code>TaskProcessor</code> (one for each Storage Enabled member)
+with a thread pool size of 10.</p></li>
+</ul>
+
+<p>Below follows the relevant parts of the configuration:</p>
+
+<pre><code>&lt;cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler"&gt;
+
+    ...
+
+    &lt;processing:cluster-config pof="true"&gt;
+        &lt;processing:dispatchers&gt;
+            &lt;processing:logging-dispatcher displayname="Logging Dispatcher" /&gt;
+
+            &lt;processing:task-dispatcher displayname="Task Dispatcher"&gt;
+                &lt;processing:composite-policy&gt;
+                    &lt;processing:attribute-match-policy /&gt;
+                    &lt;processing:round-robin-policy /&gt;
+                &lt;/processing:composite-policy&gt;
+            &lt;/processing:task-dispatcher&gt;
+
+            &lt;processing:local-executor-dispatcher displayname="Local Dispatcher" /&gt;
+        &lt;/processing:dispatchers&gt;
+
+        &lt;processing:taskprocessors&gt;
+            &lt;processing:taskprocessordefinition id="GridTaskProcessor"
+                                                displayname="Grid Task Processor"
+                                                type="GRID"&gt;
+
+                &lt;processing:default-taskprocessor id="GridTaskProcessor"
+                                                  threadpoolsize="10" /&gt;
+
+                &lt;processing:attribute name="type"&gt;grid&lt;/processing:attribute&gt;
+            &lt;/processing:taskprocessordefinition&gt;
+        &lt;/processing:taskprocessors&gt;
+    &lt;/processing:cluster-config&gt;
+
+    ...
 
 &lt;/cache-config&gt;
 </code></pre>
 
-<h4>Elements</h4>
+<h4>Configuring Processing Clients</h4>
 
-<p>The following section outlines the elements defined by this Namespace.</p>
+<p>A Coherence Cluster Member that shall be used as a pure client to the Processing
+Pattern <strong>must</strong> disable local storage in order to operate correctly. eg: Using the
+command line parameter:</p>
 
-<h2></h2>
-
-<p><a name="boolean"><h5>&lt;value:boolean&gt;</h5></a></p>
-
-<p>The <code>value:boolean</code> element represents a <code>java.lang.Boolean</code> value.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>java.lang.Boolean</code>.</p>
-
-<p><em>Examples:</em></p>
-
-<p>A <code>true</code> value:</p>
-
-<pre><code>&lt;value:boolean&gt;true&lt;/value:boolean&gt;
+<pre><code>-Dtangosol.coherence.distributed.localstorage=false
 </code></pre>
 
-<p>A <code>false</code> value:</p>
+<p>The configuration file <code>coherence-processingpattern-cluster-client-config.xml</code>
+as provided with the distribution is essentially defined as follows:</p>
 
-<pre><code>&lt;value:boolean&gt;false&lt;/value:boolean&gt;
+<pre><code>&lt;cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler"&gt;
+    &lt;processing:cluster-config pof="true"/&gt;
+&lt;/cache-config&gt;
 </code></pre>
 
-<h2></h2>
+<h4>Configuring Coherence *Extend Clients (without local Task Processing capabilities)</h4>
 
-<p><a name="byte"><h5>&lt;value:byte&gt;</h5></a></p>
+<p>The configuration file <code>coherence-processingpattern-extend-client-config.xml</code>
+as provided with the distribution defines a Coherence *Extend-based Client.</p>
 
-<p>The <code>value:byte</code> element represents a <code>java.lang.Byte</code> value.</p>
+<p>The relevant parts of the included configuration are as follows:</p>
 
-<p><em>Resolved Element Type:</em></p>
+<pre><code>&lt;cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler"&gt;
 
-<p>When processed this element will be resolved to produce a <code>java.lang.Byte</code>.</p>
+    ...
 
-<p><em>Examples:</em></p>
+    &lt;processing:extend-config&gt;
+        &lt;initiator-config&gt;
+            &lt;tcp-initiator&gt;
+                &lt;remote-addresses&gt;
+                    &lt;socket-address&gt;
+                        &lt;address&gt;localhost&lt;/address&gt;
+                        &lt;port&gt;20020&lt;/port&gt;
+                    &lt;/socket-address&gt;
+                &lt;/remote-addresses&gt;
+                &lt;connect-timeout&gt;10s&lt;/connect-timeout&gt;
+            &lt;/tcp-initiator&gt;
+        &lt;/initiator-config&gt;
+    &lt;/processing:extend-config&gt;
 
-<p>Simple Byte values:</p>
+    ...
 
-<pre><code>&lt;value:byte&gt;0&lt;/value:byte&gt;
-&lt;value:byte&gt;1&lt;/value:byte&gt;
-&lt;value:byte&gt;10&lt;/value:byte&gt;
-&lt;value:byte&gt;255&lt;/value:byte&gt;
+&lt;/cache-config&gt;
 </code></pre>
 
-<h2></h2>
+<h4>Configuring Coherence *Extend Clients (with Task Processing capabilities)</h4>
 
-<p><a name="double"><h5>&lt;value:double&gt;</h5></a></p>
+<p>The configuration file <code>coherence-processingpattern-extend-taskprocessing-config.xml</code>
+as provided with the distribution defines a Coherence *Extend-base Client that is
+capable of processing <code>Tasks</code> using locally managed <code>TaskProcessors</code>.</p>
 
-<p>The <code>value:double</code> element represents a <code>java.lang.Double</code> value.</p>
+<p>The relevant parts of the included configuration are as follows:</p>
 
-<p><em>Resolved Element Type:</em></p>
+<pre><code>&lt;cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler"&gt;
 
-<p>When processed this element will be resolved to produce a <code>java.lang.Double</code>.</p>
+    ...
 
-<p><em>Examples:</em></p>
+    &lt;processing:extend-config pof="true"&gt;
+        &lt;initiator-config&gt;
+            &lt;tcp-initiator&gt;
+                &lt;remote-addresses&gt;
+                    &lt;socket-address&gt;
+                        &lt;address&gt;localhost&lt;/address&gt;
+                        &lt;port&gt;20020&lt;/port&gt;
+                    &lt;/socket-address&gt;
+                &lt;/remote-addresses&gt;
+                &lt;connect-timeout&gt;10s&lt;/connect-timeout&gt;
+            &lt;/tcp-initiator&gt;
+        &lt;/initiator-config&gt;
 
-<p>Simple Double values:</p>
+        &lt;processing:taskprocessors&gt;
+            &lt;processing:taskprocessordefinition id="SingleTaskProcessor"
+                                                displayname="Single Task Processor"
+                                                type="SINGLE"
+                                                taskpattern="SingleTask"&gt;
 
-<pre><code>&lt;value:double&gt;0.0&lt;/value:double&gt;
-&lt;value:double&gt;1.0213&lt;/value:double&gt;
-&lt;value:double&gt;-1001.098&lt;/value:double&gt;
+                &lt;processing:default-taskprocessor id="Single Task Processor"
+                                                   threadpoolsize="10"/&gt;
+
+                &lt;processing:attribute name="type"&gt;single&lt;/processing:attribute&gt;
+            &lt;/processing:taskprocessordefinition&gt;
+        &lt;/processing:taskprocessors&gt;
+    &lt;/processing:extend-config&gt;
+
+    ...
+
+&lt;/cache-config&gt;
 </code></pre>
 
-<h2></h2>
+<h4>Processing Pattern Proxy Server Configuration</h4>
 
-<p><a name="float"><h5>&lt;value:float&gt;</h5></a></p>
+<p>The configuration file <code>coherence-processingpattern-proxy-config.xml</code> as provided
+with the distribution defines a Coherence *Extend Proxy Server for the Processing
+Pattern.  This is required when using Coherence *Extend Clients.</p>
 
-<p>The <code>value:float</code> element represents a <code>java.lang.Float</code> value.</p>
+<p>The config file includes a Coherence Cache Configuration &lt;acceptor-config&gt;
+that listens for connection on localhost.</p>
 
-<p><em>Resolved Element Type:</em></p>
+<blockquote>
+  <p>  <strong>IMPORTANT</strong></p>
+  
+  <p>  As in most circumstances, it is strongly recommended to run proxy nodes
+    storage disabled using the command-line argument -Dtangosol.coherence.distributed.localstorage=false</p>
+</blockquote>
 
-<p>When processed this element will be resolved to produce a <code>java.lang.Float</code>.</p>
+<p>The relevant parts of the included configuration are as follows:</p>
 
-<p><em>Examples:</em></p>
+<pre><code>&lt;cache-config
+    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+    element:introduce-cache-config="coherence-processingpattern-pof-cache-config.xml"&gt;
 
-<p>Simple Float values:</p>
-
-<pre><code>&lt;value:float&gt;0.0&lt;/value:float&gt;
-&lt;value:float&gt;1.0213&lt;/value:float&gt;
-&lt;value:float&gt;-1001.098&lt;/value:float&gt;
+    &lt;caching-schemes&gt;
+        &lt;proxy-scheme&gt;
+            &lt;acceptor-config&gt;
+                &lt;tcp-acceptor&gt;
+                    &lt;local-address&gt;
+                        &lt;address&gt;localhost&lt;/address&gt;
+                        &lt;port&gt;20020&lt;/port&gt;
+                    &lt;/local-address&gt;
+                &lt;/tcp-acceptor&gt;
+            &lt;/acceptor-config&gt;
+            &lt;autostart&gt;true&lt;/autostart&gt;
+        &lt;/proxy-scheme&gt;
+    &lt;/caching-schemes&gt;
+&lt;/cache-config&gt;
 </code></pre>
-
-<h2></h2>
-
-<p><a name="integer"><h5>&lt;value:integer&gt;</h5></a></p>
-
-<p>The <code>value:integer</code> element represents a <code>java.lang.Integer</code> value.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>java.lang.Integer</code>.</p>
-
-<p><em>Examples:</em></p>
-
-<p>Simple Integer values:</p>
-
-<pre><code>&lt;value:integer&gt;0&lt;/value:integer&gt;
-&lt;value:integer&gt;-1&lt;/value:integer&gt;
-&lt;value:integer&gt;100&lt;/value:integer&gt;
-&lt;value:integer&gt;32023&lt;/value:integer&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="long"><h5>&lt;value:long&gt;</h5></a></p>
-
-<p>The <code>value:long</code> element represents a <code>java.lang.Long</code> value.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>java.lang.Long</code>.</p>
-
-<p><em>Examples:</em></p>
-
-<p>Simple Long values:</p>
-
-<pre><code>&lt;value:long&gt;0&lt;/value:long&gt;
-&lt;value:long&gt;-1243242&lt;/value:long&gt;
-&lt;value:long&gt;1024&lt;/value:long&gt;
-&lt;value:long&gt;32432023&lt;/value:long&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="short"><h5>&lt;value:short&gt;</h5></a></p>
-
-<p>The <code>value:short</code> element represents a <code>java.lang.Short</code> value.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>java.lang.Short</code>.</p>
-
-<p><em>Examples:</em></p>
-
-<p>Simple Short values:</p>
-
-<pre><code>&lt;value:short&gt;0&lt;/value:short&gt;
-&lt;value:short&gt;-1&lt;/value:short&gt;
-&lt;value:short&gt;100&lt;/value:short&gt;
-&lt;value:short&gt;32023&lt;/value:short&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="string"><h5>&lt;value:string&gt;</h5></a></p>
-
-<p>The <code>value:string</code> element represents a <code>java.lang.String</code> value.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>java.lang.String</code>.</p>
-
-<p><em>Examples:</em></p>
-
-<p>An empty String:</p>
-
-<pre><code>&lt;value:string&gt;&lt;/value:string&gt;
-</code></pre>
-
-<p>A simple String:</p>
-
-<pre><code>&lt;value:string&gt;Gudday World&lt;/value:string&gt;
-</code></pre>
-
-<h2></h2>
 
                   </div>
             </div>
