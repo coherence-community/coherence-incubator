@@ -3,13 +3,14 @@ The Processing Pattern
 
 <h4>Overview</h4>
 
-Provides a mechanism to perform distributed grid computing with Coherence.  It
-is an extensible grid-based processing engine, capable of accepting, dispatching 
-and executing a variety of workloads, the types of which may be customized by developers.
+The Processing Pattern provides a simple mechanism to perform distributed grid
+computing operations with Coherence.  It is structured as an extensible cluster-based
+processing engine, capable of accepting, dispatching and executing a variety of workloads,
+the types of which may be customized by developers.
 
 Unlike the traditional hub-and-spoke / master-worker / broker-agent, the Processing Pattern 
 avoids the classic "single-point-of-failure", "single-point-of-dispatch", "single-point-of-contention" 
-problems by managing and distributing the core state of across Coherence.
+problems by managing and distributing the core state across a Coherence Data Grid.
 
 <h4>Distribution</h4>
 
@@ -22,27 +23,28 @@ The Processing Pattern has four key concepts; *Processing Sessions*, *Submission
 *Submission Outcomes* and *Dispatchers*.
 
 *   `ProcessingSessions`, also commonly called `Sessions`, provide the ability to
-    submit "work" for an implementation to process *asynchronously*.  Additionally
-    `ProcessingSessions` provide mechanisms to "disconnect" and later "reconnect"
-    to previously submitted "work", thus naturally permitting long running "work"
+    submit work for an implementation to process *asynchronously*.  Additionally
+    `ProcessingSessions` provide mechanisms to disconnect and later reconnect
+    to previously submitted work, thus naturally permitting long running work
     to be processed and monitored.
 
-*   `Submissions` encapsulate the information representing the "work" to process.
-    Typically these are simply regular serialized objects.  There's no contract
-    on how "work" is represented or interfaces to implement.
+*   `Submissions` encapsulate the information representing the work to process.
+    Typically these are simply serialized objects.  There's no contract
+    on how work is represented or interfaces to implement.
 
-*   Upon submitting "work", a `ProcessingSession` will return a `SubmissionOutcome`,
-    that of which may be used to track and manage the processing of the said "work".
+*   Upon submitting work, a `ProcessingSession` will return a `SubmissionOutcome`,
+    that of which may be used to track and manage the processing of the said work.
 
 *   Once submitted, one or more configured `Dispatchers` are consulted to route
-    the `Submissions` for appropriate processing. How processing actually occurs 
+    `Submissions` for appropriate processing. How processing actually occurs
     is dependent on the type of `Dispatcher` and possibly the `Submission`.
 
-Out-of-the-box three dispatcher implementations are provided:
+Three dispatcher implementations are provided out-of-the-box:
 
 1.  A `LoggingDispatcher` that simply logs `Submissions` that have been submitted.
 
-2.  A `LocalDispatcher` that can execute Java `Runnables` and `Callables`.
+2.  A `LocalDispatcher` that can execute `Submissions` that contain Java
+    `Runnables` and `Callables`.
 
 3.  A `TaskDispatcher` that can dispatch and execute `Tasks`, a more sophisticated
     form of `Callable`.
@@ -53,7 +55,7 @@ use when adopting the Processing Pattern.
 
 The `TaskDispatcher` implementation leverages the following concepts:
 
-1.  A `Task` is a `Submission` that implements the 'Task' interface.   It is used
+1.  A `Task` is a `Submission` that implements the `Task` interface.   It is used
     to provide information concerning a task, including properties for routing.
     A specialized form of `Task`, called a `ResumableTask` is provided to permit
     check-pointing (saving) of intermediate state, thus allowing said tasks to be
@@ -61,14 +63,14 @@ The `TaskDispatcher` implementation leverages the following concepts:
 
 2.  A `TaskProcessor` is an entity that actually executes `Tasks`.
 
-    Out-of-the-box two types of `TaskProcessor` are provided.   The first called
+    Two types of `TaskProcessor` are provided.   The first called
     a *Grid* processor that of which is instantiated on all storage-enabled cluster
     nodes.  The second called a *Single* processor, that of which is instantiated
     on a single storage-enabled cluster node with in a cluster.
 
 3.  A `TaskDispatchPolicy` governs how `Tasks` are allocated to `TaskProcessors`.
 
-    Out-of-the-box three `TaskDispatchPolicies` are provided, including *Round Robin*,
+    Three `TaskDispatchPolicies` are provided, including *Round Robin*,
     *Random* and *Attribute Matching*.
 
 The following section outlines the process by which `ProcessingSessions` may be
@@ -78,8 +80,8 @@ used to submit and manage `Submissions`.
 
 Submitting work is main activity of a `ProcessingSession`.  While there are several
 overloaded variants of the `ProcessingSession.submit` method, the result of submitting
-work is always a `SubmissionOutcome` instance, that of which you use to determine
-and retrieve the current `SubmissionState`, together with current processing result(s).
+work is always a `SubmissionOutcome` instance, that of which is typically used to determine
+the current `SubmissionState` together with current processing result(s) of a submission.
 
 As the Processing Pattern requires that all `Submissions` be uniquely identifiable
 (simply so that said `Submissions` may be tracked, managed and results of which may
@@ -126,10 +128,9 @@ be retrieved by calling `SubmissionOutcome.getIdentifier()` method.
 <h5>Submission Garbage Collection</h5>
 
 Once a `Submission` has been submitted it is scheduled for *acceptance* (and
-later processing) using an appropriate `Dispatcher` (more on this shortly).  Once
-accepted by a `Dispatcher` a `SubmissionOutcome` is created and returned to the
-submitter, that of which may request the status of any processing and/or retrieve
-results from processing.
+later processing) using an appropriate `Dispatcher`.  Once accepted by a `Dispatcher`
+a `SubmissionOutcome` is created and returned to the submitter, that of which may
+request the status of any processing and/or retrieve results from processing.
 
 After a `Submission` has been processed (either successfully or through to failure),
 its internal representation together with its associated `SubmissionOutcome`
@@ -149,10 +150,10 @@ must make every effort to clean-up the submissions explicitly themselves.
 
 <h5>Releasing and Acquiring Submission Outcomes</h5>
 
-When a client `ProcessingSession` would like to have another client `ProcessingSession`
-take over ownership of a `Submission`, the first client must "release" the said
+When a client `ProcessingSession` requires another client `ProcessingSession`
+take over ownership of a `Submission`, the client must "release" the said
 `SubmissionOutcome` using the `ProcessingSession.releaseSubmission(SubmissionOutcome)`
-method, after which the second client can later "acquire" ownership by calling
+method, after which the later client may "acquire" ownership by calling
 the `ProcessingSession.acquireSubmission(...)` method.
 
 *Releasing a Submission:*
@@ -206,3 +207,92 @@ Here is an example of submitting and cancelling a Submission:
 
     session.cancelSubmission(outcome.getIdentifier());
     outcome.get(); //Waits for a final state for the Submission.
+
+<h4>Dispatchers and Submissions</h4>
+
+A central concept of the Processing Pattern is the concept of `Dispatchers`.  In
+fact, for the Processing Pattern to operate at all, one or more `Dispatchers` must
+be configured.
+
+When a `Submission` is submitted to the Processing Pattern, it is first *offered*
+to each of the configured `Dispatchers`, in the order in which they were defined
+or registered.
+
+Each `Dispatcher` interogates the `Submissions` they are offered to determine if
+they are capable of handling the said `Submissions`.  When a `Dispatcher` chooses
+to *accept* a `Submission`, a `SubmissionOutcome` is returned to the calling client.
+
+After this the accepting `Dispatcher` will attempt to find a way to process the
+`Submission`.  This may involved executing the `Submission` or in some cases, like
+the `TaskDispatcher` locating a suitable `TaskProcessor` to process the `Submission`.
+
+Should a `Dispatcher` choose to *reject* (not accept) a `Submission`, the said
+`Submission` will be provided to the remaining `Dispatchers` in the configured
+list of `Dispatchers`.
+
+The following diagram illustrates the typical operational flow of an application
+using the Processing Pattern.
+
+![Processing Pattern Operational Flow](../images/processingpattern/operational-flow.png)
+
+<h4>Task Dispatching</h4>
+
+As mentioned previously, `TaskDispatchers` are special in that they themselves
+don't execute `Tasks`.  Instead they use the configured `TaskDispatchPolicy` to
+determine a suitable `TaskProcessor`, that of which will actually execute submitted
+`Tasks`.
+
+Typically a `TaskDispatchPolicy` simply compares the attributes supplied as part
+of a `SubmissionConfiguration` with those that are defined by each `TaskProcessor`.
+This activity is typically called Task Mediation.
+
+The following diagram illustrates the typical operational flow of an application
+using `Tasks` with the Processing Pattern.
+
+![Task Dispatching Flow](../images/processingpattern/task-dispatching-flow.png)
+
+<h4>Example</h4>
+
+The following demonstrates a simple example of the Processing Pattern.
+
+    package com.oracle.coherence.examples.incubator.processing.task;
+
+    import java.util.concurrent.ExecutionException;
+
+    import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
+    import com.oracle.coherence.patterns.processing.ProcessingSession;
+    import com.oracle.coherence.patterns.processing.ProcessingSessionFactory;
+    import com.oracle.coherence.patterns.processing.SubmissionOutcome;
+    import com.oracle.coherence.patterns.processing.internal.DefaultSubmissionConfiguration;
+    import com.tangosol.net.CacheFactory;
+
+    public class PiCalculationSample
+    {
+
+        public void executeTask() throws Exception
+        {
+            System.out.println("Testing PI calculation");
+            ProcessingSession session = new DefaultProcessingSession(StringBasedIdentifier
+                .newInstance("PICalculationSample " + DateFormat.getDateTimeInstance().format(System.currentTimeMillis())));
+
+            SubmissionOutcome pioutcome = session.submit(new CalculatePITask(100000), new DefaultSubmissionConfiguration());
+
+            System.out.println("PI (100000) iterations is :"+ pioutcome.get().toString());
+
+            factory.shutdown();
+            CacheFactory.shutdown();
+        }
+
+        public static void main(String[] args)
+        {
+            PiCalculationSample sample = new PiCalculationSample();
+            try
+            {
+                sample.executeTask();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }

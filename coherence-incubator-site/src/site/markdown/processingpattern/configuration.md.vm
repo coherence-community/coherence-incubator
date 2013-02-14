@@ -1,0 +1,199 @@
+Configuring the Processing Pattern
+----------------------------------
+
+The Processing Pattern is configured using Coherence Cache Configuration
+files with the addition of the following namespace:
+
+    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+
+Configuration typically occurs using either Out-Of-The-Box Configurations or
+through explicit declarations based on the [Processing Pattern Namespace](processing-namespace.html)
+
+<h4>Out-Of-The-Box Configurations</h4>
+
+Included in the processing pattern are a number of ready made, out-of-the-box
+configurations for different types of Coherence Members. These configurations can
+be used in two approaches:
+
+*   Introducing configuration files into existing configuration files
+    using the [element:introduce-cache-config](../common/element-namespace.html)
+    feature.
+
+*   Directly specifying a Processing Pattern configuration file, using
+    `-Dtangosol.coherence.cacheconfig=<config file>`
+
+<h4>Default Processing Cluster Member Configuration</h4>
+
+The configuration file `coherence-processingpattern-cluster-processing-config.xml`
+as provided in the distribution defines a full fledged Processing Pattern Cluster Member
+that is configured with the following features:
+
+*   A `LoggingDispatcher`
+
+*   A `LocalExecutorDispatcher`
+
+*   A `TaskDispatcher` with a `TaskDispatchPolicy` configured as an attribute
+    matching and round robin policy.
+
+*   A default `GRID`-based `TaskProcessor` (one for each Storage Enabled member)
+    with a thread pool size of 10.
+
+Below follows the relevant parts of the configuration:
+
+    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+
+        ...
+
+        <processing:cluster-config pof="true">
+            <processing:dispatchers>
+                <processing:logging-dispatcher displayname="Logging Dispatcher" />
+
+                <processing:task-dispatcher displayname="Task Dispatcher">
+                    <processing:composite-policy>
+                        <processing:attribute-match-policy />
+                        <processing:round-robin-policy />
+                    </processing:composite-policy>
+                </processing:task-dispatcher>
+
+                <processing:local-executor-dispatcher displayname="Local Dispatcher" />
+            </processing:dispatchers>
+
+            <processing:taskprocessors>
+                <processing:taskprocessordefinition id="GridTaskProcessor"
+                                                    displayname="Grid Task Processor"
+                                                    type="GRID">
+
+                    <processing:default-taskprocessor id="GridTaskProcessor"
+                                                      threadpoolsize="10" />
+
+                    <processing:attribute name="type">grid</processing:attribute>
+                </processing:taskprocessordefinition>
+            </processing:taskprocessors>
+        </processing:cluster-config>
+
+        ...
+
+    </cache-config>
+
+<h4>Configuring Processing Clients</h4>
+
+A Coherence Cluster Member that shall be used as a pure client to the Processing
+Pattern **must** disable local storage in order to operate correctly. eg: Using the
+command line parameter:
+
+    -Dtangosol.coherence.distributed.localstorage=false
+
+The configuration file `coherence-processingpattern-cluster-client-config.xml`
+as provided with the distribution is essentially defined as follows:
+
+    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+        <processing:cluster-config pof="true"/>
+    </cache-config>
+
+<h4>Configuring Coherence *Extend Clients (without local Task Processing capabilities)</h4>
+
+The configuration file `coherence-processingpattern-extend-client-config.xml`
+as provided with the distribution defines a Coherence *Extend-based Client.
+
+The relevant parts of the included configuration are as follows:
+
+    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+
+        ...
+
+        <processing:extend-config>
+            <initiator-config>
+                <tcp-initiator>
+                    <remote-addresses>
+                        <socket-address>
+                            <address>localhost</address>
+                            <port>20020</port>
+                        </socket-address>
+                    </remote-addresses>
+                    <connect-timeout>10s</connect-timeout>
+                </tcp-initiator>
+            </initiator-config>
+        </processing:extend-config>
+
+        ...
+
+    </cache-config>
+
+<h4>Configuring Coherence *Extend Clients (with Task Processing capabilities)</h4>
+
+The configuration file `coherence-processingpattern-extend-taskprocessing-config.xml`
+as provided with the distribution defines a Coherence *Extend-base Client that is
+capable of processing `Tasks` using locally managed `TaskProcessors`.
+
+The relevant parts of the included configuration are as follows:
+
+    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+
+        ...
+
+        <processing:extend-config pof="true">
+            <initiator-config>
+                <tcp-initiator>
+                    <remote-addresses>
+                        <socket-address>
+                            <address>localhost</address>
+                            <port>20020</port>
+                        </socket-address>
+                    </remote-addresses>
+                    <connect-timeout>10s</connect-timeout>
+                </tcp-initiator>
+            </initiator-config>
+
+            <processing:taskprocessors>
+                <processing:taskprocessordefinition id="SingleTaskProcessor"
+                                                    displayname="Single Task Processor"
+                                                    type="SINGLE"
+                                                    taskpattern="SingleTask">
+
+                    <processing:default-taskprocessor id="Single Task Processor"
+                                                       threadpoolsize="10"/>
+
+                    <processing:attribute name="type">single</processing:attribute>
+                </processing:taskprocessordefinition>
+            </processing:taskprocessors>
+        </processing:extend-config>
+
+        ...
+
+    </cache-config>
+
+<h4>Processing Pattern Proxy Server Configuration</h4>
+
+The configuration file `coherence-processingpattern-proxy-config.xml` as provided
+with the distribution defines a Coherence *Extend Proxy Server for the Processing
+Pattern.  This is required when using Coherence *Extend Clients.
+
+The config file includes a Coherence Cache Configuration &lt;acceptor-config&gt;
+that listens for connection on localhost.
+
+>   **IMPORTANT**
+>
+>   As in most circumstances, it is strongly recommended to run proxy nodes
+>   storage disabled using the command-line argument -Dtangosol.coherence.distributed.localstorage=false
+
+
+The relevant parts of the included configuration are as follows:
+
+    <cache-config
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        element:introduce-cache-config="coherence-processingpattern-pof-cache-config.xml">
+
+        <caching-schemes>
+            <proxy-scheme>
+                <acceptor-config>
+                    <tcp-acceptor>
+                        <local-address>
+                            <address>localhost</address>
+                            <port>20020</port>
+                        </local-address>
+                    </tcp-acceptor>
+                </acceptor-config>
+                <autostart>true</autostart>
+            </proxy-scheme>
+        </caching-schemes>
+    </cache-config>

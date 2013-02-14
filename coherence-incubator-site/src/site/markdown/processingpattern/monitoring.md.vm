@@ -1,0 +1,79 @@
+Monitoring the Processing Pattern
+---------------------------------
+
+The Processing Pattern is integrated and thus monitorable using the standard
+[Coherence Monitoring and Management (JMX)](http://docs.oracle.com/cd/E24290_01/coh.371/e22842/toc.htm)
+framework.  Familiarily with this framework and how it operates with Coherence is
+essential to understand monitoring the Processing Pattern.
+
+<h4>MBean Object Hierarchy</h4>
+
+The Processing Pattern MBeans are encapsulated under the Coherence MBean.
+
+See the following provides an overview of the standard hierarchy.
+
+![Processing Pattern JMS](../images/processingpattern/jmx-hierarchy.png)
+
+<h4>Monitoring Dispatchers</h4>
+
+The following attributes are available for each `Dispatcher`.
+
+*   `DispatcherName`
+
+    The name of the `Dispatcher`
+
+*   `SubmissionsAccepted`
+
+    The number of accepted `Submissions`
+
+*   `SubmissionsOffered`
+
+    The number of offered `Submissions`
+
+<h4>Monitoring TaskProcessors</h4>
+
+The following attributes are available for each `TaskProcessor`.
+
+*   `Key`
+
+    The identifier for the `TaskProcessor` (used by Coherence).
+
+*   `IdsOfCurrentlyExecutingTask`
+
+    The identifiers of currently executing `Tasks`.
+
+*   `ExecutedTaskCount`
+
+    The number of executed `Tasks`.
+
+*   `LastTaskExecutionDuration`
+
+    The duration of the last executed `Task` (in milliseconds).
+
+*   `AverageTaskExecutionDuration`
+
+    The average duration of `Task` execution (in milliseconds).
+
+*   `LastTaskExecutionDuration`
+
+    The duration of the last executed `Task` (in milliseconds).
+
+*   `YieldTaskCount`
+
+    The number of times a `Task` has been yielded.
+
+*   `TotalTaskExecutionDuration`
+
+    The total duration of all `Task` execution (in milliseconds).
+
+*   `AcceptedTaskCount`
+
+    The number of `Tasks` that has been accepted for execution.
+
+*   `MinimumTaskExecutionDuration`
+
+    The minimum duration of a single `Task` execution (in milliseconds).
+
+*   `MaximumTaskExecutionDuration`
+
+    The maximum duration of a single `Task` execution (in milliseconds).

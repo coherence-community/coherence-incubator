@@ -107,7 +107,7 @@ The following elements are defined by this namespace.
 *   [remote-cache-channel-scheme](#remote-cache-channel-scheme)
 *   [remote-cluster-channel-scheme](#remote-cluster-channel-scheme) 
 *   [stderr-channel-scheme](#stderr-channel-scheme)
-*   [transformer-scheme](#transformer-scheme).
+*   [transformer-scheme](#transformer-scheme)
 
 
 ------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ when required.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+This element is a child element of [&lt;event:channel-scheme&gt;](#channel-scheme).
 
 *Element Type:*
 
@@ -142,7 +142,7 @@ This element defines a `BinaryEntryStore`.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:binaryentry-store-channel-scheme&gt;](#binaryentry-store-channel-scheme).
+This element is a child element of [&lt;event:binaryentry-store-channel-scheme&gt;](#binaryentry-store-channel-scheme).
 
 *Element Type:*
 
@@ -172,7 +172,7 @@ when required.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+This element is a child element of [&lt;event:channel-scheme&gt;](#channel-scheme).
 
 *Element Type:*
 
@@ -198,7 +198,7 @@ to a batch of events.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:transformer-scheme&gt;](#transformer-scheme) and
+This element is a child element of [&lt;event:transformer-scheme&gt;](#transformer-scheme) and
 [&lt;event:chained-transformer-scheme&gt;](#chained-transformer-scheme).
 
 *Element Type:*
@@ -268,7 +268,7 @@ representing the name of an `EventChannel` for an `EventChannelController`.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distribution-channel&gt;](#distribution-channel).
+This element is a child element of [&lt;event:distribution-channel&gt;](#distribution-channel).
 
 *Element Type:*
 
@@ -288,7 +288,7 @@ representing an external resource name of an `EventChannel`.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distribution-channel&gt;](#distribution-channel).
+This element is a child element of [&lt;event:distribution-channel&gt;](#distribution-channel).
 
 *Element Type:*
 
@@ -311,7 +311,7 @@ This element defines a template from which to construct an `EventChannel` at run
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distribution-channel&gt;](#distribution-channel) and
+This element is a child element of [&lt;event:distribution-channel&gt;](#distribution-channel) and
 [&lt;remote-cluster-channel-scheme&gt;](#remote-cluster-channel-scheme).
 
 *Element Type:*
@@ -389,7 +389,7 @@ will be transformed into:
 
 *Used in:*
 
-This element is a child element of: [&lt;event:transformer-scheme&gt;](#transformer-scheme) and
+This element is a child element of [&lt;event:transformer-scheme&gt;](#transformer-scheme) and
 [&lt;event:chained-transformer-scheme&gt;](#chained-transformer-scheme).
 
 *Element Type:*
@@ -413,7 +413,7 @@ that of which will use Oracle Coherence for coordinating events to be distribute
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distributor-scheme&gt;](#distributor-scheme) 
+This element is a child element of [&lt;event:distributor-scheme&gt;](#distributor-scheme) 
 
 *Element Type:*
 
@@ -433,7 +433,7 @@ This element defines a `ParameterizedBuilder` for a `JMSConnectionFactory`.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:jms-based-event-distributor-scheme&gt;](#jms-based-event-distributor-scheme).
+This element is a child element of [&lt;event:jms-based-event-distributor-scheme&gt;](#jms-based-event-distributor-scheme).
 
 *Element Type:*
 
@@ -482,7 +482,7 @@ This element defines a template from which to configure and construct an `EventC
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distribution-channels&gt;](#distribution-channels).
+This element is a child element of [&lt;event:distribution-channels&gt;](#distribution-channels).
 
 *Element Type:*
 
@@ -555,7 +555,7 @@ This element defines the collection of `EventChannels` that will be used by an
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distributor&gt;](#distributor).
+This element is a child element of [&lt;event:distributor&gt;](#distributor).
 
 *Element Type:*
 
@@ -620,7 +620,7 @@ external resources.
 
 *Used in:*
 
-This is a child element of: [&lt;event:distributor&gt;](#distributor).
+This is a child element of [&lt;event:distributor&gt;](#distributor).
 
 *Element Type:*
 
@@ -646,7 +646,7 @@ representing the name of an `EventDistributor`.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distributor&gt;](#distributor).
+This element is a child element of [&lt;event:distributor&gt;](#distributor).
 
 *Element Type:*
 
@@ -666,7 +666,7 @@ This element defines the type of `EventDistributor` to use for event distributio
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distributor&gt;](#distributor).
+This element is a child element of [&lt;event:distributor&gt;](#distributor).
 
 *Element Type:*
 
@@ -706,7 +706,7 @@ the state of an entry.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme).
+This element is a child element of [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme).
 
 *Element Type:*
 
@@ -747,7 +747,7 @@ This element defines a `ParameterizedBuilder` for an `EventTransformer`.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:mutating-transformer-scheme&gt;](#mutating-transformer-scheme).
+This element is a child element of [&lt;event:mutating-transformer-scheme&gt;](#mutating-transformer-scheme).
 
 *Element Type:*
 
@@ -790,7 +790,7 @@ their type, those being one or more comma separated values of `INSERTED`, `UPDAT
 
 *Used in:*
 
-This element is a child element of: [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme).
+This element is a child element of [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme).
 
 *Element Type:*
 
@@ -832,7 +832,7 @@ when required.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+This element is a child element of [&lt;event:channel-scheme&gt;](#channel-scheme).
 
 *Element Type:*
 
@@ -863,7 +863,7 @@ out of a batch of events.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:transformer-scheme&gt;](#transformer-scheme) and
+This element is a child element of [&lt;event:transformer-scheme&gt;](#transformer-scheme) and
 [&lt;event:chained-transformer-scheme&gt;](#chained-transformer-scheme).
 
 *Element Type:*
@@ -939,7 +939,7 @@ that of which will use JMS for coordinating events to be distributed via
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distributor-scheme&gt;](#distributor-scheme) 
+This element is a child element of [&lt;event:distributor-scheme&gt;](#distributor-scheme) 
 
 *Element Type:*
 
@@ -972,7 +972,7 @@ when required.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+This element is a child element of [&lt;event:channel-scheme&gt;](#channel-scheme).
 
 *Element Type:*
 
@@ -1005,7 +1005,7 @@ are distributed.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:transformer-scheme&gt;](#transformer-scheme) 
+This element is a child element of [&lt;event:transformer-scheme&gt;](#transformer-scheme) 
 
 *Element Type:*
 
@@ -1056,7 +1056,7 @@ the original state of an entry, prior to an event occurring on the said entry.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme).
+This element is a child element of [&lt;event:filtering-transformer-scheme&gt;](#filtering-transformer-scheme).
 
 *Element Type:*
 
@@ -1104,7 +1104,7 @@ when required.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+This element is a child element of [&lt;event:channel-scheme&gt;](#channel-scheme).
 
 *Element Type:*
 
@@ -1134,7 +1134,7 @@ when required.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+This element is a child element of [&lt;event:channel-scheme&gt;](#channel-scheme).
 
 *Element Type:*
 
@@ -1164,7 +1164,7 @@ when required.
 
 *Used in:*
 
-This element is a child element of: [&lt;event:channel-scheme&gt;](#channel-scheme).
+This element is a child element of [&lt;event:channel-scheme&gt;](#channel-scheme).
 
 *Element Type:*
 
@@ -1180,7 +1180,7 @@ of events (represented as an `Iterator`).
 
 *Used in:*
 
-This element is a child element of: [&lt;event:distribution-channel&gt;](#distribution-channel).
+This element is a child element of [&lt;event:distribution-channel&gt;](#distribution-channel).
 
 *Element Type:*
 
