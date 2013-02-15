@@ -48,8 +48,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:coherence-community/coherence-incubator.git</connection>
-        <developerConnection>scm:git:git@github.com:coherence-community/coherence-incubator.git</developerConnection>
+        <connection>scm:git:https://github.com/coherence-community/coherence-incubator.git</connection>
+        <developerConnection>scm:git:https://github.com/coherence-community/coherence-incubator.git</developerConnection>
         <url>https://github.com/coherence-community/coherence-incubator.git</url>
     </scm>
 
