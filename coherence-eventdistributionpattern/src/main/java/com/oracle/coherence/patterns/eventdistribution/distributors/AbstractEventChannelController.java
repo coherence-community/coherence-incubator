@@ -3,7 +3,7 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of 
+ * The contents of this file are subject to the terms and conditions of
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
@@ -1013,13 +1013,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                     // reset the number of consecutive failures as we've had success!
                     consecutiveDistributionFailures = 0;
 
-                    // now go back into the WAITING state to wait for the next batch time (if a delay is necessary)
-                    // (only if we're still in the DISTRIBUTING state)
-                    synchronized (this)
-                    {
-                        if (getState() == State.DISTRIBUTING && controllerDependencies.getBatchDistributionDelay() > 0)
-                        {
-                            setState(State.WAITING);
+                   // now schedule for the next batch
+                   // (only if we're still in the DISTRIBUTING state)
+                   synchronized (this)
+                   {
+                       if (getState() == State.DISTRIBUTING && controllerDependencies.getBatchDistributionDelay() > 0)
+                       {
+                           setState(State.SCHEDULED);
 
                             // schedule the next time we'll attempt to distribute a batch
                             schedule(new Runnable()
