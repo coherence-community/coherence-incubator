@@ -79,7 +79,11 @@
             <item name="The Functor Pattern" href="functorpattern/index.html">
                 <!-- <item name="Examples" href="functorpattern/examples.html"/>  -->
             </item>
-            <item name="The Processing Pattern" href="processingpattern/index.html"/>
+            <item name="The Processing Pattern" href="processingpattern/index.html">
+                <item name="Configuration" href="processingpattern/configuration.html"/>
+                <item name="Monitoring" href="processingpattern/monitoring.html"/>
+                <item name="The Processing Namespace" href="processingpattern/processing-namespace.html"/>
+            </item>
             <item name="The Messaging Pattern" href="messagingpattern/index.html"/>
             <item name="The Event Distribution Pattern" href="eventdistributionpattern/index.html">
                 <item name="The Event Namespace" href="eventdistributionpattern/event-namespace.html"/>

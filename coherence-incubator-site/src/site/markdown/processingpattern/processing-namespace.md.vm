@@ -1,0 +1,516 @@
+The Processing Pattern Namespace
+--------------------------------
+
+The Processing Pattern Namespace provides the ability to declaratively configure
+the [Processing Pattern](../processingpattern/index.html).
+
+<h4>Namespace Content Handler</h4>
+
+The implementation is provided by the `com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler`
+class.
+
+<h4>Declaration</h4>
+
+The common prefix used for this namespace in Cache Configurations is `processing`,
+however as with all XML namespace declarations this can be defined arbitrarily 
+when declaring the namespace.
+
+To use the namespace you should declare it as follows:
+
+    <cache-config xmlns:processing="class://com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+    
+       ...
+    
+    </cache-config>
+
+<h4>Elements</h4>
+
+The following section outlines the elements defined by this namespace, the most
+important of which are the [&lt;processing:cluster-config&gt;](#cluster-config)
+and the [&lt;processing:extend-config&gt;](#extend-config) elements.  These
+elements are typically incorporated into Coherence Cache Config &lt;cache-config&gt;
+elements.
+
+**Reference:**
+
+The following elements are defined by this namespace. 
+
+*   [attribute-match-policy](#attribute-match-policy)
+*   [attribute](#attribute)
+*   [cluster-config](#cluster-config)
+*   [composite-policy](#composite-policy)
+*   [default-taskprocessor](#default-taskprocessor)
+*   [dispatchers](#dispatchers)
+*   [extend-config](#extend-config)
+*   [local-executor-dispatcher](#local-executor-dispatcher)
+*   [logging-dispatcher](#logging-dispatcher)
+*   [random-policy](#random-policy)
+*   [round-robin-policy](#round-robin-policy)
+*   [task-dispatcher](#task-dispatcher)
+*   [taskprocessordefinition](#taskprocessordefinition)
+*   [taskprocessors](#taskprocessors)
+
+------------------------------------------------------------------------------
+
+<a name="attribute-match-policy"><h5>&lt;processing:attribute-match-policy&gt;</h5></a>
+
+The element will specifies that the attributes declared in a
+`SubmissionConfiguration` must match those defined by a `TaskProcessor`.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:task-dispatcher&gt;](#task-dispatcher).
+
+*Example:*
+
+    <processing:attribute-match-policy />
+
+*See Also:*
+
+*   [attribute](#attribute)
+*   [taskprocessordefinition](#taskprocessordefinition)
+
+
+------------------------------------------------------------------------------
+
+<a name="attribute"><h5>&lt;processing:attribute&gt;</h5></a>
+
+This element defines an attribute for a `TaskProcessor`.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:taskprocessordefinition&gt;](#taskprocessordefinition).
+
+*Attributes:*
+
+The following attributes must be defined as part of this element:
+    
+*   `name`
+
+    The name of the attribute
+
+*Examples:*
+
+    <processing:attribute name="attribute-name">attribute-value</processing:attribute>
+
+    <processing:attribute name="operating-system">WINDOWS</processing:attribute>
+
+
+*See Also:*
+
+*   [attribute-match-policy](#attribute-match-policy)
+*   [taskprocessordefinition](#taskprocessordefinition)
+
+------------------------------------------------------------------------------
+
+<a name="cluster-config"><h5>&lt;processing:cluster-config&gt;</h5></a>
+
+This element specifies the configuration of a Processing Pattern Cluster Member.
+
+*Used in:*
+
+This element is to be defined as a child of a `<cache-config>` element with in
+an Oracle Coherence Cache Configuration file.
+
+*Child Elements:*
+
+Zero or more the following elements may be defined as a child element ofthis element:
+
+*   [&lt;processing:dispatchers&gt;](#dispatchers)
+
+    Specifies `TaskDispatcher` definitions.
+
+*   [&lt;processing:taskprocessors&gt;](#taskprocessors)
+
+    Specifies `TaskProcessor` definitions.
+
+
+------------------------------------------------------------------------------
+
+<a name="composite-policy"><h5>&lt;processing:composite-policy&gt;</h5></a>
+
+This elements defines a Task Dispatch policy that is the composition of two other
+Task Dispatch Policies.
+
+The first policy is evaluated to select a subset of TaskProcessors, after which
+the second policy is used to further restrict tasks.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:task-dispatcher&gt;](#task-dispatcher).
+
+*Child Elements:*
+
+Exactly two of the following elements must be defined as children of this element:
+
+*   [&lt;processing:attribute-match-policy&gt;](#attribute-match-policy)
+
+    Specifies an Attribute Matching Task Dispatch Policy.
+
+*   [&lt;processing:composite-policy&gt;](#composite-policy)
+
+    Specifies a Composite Task Dispatch Policy.
+
+*   [&lt;processing:round-robin-policy&gt;](#round-robin-policy)
+
+    Specifies a Round Robin Task Dispatch Policy.
+
+*   [&lt;processing:random-policy&gt;](#random-policy)
+
+    Specifies a Random Task Dispatch Policy.
+
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element, defining an `TaskDispatchPolicy`
+    to be used for instantiating a custom `TaskDispatchPolicy` implementation.
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element, defining an `TaskDispatchPolicy`
+    to be used for instantiating a custom `TaskDispatchPolicy` implementation.
+
+*Example:*
+
+    <processing:composite-policy>
+        <processing:attribute-match-policy />
+        <processing:round-robin-policy />
+    </processing:composite-policy>
+
+
+------------------------------------------------------------------------------
+
+<a name="default-taskprocessor"><h5>&lt;processing:default-taskprocessor&gt;</h5></a>
+
+This element defines a default `TaskProcessor`.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:taskprocessordefinition&gt;](#taskprocessordefinition).
+
+*Attributes:*
+
+The following attributes must be defined as part of this element:
+
+*   `id` **(required)**
+
+    The unique identity of the `TaskProcessor`.  This is used for logging and
+    JMX instrumentation.
+
+*   `threadpoolsize` **(required)**
+
+    The number of threads for the `TaskProcessor`. Each thread can execute a `Task`
+    concurrently.
+
+*Example:*
+
+    <processing:default-taskprocessor id="GridTaskProcessor" threadpoolsize="10" />
+
+
+------------------------------------------------------------------------------
+
+<a name="dispatchers"><h5>&lt;processing:dispatchers&gt;</h5></a>
+
+This element defines the dispatcher configuration for a Processing Pattern Cluster
+Member.
+
+>   The order of the child elements defines the order of Dispatcher evaluation
+
+*Used in:*
+
+This element is a child element of [&lt;processing:cluster-config&gt;](#cluster-config).
+
+*Child Elements:*
+
+Zero or more the following elements may be defined as a child element ofthis element:
+
+*   [&lt;processing:local-executor-dispatcher&gt;](#local-executor-dispatcher)
+
+    Specifies a `LocalExecutorDispatcher`.
+
+*   [&lt;processing:logging-dispatcher&gt;](#logging-dispatcher)
+
+    Specifies a `LoggingDispatcher`.
+
+*   [&lt;processing:task-dispatcher&gt;](#task-dispatcher)
+
+    Specifies a Task Dispatcher.
+
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element, defining an `Dispatcher`
+    to be used for instantiating a custom `Dispatcher` implementation.
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element, defining an `Dispatcher`
+    to be used for instantiating a custom `Dispatcher` implementation.
+
+
+------------------------------------------------------------------------------
+
+<a name="extend-config"><h5>&lt;processing:extend-config&gt;</h5></a>
+
+This element defines configuration for a Processing Pattern Extend Client, that
+of which may optionally participate and perform calculations on behalf of the
+Processing Pattern Cluster Members.
+
+>   An Extend client can serve as a client to the processing pattern submitting work
+>   as well as execute tasks using TaskProcessors. However, it can't serve as a
+>   Dispatcher. That means that any processing pattern deployment needs Processing
+>   Pattern Cluster Members to do the dispatching.
+
+*Used in:*
+
+This element is to be defined as a child of a `<cache-config>` element with in
+an Oracle Coherence Cache Configuration file.
+
+*Child Elements:*
+
+The following elements may be defined as a child element ofthis element:
+
+*   [&lt;<initiator-config>&gt;](http://docs.oracle.com/cd/E24290_01/coh.371/e22837/appendix_cacheconfig.htm#BABIDEHJ) **(required)**
+
+    Specifies the Coherence Extend Client connection configuration.
+
+*   [&lt;processing:taskprocessors&gt;](#taskprocessors) (optional)
+
+    Specifies the configuration of optional Extend Client-side `TaskProcessors`.
+
+
+------------------------------------------------------------------------------
+
+<a name="local-executor-dispatcher"><h5>&lt;processing:local-executor-dispatcher&gt;</h5></a>
+
+This element defines a `LocalExecutorDispatcher` as part of a `Dispatcher` chain.
+
+A `LocalExecutorDispatcher` will accept `Submissions` containing payload that implements
+the Java [Runnable](http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html) or
+[Callable](http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Callable.html) interfaces.
+
+>   The submitted Runnables/Callables will be executed on the node where the Dispatching takes place.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:dispatchers&gt;](#dispatchers).
+
+*Attributes:*
+
+The following attribute must be defined a part of this element:
+
+*   `displayname` **(required)**
+
+    The display name for the `Dispatcher`.
+
+*   `threadpoolsize` **(required)**
+
+    The number of threads for the `Dispatcher` may use for concurrently executing
+    Runnables/Callables.
+
+
+------------------------------------------------------------------------------
+
+<a name="logging-dispatcher"><h5>&lt;processing:logging-dispatcher&gt;</h5></a>
+
+This element defines a `LoggingDispatcher` as part of a `Dispatcher` chain.
+
+A `LoggingDispatcher` logs `Submissions` to the `java.util.logging` Framework,
+instead of accepting them for execution.  This allows other `Dispatcher` implementations
+defined in the [&lt;processing:dispatchers&gt;](#dispatchers) to continue processing.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:dispatchers&gt;](#dispatchers).
+
+*Attributes:*
+
+The following attribute must be defined a part of this element:
+
+*   `displayname` **(required)**
+
+    The display name of the `TaskDispatcher`.
+
+------------------------------------------------------------------------------
+
+<a name="random-policy"><h5>&lt;processing:random-policy&gt;</h5></a>
+
+The element will specifies that a randomized approach for selecting an appropriate
+`TaskProcessor` to execute a submitted `Task` should be used.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:task-dispatcher&gt;](#task-dispatcher).
+
+*Example:*
+
+    <processing:random-policy />
+
+
+------------------------------------------------------------------------------
+
+<a name="round-robin-policy"><h5>&lt;processing:round-robin-policy&gt;</h5></a>
+
+The element will specifies that a [round-robin](http://en.wikipedia.org/wiki/Round-robin_scheduling)
+approach for selecting an appropriate `TaskProcessor` to execute a submitted `Task`
+should be used.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:task-dispatcher&gt;](#task-dispatcher).
+
+*Example:*
+
+    <processing:round-robin-policy />
+
+
+------------------------------------------------------------------------------
+
+<a name="task-dispatcher"><h5>&lt;processing:task-dispatcher&gt;</h5></a>
+
+This element defines a `TaskDispatcher` in the Dispatcher chain.
+
+A `TaskDispatcher` dispatches `Tasks` to `TaskProcessors` using according to a
+`TaskDispatchPolicy`.
+
+A `TaskDispatchPolicy` must be specified as a child element to the `TaskDispatcher`.
+If no `TaskDispatchPolicy` is specified, the `RoundRobinPolicy` is used.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:dispatchers&gt;](#dispatchers).
+
+*Attributes:*
+
+The following attribute must be defined a part of this element:
+
+*   `displayname` **(required)**
+
+    The display name of the `TaskDispatcher`.
+
+*Child Elements:*
+
+One of the following elements must be defined as children of this element:
+
+*   [&lt;processing:attribute-match-policy&gt;](#attribute-match-policy)
+
+    Specifies an Attribute Matching Task Dispatch Policy.
+
+*   [&lt;processing:composite-policy&gt;](#composite-policy)
+
+    Specifies a Composite Task Dispatch Policy.
+
+*   [&lt;processing:round-robin-policy&gt;](#round-robin-policy)
+
+    Specifies a Round Robin Task Dispatch Policy.
+
+*   [&lt;processing:random-policy&gt;](#random-policy)
+
+    Specifies a Random Task Dispatch Policy.
+
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element, defining an `TaskDispatchPolicy`
+    to be used for instantiating a custom `TaskDispatchPolicy` implementation.
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element, defining an `TaskDispatchPolicy`
+    to be used for instantiating a custom `TaskDispatchPolicy` implementation.
+
+
+------------------------------------------------------------------------------
+
+<a name="taskprocessordefinition"><h5>&lt;processing:taskprocessordefinition&gt;</h5></a>
+
+This element defines a `TaskProcessor` that of which may be used for executing
+`Tasks` dispatched by `TaskDispatchers`.
+
+*Used in:*
+
+This element is a child element of [&lt;processing:task-processors&gt;](#task-processors).
+
+*Attributes:*
+
+The following attributes must be defined a part of this element:
+
+*   `id` **(required)**
+
+    The unique identity for the `TaskProcessor`.
+
+*   `displayname` **(required)**
+
+    The display name for the `TaskProcessor`.
+
+*   `type` **(required)**
+
+    The type of the `TaskProcessor` indicates where it will be instantiated.
+    There are two valid types:
+
+    `GRID` indicating the `TaskProcessor` should be instantiated in every
+    Cluster Member.
+
+    `SINGLE` indicating that the `TaskProcessor` should be instantiated only
+    in a single Cluster Member.
+
+*Child Elements:*
+
+One of the following elements must be defined as child of this element:
+
+*   [&lt;processing:default-taskprocessor&gt;](#default-taskprocessor)
+
+    The default definition of a `TaskProcessor`.
+
+*   &lt;instance&gt;
+
+    An Oracle Coherence `<instance>` element, defining an `TaskProcessor`
+    to be used for instantiating a custom `TaskProcessor` implementation.
+
+*   &lt;class-scheme&gt;
+
+    An Oracle Coherence `<class-scheme>` element, defining an `TaskDispatchPolicy`
+    to be used for instantiating a custom `TaskProcessor` implementation.
+
+Zero or more of the following elements may be defined as children of this element:
+
+*   [&lt;processing:attribute&gt;](#attribute)
+
+    An attribute that must be part of the `Submission` in order for the `Task`
+    to be executed by the `TaskProcessor` when using the
+    [&lt;processing:attribute-matching-policy&gt;](#attribute-matching-policy).
+
+
+------------------------------------------------------------------------------
+
+<a name="taskprocessors"><h5>&lt;processing:taskprocessors&gt;</h5></a>
+
+This element defines `TaskProcessor`s that of which are used by `TaskDispatchers`
+for executing `Tasks`.
+
+*Used in:*
+
+This element is a child element ofeither [&lt;processing:cluster-config&gt;](#cluster-config)
+or [&lt;processing:extend-config&gt;](#extend-config).
+
+*Child Elements:*
+
+One of the following elements must be defined as child of this element:
+
+*   [&lt;processing:taskprocessordefinition&gt;](#taskprocessordefinition)
+
+    The definition of a `TaskProcessor`.
+
+*Example:*
+
+    <processing:taskprocessors>
+        <processing:taskprocessordefinition id="GridTaskProcessor"
+                                            displayname="Grid Task Processor"
+                                            type="GRID">
+
+            <processing:default-taskprocessor id="GridTaskProcessor"
+                                              threadpoolsize="10" />
+
+            <processing:attribute name="operating-system">LINUX</processing:attribute>
+        </processing:taskprocessordefinition>
+    </processing:taskprocessors>
+
+
+------------------------------------------------------------------------------

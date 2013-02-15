@@ -30,21 +30,22 @@ semantically compatible with the projects released as part of Oracle Coherence
 Incubator 10.  Very few changes to the underlying project implementations have 
 occurred, apart from resolving minor defect fixes and any necessary dependency updates.  
 
-The most significant change however is in how the Oracle Coherence Incubator is
-now structured, build and organized.  In a nut shell, the following changes 
+The most significant change is in how the Oracle Coherence Incubator is
+now licensed, structured, built and organized.  In a nut shell, the following changes
 have occurred: 
 
 1.  Refactored all of the projects to be arranged in a single source tree, with 
     separate folders for each project and their associated examples.
-2.  Restructured all of the projects follow typical [Apache Maven](http://maven.apache.org/) 
+2.  Restructured all of the projects to follow classical [Apache Maven](http://maven.apache.org/)-style
     conventions.
 3.  Completely re-wrote the build system to use [Apache Maven](http://maven.apache.org/)
     instead of Apache Ant.
 4.  Ratified and released all of the projects under a standard open source 
     license (CDDL).
-5.  Formalized the mechanism and process for accepting contributions.
-6.  Completely migrated the existing "closed" Atlassian Confluence-based 
-    documentation to be part of the source tree, thus enabling contributions.
+5.  Formalized the mechanism and process for accepting Coherence Community contributions.
+6.  Completely migrated the existing Atlassian Confluence-based
+    documentation (from coherence.oracle.com) to be part of the source tree, thus
+    enabling documentation version control and Coherence Community Contributions.
 7.  Rationalized all projects to use a single Oracle Coherence Incubator version 
     number instead of individual version numbers.
 8.  Migrated the source repository to GitHub.
@@ -87,7 +88,7 @@ Provides a distributed implementation of the classic Functor Pattern.
 
 Provides example uses of the Functor Pattern.
 
-**The Processing Pattern:**
+[**The Processing Pattern:**](processingpattern/index.html)
 
 Provides an mechanism to perform distributed, grid computing with Coherence.
 
@@ -119,7 +120,14 @@ Supported Coherence Versions
 
 While most of the code may work fine with older Coherence releases, versions 
 of Coherence prior 3.7.1 are not officially supported.  All builds and routine
-testing only occurs on Coherence 3.7.1+.
+testing occurs only on Coherence 3.7.1.x+.
+
+Supported Java Versions
+-----------------------
+
+This version of the Coherence Incubator targets Java 6 language features.  This
+however does not restrict it's usage with later versions of Java, including Java 7
+and 8 (though these are not routinely tested).
 
 Contributions
 -------------
