@@ -76,6 +76,9 @@
     </modules>
 
     <properties>
+        <!-- project options -->
+        <skip-sign-artifacts>true</skip-sign-artifacts>
+
         <!-- source code repository information -->
         <source.owner>coherence-community</source.owner>
         <source.repository>coherence-incubator</source.repository>
@@ -93,6 +96,7 @@
         <maven.dependency.plugin.version>2.6</maven.dependency.plugin.version>
         <maven.deploy.plugin.version>2.7</maven.deploy.plugin.version>
         <maven.enforcer.plugin.version>1.0.1</maven.enforcer.plugin.version>
+        <maven.gpg.plugin.version>1.4</maven.gpg.plugin.version>
         <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
         <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
         <maven.release.plugin.version>2.2.1</maven.release.plugin.version>
@@ -112,7 +116,7 @@
         <miglayout.version>3.6</miglayout.version>
         <mockito.version>1.9.0</mockito.version>
         <oracle.coherence.version>3.7.1.7</oracle.coherence.version>
-        <oracle.tools.version>0.0.7</oracle.tools.version>
+        <oracle.tools.version>0.0.8-SNAPSHOT</oracle.tools.version>
         <powermock.version>1.4.12</powermock.version>
     </properties>
 
@@ -147,6 +151,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -220,6 +227,24 @@
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven.gpg.plugin.version}</version>
+                <configuration>
+                    <skip>${skip-sign-artifacts}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

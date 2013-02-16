@@ -73,7 +73,7 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
         // determine the port for connections
         int port = getAvailablePortIterator().next();
 
-        jndiProviderURL = String.format("tcp://%s:%d", Constants.LOCAL_HOST, port);
+        jndiProviderURL = String.format("tcp://%s:%d", Constants.getLocalHost(), port);
 
         // determine the file-system location for ActiveMQ files
         // (even turning off persistence will create some files unfortunately!)
