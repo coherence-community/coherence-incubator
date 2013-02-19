@@ -282,7 +282,6 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
             incrementCompleteCount(nonCacheEvents.size());
             }
 
-       x
         return getCompletedCount();
     }
 
