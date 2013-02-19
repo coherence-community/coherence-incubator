@@ -36,10 +36,9 @@ import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
 
-import com.oracle.coherence.common.network.Constants;
-
 import com.oracle.tools.junit.AbstractTest;
 
+import com.oracle.tools.runtime.network.Constants;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -99,7 +98,7 @@ public class EC2AddressProviderTest extends AbstractTest
         stub(mockElasticIPAddress.getInstanceId()).toReturn("wka-instance");
         stub(mockInstance.getInstanceId()).toReturn("wka-instance");
 
-        stub(mockInstance.getPrivateIpAddress()).toReturn(Constants.LOCAL_HOST);
+        stub(mockInstance.getPrivateIpAddress()).toReturn(Constants.getLocalHost());
 
         EC2AddressProvider      addressProvider = new EC2AddressProvider("dummy");
 
@@ -147,7 +146,7 @@ public class EC2AddressProviderTest extends AbstractTest
         stub(mockElasticIPAddress.getInstanceId()).toReturn("wka-instance");
         stub(mockInstance.getInstanceId()).toReturn("wka-instance");
 
-        stub(mockInstance.getPrivateIpAddress()).toReturn(Constants.LOCAL_HOST);
+        stub(mockInstance.getPrivateIpAddress()).toReturn(Constants.getLocalHost());
 
         EC2AddressProvider      addressProvider = new EC2AddressProvider("dummy");
 
@@ -193,7 +192,7 @@ public class EC2AddressProviderTest extends AbstractTest
         stub(mockElasticIPAddress.getInstanceId()).toReturn("elastic-instance");
         stub(mockInstance.getInstanceId()).toReturn("another-instance");
 
-        stub(mockInstance.getPrivateIpAddress()).toReturn(Constants.LOCAL_HOST);
+        stub(mockInstance.getPrivateIpAddress()).toReturn(Constants.getLocalHost());
 
         EC2AddressProvider      addressProvider = new EC2AddressProvider("dummy");
 
@@ -233,7 +232,7 @@ public class EC2AddressProviderTest extends AbstractTest
 
         stub(mockInstance.getInstanceId()).toReturn("another-instance");
 
-        stub(mockInstance.getPrivateIpAddress()).toReturn(Constants.LOCAL_HOST);
+        stub(mockInstance.getPrivateIpAddress()).toReturn(Constants.getLocalHost());
 
         EC2AddressProvider      addressProvider = new EC2AddressProvider("dummy");
 
