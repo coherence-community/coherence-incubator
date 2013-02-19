@@ -59,17 +59,5 @@
 			<autostart>true</autostart>
 		</distributed-scheme>
 
-        <proxy-scheme>
-            <service-name>ExtendTcpProxyService</service-name>
-            <acceptor-config>
-                <tcp-acceptor>
-                    <local-address>
-                        <address system-property="proxy.address">localhost</address>
-                        <port system-property="proxy.port">10000</port>
-                    </local-address>
-                </tcp-acceptor>
-            </acceptor-config>
-            <autostart>true</autostart>
-        </proxy-scheme>
 	</caching-schemes>
 </cache-config>

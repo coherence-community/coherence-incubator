@@ -27,15 +27,14 @@
     Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
  -->
 <cache-config
-	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
+        xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
 
-	xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
-	xmlns:jndi="class://com.oracle.coherence.environment.extensible.namespaces.JndiNamespaceContentHandler"
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
 
-    element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
+        element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
 
 	<defaults>
 		<serializer>pof</serializer>
@@ -46,34 +45,41 @@
 			<cache-name>publishing-*</cache-name>
 			<scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
 
+            <init-params>
+                <init-param>
+                    <param-name>write-behind-delay</param-name>
+                    <param-value system-property="write.behind.delay">0</param-value>
+                </init-param>
+            </init-params>
+
 			<event:distributor>
 				<event:distributor-name>{cache-name}</event:distributor-name>
 				<event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
 
-				<event:distributor-scheme element:replace-with-file="{event.distributor.config}" />
+                <event:distributor-scheme>
+                	<event:coherence-based-distributor-scheme/>
+                </event:distributor-scheme>
 
 				<event:distribution-channels>
 					<event:distribution-channel>
 						<event:channel-name>Remote Cluster Channel</event:channel-name>
-
 						<event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
                         <event:batch-size>1000</event:batch-size>
                         <event:distribution-delay>2000</event:distribution-delay>
-
 						<event:channel-scheme>
 							<event:remote-cluster-channel-scheme>
 								<event:remote-invocation-service-name>remote-site</event:remote-invocation-service-name>
 								<event:remote-channel-scheme>
-									<event:local-cache-channel-scheme>
-										<event:target-cache-name>{cache-name}</event:target-cache-name>
-										<event:conflict-resolver-scheme>
-											<class-scheme>
-												<class-name system-property="conflict.resolver.classname">
-													com.oracle.coherence.patterns.eventdistribution.channels.cache.BruteForceConflictResolver
-												</class-name>
-											</class-scheme>
-										</event:conflict-resolver-scheme>
-									</event:local-cache-channel-scheme>
+									<event:local-parallel-cache-channel-scheme>
+                                        <event:target-cache-name>{cache-name}</event:target-cache-name>
+                                        <event:conflict-resolver-scheme>
+                                            <class-scheme>
+                                                <class-name system-property="conflict.resolver.classname">
+                                                    com.oracle.coherence.patterns.eventdistribution.channels.cache.BruteForceConflictResolver
+                                                </class-name>
+                                            </class-scheme>
+                                        </event:conflict-resolver-scheme>
+									</event:local-parallel-cache-channel-scheme>
 								</event:remote-channel-scheme>
 							</event:remote-cluster-channel-scheme>
 						</event:channel-scheme>
@@ -102,17 +108,5 @@
 			</initiator-config>
 		</remote-invocation-scheme>
 
-		<proxy-scheme>
-			<service-name>ExtendTcpProxyService</service-name>
-			<acceptor-config>
-				<tcp-acceptor>
-					<local-address>
-						<address system-property="proxy.address">localhost</address>
-						<port system-property="proxy.port">10000</port>
-					</local-address>
-				</tcp-acceptor>
-			</acceptor-config>
-			<autostart>true</autostart>
-		</proxy-scheme>
 	</caching-schemes>
 </cache-config>

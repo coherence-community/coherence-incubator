@@ -3,7 +3,7 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of 
+ * The contents of this file are subject to the terms and conditions of
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
@@ -114,9 +114,9 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
      * {@inheritDoc}
      */
     @Override
-    protected ClusterMemberSchema newBaseClusterMemberSchema()
+    protected ClusterMemberSchema newBaseClusterMemberSchema(int iPort)
     {
-        return super.newBaseClusterMemberSchema().setSystemProperty("event.distributor.config",
+        return super.newBaseClusterMemberSchema(iPort).setSystemProperty("event.distributor.config",
                                                                     "test-jms-based-distributor-config.xml")
                                                                         .setSystemProperty("proxy.port",
                                                                                            getAvailablePortIterator())
@@ -128,9 +128,9 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
      * {@inheritDoc}
      */
     @Override
-    protected ClusterMemberSchema newPassiveClusterMemberSchema()
+    protected ClusterMemberSchema newPassiveClusterMemberSchema(int iPort)
     {
-        return newBaseClusterMemberSchema().setCacheConfigURI("test-passive-cluster-cache-config.xml")
+        return newBaseClusterMemberSchema(iPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
             .setClusterName("passive");
     }
 
@@ -139,9 +139,9 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
      * {@inheritDoc}
      */
     @Override
-    protected ClusterMemberSchema newActiveClusterMemberSchema()
+    protected ClusterMemberSchema newActiveClusterMemberSchema(int iPort)
     {
-        return newBaseClusterMemberSchema().setCacheConfigURI("test-remotecluster-eventchannel-cache-config.xml")
+        return newBaseClusterMemberSchema(iPort).setCacheConfigURI("test-remotecluster-eventchannel-cache-config.xml")
             .setClusterName("active");
     }
 }

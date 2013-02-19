@@ -65,7 +65,7 @@
                 <tcp-acceptor>
                     <local-address>
                         <address system-property="proxy.address">localhost</address>
-                        <port system-property="proxy.port">10000</port>
+                        <port system-property="proxy.port">15000</port>
                     </local-address>
                 </tcp-acceptor>
             </acceptor-config>

@@ -27,14 +27,13 @@
     Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
  -->
 <cache-config
-	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
+        xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
 
-    xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
 
-    element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
+        element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
 
 	<defaults>
 		<serializer>pof</serializer>

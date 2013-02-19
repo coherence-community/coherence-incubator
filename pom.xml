@@ -55,13 +55,13 @@
 
     <modules>
         <module>coherence-common</module>
-        
+
         <module>coherence-commandpattern</module>
         <module>coherence-commandpattern-examples</module>
-        
+
         <module>coherence-functorpattern</module>
         <module>coherence-functorpattern-examples</module>
-        
+
         <module>coherence-processingpattern</module>
         <module>coherence-processingpattern-examples</module>
 
@@ -70,6 +70,7 @@
 
         <module>coherence-pushreplicationpattern</module>
         <module>coherence-pushreplicationpattern-examples</module>
+        <module>coherence-scratch</module>
 
         <module>coherence-incubator-all</module>
         <module>coherence-incubator-site</module>
