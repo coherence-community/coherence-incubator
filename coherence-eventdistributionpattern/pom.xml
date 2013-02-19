@@ -43,7 +43,6 @@
             <groupId>javax.jms</groupId>
             <artifactId>jms</artifactId>
             <version>${javax.jms.version}</version>
-            <optional>true</optional>
         </dependency>
 
         <dependency>
