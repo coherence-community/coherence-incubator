@@ -36,25 +36,19 @@ import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
-import com.tangosol.io.ExternalizableLite;
-import com.tangosol.io.pof.PofReader;
-import com.tangosol.io.pof.PofWriter;
-import com.tangosol.io.pof.PortableObject;
-import com.tangosol.net.AbstractInvocable;
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.InvocationObserver;
 import com.tangosol.net.InvocationService;
 import com.tangosol.net.Member;
 import com.tangosol.net.NamedCache;
-import com.tangosol.net.PartitionedService;
+import com.tangosol.net.RequestTimeoutException;
+import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
-import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.NullImplementation;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,19 +56,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.ParallelLocalCacheEventChannel} is a {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.CacheEventChannel} implementation that will
- * distribute and apply {@link com.oracle.coherence.common.events.EntryEvent}s to a <strong>local</strong> {@link com.tangosol.net.NamedCache} (ie: contained
- * in the Coherence Cluster in which the {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.CacheEventChannel} is executing).
+ * A {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.ParallelLocalCacheEventChannel} is
+ * a {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.CacheEventChannel} implementation that will
+ * distribute and apply {@link com.oracle.coherence.common.events.EntryEvent}s to a <strong>local</strong>
+ * {@link com.tangosol.net.NamedCache} (ie: contained in the Coherence Cluster in which the
+ * {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.CacheEventChannel} is executing).
  * <p>
- * ie: This {@link com.oracle.coherence.patterns.eventdistribution.EventChannel} is very useful for distributing {@link com.oracle.coherence.common.events.Event}s to a cache in the local cluster.
+ * ie: This {@link com.oracle.coherence.patterns.eventdistribution.EventChannel} is very useful for distributing
+ * {@link com.oracle.coherence.common.events.Event}s to a cache in the local cluster.
  * <p>
- * To distribute {@link com.oracle.coherence.common.events.EntryEvent}s from to another cluster, you should use a {@link com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel} with
- * a {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.ParallelLocalCacheEventChannel} or potentially a {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannel} (though these have significantly
- * lower performance and throughput than of {@link com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel}s)
+ * To distribute {@link com.oracle.coherence.common.events.EntryEvent}s from to another cluster, you should
+ * use a {@link com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel} with
+ * a {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.ParallelLocalCacheEventChannel} or
+ * potentially a {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannel}
+ * (though these have significantly lower performance and throughput than of
+ * {@link com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel}s)
  * <p>
  * Copyright (c) 2011. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
@@ -98,9 +97,9 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     public static final String INVOCATION_SVC = "PublishingInvocationService";
 
     /**
-     * The total amount of time to wait in millis before throwing an exception
+     * The total amount of time to wait in millis for replication to complete before throwing an exception.
      */
-    public static final long   TOTAL_WAIT_MILLIS = 60000;
+    public static final long TOTAL_WAIT_MILLIS = 60000;
 
     /**
      * The {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor.Identifier} in which the
@@ -120,8 +119,8 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     private String targetCacheName;
 
     /**
-     * The {@link ConflictResolver} that will be used to resolve any conflicts the application of {@link com.oracle.coherence.common.events.EntryEvent}s
-     * may cause.
+     * The {@link ConflictResolver} that will be used to resolve any conflicts the application of
+     * {@link com.oracle.coherence.common.events.EntryEvent}s may cause.
      */
     private ParameterizedBuilder<ConflictResolver> conflictResolverBuilder;
 
@@ -131,19 +130,26 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     private EventChannelBuilder remoteChannelBuilder;
 
     /**
-     * The {@link ParameterProvider} that must be used to construct remote {@link com.oracle.coherence.patterns.eventdistribution.EventChannel}s.
+     * The {@link ParameterProvider} that must be used to construct remote
+     * {@link com.oracle.coherence.patterns.eventdistribution.EventChannel}s.
      */
     private ParameterProvider parameterProvider;
 
     /**
      * The total number of entries that have been inserted for this batch
      */
-    private int completedCount = 0;
+    private final AtomicInteger completedCount = new AtomicInteger();
 
     /**
-     *
+     * The cache service used by the entries being replicated by this channel.
      */
-    private volatile AtomicInteger cCompleted;
+    private DistributedCacheService service;
+
+    /**
+     * Object used to raise {@link Object#notifyAll()} upon completion of
+     * a replication invocation request.
+     */
+    private final Object NOTIFIER = new Object();
 
 
     /**
@@ -217,6 +223,23 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         }
     }
 
+    /**
+     * Return the cache service used by the cache entries being replicated.
+     *
+     * @return cache service
+     */
+    protected DistributedCacheService getCacheService()
+    {
+        // not bothering with a DCL here because we are not initializing
+        // the service; we are simply creating a reference to it; thus
+        // there is no harm if we do this more than once
+        if (service == null)
+        {
+            service = (DistributedCacheService) getTargetNamedCache().getCacheService();
+        }
+
+        return service;
+    }
 
     /**
      * {@inheritDoc}
@@ -224,196 +247,282 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     @Override
     public int send(Iterator<Event> events)
     {
-        PartitionedService partSvc = (PartitionedService) getTargetNamedCache().getCacheService();
-
         // First we need to split the events according to the member who should process them
-        HashMap<Member, List<Event>> memberEventMap = new HashMap<Member, List<Event>>();
-
-        // Save off the non distributable events and just run them here...
-        List<Event> nonCacheEvents = new ArrayList<Event>();
-
-        int iCount = 0;
-        while (events.hasNext())
-            {
-            Event e = events.next();
-
-            if (e instanceof DistributableEntryEvent)
-                {
-                DistributableEntryEvent distributableEntryEvent = (DistributableEntryEvent) e;
-                DistributableEntry entry = distributableEntryEvent.getEntry();
-                Binary binKey = entry.getBinaryKey();
-
-                int iPartition = binKey.calculateNaturalPartition(partSvc.getPartitionCount());
-
-                Member member = partSvc.getPartitionOwner(iPartition);
-
-                List<Event> eventList = memberEventMap.get(member);
-
-                if (eventList == null)
-                    {
-                    eventList = new ArrayList<Event>();
-                    }
-
-                eventList.add(e);
-                memberEventMap.put(member, eventList);
-                }
-            else
-                {
-                nonCacheEvents.add(e);
-                }
-
-            iCount++;
-            }
-
+        Map<Member, List<Event>> memberEventMap = mapEventsToMember(events);
+        Set<RemoteChannelAgentObserver> observerSet = new HashSet<RemoteChannelAgentObserver>();
 
         // Now that we've split up the batch, lets actually set ourselves up to send it
-        for (Map.Entry<Member, List<Event>> e : memberEventMap.entrySet())
-            {
-            Member member = e.getKey();
-            List<Event> eventList = e.getValue();
+        for (Map.Entry<Member, List<Event>> event : memberEventMap.entrySet())
+        {
+            observerSet.add(publishList(event.getKey(), event.getValue()));
+        }
 
-            publishList(member, eventList, partSvc);
+        long ldtStart = System.currentTimeMillis();
+
+        while (!observerSet.isEmpty() && (System.currentTimeMillis() - ldtStart < TOTAL_WAIT_MILLIS))
+        {
+            synchronized (NOTIFIER)
+            {
+                try
+                {
+                    NOTIFIER.wait(10);
+                }
+                catch (InterruptedException e)
+                {
+                    Thread.interrupted();
+                    throw Base.ensureRuntimeException(e);
+                }
             }
 
-        // Now lets just process the remaining ones locally
-        if (!nonCacheEvents.isEmpty())
+            // iterate over a copy of the observer set because we may add more entries
+            // to the set if a member failed; this will protect us from a CME since
+            // some iterator implementations can't tolerate modification of the
+            // backing collection
+            for (RemoteChannelAgentObserver observer : new HashSet<RemoteChannelAgentObserver>(observerSet))
             {
-            CacheEventChannelHelper.apply(getTargetNamedCache(), nonCacheEvents.iterator(), getConflictResolverBuilder());
-            incrementCompleteCount(nonCacheEvents.size());
+                if (observer.isCompleted())
+                {
+                    observerSet.remove(observer);
+                }
+                else if (observer.isMemberLeft())
+                {
+                    // the targeted member left the cluster; determine which members need to be
+                    // targeted for the entries the departed member previously owned
+                    for (Map.Entry<Member, List<Event>> event : mapEventsToMember(observer.getEvents()).entrySet())
+                    {
+                        observerSet.add(publishList(event.getKey(), event.getValue()));
+                    }
+                }
+                else if (observer.getException() != null)
+                {
+                    throw Base.ensureRuntimeException(observer.getException());
+                }
             }
+        }
+
+        if (!observerSet.isEmpty())
+        {
+            throw new RequestTimeoutException(
+                    String.format("InvocationService did not receive a response from members %s after %s ms",
+                            observerSet, System.currentTimeMillis() - ldtStart));
+        }
+
+        // todo: I don't know if this is needed for non DistributableEntryEvents, leaving
+        // this for now until we verify
+//        // Now lets just process the remaining ones locally
+//        if (!nonCacheEvents.isEmpty())
+//            {
+//            CacheEventChannelHelper.apply(getTargetNamedCache(), nonCacheEvents.iterator(), getConflictResolverBuilder());
+//            incrementCompleteCount(nonCacheEvents.size());
+//            }
 
         return getCompletedCount();
     }
 
-    public void publishList(Member member, List<Event> eventList, PartitionedService partSvc)
+    /**
+     * Split the events provided by the iterator by member.
+     *
+     * @param events list of events
+     *
+     * @return map of events, keyed by the member that owns the partition
+     *         for its list of events
+     */
+    protected Map<Member, List<Event>> mapEventsToMember(Iterator<Event> events)
+    {
+        Map<Member, List<Event>> map = new HashMap<Member, List<Event>>();
+
+        while (events.hasNext())
         {
+            Event  e = events.next();
+            Member member;
+
+            if (e instanceof DistributableEntryEvent)
+            {
+                DistributableEntry entry      = ((DistributableEntryEvent) e).getEntry();
+                Binary             binKey     = entry.getBinaryKey();
+                int                iPartition = getCacheService().getBackingMapManager().getContext().getKeyPartition(binKey);
+
+                member = getCacheService().getPartitionOwner(iPartition);
+            }
+            else
+            {
+                // target local events to "this" member
+                member = getCacheService().getCluster().getLocalMember();
+            }
+
+            List<Event> eventList = map.get(member);
+
+            if (eventList == null)
+            {
+                eventList = new ArrayList<Event>();
+            }
+
+            eventList.add(e);
+            map.put(member, eventList);
+        }
+
+        return map;
+    }
+
+    /**
+     * Invoke an asynchronous request to a member to replicate a list of events.
+     *
+     * @param member     the target member for the request
+     * @param eventList  the list of events to replicate
+     *
+     * @return an observer that will contain the results of the replication request
+     */
+    protected RemoteChannelAgentObserver publishList(Member member, List<Event> eventList)
+    {
         InvocationService invocationService = (InvocationService) CacheFactory.getService(INVOCATION_SVC);
-        HashSet<Member> set = new HashSet<Member>();
-        set.add(member);
+        RemoteChannelAgentObserver observer = new RemoteChannelAgentObserver(eventList);
 
         invocationService.execute(new RemoteClusterEventChannel.RemoteDistributionAgent(
                 distributorIdentifier, controllerIdentifier, eventList, remoteChannelBuilder, parameterProvider),
-                set, new RemoteChannelAgentObserver(eventList, this, partSvc));
-        }
+                Collections.singleton(member), observer);
+
+        return observer;
+    }
 
     /**
      * Increment the completed count by the amount specified
      *
      * @param count - The amount to increment the completed count by
      */
-    public synchronized void incrementCompleteCount(int count)
-        {
-        completedCount += count;
-        notify();
-        }
-
+    public void incrementCompleteCount(int count)
+    {
+        completedCount.addAndGet(count);
+    }
 
     /**
      *  Get the completed count
      *
      * @return the completed count
      */
-    public synchronized int getCompletedCount()
-        {
-        return completedCount;
-        }
+    public int getCompletedCount()
+    {
+        return completedCount.get();
+    }
 
     /**
      * This Observer will keep track or the requests we sent
      */
-    public static class RemoteChannelAgentObserver implements InvocationObserver
-        {
+    public class RemoteChannelAgentObserver implements InvocationObserver
+    {
+        /**
+         * The list of events this invocation is attempting to replicate.
+         */
+        private final List<Event> eventList;
 
         /**
-         * A reference back to the event channel that instantiated us
+         * Flag that indicates whether the invocation successfully completed.
          */
-        private ParallelLocalCacheEventChannel eventChannel;
+        private volatile boolean completed;
 
         /**
-         * The list of events that we tried to publish
+         * Flag that indicates whether the target member for this invocation
+         * left the cluster before the invocation was completed.
          */
-        private List<Event> eventList;
+        private volatile boolean memberLeft;
 
         /**
-         * The PartitionedService used to send these events
+         * Exception thrown by the target member when processing the
+         * invocation request.
          */
-        private PartitionedService partSvc;
-
+        private volatile Throwable exception;
 
         /**
          * Constructor
          *
-         * @param events   The list of events that we want to insert
-         * @param channel  The channel that will be used to insert the events
-         * @param service  The PartitionedService used to locally perform the insert
+         * @param events  the list of events that we want to insert
          */
-        public RemoteChannelAgentObserver(List<Event> events, ParallelLocalCacheEventChannel channel,
-                                          PartitionedService service)
-            {
-            eventChannel      = channel;
-            eventList         = events;
-            partSvc           = service;
-            }
-
-
-        @Override
-        public void memberCompleted(Member member, Object o)
-            {
-                eventChannel.incrementCompleteCount((Integer) o);
-            }
-
-        @Override
-        public void memberFailed(Member member, Throwable throwable)
-            {
-            // ToDo need to throw something here
-            }
-
-        @Override
-        public void memberLeft(Member member)
-            {
-            // The member left we need to retry
-            Iterator<Event> events = eventList.iterator();
-            HashMap<Member, List<Event>> memberEventMap = new HashMap<Member, List<Event>>();
-
-            while (events.hasNext())
-                {
-                Event e = events.next();
-
-                DistributableEntryEvent distributableEntryEvent = (DistributableEntryEvent) e;
-                DistributableEntry entry = distributableEntryEvent.getEntry();
-                Binary binKey = entry.getBinaryKey();
-
-                int iPartition = binKey.calculateNaturalPartition(partSvc.getPartitionCount());
-
-
-                Member mbr = partSvc.getPartitionOwner(iPartition);
-
-                List<Event> eventList = memberEventMap.get(member);
-
-                if (eventList == null)
-                    {
-                    eventList = new ArrayList<Event>();
-                    }
-
-                eventList.add(e);
-                memberEventMap.put(mbr, eventList);
-                }
-
-            for (Map.Entry<Member, List<Event>> e : memberEventMap.entrySet())
-                {
-                Member mbr = e.getKey();
-                List<Event> eventList = e.getValue();
-
-                eventChannel.publishList(mbr, eventList, partSvc);
-                }
-            }
-
-        @Override
-        public void invocationCompleted()
-            {
-            // This is always an invocation against a single member and we handle completion in the MemberComplete event
-            }
+        public RemoteChannelAgentObserver(List<Event> events)
+        {
+            eventList = events;
         }
 
+        /**
+         * Return an iterator over the events this request will attempt to replicate.
+         *
+         * @return iterator for events
+         */
+        public Iterator<Event> getEvents()
+        {
+            return eventList.iterator();
+        }
 
+        /**
+         * Return true if this invocation successfully completed.
+         *
+         * @return true if this invocation successfully completed
+         */
+        public boolean isCompleted()
+        {
+            return completed;
+        }
+
+        /**
+         * Return true if the target member for this invocation
+         * left the cluster before the invocation was completed.
+         *
+         * @return true if the target member left the cluster
+         */
+        public boolean isMemberLeft()
+        {
+            return memberLeft;
+        }
+
+        /**
+         * Exception thrown by the target member when processing the
+         * invocation request.
+         *
+         * @return the exception thrown by the target member; null
+         *         if no exception was thrown
+         */
+        public Throwable getException()
+        {
+            return exception;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void memberCompleted(Member member, Object o)
+        {
+            ParallelLocalCacheEventChannel.this.incrementCompleteCount((Integer) o);
+            completed = true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void memberFailed(Member member, Throwable throwable)
+        {
+            exception = throwable;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void memberLeft(Member member)
+        {
+            memberLeft = true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void invocationCompleted()
+        {
+            // This is always an invocation against a single member and we handle completion in the MemberComplete event
+            synchronized (NOTIFIER)
+            {
+                NOTIFIER.notifyAll();
+            }
+        }
+    }
 }
