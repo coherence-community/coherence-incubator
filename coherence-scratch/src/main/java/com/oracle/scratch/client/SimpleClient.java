@@ -33,9 +33,11 @@ import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
+import com.tangosol.util.Resources;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.lang.reflect.Method;
@@ -88,7 +90,6 @@ public class SimpleClient
 
             try
             {
-                // attempt to load the properties (via the classpath)
                 BufferedReader reader =
                     new BufferedReader(new InputStreamReader(ClassLoader
                         .getSystemResourceAsStream(propertiesFileName)));
@@ -100,75 +101,24 @@ public class SimpleClient
                 reader.close();
 
                 // determine the application class name (for main)
-                String testMethodName = applicationProperties.getProperty("testname");
+                String testMethodName = loadProperty("testname", applicationProperties, propertiesFileName);
 
-                if (testMethodName == "runPutClient")
+                if (testMethodName.equals("runPutClient"))
                     {
-                    String sourcePort = applicationProperties.getProperty("sourcePort");
+                    String sourceHost      = loadProperty("sourcehost", applicationProperties, propertiesFileName);
+                    String sourcePort      = loadProperty("sourceport", applicationProperties, propertiesFileName);
+                    String destinationHost = loadProperty("destinationhost", applicationProperties, propertiesFileName);
+                    String destinationPort = loadProperty("destinationport", applicationProperties, propertiesFileName);
+                    String cacheConfig     = loadProperty("cacheconfig", applicationProperties, propertiesFileName);
+                    String cacheName       = loadProperty("cachename", applicationProperties, propertiesFileName);
 
-                    if (sourcePort == null)
-                        {
-                        throw new IllegalArgumentException("sourcePort missing from properties file");
-                        }
+                    int     entriesPerIteration = Integer.parseInt(loadProperty("entriesperiteration", applicationProperties, propertiesFileName));
+                    int     basekey             = Integer.parseInt(loadProperty("basekey", applicationProperties, propertiesFileName));
+                    int     publishIterations   = Integer.parseInt(loadProperty("publishiterations", applicationProperties, propertiesFileName));
+                    boolean usePutAll           = Boolean.parseBoolean(loadProperty("useputall", applicationProperties, propertiesFileName));
+                    long    lTimeoutMillis      = Long.parseLong(loadProperty("timeoutmillis", applicationProperties, propertiesFileName));
 
-                    String destinationPort = applicationProperties.getProperty("destinationPort");
-
-                    if (destinationPort == null)
-                        {
-                        throw new IllegalArgumentException("destinationPort missing from properties file");
-                        }
-
-                    String cacheConfig = applicationProperties.getProperty("cacheConfig");
-
-                    if (cacheConfig == null)
-                        {
-                        throw new IllegalArgumentException("cacheConfig missing from properties file");
-                        }
-
-                    String cacheName = applicationProperties.getProperty("cacheName");
-
-                    if (cacheName == null)
-                        {
-                        throw new IllegalArgumentException("cacheName missing from properties file");
-                        }
-
-                    String entriesPerIterationString = applicationProperties.getProperty("entriesPerIteration");
-
-                    if (entriesPerIterationString == null)
-                        {
-                        throw new IllegalArgumentException("entriesPerIteration missing from properties file");
-                        }
-
-                    int entriesPerIteration = Integer.parseInt(entriesPerIterationString);
-
-                    String publishIterationsString = applicationProperties.getProperty("publishIterations");
-
-                    if (publishIterationsString == null)
-                        {
-                        throw new IllegalArgumentException("publishIterations missing from properties file");
-                        }
-
-                    int publishIterations = Integer.parseInt(publishIterationsString);
-
-                    String usePutAllString = applicationProperties.getProperty("usePutAll");
-
-                    if (usePutAllString == null)
-                        {
-                        throw new IllegalArgumentException("usePutAll missing from properties file");
-                        }
-
-                    boolean usePutAll = Boolean.parseBoolean(usePutAllString);
-
-                    String timeoutMillisString = applicationProperties.getProperty("timeoutMillis");
-
-                    if (timeoutMillisString == null)
-                        {
-                        throw new IllegalArgumentException("timeoutMillis missing from properties file");
-                        }
-
-                    long lTimeoutMillis = Long.parseLong(timeoutMillisString);
-
-                    runPutClient(sourcePort, destinationPort, cacheConfig, cacheName, entriesPerIteration, publishIterations,
+                    runPutClient(sourcePort, sourceHost, destinationPort, destinationHost, cacheConfig, cacheName, basekey, entriesPerIteration, publishIterations,
                             usePutAll, lTimeoutMillis);
                     }
             }
@@ -177,6 +127,7 @@ public class SimpleClient
                 System.out.printf("ERROR: Unable to loaded the application properties file [%s] due to:\n%s",
                                   propertiesFileName,
                                   e);
+            e.printStackTrace();
             }
         }
         else
@@ -199,15 +150,19 @@ public class SimpleClient
      * @param destinationPort
      * @param cacheConfig
      * @param cacheName
+     * @param baseKey
      * @param entriesPerIteration
      * @param publishIterations
      * @param usePutAll
      * @param timeoutMillis
      */
     public static void runPutClient(String sourcePort,
+                             String       sourceHost,
                              String       destinationPort,
+                             String       destinationHost,
                              String       cacheConfig,
                              final String cacheName,
+                             int          baseKey,
                              int          entriesPerIteration,
                              int          publishIterations,
                              boolean      usePutAll,
@@ -216,6 +171,7 @@ public class SimpleClient
         // turn off local clustering
         System.setProperty("tangosol.coherence.tcmp.enabled", "false");
         System.setProperty("remote.port", sourcePort);
+        System.setProperty("remote.address", sourceHost);
         System.setProperty("tangosol.pof.config", "test-pof-config.xml");
 
         // Connect to source site
@@ -224,7 +180,7 @@ public class SimpleClient
 
         long lStartTime = System.currentTimeMillis();
 
-        for (int x = 0; x < publishIterations; ++x)
+        for (int x = baseKey; x < baseKey + publishIterations; ++x)
         {
             populateNamedCache(CacheFactory.getCache(cacheName),
                                entriesPerIteration,
@@ -240,6 +196,7 @@ public class SimpleClient
 
         // assert that the values have arrived in the remote site
         System.out.printf("Connecting to PASSIVE site.\n");
+        System.setProperty("remote.address", destinationHost);
         System.setProperty("remote.port", destinationPort);
         CacheFactory.setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
@@ -259,7 +216,7 @@ public class SimpleClient
         };
 
         System.out.printf("\nWaiting for %d entries to synchronize between ACTIVE and PASSIVE site.\n",
-                          activeCache.size());
+                          entriesPerIteration * publishIterations);
 
         NamedCache namedCache = deferredNamedCache.getResource();
 
@@ -274,7 +231,7 @@ public class SimpleClient
 
             System.out.printf("Test completed replicating %d entries in %d millis\n",
                               (entriesPerIteration * publishIterations),
-                              lFinishTime);
+                              lTestTime);
         }
     }
 
@@ -364,4 +321,17 @@ public class SimpleClient
             return false;
         }
     }
+
+    public static String loadProperty(String propertyName, Properties properties, String fileName)
+        {
+        String value = properties.getProperty(propertyName);
+
+        if (value == null)
+            {
+            //throw new IllegalArgumentException(propertyName + " missing from " + fileName);
+            return "0";
+            }
+
+        return value;
+        }
 }
