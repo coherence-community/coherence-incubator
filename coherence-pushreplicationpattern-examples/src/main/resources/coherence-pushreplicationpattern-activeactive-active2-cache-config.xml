@@ -33,46 +33,45 @@
     <defaults>
         <serializer>pof</serializer>
     </defaults>
-    
+
+    <caching-scheme-mapping>
+        <cache-mapping>
+            <cache-name>publishing-cache</cache-name>
+            <scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
+
+            <event:distributor>
+                <event:distributor-name>{cache-name}</event:distributor-name>
+                <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
+
+                <event:distributor-scheme>
+                    <event:coherence-based-distributor-scheme/>
+                </event:distributor-scheme>
+
+                <event:distribution-channels>
+                    <event:distribution-channel>
+                        <event:channel-name>Active2 Publisher</event:channel-name>
+                        <event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
+
+                        <event:channel-scheme>
+                            <event:remote-cluster-channel-scheme>
+                                <event:remote-invocation-service-name>remote-site1</event:remote-invocation-service-name>
+                                <event:remote-channel-scheme>
+                                    <event:local-cache-channel-scheme>
+                                        <event:target-cache-name>publishing-cache</event:target-cache-name>
+                                        <event:conflict-resolver-scheme>
+                                            <cr:class classname="com.oracle.coherence.patterns.pushreplication.examples.activeactive.ActiveActiveSumConflictResolver"/>
+                                        </event:conflict-resolver-scheme>
+                                    </event:local-cache-channel-scheme>
+                                </event:remote-channel-scheme>
+                            </event:remote-cluster-channel-scheme>
+                        </event:channel-scheme>
+                    </event:distribution-channel>
+                </event:distribution-channels>
+            </event:distributor>
+        </cache-mapping>
+    </caching-scheme-mapping>
+
     <caching-schemes>
-        <caching-scheme-mapping>
-            <cache-mapping>
-                <cache-name>publishing-cache</cache-name>
-                <scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
-                
-                <event:distributor>
-                    <event:distributor-name>{cache-name}</event:distributor-name>
-                    <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
-                    
-                    <event:distributor-scheme>
-                        <event:coherence-based-distributor-scheme/>
-                    </event:distributor-scheme>
-                    
-                    <event:distribution-channels>
-                        <event:distribution-channel>
-                            <event:channel-name>Active2 Publisher</event:channel-name>
-                            <event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
-                            
-                            <event:channel-scheme>
-                                <event:remote-cluster-channel-scheme>
-                                    <event:remote-invocation-service-name>remote-site1</event:remote-invocation-service-name>
-                                    <event:remote-channel-scheme>
-                                        <event:local-cache-channel-scheme>
-                                            <event:target-cache-name>publishing-cache</event:target-cache-name>
-                                            <event:conflict-resolver-scheme>
-                                                <cr:class classname="com.oracle.coherence.patterns.pushreplication.examples.activeactive.ActiveActiveSumConflictResolver"/>
-                                            </event:conflict-resolver-scheme>
-                                        </event:local-cache-channel-scheme>
-                                    </event:remote-channel-scheme>
-                                </event:remote-cluster-channel-scheme>
-                            </event:channel-scheme>
-                        </event:distribution-channel>
-                    </event:distribution-channels>
-                </event:distributor>
-            </cache-mapping>
-        </caching-scheme-mapping>
-
-
         <!--
             The following scheme is required for each remote-site when
             using a RemoteInvocationPublisher

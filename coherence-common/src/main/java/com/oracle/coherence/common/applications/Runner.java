@@ -62,7 +62,7 @@ public class Runner
      *      <li>Argumentn=valuen</li>
      * </ol>
      *
-     * @param arguments  the arguments for the {@link ExampleRunner}
+     * @param arguments  the arguments for the {@link Runner}
      */
     public static void main(String[] arguments)
     {

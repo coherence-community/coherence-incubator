@@ -56,6 +56,37 @@ have occurred:
 For more detailed information concerning changes in this release please consult the 
 project [history](history.html).
 
+Migrating from Previous Releases
+--------------------------------
+
+Migrating from Oracle Coherence Incubator 10 to this release is typically as simple
+as swapping to use the new distribution `jars`, those of which are available for
+download (if you're not using Maven) from [maven.java.net](http://maven.java.net).
+
+If you're using Maven you can acquire the "uber" distribution artifact using the
+following dependency declaration:
+
+    <dependency>
+        <groupId>com.oracle.coherence.incubator<groupId>
+        <artifactId>coherence-incubator-all</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+
+Should you require individual project distributions, the artifacts Ids are as
+follows:
+
+    coherence-common, coherence-commandpattern, coherence-functorpattern,
+    coherence-processingpattern, coherence-messagingpattern,
+    coherence-eventdistributionpattern, coherence-pushreplicationpattern
+
+While the source code is readily available on [github](http://github.com/coherence-community),
+the source code and java documentation for each released version and artifact also
+published to Maven.
+
+Migrating from releases prior to Oracle Coherence Incubator 10 requires more effort,
+typically refactoring configuration.  Some patterns may require more effort than
+others, however once migrated to this release, moving forward will be much easier.
+
 Project Modules
 ---------------
 
