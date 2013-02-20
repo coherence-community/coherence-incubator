@@ -419,8 +419,7 @@ public class RemoteClusterEventChannel
             this.parameterProvider         = parameterProvider;
         }
 
-
-        /**
+    /**
          * REMEMBER: The following method is executed in the remote cluster!
          */
         public void run()
@@ -429,19 +428,19 @@ public class RemoteClusterEventChannel
 
             try
             {
-                ensureMBean();
                 long ldtStart = Base.getSafeTimeMillis();
 
                 channel.connect(distributorIdentifier, controllerIdentifier);
-
                 int cEvents = channel.send(events.iterator());
-
                 setResult(new Integer(cEvents));
 
                 channel.disconnect();
 
-                EventApplyManager.getInstance().updateEventStats(cEvents,
+                if (! getService().getInfo().getServiceName().equals("PublishingInvocationService"))
+                    {
+                    EventApplyManager.getInstance().updateEventStats(cEvents,
                         ldtStart, Base.getSafeTimeMillis());
+                    }
 
             }
             catch (Exception exception)
@@ -451,14 +450,6 @@ public class RemoteClusterEventChannel
                                                            controllerIdentifier, distributorIdentifier));
             }
         }
-
-        /**
-        * Ensure that an MBean for the remote stats exists
-        */
-        private void ensureMBean()
-            {
-
-            }
 
         /**
          * {@inheritDoc}

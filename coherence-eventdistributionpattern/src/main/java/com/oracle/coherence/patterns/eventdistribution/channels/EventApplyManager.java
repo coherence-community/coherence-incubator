@@ -53,7 +53,6 @@ public class EventApplyManager
 
               //  String mBeanName = "type=EventApplyManager" + sSuffix;
 
-                System.out.println("Registering MBean name " + mBeanName);
                 registry.register(mBeanName, instance);
                 }
 

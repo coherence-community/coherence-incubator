@@ -250,6 +250,13 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     {
         // First we need to split the events according to the member who should process them
         Map<Member, List<Event>> memberEventMap = mapEventsToMember(events);
+
+        int cEntries = 0;
+        for (Map.Entry<Member, List<Event>> e : memberEventMap.entrySet())
+            {
+            cEntries += e.getValue().size();
+            }
+
         Set<RemoteChannelAgentObserver> observerSet = new HashSet<RemoteChannelAgentObserver>();
 
         // Now that we've split up the batch, lets actually set ourselves up to send it
@@ -497,9 +504,9 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         @Override
         public void memberCompleted(Member member, Object o)
         {
+            //System.out.println("Registering MBean name " + mBeanName);
             EventApplyManager.getInstance(String.valueOf(member.getId())).updateEventStats(
-                    eventList.size(), ldtStart, Base.getSafeTimeMillis());
-
+                eventList.size(), ldtStart, Base.getSafeTimeMillis());
             ParallelLocalCacheEventChannel.this.incrementCompleteCount((Integer) o);
 
             completed = true;
