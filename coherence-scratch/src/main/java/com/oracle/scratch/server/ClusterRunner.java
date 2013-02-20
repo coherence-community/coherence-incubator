@@ -30,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -48,7 +49,7 @@ public class ClusterRunner
      *
      * @throws IOException
      */
-    public static void main(String[] arguments) throws IOException
+    public static void main(String[] arguments) throws Exception
     {
         System.out.println("-----------------------------------------------------------");
         System.out.println("Oracle Simple Cluster Runner");
@@ -88,22 +89,44 @@ public class ClusterRunner
                 int proxyCount      = Integer.parseInt(loadProperty("proxycount", applicationProperties, propertiesFileName));
                 int managementCount = Integer.parseInt(loadProperty("managementcount", applicationProperties, propertiesFileName));
                 int clusterPort     = Integer.parseInt(loadProperty("clusterport", applicationProperties, propertiesFileName));
-                int proxyPort     = Integer.parseInt(loadProperty("proxyport", applicationProperties, propertiesFileName));
+                int proxyPort       = Integer.parseInt(loadProperty("proxyport", applicationProperties, propertiesFileName));
+                int remoteProxyPort = Integer.parseInt(loadProperty("remoteproxyport", applicationProperties, propertiesFileName));
                 int JMXPort         = Integer.parseInt(loadProperty("jmxport", applicationProperties, propertiesFileName));
 
                 String serverConfig     = loadProperty("serverconfig", applicationProperties, propertiesFileName);
                 String proxyConfig      = loadProperty("proxyconfig", applicationProperties, propertiesFileName);
                 String managementConfig = loadProperty("managementconfig", applicationProperties, propertiesFileName);
+                String pofConfig        = loadProperty("pofconfig", applicationProperties, propertiesFileName);
                 String siteName         = loadProperty("sitename", applicationProperties, propertiesFileName);
 
-                manager = new ClusterManager(serverCount, proxyCount, managementCount, clusterPort, proxyPort,
-                        JMXPort, serverConfig, proxyConfig, managementConfig, siteName);
+                // determine the system properties and application arguments
+                ArrayList<String> jvmArguments = new ArrayList<String>();
 
+                for (String propertyName : applicationProperties.stringPropertyNames())
+                    {
+                    if (propertyName.startsWith("jvmarg"))
+                        {
+                            try
+                            {
+                                jvmArguments.add(applicationProperties.getProperty(propertyName));
+                            }
+                            catch (Exception e)
+                            {
+                                throw new IllegalArgumentException(String
+                                    .format("ERROR: Invalid Argument Index for [%s=%s].  Should be of the form: jvmargN=value (where N is an integer)\n",
+                                            propertyName, applicationProperties.getProperty(propertyName)),
+                                                                   e);
+                            }
+                        }
+                    }
+
+                manager = new ClusterManager(serverCount, proxyCount, managementCount, clusterPort, proxyPort, remoteProxyPort,
+                                    JMXPort, serverConfig, proxyConfig, managementConfig, pofConfig, siteName, jvmArguments);
 
             }
             catch (Exception e)
             {
-                System.out.printf("ERROR: Unable to loaded the application properties file [%s] due to:\n%s",
+                System.out.printf("WARNING: Unable to loaded the application properties file [%s] due to:\n%s",
                                   propertiesFileName,
                                   e);
             }
@@ -117,11 +140,23 @@ public class ClusterRunner
 
             in.readLine();
             }
+        catch(Exception e)
+            {
+            e.printStackTrace();
+            throw e;
+            }
         finally
             {
-            manager.stopCluster();
+            if (manager != null)
+                {
+                manager.stopCluster();
+                }
             }
         }
+        else
+            {
+            System.out.println("Invalid usage: please provide the properties file you wish to run.");
+            }
     }
 
     public static String loadProperty(String propertyName, Properties properties, String fileName)
@@ -130,7 +165,8 @@ public class ClusterRunner
 
         if (value == null)
             {
-            throw new IllegalArgumentException(propertyName + " missing from " + fileName);
+            //throw new IllegalArgumentException(propertyName + " missing from " + fileName);
+            return "0";
             }
 
         return value;

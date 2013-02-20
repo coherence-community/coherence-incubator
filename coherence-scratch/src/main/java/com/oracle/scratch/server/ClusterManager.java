@@ -39,6 +39,7 @@ import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.VirtualizedJavaApplicationBuilder;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -49,17 +50,20 @@ import java.io.IOException;
  */
 public class ClusterManager
 {
-    private int     m_serverCount     = 1;
-    private int     m_proxyCount      = 0;
-    private int     m_managementCount = 1;
-    private int     m_clusterPort;
-    private int     m_proxyPort;
-    private int     m_JMXPort;
-    private String  m_serverConfig;
-    private String  m_proxyConfig;
-    private String  m_managementConfig;
-    private String  m_siteName;
-    private Cluster m_cluster;
+    private int          m_serverCount     = 1;
+    private int          m_proxyCount      = 0;
+    private int          m_managementCount = 1;
+    private int          m_clusterPort;
+    private int          m_proxyPort;
+    private int          m_remoteProxyPort;
+    private int          m_JMXPort;
+    private String       m_serverConfig;
+    private String       m_proxyConfig;
+    private String       m_managementConfig;
+    private String       m_pofConfig;
+    private String       m_siteName;
+    private List<String> m_jvmArgs;
+    private Cluster      m_cluster;
 
 
     /**
@@ -75,30 +79,38 @@ public class ClusterManager
      * @param serverConfig
      * @param proxyConfig
      * @param managementConfig
+     * @param pofConfig
      * @param siteName
+     * @param jvmArgs
      */
     public ClusterManager(int    serverCount,
                           int    proxyCount,
                           int    managementCount,
                           int    clusterPort,
                           int    proxyPort,
+                          int    remoteProxyPort,
                           int    JMXPort,
                           String serverConfig,
                           String proxyConfig,
                           String managementConfig,
-                          String siteName)
+                          String pofConfig,
+                          String siteName,
+                          List<String> jvmArgs)
     {
         m_serverCount      = serverCount;
         m_proxyCount       = proxyCount;
         m_managementCount  = managementCount;
         m_clusterPort      = clusterPort;
         m_proxyPort        = proxyPort;
+        m_remoteProxyPort  = remoteProxyPort;
         m_JMXPort          = JMXPort;
 
         m_serverConfig     = serverConfig;
         m_proxyConfig      = proxyConfig;
         m_managementConfig = managementConfig;
+        m_pofConfig        = pofConfig;
         m_siteName         = siteName;
+        m_jvmArgs          = jvmArgs;
     }
 
     /**
@@ -188,6 +200,25 @@ public class ClusterManager
         m_clusterPort = port;
     }
 
+    public void setProxyPort(int iPort)
+        {
+        m_proxyPort = iPort;
+        }
+
+    public int getProxyPort()
+        {
+        return m_proxyPort;
+        }
+
+    public void setRemoteProxyPort(int iPort)
+        {
+        m_remoteProxyPort = iPort;
+        }
+
+    public int getRemoteProxyPort()
+        {
+        return m_remoteProxyPort;
+        }
 
     /**
      * Method description
@@ -220,6 +251,16 @@ public class ClusterManager
     {
         return m_serverConfig;
     }
+
+    public void setJvmArgs(List<String> jvmArgs)
+        {
+        m_jvmArgs = jvmArgs;
+        }
+
+    public List<String> getJvmArgs()
+        {
+        return m_jvmArgs;
+        }
 
 
     /**
@@ -276,6 +317,16 @@ public class ClusterManager
         m_managementConfig = managementConfig;
     }
 
+    public void setPofConfig(String pofConfig)
+        {
+        m_pofConfig = pofConfig;
+        }
+
+    public String getPofConfig()
+        {
+        return m_pofConfig;
+        }
+
 
     /**
      * Method description
@@ -326,10 +377,35 @@ public class ClusterManager
      */
     public ClusterMemberSchema getBaseSchema()
     {
-        return new ClusterMemberSchema().setClusterPort(getClusterPort())
+        ClusterMemberSchema result =  new ClusterMemberSchema().setClusterPort(getClusterPort())
                 .setSiteName(getSiteName())
                 .setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-                .setSystemProperties(PropertiesBuilder.fromCurrentSystemProperties());
+                .setSystemProperties(PropertiesBuilder.fromCurrentSystemProperties())
+                .setPofConfigURI(getPofConfig());
+
+        for (String jvmArg : m_jvmArgs)
+            {
+            result.addOption(jvmArg);
+            }
+
+        return result;
+    }
+
+    public ClusterMemberSchema getProxySchema()
+    {
+        ClusterMemberSchema result =  new ClusterMemberSchema("com.tangosol.net.management.MBeanConnector").setClusterPort(getClusterPort())
+                .setSiteName(getSiteName())
+                .setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
+                .setSystemProperties(PropertiesBuilder.fromCurrentSystemProperties())
+                .setPofConfigURI(getPofConfig())
+                .setArgument("-rmi");
+
+        for (String jvmArg : m_jvmArgs)
+            {
+            result.addOption(jvmArg);
+            }
+
+        return result;
     }
 
 
@@ -345,36 +421,41 @@ public class ClusterManager
 
         serverSchema.setCacheConfigURI(getServerConfig())
             .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.REMOTE_ONLY)
-            .setRoleName("Server");
+            .setRoleName("Server")
+            .setSystemProperty("remote.port", getRemoteProxyPort());
 
-        // Setup the proxy schema
+    // Setup the proxy schema
         ClusterMemberSchema proxySchema = getBaseSchema();
 
         proxySchema.setCacheConfigURI(getProxyConfig()).setStorageEnabled(false)
-            .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.REMOTE_ONLY)
+            .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.ALL)
             .setRoleName("Proxy")
-            .setJMXPort(m_proxyPort);
+            .setSystemProperty("proxy.port", getProxyPort());
 
         // Setup the management schema
         ClusterMemberSchema managementSchema = getBaseSchema();
 
         managementSchema.setCacheConfigURI(getManagementConfig()).setStorageEnabled(false)
-            .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.ALL).setJMXAuthentication(false)
-            .setJMXPort(getJMXPort()).setJMXSupport(true).setRemoteJMXManagement(true).setRoleName("Management");
+                .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.ALL)
+                .setJMXAuthentication(false)
+                .setJMXPort(getJMXPort())
+                .setJMXSupport(true)
+                .setRemoteJMXManagement(true)
+                .setRoleName("Management");
 
         builder.addBuilder(new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>(),
                            serverSchema,
-                           "Server",
+                           getSiteName() + "-Server",
                            getServerCount());
 
         builder.addBuilder(new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>(),
                            proxySchema,
-                           "Proxy",
+                           getSiteName() + "-Proxy",
                            getProxyCount());
 
         builder.addBuilder(new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>(),
                            managementSchema,
-                           "Management",
+                           getSiteName() + "-Management",
                            getManagementCount());
 
         try
