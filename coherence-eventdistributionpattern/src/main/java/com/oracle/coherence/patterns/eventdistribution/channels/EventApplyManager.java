@@ -49,9 +49,9 @@ public class EventApplyManager
                 {
                 String sSuffix = id == "" ? "" : ",id=" + "ApplyToMember-" + id;
 
-              //  String mBeanName = registry.ensureGlobalName("type=EventApplyManager" + sSuffix);
+                String mBeanName = registry.ensureGlobalName("type=EventApplyManager" + sSuffix);
 
-                String mBeanName = "type=EventApplyManager" + sSuffix;
+              //  String mBeanName = "type=EventApplyManager" + sSuffix;
 
                 System.out.println("Registering MBean name " + mBeanName);
                 registry.register(mBeanName, instance);
