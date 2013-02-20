@@ -58,6 +58,7 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.InvocationService;
 
+import com.tangosol.util.Base;
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -83,14 +84,15 @@ import java.util.logging.Logger;
  * @author Brian Oliver
  */
 @SuppressWarnings("serial")
-public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
+public class RemoteClusterEventChannel
+        extends AbstractInterClusterEventChannel
 {
     /**
      * The {@link Logger} to use.
      */
     private static Logger logger = Logger.getLogger(RemoteClusterEventChannel.class.getName());
 
-    /**
+/**
      * The {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor.Identifier} in which the
      * {@link EventChannel} operates.
      */
@@ -128,6 +130,11 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
 
 
     /**
+     * The millis needed to do the apply.
+     */
+    private volatile long m_cApplyMillis;
+
+    /**
      * Standard Constructor.
      *
      * @param distributionRole
@@ -148,7 +155,6 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
         this.parameterProvider           = parameterProvider;
     }
 
-
     /**
      * Returns the {@link SupervisedResourceProvider} for the remote {@link InvocationService}.
      *
@@ -161,7 +167,6 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
                 .getResourceProvider(InvocationService.class,
                                      remoteInvocationServiceName);
     }
-
 
     /**
      * {@inheritDoc}
@@ -424,9 +429,20 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
 
             try
             {
+                ensureMBean();
+                long ldtStart = Base.getSafeTimeMillis();
+
                 channel.connect(distributorIdentifier, controllerIdentifier);
-                setResult(new Integer(channel.send(events.iterator())));
+
+                int cEvents = channel.send(events.iterator());
+
+                setResult(new Integer(cEvents));
+
                 channel.disconnect();
+
+                EventApplyManager.getInstance().updateEventStats(cEvents,
+                        ldtStart, Base.getSafeTimeMillis());
+
             }
             catch (Exception exception)
             {
@@ -436,6 +452,13 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
             }
         }
 
+        /**
+        * Ensure that an MBean for the remote stats exists
+        */
+        private void ensureMBean()
+            {
+
+            }
 
         /**
          * {@inheritDoc}
