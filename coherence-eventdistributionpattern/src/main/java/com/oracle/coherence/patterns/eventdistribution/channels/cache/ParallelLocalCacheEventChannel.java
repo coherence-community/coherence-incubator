@@ -251,12 +251,6 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         // First we need to split the events according to the member who should process them
         Map<Member, List<Event>> memberEventMap = mapEventsToMember(events);
 
-        int cEntries = 0;
-        for (Map.Entry<Member, List<Event>> e : memberEventMap.entrySet())
-            {
-            cEntries += e.getValue().size();
-            }
-
         Set<RemoteChannelAgentObserver> observerSet = new HashSet<RemoteChannelAgentObserver>();
 
         // Now that we've split up the batch, lets actually set ourselves up to send it
@@ -300,6 +294,9 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
                     {
                         observerSet.add(publishList(event.getKey(), event.getValue()));
                     }
+                    // this observer is for a member that has left the cluster, remove
+                    // it from the set of observers we are expecting results for
+                    observerSet.remove(observer);
                 }
                 else if (observer.getException() != null)
                 {
@@ -393,7 +390,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     }
 
     /**
-     * Increment the completed count by the amount specified
+     * Increment the completed count by the amount specified.
      *
      * @param count - The amount to increment the completed count by
      */
