@@ -103,6 +103,7 @@ The following elements are defined by this namespace.
 *   [local-cache-channel-scheme](#local-cache-channel-scheme)
 *   [mutating-transformer-scheme](#mutating-transformer-scheme)
 *   [original-entry-filter](#original-entry-filter)
+*   [parallel-local-cache-channel-scheme](#parallel-local-cache-channel-scheme)
 *   [remote-channel-scheme](#remote-channel-scheme)
 *   [remote-cache-channel-scheme](#remote-cache-channel-scheme)
 *   [remote-cluster-channel-scheme](#remote-cluster-channel-scheme) 
@@ -339,6 +340,11 @@ One of following elements must be defined as child element this element:
     Defines an `EventChannel` that replays cache events in a cache local to the
     cluster.
 
+*   [&lt;event:parallel-local-cache-channel-scheme&gt;](#parallel-local-cache-channel-scheme)
+
+    Defines an `EventChannel` that concurrently replays cache events in a cache
+    local to the cluster.
+
 *   [&lt;event:remote-cache-channel-scheme&gt;](#remote-cache-channel-scheme)
 
     Defines an `EventChannel` that replays cache events in a remote cache defined
@@ -424,6 +430,23 @@ When processed this element produce a `EventDistributorBuilder`.
     <event:distributor-scheme>
        <event:coherence-based-event-distributor-scheme/>
     </event:distributor-scheme>
+
+*Note:*
+
+When using this `DistributorScheme` it is **mandatory** that the class-path defines
+the necessary dependencies prescribed by the [Messaging Pattern](../messagingpattern/index.html),
+and the cache configuration for the Messaging Pattern is appropriately included
+in the application cache configuration.  For example:
+
+    <cache-config
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+        element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
+
+        ...
+
+    </cache-config>
+
 
 ------------------------------------------------------------------------------
 
@@ -537,7 +560,7 @@ The following elements are permitted as child elements of this element:
     
 *   [&lt;event:channel-scheme&gt;](#channel-scheme) **(required)**
 
-    The scheme specifying how to build an {{EventChannel}}.
+    The scheme specifying how to build an `EventChannel`.
     
 *   [&lt;event:transformer-scheme&gt;](#transformer-scheme) (optional)
 
@@ -963,6 +986,12 @@ The following element is a required child element of this element:
        </event:jms-based-event-distributor-scheme>
     </event:distributor-scheme>
 
+*Note:*
+
+When using this `DistributorScheme` it is **mandatory** that the class-path also
+defines the necessary dependencies for the underlying JMS Provider.
+
+
 ------------------------------------------------------------------------------
 
 <a name="local-cache-channel-scheme"><h5>&lt;event:local-cache-channel-scheme&gt;</h5></a>
@@ -990,7 +1019,7 @@ The following elements are permitted as child elements of this element:
     
 *   [&lt;event:conflict-resolver-scheme&gt;](#conflict-resolver-scheme) (optional)
 
-    A `ParameterizedBuilder` realize a {{ConflictResolver}} to be used for
+    A `ParameterizedBuilder` realize a `ConflictResolver` to be used for
     resolving potential conflicts between events and existing cache entries.
     By default this is a `ParameterizedBuilder` for the `BruteForceConflictResolver`.
 
@@ -1090,6 +1119,38 @@ One of the following elements must be defined as a child element of this element
 
 ------------------------------------------------------------------------------
 
+<a name="parallel-local-cache-channel-scheme"><h5>&lt;event:parallel-local-cache-channel-scheme&gt;</h5></a>
+
+This element defines an `EventChannelBuilder` that will construct a `ParallelLocalCacheEventChannel`
+when required.
+
+*Used in:*
+
+This element is a child element of [&lt;event:channel-scheme&gt;](#channel-scheme).
+
+*Element Type:*
+
+When processed this element will produce an `EventChannelBuilder`.
+
+*Child Elements:*
+
+The following elements are permitted as child elements of this element:
+
+*   &lt;event:target-cache-name&gt;**(required)**
+
+    An expression that when evaluated will produce the name of the cache in
+    which to "replay" events.
+    (the name may include the use of parameter macros)
+
+*   [&lt;event:conflict-resolver-scheme&gt;](#conflict-resolver-scheme) (optional)
+
+    A `ParameterizedBuilder` realize a `ConflictResolver` to be used for
+    resolving potential conflicts between events and existing cache entries.
+    By default this is a `ParameterizedBuilder` for the `BruteForceConflictResolver`.
+
+
+------------------------------------------------------------------------------
+
 <a name="remote-cache-channel-scheme"><h5>&lt;event:remote-cache-channel-scheme&gt;</h5></a>
 
 This element defines an `EventChannelBuilder` that will construct a `RemoteCacheEventChannel` 
@@ -1121,7 +1182,7 @@ The following elements are permitted as child elements of this element:
     
 *   [&lt;event:conflict-resolver-scheme&gt;](#conflict-resolver-scheme) (optional)
 
-    A `ParameterizedBuilder` realize a {{ConflictResolver}} to be used for
+    A `ParameterizedBuilder` realize a `ConflictResolver` to be used for
     resolving potential conflicts between events and existing cache entries.
     By default this is a `ParameterizedBuilder` for the `BruteForceConflictResolver`.
 

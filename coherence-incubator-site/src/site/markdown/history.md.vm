@@ -109,12 +109,17 @@ reverse chronological order.
 
 *   Refactored tests to use Oracle Tools.
 
+*   Introduced the new `ParallelLocalCacheEventChannel` providing the ability
+    to update local caches in parallel across a cluster.
+
 <h4>coherence-pushreplicationpattern</h4>
 
 *   Refactored tests to use Oracle Tools.
 
 *   Resolved issue were calling NamedCache.getAll(...) on a cache that is being
     used for Push Replication would throw an UnsupportedOperationException.
+
+*   Added new tests for the new `ParallelLocalCacheEventChannel`.
 
 <h4>coherence-pushreplicationpattern-examples</h4>
 

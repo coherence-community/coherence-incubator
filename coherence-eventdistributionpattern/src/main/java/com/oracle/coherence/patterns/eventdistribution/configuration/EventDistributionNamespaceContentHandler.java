@@ -3,14 +3,13 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -322,21 +321,21 @@ public class EventDistributionNamespaceContentHandler extends AbstractNamespaceC
             }
         });
 
-        registerContentHandler("local-parallel-cache-channel-scheme", new ElementContentHandler()
-                {
-                    public Object onElement(ConfigurationContext context,
-                                            QualifiedName        qualifiedName,
-                                            XmlElement           xmlElement) throws ConfigurationException
-                    {
-                        // create a configurable builder for the LocalCacheEventChannelBuilder
-                        ParallelLocalCacheEventChannelBuilder builder = new ParallelLocalCacheEventChannelBuilder();
+        registerContentHandler("parallel-local-cache-channel-scheme", new ElementContentHandler()
+        {
+            public Object onElement(ConfigurationContext context,
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
+            {
+                // create a configurable builder for the ParallelLocalCacheEventChannelBuilder
+                ParallelLocalCacheEventChannelBuilder builder = new ParallelLocalCacheEventChannelBuilder();
 
-                        // configure the builder from the XmlElement
-                        context.configure(builder, qualifiedName, xmlElement);
+                // configure the builder from the XmlElement
+                context.configure(builder, qualifiedName, xmlElement);
 
-                        return builder;
-                    }
-                });
+                return builder;
+            }
+        });
 
         registerContentHandler("local-cache-channel-scheme", new ElementContentHandler()
         {

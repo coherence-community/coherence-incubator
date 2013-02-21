@@ -9,8 +9,22 @@ as it is also known, the Functor Pattern, built using Oracle Coherence.
 
 <h4>Distribution</h4>
 
-The Oracle Coherence Incubator Functor Pattern is distributed as a single jar 
-called: `coherence-functorpattern-${project.version}.jar`
+The Functor Pattern implementation is distributed in the jar file
+called: `coherence-functorpattern-${project.version}.jar`.
+
+However as the Functor Pattern has several other dependencies, we **strongly
+recommend** that developers adopt and use tools like Apache Maven/Ivy/Gradle to
+transitively resolve the said dependencies, instead of attempting to do so manually.
+
+To configure your Apache Maven-based application to use the Functor Pattern,
+simply add the following declaration to your application `pom.xml` file
+`<dependencies>` element.
+
+    <dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-functorpattern</artifactId>
+        <version>${project.version}</version>
+    </dependency>
 
 <h4>Details</h4>
 

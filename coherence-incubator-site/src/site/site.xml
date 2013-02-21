@@ -88,7 +88,9 @@
             <item name="The Event Distribution Pattern" href="eventdistributionpattern/index.html">
                 <item name="The Event Namespace" href="eventdistributionpattern/event-namespace.html"/>
             </item>
-            <item name="The Push Replication Pattern" href="pushreplicationpattern/index.html"/>
+            <item name="The Push Replication Pattern" href="pushreplicationpattern/index.html">
+                <item name="Active Passive Tutorial" href="pushreplicationpattern/active-passive-tutorial.html"/>
+            </item>
         </menu>
     
         <menu name="Development">

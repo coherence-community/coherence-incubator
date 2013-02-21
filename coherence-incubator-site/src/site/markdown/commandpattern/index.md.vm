@@ -9,8 +9,22 @@ built using Oracle Coherence.
 
 <h4>Distribution</h4>
 
-The Oracle Coherence Incubator Command Pattern is distributed as a single jar 
-called: `coherence-commandpattern-${project.version}.jar`
+The Command Pattern implementation is distributed in the jar file
+called: `coherence-commandpattern-${project.version}.jar`.
+
+However as the Command Pattern has several other dependencies, we **strongly
+recommend** that developers adopt and use tools like Apache Maven/Ivy/Gradle to
+transitively resolve the said dependencies, instead of attempting to do so manually.
+
+To configure your Apache Maven-based application to use the Command Pattern,
+simply add the following declaration to your application `pom.xml` file
+`<dependencies>` element.
+
+    <dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-commandpattern</artifactId>
+        <version>${project.version}</version>
+    </dependency>
 
 <h4>Details</h4>
 

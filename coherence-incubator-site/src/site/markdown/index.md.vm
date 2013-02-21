@@ -60,11 +60,12 @@ Migrating from Previous Releases
 --------------------------------
 
 Migrating from Oracle Coherence Incubator 10 to this release is typically as simple
-as swapping to use the new distribution `jars`, those of which are available for
+as replacing previous `jars` with the new `jars`, those of which are available for
 download (if you're not using Maven) from [maven.java.net](http://maven.java.net).
 
-If you're using Maven you can acquire the "uber" distribution artifact using the
-following dependency declaration:
+If you're using all of the Oracle Coherence Incubator projects (or most of them),
+you can now use the new "uber" distribution, simply by adding the following
+following dependency declaration to your Maven-based application.
 
     <dependency>
         <groupId>com.oracle.coherence.incubator<groupId>
@@ -72,16 +73,16 @@ following dependency declaration:
         <version>${project.version}</version>
     </dependency>
 
-Should you require individual project distributions, the artifacts Ids are as
-follows:
+However should you require individual project distributions, the artifacts are
+identified as follows:
 
     coherence-common, coherence-commandpattern, coherence-functorpattern,
     coherence-processingpattern, coherence-messagingpattern,
     coherence-eventdistributionpattern, coherence-pushreplicationpattern
 
 While the source code is readily available on [github](http://github.com/coherence-community),
-the source code and java documentation for each released version and artifact also
-published to Maven.
+the source code and java documentation for each released version additionally
+published to [maven.java.net](http://maven.java.net).
 
 Migrating from releases prior to Oracle Coherence Incubator 10 requires more effort,
 typically refactoring configuration.  Some patterns may require more effort than
@@ -137,7 +138,7 @@ Provides a mechanism to distribute application events over multiple channels.
 This is core infrastructure for the Push Replication Pattern, but may be used 
 directly with in applications for local or global event distribution.
 
-**The Push Replication Pattern:**
+[**The Push Replication Pattern:**](pushreplicationpattern/index.html)
 
 Provides a mechanism to replicate cache entry events to other clusters and 
 devices (including other clusters separated by WANs).

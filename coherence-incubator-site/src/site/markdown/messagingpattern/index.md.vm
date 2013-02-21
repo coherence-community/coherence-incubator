@@ -8,8 +8,22 @@ Oracle Coherence.
 
 <h4>Distribution</h4>
 
-The Oracle Coherence Incubator Messaging Pattern is distributed as a single jar 
-called: `coherence-messagingpattern-${project.version}.jar`
+The Messaging Pattern implementation is distributed in the jar file
+called: `coherence-messagingpattern-${project.version}.jar`.
+
+However as the Messaging Pattern has several other dependencies, we **strongly
+recommend** that developers adopt and use tools like Apache Maven/Ivy/Gradle to
+transitively resolve the said dependencies, instead of attempting to do so manually.
+
+To configure your Apache Maven-based application to use the Messaging Pattern,
+simply add the following declaration to your application `pom.xml` file
+`<dependencies>` element.
+
+    <dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-messagingpattern</artifactId>
+        <version>${project.version}</version>
+    </dependency>
 
 <h4>Details</h4>
 
