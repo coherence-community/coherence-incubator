@@ -84,55 +84,54 @@ import java.util.logging.Logger;
  * @author Brian Oliver
  */
 @SuppressWarnings("serial")
-public class RemoteClusterEventChannel
-        extends AbstractInterClusterEventChannel
+public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
 {
     /**
      * The {@link Logger} to use.
      */
     private static Logger logger = Logger.getLogger(RemoteClusterEventChannel.class.getName());
 
-/**
-     * The {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor.Identifier} in which the
-     * {@link EventChannel} operates.
+    /**
+     *     The {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor.Identifier} in which the
+     *     {@link EventChannel} operates.
      */
-    private EventDistributor.Identifier distributorIdentifier;
+    private EventDistributor.Identifier m_distributorIdentifier;
 
     /**
      * The {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Identifier} of the
      * {@link EventChannelController} that owns the {@link EventChannel}.
      */
-    private EventChannelController.Identifier controllerIdentifier;
+    private EventChannelController.Identifier m_controllerIdentifier;
 
     /**
      * The name of the remote {@link InvocationService} that we'll use to distribute {@link Event}s to the
      * remote cluster.
      */
-    private String remoteInvocationServiceName;
+    private String m_remoteInvocationServiceName;
 
     /**
      * The {@link EventChannelBuilder} that will be used to build an {@link EventChannel} that is responsible
      * for distributing {@link Event}s in the the remote cluster.
      */
-    private EventChannelBuilder remoteEventChannelBuilder;
+    private EventChannelBuilder m_remoteEventChannelBuilder;
 
     /**
      * The {@link InvocationService} that we'll use to distribute {@link Event}s to a remote cluster.
      * <p>
      * When this is <code>null</code> the remote {@link InvocationService} is unavailable.
      */
-    private InvocationService remoteInvocationService;
+    private InvocationService m_remoteInvocationService;
 
     /**
      * The {@link ParameterProvider} that must be used to construct remote {@link EventChannel}s.
      */
-    private ParameterProvider parameterProvider;
-
+    private ParameterProvider m_parameterProvider;
 
     /**
      * The millis needed to do the apply.
      */
-    private volatile long m_cApplyMillis;
+    private volatile long m_applyMillis;
+
 
     /**
      * Standard Constructor.
@@ -149,11 +148,12 @@ public class RemoteClusterEventChannel
                                      ParameterProvider   parameterProvider)
     {
         super(distributionRole);
-        this.remoteInvocationServiceName = remoteInvocationServiceName;
-        this.remoteEventChannelBuilder   = remoteEventChannelBuilder;
-        this.remoteInvocationService     = null;
-        this.parameterProvider           = parameterProvider;
+        this.m_remoteInvocationServiceName = remoteInvocationServiceName;
+        this.m_remoteEventChannelBuilder   = remoteEventChannelBuilder;
+        this.m_remoteInvocationService     = null;
+        this.m_parameterProvider           = parameterProvider;
     }
+
 
     /**
      * Returns the {@link SupervisedResourceProvider} for the remote {@link InvocationService}.
@@ -165,8 +165,9 @@ public class RemoteClusterEventChannel
         return (SupervisedResourceProvider<InvocationService>) ((Environment) CacheFactory
             .getConfigurableCacheFactory()).getResource(ResourceProviderManager.class)
                 .getResourceProvider(InvocationService.class,
-                                     remoteInvocationServiceName);
+                                     m_remoteInvocationServiceName);
     }
+
 
     /**
      * {@inheritDoc}
@@ -175,11 +176,11 @@ public class RemoteClusterEventChannel
                         EventChannelController.Identifier controllerIdentifier) throws EventChannelNotReadyException
     {
         // remember the identifiers as we'll need to pass them to the remote event channel
-        this.distributorIdentifier = distributorIdentifier;
-        this.controllerIdentifier  = controllerIdentifier;
+        this.m_distributorIdentifier = distributorIdentifier;
+        this.m_controllerIdentifier  = controllerIdentifier;
 
         // assume the remote invocation service is unavailable
-        remoteInvocationService = null;
+        m_remoteInvocationService = null;
 
         // get the SupervisedResourceProvider that controls access to the underlying remote Invocation Service
         SupervisedResourceProvider<InvocationService> resourceProvider = getSupervisedResourceProvider();
@@ -189,8 +190,8 @@ public class RemoteClusterEventChannel
             // register a SupervisedResourceProvider for the remote invocation scheme
             ((Environment) CacheFactory.getConfigurableCacheFactory()).getResource(ResourceProviderManager.class)
                 .registerResourceProvider(InvocationService.class,
-                                          remoteInvocationServiceName,
-                                          new InvocationServiceSupervisedResourceProvider(remoteInvocationServiceName));
+                                          m_remoteInvocationServiceName,
+                                          new InvocationServiceSupervisedResourceProvider(m_remoteInvocationServiceName));
 
             // now ask for it again (just in case it was replaced by the supervisor)
             resourceProvider = getSupervisedResourceProvider();
@@ -204,28 +205,30 @@ public class RemoteClusterEventChannel
                 {
                     logger.log(Level.FINE,
                                "Attempting to connect to Remote Invocation Service {0} in {1} for {2}",
-                               new Object[] {remoteInvocationServiceName, distributorIdentifier, controllerIdentifier});
+                               new Object[] {m_remoteInvocationServiceName, distributorIdentifier,
+                                             controllerIdentifier});
                 }
 
                 // attempt to access the remote InvocationService (this will make the connection)
-                remoteInvocationService = resourceProvider.getResource();
+                m_remoteInvocationService = resourceProvider.getResource();
 
                 if (logger.isLoggable(Level.FINE))
                 {
                     logger.log(Level.FINE,
                                "Connected to Remote Invocation Service {0} in {1} for {2}",
-                               new Object[] {remoteInvocationServiceName, distributorIdentifier, controllerIdentifier});
+                               new Object[] {m_remoteInvocationServiceName, distributorIdentifier,
+                                             controllerIdentifier});
                 }
 
                 if (logger.isLoggable(Level.FINE))
                 {
                     logger.log(Level.FINE,
                                "Attempting to detect Remote Cluster Name using Remote Invocation Service {0}",
-                               remoteInvocationServiceName);
+                               m_remoteInvocationServiceName);
                 }
 
                 // attempt to auto-detect the remote cluster info
-                setTargetClusterMetaInfo((ClusterMetaInfo) remoteInvocationService
+                setTargetClusterMetaInfo((ClusterMetaInfo) m_remoteInvocationService
                     .query(new GetClusterMetaInfoAgent(), null).values().iterator().next());
 
                 if (logger.isLoggable(Level.FINE))
@@ -246,7 +249,8 @@ public class RemoteClusterEventChannel
                 {
                     logger.log(Level.WARNING,
                                "Failed to connect to Remote Invocation Service {0} in {1} for {2}",
-                               new Object[] {remoteInvocationServiceName, distributorIdentifier, controllerIdentifier});
+                               new Object[] {m_remoteInvocationServiceName, distributorIdentifier,
+                                             controllerIdentifier});
                     logger.log(Level.WARNING, "Causing exception was:", runtimeException);
                 }
 
@@ -269,16 +273,17 @@ public class RemoteClusterEventChannel
      */
     public void disconnect()
     {
-        if (remoteInvocationService != null)
+        if (m_remoteInvocationService != null)
         {
             if (logger.isLoggable(Level.FINE))
             {
                 logger.log(Level.FINE,
                            "Disconnected from Remote Invocation Service {0} in {1} for {2}",
-                           new Object[] {remoteInvocationServiceName, distributorIdentifier, controllerIdentifier});
+                           new Object[] {m_remoteInvocationServiceName, m_distributorIdentifier,
+                                         m_controllerIdentifier});
             }
 
-            remoteInvocationService = null;
+            m_remoteInvocationService = null;
         }
     }
 
@@ -288,11 +293,11 @@ public class RemoteClusterEventChannel
      */
     public int send(Iterator<Event> events)
     {
-        if (remoteInvocationService == null)
+        if (m_remoteInvocationService == null)
         {
             throw new IllegalStateException(String
                 .format("Attempted to distribute using an unavailable Remote Invocation Service %s",
-                        remoteInvocationServiceName));
+                        m_remoteInvocationServiceName));
         }
         else
         {
@@ -300,11 +305,11 @@ public class RemoteClusterEventChannel
 
             try
             {
-                remoteInvocationService.query(new RemoteDistributionAgent(distributorIdentifier,
-                                                                          controllerIdentifier,
-                                                                          eventsToDistribute,
-                                                                          remoteEventChannelBuilder,
-                                                                          parameterProvider), null);
+                m_remoteInvocationService.query(new RemoteDistributionAgent(m_distributorIdentifier,
+                                                                            m_controllerIdentifier,
+                                                                            eventsToDistribute,
+                                                                            m_remoteEventChannelBuilder,
+                                                                            m_parameterProvider), null);
             }
             catch (RuntimeException runtimeException)
             {
@@ -419,8 +424,9 @@ public class RemoteClusterEventChannel
             this.parameterProvider         = parameterProvider;
         }
 
-    /**
-         * REMEMBER: The following method is executed in the remote cluster!
+
+        /**
+         *     REMEMBER: The following method is executed in the remote cluster!
          */
         public void run()
         {
@@ -431,7 +437,9 @@ public class RemoteClusterEventChannel
                 long ldtStart = Base.getSafeTimeMillis();
 
                 channel.connect(distributorIdentifier, controllerIdentifier);
+
                 int cEvents = channel.send(events.iterator());
+
                 setResult(new Integer(cEvents));
 
                 channel.disconnect();
@@ -444,6 +452,7 @@ public class RemoteClusterEventChannel
                                                            controllerIdentifier, distributorIdentifier));
             }
         }
+
 
         /**
          * {@inheritDoc}

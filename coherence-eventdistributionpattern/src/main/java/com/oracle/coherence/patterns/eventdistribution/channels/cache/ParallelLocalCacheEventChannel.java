@@ -1,5 +1,5 @@
 /*
- * File: LocalCacheEventChannel.java
+ * File: ParallelLocalCacheEventChannel.java
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -27,8 +27,17 @@
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.Event;
+
+import com.oracle.coherence.common.resourcing.InvocationServiceSupervisedResourceProvider;
+import com.oracle.coherence.common.resourcing.ResourceProviderManager;
+import com.oracle.coherence.common.resourcing.SupervisedResourceProvider;
+
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
+
+import com.oracle.coherence.environment.Environment;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
@@ -36,6 +45,7 @@ import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.InvocationObserver;
@@ -43,6 +53,7 @@ import com.tangosol.net.InvocationService;
 import com.tangosol.net.Member;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.RequestTimeoutException;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.NullImplementation;
@@ -54,8 +65,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Observer;
 import java.util.Set;
+
 import java.util.concurrent.atomic.AtomicInteger;
+
 import java.util.logging.Logger;
 
 /**
@@ -75,7 +90,10 @@ import java.util.logging.Logger;
  * (though these have significantly lower performance and throughput than of
  * {@link com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel}s)
  * <p>
- * Copyright (c) 2011. All Rights Reserved. Oracle Corporation.<br>
+ * Note that this channel requires the use of an additional {@link com.tangosol.net.InvocationService} to publish
+ * name PublishingInvocationService. See the cache configuration file provided by the Push Replication pattern.
+ * <p>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @see com.oracle.coherence.patterns.eventdistribution.channels.cache.CacheEventChannel
@@ -92,7 +110,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     private static Logger logger = Logger.getLogger(ParallelLocalCacheEventChannel.class.getName());
 
     /**
-     * The name of the invocation service to use
+     * The name of the invocation service to use to publish to
      */
     public static final String INVOCATION_SVC = "PublishingInvocationService";
 
@@ -155,15 +173,29 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     /**
      * Standard Constructor.
      */
-    public ParallelLocalCacheEventChannel(String targetCacheName,
+    public ParallelLocalCacheEventChannel(String              targetCacheName,
                                           EventChannelBuilder remoteChannelBuilder,
-                                          ParameterProvider parameterProvider)
+                                          ParameterProvider   parameterProvider)
     {
         super();
 
-        this.targetCacheName         = targetCacheName;
-        this.remoteChannelBuilder    = remoteChannelBuilder;
-        this.parameterProvider       = parameterProvider;
+        this.targetCacheName      = targetCacheName;
+        this.remoteChannelBuilder = remoteChannelBuilder;
+        this.parameterProvider    = parameterProvider;
+    }
+
+
+    /**
+     * Returns the {@link SupervisedResourceProvider} for the remote {@link InvocationService}.
+     *
+     * @return The {@link SupervisedResourceProvider} for the remote {@link InvocationService}
+     */
+    private SupervisedResourceProvider<InvocationService> getSupervisedResourceProvider()
+    {
+        return (SupervisedResourceProvider<InvocationService>) ((Environment) CacheFactory
+            .getConfigurableCacheFactory()).getResource(ResourceProviderManager.class)
+                .getResourceProvider(InvocationService.class,
+                                     INVOCATION_SVC);
     }
 
 
@@ -223,6 +255,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         }
     }
 
+
     /**
      * Return the cache service used by the cache entries being replicated.
      *
@@ -241,6 +274,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         return service;
     }
 
+
     /**
      * {@inheritDoc}
      */
@@ -248,9 +282,9 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     public int send(Iterator<Event> events)
     {
         // First we need to split the events according to the member who should process them
-        Map<Member, List<Event>> memberEventMap = mapEventsToMember(events);
+        Map<Member, List<Event>>        memberEventMap = mapEventsToMember(events);
 
-        Set<RemoteChannelAgentObserver> observerSet = new HashSet<RemoteChannelAgentObserver>();
+        Set<RemoteChannelAgentObserver> observerSet    = new HashSet<RemoteChannelAgentObserver>();
 
         // Now that we've split up the batch, lets actually set ourselves up to send it
         for (Map.Entry<Member, List<Event>> event : memberEventMap.entrySet())
@@ -271,6 +305,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
                 catch (InterruptedException e)
                 {
                     Thread.interrupted();
+
                     throw Base.ensureRuntimeException(e);
                 }
             }
@@ -293,6 +328,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
                     {
                         observerSet.add(publishList(event.getKey(), event.getValue()));
                     }
+
                     // this observer is for a member that has left the cluster, remove
                     // it from the set of observers we are expecting results for
                     observerSet.remove(observer);
@@ -306,22 +342,14 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
 
         if (!observerSet.isEmpty())
         {
-            throw new RequestTimeoutException(
-                    String.format("InvocationService did not receive a response from members %s after %s ms",
-                            observerSet, System.currentTimeMillis() - ldtStart));
+            throw new RequestTimeoutException(String
+                .format("InvocationService did not receive a response from members %s after %s ms", observerSet,
+                        System.currentTimeMillis() - ldtStart));
         }
-
-        // todo: I don't know if this is needed for non DistributableEntryEvents, leaving
-        // this for now until we verify
-//        // Now lets just process the remaining ones locally
-//        if (!nonCacheEvents.isEmpty())
-//            {
-//            CacheEventChannelHelper.apply(getTargetNamedCache(), nonCacheEvents.iterator(), getConflictResolverBuilder());
-//            incrementCompleteCount(nonCacheEvents.size());
-//            }
 
         return getCompletedCount();
     }
+
 
     /**
      * Split the events provided by the iterator by member.
@@ -342,9 +370,9 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
 
             if (e instanceof DistributableEntryEvent)
             {
-                DistributableEntry entry      = ((DistributableEntryEvent) e).getEntry();
-                Binary             binKey     = entry.getBinaryKey();
-                int                iPartition = getCacheService().getBackingMapManager().getContext().getKeyPartition(binKey);
+                DistributableEntry entry  = ((DistributableEntryEvent) e).getEntry();
+                Binary             binKey = entry.getBinaryKey();
+                int iPartition = getCacheService().getBackingMapManager().getContext().getKeyPartition(binKey);
 
                 member = getCacheService().getPartitionOwner(iPartition);
             }
@@ -368,6 +396,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         return map;
     }
 
+
     /**
      * Invoke an asynchronous request to a member to replicate a list of events.
      *
@@ -376,17 +405,47 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
      *
      * @return an observer that will contain the results of the replication request
      */
-    protected RemoteChannelAgentObserver publishList(Member member, List<Event> eventList)
+    protected RemoteChannelAgentObserver publishList(Member      member,
+                                                     List<Event> eventList)
     {
-        InvocationService invocationService = (InvocationService) CacheFactory.getService(INVOCATION_SVC);
-        RemoteChannelAgentObserver observer = new RemoteChannelAgentObserver(eventList);
+        // get the SupervisedResourceProvider that controls access to the underlying remote Invocation Service
+        SupervisedResourceProvider<InvocationService> resourceProvider = getSupervisedResourceProvider();
 
-        invocationService.execute(new RemoteClusterEventChannel.RemoteDistributionAgent(
-                distributorIdentifier, controllerIdentifier, eventList, remoteChannelBuilder, parameterProvider),
-                Collections.singleton(member), observer);
+        if (resourceProvider == null)
+        {
+            // register a SupervisedResourceProvider for the remote invocation scheme
+            ((Environment) CacheFactory.getConfigurableCacheFactory()).getResource(ResourceProviderManager.class)
+                .registerResourceProvider(InvocationService.class,
+                                          INVOCATION_SVC,
+                                          new InvocationServiceSupervisedResourceProvider(INVOCATION_SVC));
 
-        return observer;
+            // now ask for it again (just in case it was replaced by the supervisor)
+            resourceProvider = getSupervisedResourceProvider();
+        }
+
+        if (resourceProvider.isResourceAccessible())
+        {
+            InvocationService          invocationService = resourceProvider.getResource();
+            RemoteChannelAgentObserver observer          = new RemoteChannelAgentObserver(eventList);
+
+            invocationService.execute(new RemoteClusterEventChannel.RemoteDistributionAgent(distributorIdentifier,
+                                                                                            controllerIdentifier,
+                                                                                            eventList,
+                                                                                            remoteChannelBuilder,
+                                                                                            parameterProvider),
+                                      Collections.singleton(member),
+                                      observer);
+
+            return observer;
+        }
+        else
+        {
+            throw new MissingResourceException("Unable to resolve the following invocation service",
+                                               InvocationService.class.toString(),
+                                               INVOCATION_SVC);
+        }
     }
+
 
     /**
      * Increment the completed count by the amount specified.
@@ -398,6 +457,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         completedCount.addAndGet(count);
     }
 
+
     /**
      *  Get the completed count
      *
@@ -407,6 +467,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     {
         return completedCount.get();
     }
+
 
     /**
      * This Observer will keep track or the requests we sent
@@ -440,6 +501,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
          */
         private volatile long ldtStart;
 
+
         /**
          * Constructor
          *
@@ -447,9 +509,10 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
          */
         public RemoteChannelAgentObserver(List<Event> events)
         {
-            ldtStart = Base.getSafeTimeMillis();
+            ldtStart  = Base.getSafeTimeMillis();
             eventList = events;
         }
+
 
         /**
          * Return an iterator over the events this request will attempt to replicate.
@@ -461,6 +524,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
             return eventList.iterator();
         }
 
+
         /**
          * Return true if this invocation successfully completed.
          *
@@ -470,6 +534,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         {
             return completed;
         }
+
 
         /**
          * Return true if the target member for this invocation
@@ -481,6 +546,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         {
             return memberLeft;
         }
+
 
         /**
          * Exception thrown by the target member when processing the
@@ -494,24 +560,29 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
             return exception;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void memberCompleted(Member member, Object o)
-        {
-            ParallelLocalCacheEventChannel.this.incrementCompleteCount((Integer) o);
-            completed = true;
-        }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void memberFailed(Member member, Throwable throwable)
+        public void memberCompleted(Member member,
+                                    Object o)
+        {
+            ParallelLocalCacheEventChannel.this.incrementCompleteCount((Integer) o);
+            completed = true;
+        }
+
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void memberFailed(Member    member,
+                                 Throwable throwable)
         {
             exception = throwable;
         }
+
 
         /**
          * {@inheritDoc}
@@ -521,6 +592,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         {
             memberLeft = true;
         }
+
 
         /**
          * {@inheritDoc}
