@@ -428,7 +428,7 @@ public class ClusterManager
         ClusterMemberSchema proxySchema = getBaseSchema();
 
         proxySchema.setCacheConfigURI(getProxyConfig()).setStorageEnabled(false)
-            .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.ALL)
+            .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.REMOTE_ONLY)
             .setRoleName("Proxy")
             .setSystemProperty("proxy.port", getProxyPort());
 
