@@ -1,5 +1,5 @@
 /*
- * File: LocalCacheEventChannelBuilder.java
+ * File: ParallelLocalCacheEventChannelBuilder.java
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -27,16 +27,23 @@
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.configuration.Mandatory;
 import com.oracle.coherence.configuration.Property;
 import com.oracle.coherence.configuration.SubType;
 import com.oracle.coherence.configuration.Type;
+
+import com.oracle.coherence.configuration.expressions.Constant;
 import com.oracle.coherence.configuration.expressions.Expression;
+
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.AbstractEventChannelBuilder;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -49,11 +56,16 @@ import java.io.IOException;
  * Copyright (c) 2011. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
- * @author Brian Oliver
+ * @author Noah Arliss
  */
 @SuppressWarnings("serial")
 public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelBuilder
 {
+    /**
+     * The name of the invocation service to use to publish to
+     */
+    public static final String INVOCATION_SVC = "PublishingInvocationService";
+
     /**
      * The name of the local cache to which the {@link com.oracle.coherence.patterns.eventdistribution.EventChannel} will apply {@link com.oracle.coherence.common.events.EntryEvent}.
      */
@@ -64,6 +76,11 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
      */
     private ParameterizedBuilder<ConflictResolver> conflictResolverBuilder = null;
 
+    /**
+     * The name of the Invocation Service to use.
+     */
+    private Expression invocationServiceName;
+
 
     /**
      * Required for {@link com.tangosol.io.ExternalizableLite} and {@link com.tangosol.io.pof.PortableObject}.
@@ -71,6 +88,7 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
     public ParallelLocalCacheEventChannelBuilder()
     {
         super();
+        invocationServiceName = new Constant(INVOCATION_SVC);
     }
 
 
@@ -80,12 +98,17 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
     public EventChannel realize(ParameterProvider parameterProvider)
     {
         String targetCacheName = getTargetCacheName().evaluate(parameterProvider).getString();
+        String invocationServiceName = getInvocationServiceName().evaluate(parameterProvider).getString();
 
         LocalCacheEventChannelBuilder localEventChannelBuilder = new LocalCacheEventChannelBuilder();
+
         localEventChannelBuilder.setConflictResolverBuilder(getConflictResolverBuilder());
         localEventChannelBuilder.setTargetCacheName(getTargetCacheName());
 
-        return new ParallelLocalCacheEventChannel(targetCacheName, localEventChannelBuilder, parameterProvider);
+        return new ParallelLocalCacheEventChannel(targetCacheName,
+                                                  invocationServiceName,
+                                                  localEventChannelBuilder,
+                                                  parameterProvider);
     }
 
 
@@ -118,7 +141,7 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
     /**
      * Method description
      *
-     * @return
+     * @return the Conflict Resolver Builder
      */
     public ParameterizedBuilder<ConflictResolver> getConflictResolverBuilder()
     {
@@ -137,6 +160,31 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
     public void setConflictResolverBuilder(ParameterizedBuilder<ConflictResolver> conflictResolverBuilder)
     {
         this.conflictResolverBuilder = conflictResolverBuilder;
+    }
+
+
+    /**
+     * Method description
+     *
+     * @return the Invocation Service name
+     */
+    public Expression getInvocationServiceName()
+    {
+        return invocationServiceName;
+    }
+
+
+    /**
+     * Method description
+     *
+     * @param serviceName The name of the service to use
+     */
+    @Property("invocation-service-name")
+    @Type(Expression.class)
+    @SubType(String.class)
+    public void setInvocationServiceName(Expression serviceName)
+    {
+        invocationServiceName = serviceName;
     }
 
 
@@ -187,6 +235,7 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
         super.readExternal(reader);
         this.targetCacheName         = (Expression) reader.readObject(100);
         this.conflictResolverBuilder = (ParameterizedBuilder<ConflictResolver>) reader.readObject(101);
+        this.invocationServiceName   = (Expression) reader.readObject(102);
     }
 
 
@@ -203,5 +252,6 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
         super.writeExternal(writer);
         writer.writeObject(100, targetCacheName);
         writer.writeObject(101, conflictResolverBuilder);
+        writer.writeObject(102, invocationServiceName);
     }
 }

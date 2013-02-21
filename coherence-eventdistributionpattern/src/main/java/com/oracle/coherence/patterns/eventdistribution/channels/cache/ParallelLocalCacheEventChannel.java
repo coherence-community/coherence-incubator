@@ -100,7 +100,7 @@ import java.util.logging.Logger;
  * @see com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel
  * @see com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannel
  *
- * @author Noah Arliss
+ * @author Noah Arliss, Patrick Peralta
  */
 public class ParallelLocalCacheEventChannel implements CacheEventChannel
 {
@@ -108,11 +108,6 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
      * The {@link java.util.logging.Logger} to use.
      */
     private static Logger logger = Logger.getLogger(ParallelLocalCacheEventChannel.class.getName());
-
-    /**
-     * The name of the invocation service to use to publish to
-     */
-    public static final String INVOCATION_SVC = "PublishingInvocationService";
 
     /**
      * The total amount of time to wait in millis for replication to complete before throwing an exception.
@@ -169,19 +164,26 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
      */
     private final Object NOTIFIER = new Object();
 
+    /**
+     * The name of the {@link com.tangosol.net.InvocationService} to use.
+     */
+    private String invocationServiceName;
+
 
     /**
      * Standard Constructor.
      */
     public ParallelLocalCacheEventChannel(String              targetCacheName,
+                                          String              invocationServiceName,
                                           EventChannelBuilder remoteChannelBuilder,
                                           ParameterProvider   parameterProvider)
     {
         super();
 
-        this.targetCacheName      = targetCacheName;
-        this.remoteChannelBuilder = remoteChannelBuilder;
-        this.parameterProvider    = parameterProvider;
+        this.targetCacheName       = targetCacheName;
+        this.remoteChannelBuilder  = remoteChannelBuilder;
+        this.parameterProvider     = parameterProvider;
+        this.invocationServiceName = invocationServiceName;
     }
 
 
@@ -195,7 +197,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         return (SupervisedResourceProvider<InvocationService>) ((Environment) CacheFactory
             .getConfigurableCacheFactory()).getResource(ResourceProviderManager.class)
                 .getResourceProvider(InvocationService.class,
-                                     INVOCATION_SVC);
+                                     invocationServiceName);
     }
 
 
@@ -416,8 +418,8 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
             // register a SupervisedResourceProvider for the remote invocation scheme
             ((Environment) CacheFactory.getConfigurableCacheFactory()).getResource(ResourceProviderManager.class)
                 .registerResourceProvider(InvocationService.class,
-                                          INVOCATION_SVC,
-                                          new InvocationServiceSupervisedResourceProvider(INVOCATION_SVC));
+                                          invocationServiceName,
+                                          new InvocationServiceSupervisedResourceProvider(invocationServiceName));
 
             // now ask for it again (just in case it was replaced by the supervisor)
             resourceProvider = getSupervisedResourceProvider();
@@ -442,7 +444,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         {
             throw new MissingResourceException("Unable to resolve the following invocation service",
                                                InvocationService.class.toString(),
-                                               INVOCATION_SVC);
+                                               invocationServiceName);
         }
     }
 
