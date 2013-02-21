@@ -72,7 +72,7 @@ public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushRepli
     protected ClusterMemberSchema newActiveClusterMemberSchema(int iPort)
     {
         return newBaseClusterMemberSchema(iPort)
-            .setCacheConfigURI("test-remotecluster-pralleleventchannel-cache-config.xml").setClusterName("active");
+            .setCacheConfigURI("test-remotecluster-paralleleventchannel-cache-config.xml").setClusterName("active");
     }
 
 

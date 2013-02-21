@@ -55,10 +55,7 @@
 				<event:distribution-channels>
 					<event:distribution-channel>
 						<event:channel-name>Remote Cluster Channel</event:channel-name>
-
 						<event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
-                        <event:batch-size>1000</event:batch-size>
-                        <event:distribution-delay>2000</event:distribution-delay>
 
 						<event:channel-scheme>
 							<event:remote-cluster-channel-scheme>
