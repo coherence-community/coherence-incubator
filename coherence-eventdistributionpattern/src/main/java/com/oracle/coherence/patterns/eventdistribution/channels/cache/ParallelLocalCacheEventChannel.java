@@ -33,7 +33,6 @@ import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
-import com.oracle.coherence.patterns.eventdistribution.channels.EventApplyManager;
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
@@ -501,11 +500,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
         @Override
         public void memberCompleted(Member member, Object o)
         {
-            //System.out.println("Registering MBean name " + mBeanName);
-            EventApplyManager.getInstance(String.valueOf(member.getId())).updateEventStats(
-                eventList.size(), ldtStart, Base.getSafeTimeMillis());
             ParallelLocalCacheEventChannel.this.incrementCompleteCount((Integer) o);
-
             completed = true;
         }
 

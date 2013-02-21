@@ -436,12 +436,6 @@ public class RemoteClusterEventChannel
 
                 channel.disconnect();
 
-                if (! getService().getInfo().getServiceName().equals("PublishingInvocationService"))
-                    {
-                    EventApplyManager.getInstance().updateEventStats(cEvents,
-                        ldtStart, Base.getSafeTimeMillis());
-                    }
-
             }
             catch (Exception exception)
             {
