@@ -26,7 +26,6 @@
 package com.oracle.coherence.patterns.pushreplication;
 
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
-
 import org.junit.Test;
 
 /**

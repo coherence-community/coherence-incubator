@@ -3,14 +3,13 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,9 +26,7 @@
 package com.oracle.coherence.patterns.pushreplication;
 
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
-
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
-
 import org.junit.Test;
 
 /**
@@ -49,9 +46,9 @@ public class CoherenceBasedPushReplicationTest extends AbstractPushReplicationTe
     protected ClusterMemberSchema newBaseClusterMemberSchema(int iPort)
     {
         return super.newBaseClusterMemberSchema(iPort).setSystemProperty("event.distributor.config",
-                                                                    "test-coherence-based-distributor-config.xml")
-                                                                        .setSystemProperty("proxy.port",
-                                                                                           getAvailablePortIterator());
+                                                                         "test-coherence-based-distributor-config.xml")
+                                                                             .setSystemProperty("proxy.port",
+                                                                                                getAvailablePortIterator());
     }
 
 

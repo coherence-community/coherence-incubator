@@ -3,14 +3,13 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,47 +28,37 @@ package com.oracle.coherence.patterns.pushreplication;
 import com.oracle.coherence.common.resourcing.AbstractDeferredResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.CacheStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.filters.ExampleEventFilter;
-
 import com.oracle.tools.junit.AbstractTest;
-
 import com.oracle.tools.runtime.Application;
 import com.oracle.tools.runtime.LifecycleEvent;
 import com.oracle.tools.runtime.LifecycleEventInterceptor;
 import com.oracle.tools.runtime.PropertiesBuilder;
-
 import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
-
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
 import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
-
 import com.oracle.tools.runtime.network.AvailablePortIterator;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.net.partition.PartitionSet;
-
 import com.tangosol.util.Filter;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.management.ObjectName;
 import java.net.UnknownHostException;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,9 +66,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
-
-import javax.management.MBeanInfo;
-import javax.management.ObjectName;
 
 /**
  * The {@link AbstractPushReplicationTest} defines a set of standard tests
@@ -181,8 +167,10 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
     {
         ClusterMemberSchema schema =
             new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-                .setSingleServerMode().setClusterPort(iClusterPort == 0 ? getAvailablePortIterator().next() : iClusterPort).setPofConfigURI("test-pof-config.xml")
-                .setJMXPort(getAvailablePortIterator()).setJMXManagementMode(JMXManagementMode.ALL);
+                .setSingleServerMode()
+                .setClusterPort(iClusterPort == 0 ? getAvailablePortIterator().next() : iClusterPort)
+                .setPofConfigURI("test-pof-config.xml").setJMXPort(getAvailablePortIterator())
+                .setJMXManagementMode(JMXManagementMode.ALL);
 
         schema.addLifecycleInterceptor(new LifecycleEventInterceptor<ClusterMember>()
         {
@@ -239,24 +227,28 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         try
         {
             SystemApplicationConsole console = new SystemApplicationConsole();
+
             // establish the london server
             ClusterMemberSchema londonServerSchema =
-                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("london").setSystemProperty("proxy.port",
-                                                                                       getAvailablePortIterator())
-                                                                                           .setSystemProperty("remote.port", getAvailablePortIterator());
+                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("london")
+                    .setSystemProperty("proxy.port",
+                            getAvailablePortIterator())
+                                           .setSystemProperty("remote.port", getAvailablePortIterator());
 
-            londonServerSchema.setSystemProperty("tangosol.coherence.log", "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActive-london.log");
+            londonServerSchema.setSystemProperty("tangosol.coherence.log",
+                                                 "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActive-london.log");
             londonServer = builder.realize(londonServerSchema, "LONDON", console);
 
             // establish the newyork server
             ClusterMemberSchema newyorkServerSchema =
-                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("newyork").setSystemProperty("proxy.port",
-                                                                                        londonServer
-                                                                                            .getSystemProperty("remote.port"))
-                                                                                                .setSystemProperty("remote.port",
-                londonServer.getSystemProperty("proxy.port"));
+                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("newyork")
+                    .setSystemProperty("proxy.port",
+                            londonServer.getSystemProperty("remote.port")).setSystemProperty("remote.port",
+                        londonServer
+                                .getSystemProperty("proxy.port"));
 
-            newyorkServerSchema.setSystemProperty("tangosol.coherence.log", "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActive-ny.log");
+            newyorkServerSchema.setSystemProperty("tangosol.coherence.log",
+                                                  "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActive-ny.log");
             newyorkServer = builder.realize(newyorkServerSchema, "NEWYORK", console);
 
             // turn off local clustering so we don't connect with the process just started
@@ -383,23 +375,32 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         try
         {
             // establish the passive cluster
-            int iPort = getAvailablePortIterator().next();
+            int                      iPort   = getAvailablePortIterator().next();
             SystemApplicationConsole console = new SystemApplicationConsole();
+
             for (int i = 0; i < nrPassiveServers; i++)
             {
-                ClusterMemberSchema passiveServerSchema = newPassiveClusterMemberSchema(iPort).setSiteName(siteName).setSystemProperty("tangosol.coherence.log", "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActivePassive-passive-" + i + ".log");
+                ClusterMemberSchema passiveServerSchema =
+                    newPassiveClusterMemberSchema(iPort).setSiteName(siteName)
+                        .setSystemProperty("tangosol.coherence.log",
+                                "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActivePassive-passive-"
+                                        + i + ".log");
 
                 passiveServers.add(builder.realize(passiveServerSchema, String.format("PASSIVE %s", i), console));
             }
 
             // establish the active cluster
             iPort = getAvailablePortIterator().next();
+
             for (int i = 0; i < nrActiveServers; i++)
             {
                 ClusterMemberSchema activeServerSchema =
                     newActiveClusterMemberSchema(iPort).setSiteName(siteName).setSystemProperty("remote.port",
-                                                                                           passiveServers.get(0)
-                                                                                               .getSystemProperty("proxy.port")).setSystemProperty("tangosol.coherence.log", "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActivePassive-active-" + i + ".log");
+                            passiveServers.get(0)
+                                    .getSystemProperty("proxy.port"))
+                                                                                                        .setSystemProperty("tangosol.coherence.log",
+                                                                                                                "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActivePassive-active-"
+                                                                                                                        + i + ".log");
 
                 activeServers.add(builder.realize(activeServerSchema, String.format("ACTIVE  %d", i), console));
             }
@@ -497,21 +498,22 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         ClusterMember                                              activeServer  = null;
 
         JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder       = newClusterMemberBuilder();
-        SystemApplicationConsole console = new SystemApplicationConsole();
+        SystemApplicationConsole                                   console       = new SystemApplicationConsole();
 
         try
         {
             // establish the passive cluster
-            ClusterMemberSchema passiveServerSchema = newPassiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("sydney");
+            ClusterMemberSchema passiveServerSchema =
+                newPassiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("sydney");
 
             passiveServer = builder.realize(passiveServerSchema, "PASSIVE", console);
 
             // establish the active cluster
             ClusterMemberSchema activeServerSchema =
-                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("sydney").setSystemProperty("remote.port",
-                                                                                       passiveServer
-                                                                                           .getSystemProperty("proxy.port"))
-                                                                                               .setSystemProperty("channel.starting.mode", "disabled");
+                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("sydney")
+                    .setSystemProperty("remote.port",
+                            passiveServer.getSystemProperty("proxy.port"))
+                                           .setSystemProperty("channel.starting.mode", "disabled");
 
             activeServer = builder.realize(activeServerSchema, "ACTIVE", console);
 
@@ -599,8 +601,9 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         try
         {
             // establish the passive cluster
-            int iPort = getAvailablePortIterator().next();
+            int                      iPort   = getAvailablePortIterator().next();
             SystemApplicationConsole console = new SystemApplicationConsole();
+
             for (int i = 0; i < nrPassiveServers; i++)
             {
                 ClusterMemberSchema passiveServerSchema = newPassiveClusterMemberSchema(iPort).setSiteName(siteName);
@@ -610,6 +613,7 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
 
             // establish the active cluster
             iPort = getAvailablePortIterator().next();
+
             for (int i = 0; i < nrActiveServers; i++)
             {
                 ClusterMemberSchema activeServerSchema =
@@ -735,7 +739,8 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         try
         {
             // establish the passive cluster
-            ClusterMemberSchema passiveServerSchema = newPassiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName(siteName);
+            ClusterMemberSchema passiveServerSchema =
+                newPassiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName(siteName);
 
             passiveServer = builder.realize(passiveServerSchema, "PASSIVE", console);
 
@@ -744,9 +749,10 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
 
             // establish the active cluster
             ClusterMemberSchema activeServerSchema =
-                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setCacheConfigURI("test-remotecluster-eventfiltering-cache-config.xml")
-                    .setSiteName(siteName).setSystemProperty("remote.port",
-                                                             passiveServer.getSystemProperty("proxy.port"));
+                newActiveClusterMemberSchema(getAvailablePortIterator().next())
+                    .setCacheConfigURI("test-remotecluster-eventfiltering-cache-config.xml").setSiteName(siteName)
+                    .setSystemProperty("remote.port",
+                            passiveServer.getSystemProperty("proxy.port"));
 
             activeServer = builder.realize(activeServerSchema, "ACTIVE", console);
 
@@ -938,7 +944,8 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         ClusterMember                                              londonServer = null;
 
         JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder      = newClusterMemberBuilder();
-        SystemApplicationConsole console = new SystemApplicationConsole();
+        SystemApplicationConsole                                   console      = new SystemApplicationConsole();
+
         try
         {
             // establish the london server
@@ -1012,7 +1019,8 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         ClusterMember                                              londonServer = null;
 
         JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder      = newClusterMemberBuilder();
-        SystemApplicationConsole console = new SystemApplicationConsole();
+        SystemApplicationConsole                                   console      = new SystemApplicationConsole();
+
         try
         {
             // establish the london server
@@ -1090,29 +1098,35 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         ClusterMember                                              newyorkServer = null;
 
         JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder       = newClusterMemberBuilder();
-        SystemApplicationConsole console = new SystemApplicationConsole();
+        SystemApplicationConsole                                   console       = new SystemApplicationConsole();
 
         try
         {
             // establish the london server
             ClusterMemberSchema londonServerSchema =
-                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("london").setSystemProperty("proxy.port",
-                                                                                       getAvailablePortIterator())
-                                                                                           .setSystemProperty("remote.port",
-                                                                                                              getAvailablePortIterator())
-                                                                                                                  .setSystemProperty("conflict.resolver.classname",
-                "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver").setSystemProperty("tangosol.coherence.log", "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActiveCR-london.log");
+                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("london")
+                    .setSystemProperty("proxy.port",
+                            getAvailablePortIterator()).setSystemProperty("remote.port",
+                        getAvailablePortIterator())
+                                                                                         .setSystemProperty("conflict.resolver.classname",
+                                                                                                 "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver")
+                                                                                                                .setSystemProperty("tangosol.coherence.log",
+                                                                                                                        "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActiveCR-london.log");
 
             londonServer = builder.realize(londonServerSchema, "LONDON", console);
 
             // establish the newyork server
             ClusterMemberSchema newyorkServerSchema =
-                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("newyork").setSystemProperty("proxy.port",
-                                                                                        londonServer
-                                                                                            .getSystemProperty("remote.port"))
-                                                                                                .setSystemProperty("remote.port",
-                londonServer.getSystemProperty("proxy.port")).setSystemProperty("conflict.resolver.classname",
-                                                                                "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver").setSystemProperty("tangosol.coherence.log", "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActiveCR-NY.log");;
+                newActiveClusterMemberSchema(getAvailablePortIterator().next()).setSiteName("newyork")
+                    .setSystemProperty("proxy.port",
+                            londonServer.getSystemProperty("remote.port")).setSystemProperty("remote.port",
+                        londonServer
+                                .getSystemProperty("proxy.port"))
+                                                                                                                .setSystemProperty("conflict.resolver.classname",
+                                                                                                                        "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver")
+                    .setSystemProperty("tangosol.coherence.log",
+                            "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActiveCR-NY.log");
+            ;
 
             newyorkServer = builder.realize(newyorkServerSchema, "NEWYORK", console);
 
@@ -1200,7 +1214,8 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         ClusterMember                                              londonServer = null;
 
         JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder      = newClusterMemberBuilder();
-        SystemApplicationConsole console = new SystemApplicationConsole();
+        SystemApplicationConsole                                   console      = new SystemApplicationConsole();
+
         try
         {
             // establish the london server
@@ -1279,7 +1294,8 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
         ClusterMember                                              londonServer = null;
 
         JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder      = newClusterMemberBuilder();
-        SystemApplicationConsole console = new SystemApplicationConsole();
+        SystemApplicationConsole                                   console      = new SystemApplicationConsole();
+
         try
         {
             // establish the london server
@@ -1345,6 +1361,7 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
             }
         }
     }
+
 
     /**
      * Randomly populates the specified {@link NamedCache} by inserting, updating and removing a number of entries
@@ -1447,6 +1464,7 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
 
         return changeCount;
     }
+
 
     /**
      * Generates a pseudo random {@link String} consisting of characters from the specified {@link String} and of
