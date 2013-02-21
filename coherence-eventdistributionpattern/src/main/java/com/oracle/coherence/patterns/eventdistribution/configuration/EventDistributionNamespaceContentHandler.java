@@ -26,20 +26,15 @@
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.resourcing.ResourceProviderManager;
-
 import com.oracle.coherence.configuration.caching.CacheMapping;
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
-
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.ElementContentHandler;
 import com.oracle.coherence.environment.extensible.QualifiedName;
 import com.oracle.coherence.environment.extensible.namespaces.AbstractNamespaceContentHandler;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStoreEventChannelBuilder;
@@ -61,24 +56,18 @@ import com.oracle.coherence.patterns.eventdistribution.transformers.ChainedEvent
 import com.oracle.coherence.patterns.eventdistribution.transformers.CoalescingEventIteratorTransformerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.transformers.FilteringEventIteratorTransformerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformerBuilder;
-
 import com.tangosol.net.cache.BinaryEntryStore;
 import com.tangosol.net.cache.CacheStore;
-
 import com.tangosol.run.xml.XmlElement;
-
 import com.tangosol.util.Filter;
-
 import com.tangosol.util.filter.EntryFilter;
 
+import javax.jms.JMSException;
 import java.net.URI;
-
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import javax.jms.JMSException;
 
 /**
  * A {@link EventDistributionNamespaceContentHandler} handles XML Configuration processing for the

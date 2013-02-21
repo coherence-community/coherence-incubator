@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -77,9 +76,9 @@ public interface MessagingSession
      * @param subscription subscription
      * @return subscriber
      */
-    public Subscriber subscribe(Identifier destination,
+    public Subscriber subscribe(Identifier                destination,
                                 SubscriptionConfiguration subscriptionConfiguration,
-                                Subscription subscription);
+                                Subscription              subscription);
 
 
     /**
@@ -91,7 +90,7 @@ public interface MessagingSession
      * @param subscriptionConfiguration subscription configuration
      * @return subscriber
      */
-    public Subscriber subscribe(Identifier destination,
+    public Subscriber subscribe(Identifier                destination,
                                 SubscriptionConfiguration subscriptionConfiguration);
 
 
@@ -104,7 +103,7 @@ public interface MessagingSession
      * @param subscriptionConfiguration subscription configuration
      * @return subscriber
      */
-    public Subscriber subscribe(String destinationName,
+    public Subscriber subscribe(String                    destinationName,
                                 SubscriptionConfiguration subscriptionConfiguration);
 
 
@@ -136,7 +135,7 @@ public interface MessagingSession
      * @param payload message payload
      */
     public void publishMessage(Identifier destinationIdentifier,
-                               Object payload);
+                               Object     payload);
 
 
     /**

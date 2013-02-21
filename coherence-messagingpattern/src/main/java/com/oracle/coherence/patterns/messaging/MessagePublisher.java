@@ -1,31 +1,29 @@
 /*
  * File: MessagePublisher.java
- * 
- * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
- * 
- * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
- * 
- * This software is the confidential and proprietary information of Oracle
- * Corporation. You shall not disclose such confidential and proprietary
- * information and shall use it only in accordance with the terms of the license
- * agreement you entered into with Oracle Corporation.
- * 
- * Oracle Corporation makes no representations or warranties about the
- * suitability of the software, either express or implied, including but not
- * limited to the implied warranties of merchantability, fitness for a
- * particular purpose, or non-infringement. Oracle Corporation shall not be
- * liable for any damages suffered by licensee as a result of using, modifying
- * or distributing this software or its derivatives.
- * 
- * This notice may not be removed or altered.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * The contents of this file are subject to the terms and conditions of 
+ * the Common Development and Distribution License 1.0 (the "License").
+ *
+ * You may not use this file except in compliance with the License.
+ *
+ * You can obtain a copy of the License by consulting the LICENSE.txt file
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ *
+ * See the License for the specific language governing permissions
+ * and limitations under the License.
+ *
+ * When distributing the software, include this License Header Notice in each
+ * file and include the License file LICENSE.txt.
+ *
+ * MODIFICATIONS:
+ * If applicable, add the following below the License Header, with the fields
+ * enclosed by brackets [] replaced by your own identifying information:
+ * "Portions Copyright [year] [name of copyright owner]"
  */
-package com.oracle.coherence.patterns.messaging;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.logging.Logger;
@@ -44,25 +42,31 @@ import com.tangosol.util.InvocableMap.EntryProcessor;
 import com.tangosol.util.extractor.ReflectionExtractor;
 import com.tangosol.util.processor.ExtractorProcessor;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * The {@link MessagePublisher} is responsible for generating {@link MessageIdentifier}s and putting a 
- * message in the message cache. The {@link MessagePublisher} is a JVM only object, it is not 
+ * The {@link MessagePublisher} is responsible for generating {@link MessageIdentifier}s and putting a
+ * message in the message cache. The {@link MessagePublisher} is a JVM only object, it is not
  * stored in the cache. It is created on demand the first time it is needed and exists for the life
  * of the JVM or until the message partition it services is transferred to another member.
- * There is a {@link MessagePublisher} created for each destination/partition pair. 
- * When the {@link PublishMessageProcessor} .process() method executes, it calls {@link MessagePublisherManager} to 
- * get the publisher.  The {@link MessagePublisherManager} looks up the publisher in a local, static map.  
+ * There is a {@link MessagePublisher} created for each destination/partition pair.
+ * When the {@link PublishMessageProcessor} .process() method executes, it calls {@link MessagePublisherManager} to
+ * get the publisher.  The {@link MessagePublisherManager} looks up the publisher in a local, static map.
  * If the publisher doesn't exist, it is created and put in the map. That publisher exists for the life of the JVM.
  * <p>
  * In the case of a member failure the entire map will be recreated.  If the message partition moves to another member, then
  * the Publisher will need to be recreated and rebuilt.  A Message backing map listener will generate the events needed
  * to rebuild the entry (entry events, and partition events).
  * <p>
- * To publisher a message, the client must call MessagingSession.publisherMessage(..).  Every MessagingSession 
+ * To publisher a message, the client must call MessagingSession.publisherMessage(..).  Every MessagingSession
  * has a unique publisher identifier that is used as a key when invoking the PublishMessageProcesser.  This
  * forces the processor to execute in the member that owns that key, even though there isn't yet an
  * entry in the cache for that key. This class then gets the partitionId assigned to that key and puts
- * the message into the partition.  The message key used to store the message is a combination of destinationId, 
+ * the message into the partition.  The message key used to store the message is a combination of destinationId,
  * partitionId and a sequence number.
  * <p>
  * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
@@ -74,7 +78,6 @@ import com.tangosol.util.processor.ExtractorProcessor;
 @SuppressWarnings("serial")
 public class MessagePublisher
 {
-
     /**
      * The identifier of the partition serviced by this {@link MessagePublisher}.
      */
@@ -123,44 +126,43 @@ public class MessagePublisher
 
     /**
      * A map of the highest request sequence number for each publisher indexed by the publisher id.  This
-     * is used to prevent putting a message in the cache in the case of an entry processor failure.  
+     * is used to prevent putting a message in the cache in the case of an entry processor failure.
      */
     private HashMap<Identifier, Long> requestIdentifierMap = new HashMap<Identifier, Long>();
 
 
     /**
      * Constructor.  Initialize variables and create a new {@link TicketBook}
-     * 
+     *
      * @param destinationIdentifier destination identifier
      * @param partitionId partition identifier
      */
     MessagePublisher(Identifier destinationIdentifier,
-                     int partitionId)
+                     int        partitionId)
     {
         this.destinationIdentifier = destinationIdentifier;
-        this.partitionId = partitionId;
+        this.partitionId           = partitionId;
         initDestinationType();
         reset();
     }
 
 
     /**
-     * Publish the message by creating a {@link Message} object and putting it directly into 
+     * Publish the message by creating a {@link Message} object and putting it directly into
      * the backing map. See {@link PublishMessageProcessor} for further explanation.
      * <p>
-     * Note: This method must be synchronized since multiple publishers may be writing to the 
+     * Note: This method must be synchronized since multiple publishers may be writing to the
      * same partition.  It is imperative that the backing map event is called is the message sequence
      * number order.  This ensures that {@link MessageEventManager} getEventProcessor method exposes the
      * messages in monotonically increasing order.
-     * 
+     *
      * @param requestId request identifier
      * @param payload message payload
      */
     @SuppressWarnings("unchecked")
     public synchronized void publishMessage(PublishRequestIdentifier requestId,
-                               Object payload)
+                                            Object                   payload)
     {
-
         // Note: if the destination is a topic with no subscriptions then the
         // message is deleted in the event processor. This allows the message to
         // be put into the cache.
@@ -168,40 +170,44 @@ public class MessagePublisher
         Message message = new Message(this.destinationIdentifier, requestId, generateMessageId(), payload);
 
         // Get the backing map manager context.
-        NamedCache cache = CacheFactory.getCache(Message.CACHENAME);
-        CacheService service = cache.getCacheService();
-        BackingMapManager manager = service.getBackingMapManager();
+        NamedCache               cache   = CacheFactory.getCache(Message.CACHENAME);
+        CacheService             service = cache.getCacheService();
+        BackingMapManager        manager = service.getBackingMapManager();
         BackingMapManagerContext context = manager.getContext();
 
         // Put the message into the cache via the backing map. This will
         // generate an event where we will inform all the subscribers that the
         // message has arrived.
         Map<Object, Object> backingMap = (Map<Object, Object>) context.getBackingMap(Message.CACHENAME);
-        Object binaryKey = context.getKeyToInternalConverter().convert(message.getKey());
-        Object binaryVal = context.getValueToInternalConverter().convert(message);
+        Object              binaryKey  = context.getKeyToInternalConverter().convert(message.getKey());
+        Object              binaryVal  = context.getValueToInternalConverter().convert(message);
+
         backingMap.put(binaryKey, binaryVal);
     }
 
 
     /**
-     * Check if a {@link PublishRequestIdentifier} has already been seen by this publisher. If a partition is 
+     * Check if a {@link PublishRequestIdentifier} has already been seen by this publisher. If a partition is
      * transferred after {@link Message} has been put into the cache but before the {@link PublishMessageProcessor}
-     * completes, then Coherence will re-run the {@link PublishMessageProcessor}.  Without this check, the same 
+     * completes, then Coherence will re-run the {@link PublishMessageProcessor}.  Without this check, the same
      * {@link Message} would be written to the cache again, violating the JMS contract.
-     * The map is populated during partition transfer and is only needed by the first {@link PublishMessageProcessor} 
-     * executing against a partition after the partition has been transferred.  That is why the map entry is 
-     * removed if it is found. 
-     * 
+     * The map is populated during partition transfer and is only needed by the first {@link PublishMessageProcessor}
+     * executing against a partition after the partition has been transferred.  That is why the map entry is
+     * removed if it is found.
+     *
      * @param requestId request identifier
      * @return boolean true if the request exists.
      */
     public synchronized boolean checkRequestExists(PublishRequestIdentifier requestId)
     {
         Identifier key = requestId.getPublisherIdentifier();
+
         if (requestIdentifierMap.containsKey(key))
         {
             long lastSeqNum = requestIdentifierMap.get(key).longValue();
+
             requestIdentifierMap.remove(key);
+
             if (lastSeqNum == requestId.getMessageSequenceNumber())
             {
                 return true;
@@ -219,18 +225,21 @@ public class MessagePublisher
     /**
      * Save the maximum sequence number for a given publisher.  This is used to determine if the
      * {@link PublishMessageProcessor} is trying to re=publish the same message.
-     * 
+     *
      * @param requestId request identifier
      */
     synchronized void saveRequest(PublishRequestIdentifier requestId)
     {
         Identifier key = requestId.getPublisherIdentifier();
+
         if (requestIdentifierMap.containsKey(key))
         {
             long maxSeqNum = requestIdentifierMap.get(key).longValue();
+
             if (maxSeqNum >= requestId.getMessageSequenceNumber())
             {
-                return; // maximum sequence number for this publisher is already
+                return;    // maximum sequence number for this publisher is already
+
                 // in the map
             }
         }
@@ -256,7 +265,7 @@ public class MessagePublisher
 
     /**
      * Check if the {@link Destination} used by this publisher is a {@link Topic}.
-     * 
+     *
      * @return true if destination is a topic
      */
     boolean isTopic()
@@ -267,7 +276,7 @@ public class MessagePublisher
 
     /**
      * Check if the {@link Destination} used by this publisher is a {@link Queue}.
-     * 
+     *
      * @return true if destination is a queue
      */
     boolean isQueue()
@@ -278,7 +287,7 @@ public class MessagePublisher
 
     /**
      * Check if the {@link Destination} used by this publisher is a {@link Queue}.
-     * 
+     *
      * @return true if destination is a queue
      */
     int getPartitionId()
@@ -289,7 +298,7 @@ public class MessagePublisher
 
     /**
      * Get the {@link Identifier} of the {@link Destination} used by this publisher.
-     * 
+     *
      * @return destination identifier
      */
     Identifier getDestinationIdentifier()
@@ -300,7 +309,7 @@ public class MessagePublisher
 
     /**
      * A message is arriving to this member due to a partition transfer.
-     * 
+     *
      * @param message messages
      */
     void saveArrivingMessage(Message message)
@@ -317,6 +326,7 @@ public class MessagePublisher
         {
             minArrivingSeqNum = seqNum;
         }
+
         if (seqNum > maxArrivingSeqNum)
         {
             maxArrivingSeqNum = seqNum;
@@ -327,7 +337,7 @@ public class MessagePublisher
     /**
      * A message is arriving to this member due to a partition transfer and the message
      * needs to be exposed by an event processor.
-     * 
+     *
      * @param messageIdentifier message identifier
      */
     void saveMessageToBeExposed(MessageIdentifier messageIdentifier)
@@ -340,6 +350,7 @@ public class MessagePublisher
         {
             minDeliverySeqNum = seqNum;
         }
+
         if (seqNum > maxDeliverySeqNum)
         {
             maxDeliverySeqNum = seqNum;
@@ -349,7 +360,7 @@ public class MessagePublisher
 
     /**
      * The partition transfer to this member is done.  Create a {@link TicketBook} for generating
-     * message sequence numbers.  
+     * message sequence numbers.
      */
     void recreateTicketBook()
     {
@@ -378,14 +389,15 @@ public class MessagePublisher
 
     /**
      * Create the new range for this partition containing messages that need to be exposed.
-     * 
+     *
      * @return range
      */
     Range getPendingMessagesToExpose()
     {
         // Create a new range for the batch delivery tracker
-        // 
+        //
         Range range;
+
         if (minDeliverySeqNum == Long.MAX_VALUE)
         {
             range = Ranges.EMPTY;
@@ -401,19 +413,19 @@ public class MessagePublisher
 
 
     /**
-     * Generate the {@link MessageIdentifier} using the destination id and a monotonically increasing 
-     * message sequence number for the next {@link Message} to publish. The {@link MessageIdentifier} 
+     * Generate the {@link MessageIdentifier} using the destination id and a monotonically increasing
+     * message sequence number for the next {@link Message} to publish. The {@link MessageIdentifier}
      * will guarantee ordering for each message sent by a {@link MessagingSession} to a specific destination.
      * <p>
-     * Each {@link MessagePublisher} contains a {@link TicketBook} which is used to generate the 
+     * Each {@link MessagePublisher} contains a {@link TicketBook} which is used to generate the
      * message sequence numbers. It is critical that message ordering is maintained per client
      * session, i.e. {@link MessagingSession}.  When an message partition is transferred to a new member,
      * the last message sequence number is tracked and we recreate the {@link TicketBook} once the transfer
-     * is done. See {@link MessageEventManager}.  However, if the partition is empty there are 
+     * is done. See {@link MessageEventManager}.  However, if the partition is empty there are
      * no arriving messages, the next sequence number is not known. This can happen if message consumption
      * is faster than message production.  In that case, the code gets the sequence number from the destination or
      * subscription.
-     * 
+     *
      * @return message identifier
      */
     private MessageIdentifier generateMessageId()
@@ -421,32 +433,39 @@ public class MessagePublisher
         // Get a new ticket. Since multiple publishers may be sharing a single
         // partition, we need to lock the book.
         Ticket ticket = null;
+
         synchronized (messageSequenceNumberTicketBook)
         {
-            // INC-529 fix 
+            // INC-529 fix
             // If the ticket book is empty that means that either this is the first message
             // put into the message partition or there was a fail over when the message partition
             // was empty.  Either case is very rare but must be handled or else the
-            // sequence number will restart at 1 and be incorrect. 
+            // sequence number will restart at 1 and be incorrect.
             if (messageSequenceNumberTicketBook.isEmpty())
             {
                 // Set up Extractor entry processor to get sequence number
                 Integer[] params = new Integer[1];
+
                 params[0] = Integer.valueOf(partitionId);
-                EntryProcessor processor = new ExtractorProcessor(new ReflectionExtractor(
-                    "getLastMessageSequenceNumber", params));
+
+                EntryProcessor processor =
+                    new ExtractorProcessor(new ReflectionExtractor("getLastMessageSequenceNumber",
+                                                                   params));
 
                 // The queue or topic subscription keeps track of the last message received for each partition.
                 long seqNum = 0;
+
                 if (isTopic())
                 {
                     seqNum = getSequenceNumberForTopic(processor);
-                }      
+                }
                 else
                 {
                     // Invoke the extractor processor against the queue
-                    Long seqNumLong = (Long) CacheFactory.getCache(Destination.CACHENAME).invoke(
-                        this.destinationIdentifier, processor);
+                    Long seqNumLong =
+                        (Long) CacheFactory.getCache(Destination.CACHENAME).invoke(this.destinationIdentifier,
+                                                                                   processor);
+
                     seqNum = seqNumLong.longValue();
                 }
 
@@ -457,74 +476,84 @@ public class MessagePublisher
                     this.createTicketBook(seqNum, seqNum);
                 }
             }
+
             // Get a ticket with the next sequence number
             ticket = messageSequenceNumberTicketBook.extend();
-        } 
-        
+        }
+
         return new MessageIdentifier(partitionId, ticket.getSequenceNumber());
     }
 
+
     /**
      * Get the maximum message sequence number from one of the subscriptions in a topic.
-     * 
+     *
      * @param processor entry processor to invoke against subscription
      * @return long sequence number. A value of zero means the sequence number was not retrieved.
      */
     private long getSequenceNumberForTopic(EntryProcessor processor)
-    {     
+    {
         // Get the topic
-        NamedCache destinationsCache = CacheFactory.getCache(Destination.CACHENAME);
-        Destination destination = (Destination) destinationsCache.get(destinationIdentifier);
+        NamedCache  destinationsCache = CacheFactory.getCache(Destination.CACHENAME);
+        Destination destination       = (Destination) destinationsCache.get(destinationIdentifier);
+
         if (destination == null)
         {
-            String error = "Error generating message identifier. Destination " + this.destinationIdentifier + 
-                           " is not found.";
+            String error = "Error generating message identifier. Destination " + this.destinationIdentifier
+                           + " is not found.";
+
             Logger.log(Logger.ERROR, error);
+
             throw new IllegalStateException(error);
         }
 
         // Get the last message sequence number seen for this partition by any topic subscription.
         Set<SubscriptionIdentifier> subscriptions = destination.getSubscriptionIdentifiers();
+
         if (subscriptions == null)
         {
             return 0;
         }
-        
+
         // Loop until a successful call is made or no more subscriptions.
         // A subscription might be removed from the cache by the time we call it.
-        long seqNum = 0;
-        boolean success = false;
-        Iterator<SubscriptionIdentifier> iter = subscriptions.iterator();
+        long                             seqNum  = 0;
+        boolean                          success = false;
+        Iterator<SubscriptionIdentifier> iter    = subscriptions.iterator();
+
         while (iter.hasNext() && (!success))
         {
             SubscriptionIdentifier subscriptionIdentifier = iter.next();
 
-            // Call the subscription. If null is returned then try the next one. 
-            Long seqNumLong = (Long) CacheFactory.getCache(Subscription.CACHENAME).invoke(
-                subscriptionIdentifier, processor);
+            // Call the subscription. If null is returned then try the next one.
+            Long seqNumLong = (Long) CacheFactory.getCache(Subscription.CACHENAME).invoke(subscriptionIdentifier,
+                                                                                          processor);
+
             if (seqNumLong != null)
             {
-                seqNum = seqNumLong.longValue();
+                seqNum  = seqNumLong.longValue();
                 success = true;
             }
         }
-        
+
         return seqNum;
     }
-        
+
 
     /**
-     * Load the destination object if we don't know the type of destination. 
+     * Load the destination object if we don't know the type of destination.
      */
     private void initDestinationType()
     {
         if (this.destinationType == null)
         {
-            NamedCache destinationsCache = CacheFactory.getCache(Destination.CACHENAME);
-            Destination destination = (Destination) destinationsCache.get(destinationIdentifier);
+            NamedCache  destinationsCache = CacheFactory.getCache(Destination.CACHENAME);
+            Destination destination       = (Destination) destinationsCache.get(destinationIdentifier);
+
             if (destination == null)
             {
                 Logger.log(Logger.ERROR, "Destination " + this.destinationIdentifier + " is not found.");
+
                 return;
             }
 
@@ -547,7 +576,6 @@ public class MessagePublisher
      */
     public static class Key implements Serializable
     {
-
         /**
          * Destination {@link Identifier}.
          */
@@ -561,15 +589,15 @@ public class MessagePublisher
 
         /**
          * Constructor.
-         * 
+         *
          * @param destinationIdentifier destination identifier
          * @param partitionId partition identifier
          */
         Key(Identifier destinationIdentifier,
-            int partitionId)
+            int        partitionId)
         {
             this.destinationIdentifier = destinationIdentifier;
-            this.partitionId = partitionId;
+            this.partitionId           = partitionId;
         }
 
 
@@ -579,16 +607,32 @@ public class MessagePublisher
         public boolean equals(Object obj)
         {
             if (this == obj)
+            {
                 return true;
+            }
+
             if (obj == null)
+            {
                 return false;
+            }
+
             if (getClass() != obj.getClass())
+            {
                 return false;
+            }
+
             final MessagePublisher.Key other = (MessagePublisher.Key) obj;
+
             if (partitionId != other.partitionId)
+            {
                 return false;
+            }
+
             if (!destinationIdentifier.equals(other.destinationIdentifier))
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -598,25 +642,26 @@ public class MessagePublisher
          */
         public int hashCode()
         {
-            final int prime = 31;
-            int result = 1;
+            final int prime  = 31;
+            int       result = 1;
+
             result = prime * result + destinationIdentifier.hashCode();
             result = prime * result + (int) (partitionId);
+
             return result;
         }
 
 
         /**
          * Generate a string representation of this key.
-         * 
+         *
          * @return string
          */
         public String toString()
         {
-            return String.format("MessagePublsiher{destinationIdentifier=%s, partitionId=%d, }", destinationIdentifier,
-                partitionId);
+            return String.format("MessagePublsiher{destinationIdentifier=%s, partitionId=%d, }",
+                                 destinationIdentifier,
+                                 partitionId);
         }
-
     }
-
 }

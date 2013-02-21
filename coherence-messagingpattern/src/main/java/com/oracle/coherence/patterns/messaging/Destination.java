@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,33 +27,23 @@ package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.patterns.messaging.entryprocessors.CreateSubscriptionProcessor;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.ExternalizableHelper;
-
 import com.tangosol.util.extractor.ChainedExtractor;
-
 import com.tangosol.util.filter.PresentFilter;
-
 import com.tangosol.util.processor.ConditionalProcessor;
 import com.tangosol.util.processor.ExtractorProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -103,7 +92,6 @@ public abstract class Destination implements ExternalizableLite, PortableObject
      * The {@link Identifier} of the {@link Destination}.
      */
     private Identifier identifier;
-
 
     ;
 
@@ -266,9 +254,9 @@ public abstract class Destination implements ExternalizableLite, PortableObject
      * @param subscription The object that will be used to capture the state of
      * the subscription
      */
-    public void subscribe(SubscriptionIdentifier subscriptionIdentifier,
+    public void subscribe(SubscriptionIdentifier    subscriptionIdentifier,
                           SubscriptionConfiguration subscriptionConfiguration,
-                          Subscription subscription)
+                          Subscription              subscription)
     {
         // attempt to register the subscription
         if (subscription == null)
@@ -282,7 +270,7 @@ public abstract class Destination implements ExternalizableLite, PortableObject
         {
             // first attempt to place the subscription into the subscriptions
             // cache (if it does not already exist)
-            NamedCache   subscriptionsCache   = CacheFactory.getCache(Subscription.CACHENAME);
+            NamedCache subscriptionsCache = CacheFactory.getCache(Subscription.CACHENAME);
             Subscription existingSubscription = (Subscription) subscriptionsCache.invoke(subscription.getIdentifier(),
                                                                                          new CreateSubscriptionProcessor(subscription));
 
@@ -321,7 +309,7 @@ public abstract class Destination implements ExternalizableLite, PortableObject
      * @param messageTracker message tracker
      */
     public void unsubscribe(SubscriptionIdentifier subscriptionIdentifier,
-                            MessageTracker messageTracker)
+                            MessageTracker         messageTracker)
     {
         // remove the subscriber from the destination
         removeSubscriptionWithIdentifier(subscriptionIdentifier);

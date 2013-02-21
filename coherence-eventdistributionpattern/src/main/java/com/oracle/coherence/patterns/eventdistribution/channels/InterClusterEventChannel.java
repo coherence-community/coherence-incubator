@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,14 +26,11 @@
 package com.oracle.coherence.patterns.eventdistribution.channels;
 
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
-
 import com.oracle.coherence.common.events.Event;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.channels.cache.ConflictResolver;
-
 import com.tangosol.net.Cluster;
 
 /**

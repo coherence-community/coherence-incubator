@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,26 +26,19 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.backingmaplisteners.Cause;
-
 import com.oracle.coherence.common.leasing.Lease;
 import com.oracle.coherence.common.leasing.LeaseExpiryCoordinator;
 import com.oracle.coherence.common.leasing.LeaseListener;
 import com.oracle.coherence.common.leasing.Leased;
 import com.oracle.coherence.common.leasing.Leasing;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.patterns.messaging.entryprocessors.UnsubscribeProcessor;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.MapEvent;
 
@@ -90,10 +82,10 @@ public abstract class LeasedSubscription extends ConfigurableSubscription<Leased
      * @param leasedSubscriptionConfiguration leasedSubscription configuration
      * @param creationTime The time (since in the epoc in milliseconds) when the {@link Subscription} was created.
      */
-    public LeasedSubscription(SubscriptionIdentifier subscriptionIdentifier,
-                              Status status,
+    public LeasedSubscription(SubscriptionIdentifier          subscriptionIdentifier,
+                              Status                          status,
                               LeasedSubscriptionConfiguration leasedSubscriptionConfiguration,
-                              long creationTime)
+                              long                            creationTime)
     {
         super(subscriptionIdentifier, status, leasedSubscriptionConfiguration);
         this.lease = Leasing.newLease(creationTime, leasedSubscriptionConfiguration.getLeaseDuration());
@@ -113,7 +105,7 @@ public abstract class LeasedSubscription extends ConfigurableSubscription<Leased
      * {@inheritDoc}
      */
     public void onLeaseCanceled(Object leaseOwner,
-                                Lease lease)
+                                Lease  lease)
     {
         if (Logger.isEnabled(Logger.QUIET))
         {
@@ -128,7 +120,7 @@ public abstract class LeasedSubscription extends ConfigurableSubscription<Leased
      * {@inheritDoc}
      */
     public void onLeaseExpiry(Object leaseOwner,
-                              Lease lease)
+                              Lease  lease)
     {
         if (Logger.isEnabled(Logger.QUIET))
         {
@@ -175,7 +167,7 @@ public abstract class LeasedSubscription extends ConfigurableSubscription<Leased
      * @param cause cause of event
      */
     public void onCacheEntryEvent(MapEvent mapEvent,
-                                  Cause cause)
+                                  Cause    cause)
     {
         if (mapEvent.getId() == MapEvent.ENTRY_INSERTED || mapEvent.getId() == MapEvent.ENTRY_UPDATED)
         {

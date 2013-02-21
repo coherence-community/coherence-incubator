@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +26,6 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.ranges.Range;
 
 import java.util.HashMap;
@@ -39,14 +37,14 @@ import java.util.HashMap;
  * <p>
  * All access to the delivery tracker is synchronized.  There are 3 threads that access this class:
  * <ol>
- * 	<li>Backing map listener thread that runs when a {@link Message} is written to the cache.  The {@link MessageEventManager}
- * 		will add a message to the tracker.</li>
+ *  <li>Backing map listener thread that runs when a {@link Message} is written to the cache.  The {@link MessageEventManager}
+ *      will add a message to the tracker.</li>
  *
- * 	<li>Partition transfer complete thread.  This thread calls createRangeForPartition and only runs when a
- * 		message partition transfer to this member is done.</li>
+ *  <li>Partition transfer complete thread.  This thread calls createRangeForPartition and only runs when a
+ *      message partition transfer to this member is done.</li>
  *
- * 	<li> Event processor thread.  This thread is background thread that exposes the messages to the topic or queue.
- * 		It calls getTrackerSnapShot.</li>
+ *  <li> Event processor thread.  This thread is background thread that exposes the messages to the topic or queue.
+ *      It calls getTrackerSnapShot.</li>
  * </ol>
  * <p>
  * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
@@ -129,8 +127,8 @@ class MessagesToExpose
      * @param range message range
      */
     public synchronized void createRangeForPartition(Identifier destinationIdentifier,
-                                                     int partitionId,
-                                                     Range range)
+                                                     int        partitionId,
+                                                     Range      range)
     {
         DefaultMessageTracker tracker = (DefaultMessageTracker) ensureTracker(destinationIdentifier);
 

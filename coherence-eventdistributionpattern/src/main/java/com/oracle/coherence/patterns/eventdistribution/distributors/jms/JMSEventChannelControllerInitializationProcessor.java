@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,29 +26,16 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.Base;
 import com.tangosol.util.ExternalizableHelper;
-
 import com.tangosol.util.InvocableMap.Entry;
 import com.tangosol.util.InvocableMap.EntryProcessor;
-
 import com.tangosol.util.processor.AbstractProcessor;
-
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -57,6 +43,11 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A {@link JMSEventChannelControllerInitializationProcessor} is an {@link EntryProcessor} that creates and initializes

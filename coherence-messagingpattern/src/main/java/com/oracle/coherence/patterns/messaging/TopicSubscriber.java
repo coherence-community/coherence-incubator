@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,15 +26,12 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeMessageProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeSubscriptionMessagesProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.RequestMessageProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.SubscriptionRollbackProcessor;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.processor.ExtractorProcessor;
 import com.tangosol.util.processor.UpdaterProcessor;
 
@@ -57,7 +53,7 @@ class TopicSubscriber extends AbstractSubscriber<TopicSubscription>
      * @param messagingSession messaging session
      * @param subscriptionIdentifier subscription identifier
      */
-    TopicSubscriber(MessagingSession messagingSession,
+    TopicSubscriber(MessagingSession       messagingSession,
                     SubscriptionIdentifier subscriptionIdentifier)
     {
         super(messagingSession, subscriptionIdentifier);

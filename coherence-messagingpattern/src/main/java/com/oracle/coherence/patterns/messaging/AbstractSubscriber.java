@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,20 +26,14 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.leasing.Lease;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.patterns.messaging.entryprocessors.UnsubscribeProcessor;
 import com.oracle.coherence.patterns.messaging.exceptions.SubscriberInterruptedException;
 import com.oracle.coherence.patterns.messaging.exceptions.SubscriptionLostException;
-
 import com.tangosol.net.CacheFactory;
-
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
-
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +47,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @param <S> subscription
- * 
+ *
  * @author Brian Oliver
  */
 abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subscriber
@@ -153,7 +146,7 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
      * @param messagingSession The {@link MessagingSession} that owns this {@link Subscriber}.
      * @param subscriptionIdentifier subscription identifier
      */
-    protected AbstractSubscriber(MessagingSession messagingSession,
+    protected AbstractSubscriber(MessagingSession       messagingSession,
                                  SubscriptionIdentifier subscriptionIdentifier)
     {
         this.messagingSession       = messagingSession;

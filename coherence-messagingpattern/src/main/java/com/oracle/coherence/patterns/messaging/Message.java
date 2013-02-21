@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,21 +28,16 @@ package com.oracle.coherence.patterns.messaging;
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.processing.EventProcessor;
 import com.oracle.coherence.common.events.processing.EventProcessorFactory;
-
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -136,10 +130,10 @@ public class Message implements EventProcessorFactory<EntryEvent>, Externalizabl
      * @param messageIdentifier The unique and in-order sequence number of the {@link Message}.
      * @param payload The payload for the {@link Message}
      */
-    public Message(Identifier destinationIdentifier,
+    public Message(Identifier               destinationIdentifier,
                    PublishRequestIdentifier requestIdentifier,
-                   MessageIdentifier messageIdentifier,
-                   Object payload)
+                   MessageIdentifier        messageIdentifier,
+                   Object                   payload)
     {
         this.key               = new MessageKey(destinationIdentifier, messageIdentifier);
         this.visibleTo         = new TreeSet<SubscriptionIdentifier>();
@@ -194,8 +188,8 @@ public class Message implements EventProcessorFactory<EntryEvent>, Externalizabl
      * @return MessageKey
      */
     public static MessageKey getKey(Identifier destinationIdentifier,
-                                    int partitionId,
-                                    long messageSequenceNumber)
+                                    int        partitionId,
+                                    long       messageSequenceNumber)
     {
         return new MessageKey(destinationIdentifier, new MessageIdentifier(partitionId, messageSequenceNumber));
     }
@@ -209,7 +203,7 @@ public class Message implements EventProcessorFactory<EntryEvent>, Externalizabl
      * @param messageIdentifier message identifier
      * @return MessageKey
      */
-    public static MessageKey getKey(Identifier destinationIdentifier,
+    public static MessageKey getKey(Identifier        destinationIdentifier,
                                     MessageIdentifier messageIdentifier)
     {
         return new MessageKey(destinationIdentifier, messageIdentifier);

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,17 +26,11 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.leasing.Lease;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.CacheFactory;
-
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.util.ArrayList;
@@ -70,10 +63,10 @@ public class QueueSubscription extends LeasedSubscription
      * @param leasedSubscriptionConfiguration configuration
      * @param creationTime The time (since in the epoc in milliseconds) when the subscription was created.
      */
-    public QueueSubscription(SubscriptionIdentifier subscriptionIdentifier,
-                             Status status,
+    public QueueSubscription(SubscriptionIdentifier          subscriptionIdentifier,
+                             Status                          status,
                              LeasedSubscriptionConfiguration leasedSubscriptionConfiguration,
-                             long creationTime)
+                             long                            creationTime)
     {
         super(subscriptionIdentifier, status, leasedSubscriptionConfiguration, creationTime);
     }
@@ -87,11 +80,11 @@ public class QueueSubscription extends LeasedSubscription
      * @param leasedSubscriptionConfiguration configuration
      * @param creationTime The time (since in the epoc in milliseconds) when the subscription was created.
      */
-    public QueueSubscription(Identifier destinationIdentifier,
-                             String subscriberName,
-                             Status status,
+    public QueueSubscription(Identifier                      destinationIdentifier,
+                             String                          subscriberName,
+                             Status                          status,
                              LeasedSubscriptionConfiguration leasedSubscriptionConfiguration,
-                             long creationTime)
+                             long                            creationTime)
     {
         this(new SubscriptionIdentifier(destinationIdentifier,
                                         subscriberName), status, leasedSubscriptionConfiguration, creationTime);
@@ -136,7 +129,7 @@ public class QueueSubscription extends LeasedSubscription
      * {@inheritDoc}
      */
     public void onLeaseSuspended(Object leaseOwner,
-                                 Lease lease)
+                                 Lease  lease)
     {
         Logger.log(Logger.ERROR,
                    "Unexpected %s Lease %s was suspended.  This should never happen! Ignoring request",
