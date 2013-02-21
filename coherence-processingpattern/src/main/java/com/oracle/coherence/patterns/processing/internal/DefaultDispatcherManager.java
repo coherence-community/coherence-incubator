@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -32,32 +31,24 @@ import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStoppedEvent;
 import com.oracle.coherence.common.events.lifecycle.NamedCacheStorageReleasedEvent;
 import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.LifecycleEventFilter;
 import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.environment.extensible.dependencies.EnvironmentReference;
-
 import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
 import com.oracle.coherence.patterns.processing.friends.DispatcherManager;
-
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.Filter;
-
 import com.tangosol.util.filter.NotFilter;
 import com.tangosol.util.filter.PresentFilter;
-
 import com.tangosol.util.processor.ConditionalPut;
 import com.tangosol.util.processor.ConditionalRemove;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
-
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -150,7 +141,7 @@ public class DefaultDispatcherManager extends AbstractAsynchronousEventProcessor
     /**
      * {@inheritDoc}
      */
-    public void registerDispatcher(int priority,
+    public void registerDispatcher(int              priority,
                                    final Dispatcher dispatcher)
     {
         if (!started)
@@ -169,7 +160,7 @@ public class DefaultDispatcherManager extends AbstractAsynchronousEventProcessor
     /**
      * {@inheritDoc}
      */
-    public void unregisterDispatcher(int priority,
+    public void unregisterDispatcher(int              priority,
                                      final Dispatcher dispatcher)
     {
         dispatcherCache.invoke(priority, new ConditionalRemove(PresentFilter.INSTANCE));
@@ -189,7 +180,7 @@ public class DefaultDispatcherManager extends AbstractAsynchronousEventProcessor
      * {@inheritDoc}
      */
     @Override
-    public void processLater(EventDispatcher eventDispatcher,
+    public void processLater(EventDispatcher   eventDispatcher,
                              LifecycleEvent<?> event)
     {
         if (event instanceof NamedCacheStorageReleasedEvent)

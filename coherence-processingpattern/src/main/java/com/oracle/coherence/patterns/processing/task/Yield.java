@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -57,7 +56,7 @@ public class Yield
      * @param lDelay             the delay in milliseconds before rescheduling
      */
     public Yield(final Object oIntermediatestate,
-                 final long lDelay)
+                 final long   lDelay)
     {
         m_intermediateState = oIntermediatestate;
         m_lDelay            = lDelay;

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,9 +26,7 @@
 package com.oracle.coherence.patterns.processing.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.patterns.processing.SubmissionOutcome;
 import com.oracle.coherence.patterns.processing.SubmissionOutcomeListener;
 import com.oracle.coherence.patterns.processing.SubmissionRetentionPolicy;
@@ -108,8 +105,8 @@ public class DefaultSubmissionOutcome implements SubmissionOutcome
      * @param resultIdentifier  the id of the {@link DefaultSubmissionResult}
      * @param retentionPolicy   the {@link SubmissionRetentionPolicy} for this {@link SubmissionOutcome}
      */
-    public DefaultSubmissionOutcome(final Identifier resultIdentifier,
-                                    SubmissionRetentionPolicy retentionPolicy,
+    public DefaultSubmissionOutcome(final Identifier                     resultIdentifier,
+                                    SubmissionRetentionPolicy            retentionPolicy,
                                     ObjectProxyFactory<SubmissionResult> submissionResultProxyFactory)
     {
         this.resultIdentifier             = resultIdentifier;
@@ -127,10 +124,10 @@ public class DefaultSubmissionOutcome implements SubmissionOutcome
      * @param submissionResult  the {@link SubmissionResult} that this {@link SubmissionOutcome} represents
      * @param retentionPolicy   the {@link SubmissionRetentionPolicy} for this {@link SubmissionOutcome}
      */
-    public DefaultSubmissionOutcome(Identifier resultIdentifier,
-                                    SubmissionOutcomeListener listener,
-                                    SubmissionResult submissionResult,
-                                    SubmissionRetentionPolicy retentionPolicy,
+    public DefaultSubmissionOutcome(Identifier                           resultIdentifier,
+                                    SubmissionOutcomeListener            listener,
+                                    SubmissionResult                     submissionResult,
+                                    SubmissionRetentionPolicy            retentionPolicy,
                                     ObjectProxyFactory<SubmissionResult> submissionResultProxyFactory)
     {
         this.resultIdentifier             = resultIdentifier;
@@ -153,11 +150,11 @@ public class DefaultSubmissionOutcome implements SubmissionOutcome
      * @param latency           the time it took until execution was started
      * @param executionDuration the time it took to execute the submission
      */
-    public void acceptProcessResult(final Object result,
+    public void acceptProcessResult(final Object          result,
                                     final SubmissionState state,
-                                    final long submissionTime,
-                                    final long latency,
-                                    final long executionDuration)
+                                    final long            submissionTime,
+                                    final long            latency,
+                                    final long            executionDuration)
     {
         synchronized (this)
         {
@@ -211,7 +208,7 @@ public class DefaultSubmissionOutcome implements SubmissionOutcome
     /**
      * {@inheritDoc}
      */
-    public Object get(final long timeout,
+    public Object get(final long     timeout,
                       final TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException
     {
         synchronized (this)

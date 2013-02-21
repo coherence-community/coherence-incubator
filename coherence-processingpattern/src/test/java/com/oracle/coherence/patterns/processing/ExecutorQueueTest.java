@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,27 +26,22 @@
 package com.oracle.coherence.patterns.processing;
 
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
-
 import com.oracle.coherence.common.leasing.Lease;
-
 import com.oracle.coherence.patterns.processing.internal.SubmissionKey;
 import com.oracle.coherence.patterns.processing.internal.SubmissionKeyPair;
 import com.oracle.coherence.patterns.processing.internal.task.DefaultTaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.internal.task.ServerLeaseMonitor;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediatorKey;
-
 import com.tangosol.util.UID;
 import com.tangosol.util.UUID;
-
 import org.easymock.classextension.EasyMock;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * ExecutorQueueTest tests the ExecutorQueue.
@@ -169,7 +163,7 @@ public class ExecutorQueueTest
         leaseMonitor.registerLease(EasyMock.isA(TaskProcessorMediatorKey.class), EasyMock.isA(Lease.class));
         DefaultTaskProcessorMediator.setLeaseMonitor(leaseMonitor);
 
-        SubmissionKey         key   = new SubmissionKey(null, new UUID());
+        SubmissionKey key = new SubmissionKey(null, new UUID());
         TaskProcessorMediator queue =
             new DefaultTaskProcessorMediator(new TaskProcessorMediatorKey(StringBasedIdentifier.newInstance("Test"),
                                                                           0,
@@ -196,9 +190,9 @@ public class ExecutorQueueTest
     @Test
     public void testNamedQueue()
     {
-        UID                   uid       = new UID();
-        String                uidstring = uid.toString();
-        TaskProcessorMediator queue     =
+        UID    uid       = new UID();
+        String uidstring = uid.toString();
+        TaskProcessorMediator queue =
             new DefaultTaskProcessorMediator(new TaskProcessorMediatorKey(StringBasedIdentifier
                 .newInstance("testqueue"),
                                                                           1,
@@ -222,7 +216,7 @@ public class ExecutorQueueTest
 
         EasyMock.replay(leaseMonitor);
 
-        SubmissionKey         key   = new SubmissionKey(null, new UUID());
+        SubmissionKey key = new SubmissionKey(null, new UUID());
         TaskProcessorMediator queue =
             new DefaultTaskProcessorMediator(new TaskProcessorMediatorKey(StringBasedIdentifier
                 .newInstance("testqueue"),

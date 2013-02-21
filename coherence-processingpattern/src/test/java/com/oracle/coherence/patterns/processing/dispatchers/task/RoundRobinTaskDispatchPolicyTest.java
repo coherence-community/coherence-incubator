@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,26 +26,22 @@
 package com.oracle.coherence.patterns.processing.dispatchers.task;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediatorKey;
 import com.oracle.coherence.patterns.processing.task.Task;
 import com.oracle.coherence.patterns.processing.task.TaskProcessor;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
-
 import org.easymock.EasyMock;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for RoundRobinTaskDispatchPolicy.
@@ -150,7 +145,7 @@ public class RoundRobinTaskDispatchPolicyTest
 
         replayAll();
 
-        RoundRobinTaskDispatchPolicy                         pol    = new RoundRobinTaskDispatchPolicy();
+        RoundRobinTaskDispatchPolicy pol = new RoundRobinTaskDispatchPolicy();
         Map<TaskProcessorMediatorKey, TaskProcessorMediator> result = pol.selectTaskProcessorSet(task,
                                                                                                  submissionConfiguration,
                                                                                                  taskProcessorMediators,
@@ -173,7 +168,7 @@ public class RoundRobinTaskDispatchPolicyTest
 
         replayAll();
 
-        RoundRobinTaskDispatchPolicy                         pol    = new RoundRobinTaskDispatchPolicy();
+        RoundRobinTaskDispatchPolicy pol = new RoundRobinTaskDispatchPolicy();
         Map<TaskProcessorMediatorKey, TaskProcessorMediator> result = pol.selectTaskProcessorSet(task,
                                                                                                  submissionConfiguration,
                                                                                                  taskProcessorMediators,
@@ -213,7 +208,7 @@ public class RoundRobinTaskDispatchPolicyTest
         replayAll();
         org.easymock.classextension.EasyMock.replay(key2);
 
-        RoundRobinTaskDispatchPolicy                         pol    = new RoundRobinTaskDispatchPolicy();
+        RoundRobinTaskDispatchPolicy pol = new RoundRobinTaskDispatchPolicy();
         Map<TaskProcessorMediatorKey, TaskProcessorMediator> result = pol.selectTaskProcessorSet(task,
                                                                                                  submissionConfiguration,
                                                                                                  taskProcessorMediators,

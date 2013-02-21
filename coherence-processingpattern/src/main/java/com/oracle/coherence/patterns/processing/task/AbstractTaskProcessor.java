@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,20 +26,16 @@
 package com.oracle.coherence.patterns.processing.task;
 
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionKeyPair;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediatorKey;
 import com.oracle.coherence.patterns.processing.taskprocessor.ClientLeaseMaintainer;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.Base;
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.MapEvent;
@@ -50,9 +45,7 @@ import com.tangosol.util.MultiplexingMapListener;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.List;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -144,7 +137,7 @@ public abstract class AbstractTaskProcessor implements TaskProcessor, Externaliz
      * @param displayName the readable name for the executor
      */
     public AbstractTaskProcessor(final TaskProcessorMediatorKey taskProcessorKey,
-                                 final String displayName)
+                                 final String                   displayName)
     {
         this.displayName      = displayName;
         this.taskProcessorKey = taskProcessorKey;
@@ -260,12 +253,12 @@ public abstract class AbstractTaskProcessor implements TaskProcessor, Externaliz
     /**
      * {@inheritDoc}
      */
-    public void onStartup(TaskProcessorMediator taskProcessorMediator,
-                          TaskProcessorMediatorKey key,
-                          ObjectProxyFactory<Submission> submissionProxyFactory,
-                          ObjectProxyFactory<SubmissionResult> submissionResultProxyFactory,
+    public void onStartup(TaskProcessorMediator                     taskProcessorMediator,
+                          TaskProcessorMediatorKey                  key,
+                          ObjectProxyFactory<Submission>            submissionProxyFactory,
+                          ObjectProxyFactory<SubmissionResult>      submissionResultProxyFactory,
                           ObjectProxyFactory<TaskProcessorMediator> taskProcessorMediatorProxyFactory,
-                          ClientLeaseMaintainer clientLeaseMaintainer)
+                          ClientLeaseMaintainer                     clientLeaseMaintainer)
     {
         this.taskProcessorMediator = taskProcessorMediator;
         this.setTaskProcessorKey(key);

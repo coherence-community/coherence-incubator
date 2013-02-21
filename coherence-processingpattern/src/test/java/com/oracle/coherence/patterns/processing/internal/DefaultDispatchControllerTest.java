@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,31 +27,23 @@ package com.oracle.coherence.patterns.processing.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
-
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.processing.DispatcherFilter;
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchOutcome;
 import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
 import com.oracle.coherence.patterns.processing.task.ResumableTask;
-
 import com.tangosol.net.ConfigurableCacheFactory;
-
 import org.easymock.classextension.EasyMock;
-
 import org.junit.Test;
-
 import org.powermock.api.easymock.PowerMock;
 
-import static org.junit.Assert.assertEquals;
+import java.util.NoSuchElementException;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
-
-import java.util.NoSuchElementException;
 
 /**
  * Testing a {@link DefaultDispatchController}.
@@ -70,7 +61,7 @@ public class DefaultDispatchControllerTest
     @Test
     public void testDispatcherFilterAcceptingLogic()
     {
-        ConfigurableCacheFactory             factory = EasyMock.createMock(ConfigurableCacheFactory.class);
+        ConfigurableCacheFactory factory = EasyMock.createMock(ConfigurableCacheFactory.class);
         ObjectProxyFactory<SubmissionResult> submissionResultProxyFactoryMock =
             EasyMock.createMock(ObjectProxyFactory.class);
         DefaultDispatchController ctrl = new DefaultDispatchController(factory, submissionResultProxyFactoryMock);
@@ -111,7 +102,7 @@ public class DefaultDispatchControllerTest
     @Test
     public void testDispatcherFilterRejectingLogic()
     {
-        ConfigurableCacheFactory             factory = EasyMock.createMock(ConfigurableCacheFactory.class);
+        ConfigurableCacheFactory factory = EasyMock.createMock(ConfigurableCacheFactory.class);
         ObjectProxyFactory<SubmissionResult> submissionResultProxyFactoryMock =
             EasyMock.createMock(ObjectProxyFactory.class);
         DefaultDispatchController ctrl = new DefaultDispatchController(factory, submissionResultProxyFactoryMock);
@@ -151,7 +142,7 @@ public class DefaultDispatchControllerTest
     @Test
     public void testDispatcherNoFilter()
     {
-        ConfigurableCacheFactory             factory = EasyMock.createMock(ConfigurableCacheFactory.class);
+        ConfigurableCacheFactory factory = EasyMock.createMock(ConfigurableCacheFactory.class);
         ObjectProxyFactory<SubmissionResult> submissionResultProxyFactoryMock =
             EasyMock.createMock(ObjectProxyFactory.class);
         DefaultDispatchController ctrl = new DefaultDispatchController(factory, submissionResultProxyFactoryMock);
@@ -188,7 +179,7 @@ public class DefaultDispatchControllerTest
     @Test
     public void testDispatcherNoConfiguration()
     {
-        ConfigurableCacheFactory             factory = EasyMock.createMock(ConfigurableCacheFactory.class);
+        ConfigurableCacheFactory factory = EasyMock.createMock(ConfigurableCacheFactory.class);
         ObjectProxyFactory<SubmissionResult> submissionResultProxyFactoryMock =
             EasyMock.createMock(ObjectProxyFactory.class);
 
@@ -226,7 +217,8 @@ public class DefaultDispatchControllerTest
         Environment                          environmentMock              = mock(Environment.class);
 
         ObjectProxyFactory<SubmissionResult> submissionresultproxyfactory = mock(ObjectProxyFactory.class);
-        DefaultDispatchController            ctrl = new DefaultDispatchController(factory, submissionresultproxyfactory);
+        DefaultDispatchController            ctrl = new DefaultDispatchController(factory,
+                                                                                  submissionresultproxyfactory);
         DefaultPendingSubmission             pendingSubmission            = mock(DefaultPendingSubmission.class);
         SubmissionKey                        submissionkey                = new SubmissionKey();
 

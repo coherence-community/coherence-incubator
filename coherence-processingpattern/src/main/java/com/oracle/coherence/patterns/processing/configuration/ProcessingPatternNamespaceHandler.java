@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,19 +26,14 @@
 package com.oracle.coherence.patterns.processing.configuration;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
-
 import com.oracle.coherence.common.tuples.Pair;
-
 import com.oracle.coherence.configuration.parameters.EmptyParameterProvider;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.ElementContentHandler;
 import com.oracle.coherence.environment.extensible.QualifiedName;
 import com.oracle.coherence.environment.extensible.namespaces.AbstractNamespaceContentHandler;
-
 import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.local.LocalExecutorDispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.logging.LoggingDispatcher;
@@ -55,19 +49,15 @@ import com.oracle.coherence.patterns.processing.task.TaskProcessor;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorType;
 import com.oracle.coherence.patterns.processing.taskprocessor.DefaultTaskProcessor;
-
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
-
 import com.tangosol.run.xml.XmlDocument;
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlHelper;
 import com.tangosol.run.xml.XmlValue;
-
 import com.tangosol.util.Base;
 
 import java.text.ParseException;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -93,8 +83,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
 
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 try
                 {
@@ -112,8 +102,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("extend-config", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 try
                 {
@@ -131,8 +121,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("dispatchers", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 try
                 {
@@ -149,8 +139,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("taskprocessors", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 try
                 {
@@ -168,8 +158,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("taskprocessordefinition", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 return parseProcessingPatternTaskProcessorDefinition(context, xmlElement);
             }
@@ -178,8 +168,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("default-taskprocessor", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 return parseDefaultTaskProcessor(context, xmlElement);
             }
@@ -188,8 +178,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("logging-dispatcher", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 return parseProcessingPatternLoggingDispatcher(context, xmlElement);
             }
@@ -198,8 +188,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("local-executor-dispatcher", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 return parseProcessingPatternLocalExecutorDispatcher(context, xmlElement);
             }
@@ -208,8 +198,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("task-dispatcher", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 return parseProcessingPatternTaskDispatcher(context, xmlElement);
             }
@@ -218,8 +208,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("round-robin-policy", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 return new RoundRobinTaskDispatchPolicy();
             }
@@ -228,8 +218,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("attribute-match-policy", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 return new AttributeMatchTaskDispatchPolicy();
             }
@@ -238,8 +228,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("composite-policy", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 return parseCompositeTaskDispatchPolicy(context, xmlElement);
             }
@@ -248,8 +238,8 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
         registerContentHandler("attribute", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 return new Pair<String, String>(xmlElement.getAttribute("name").toString(),
                                                 xmlElement.getValue().toString());
@@ -269,7 +259,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      */
     @SuppressWarnings("unchecked")
     private void parseProcessingPatternExtendConfig(ConfigurationContext context,
-                                                    XmlElement xmlElement) throws Throwable
+                                                    XmlElement           xmlElement) throws Throwable
     {
         try
         {
@@ -376,7 +366,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      */
     @SuppressWarnings("unchecked")
     private void parseProcessingPatternClusterConfig(ConfigurationContext context,
-                                                     XmlElement xmlElement) throws Throwable
+                                                     XmlElement           xmlElement) throws Throwable
     {
         XmlDocument document =
             DefaultConfigurableCacheFactory.loadConfigAsResource("coherence-processingpattern-cache-config.xml",
@@ -426,7 +416,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      */
     @SuppressWarnings("unchecked")
     private void parseProcessingPatternTaskProcessors(ConfigurationContext context,
-                                                      XmlElement xmlElement) throws ConfigurationException, Throwable
+                                                      XmlElement           xmlElement) throws ConfigurationException, Throwable
     {
         List<XmlElement> elementList = xmlElement.getElementList();
 
@@ -460,7 +450,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
 
             // Now register the collected dispatchers
             Iterator<TaskProcessorDefinition> tpdIter = tpdList.iterator();
-            TaskProcessorDefinitionManager    mgr     =
+            TaskProcessorDefinitionManager mgr =
                 context.getEnvironment().getResource(TaskProcessorDefinitionManager.class);
 
             while (tpdIter.hasNext())
@@ -484,7 +474,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      */
     @SuppressWarnings("unchecked")
     private Object parseProcessingPatternTaskProcessorDefinition(ConfigurationContext context,
-                                                                 XmlElement element) throws ConfigurationException
+                                                                 XmlElement           element) throws ConfigurationException
     {
         XmlValue            value        = element.getAttribute("id");
         String              identifier   = value.getString();
@@ -552,7 +542,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      * @return a TaskProcessor if there is one
      */
     private Object parseDefaultTaskProcessor(ConfigurationContext context,
-                                             XmlElement element)
+                                             XmlElement           element)
     {
         String        id            = element.getAttribute("id").getValue().toString();
         Integer       noThreads     = Integer.parseInt(element.getAttribute("threadpoolsize").getValue().toString());
@@ -572,7 +562,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void parseProcessingPatternDispatchers(ConfigurationContext context,
-                                                   XmlElement xmlElement) throws ConfigurationException
+                                                   XmlElement           xmlElement) throws ConfigurationException
     {
         List<XmlElement> elementList = xmlElement.getElementList();
         int              i           = 1;
@@ -624,7 +614,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      */
     @SuppressWarnings("unchecked")
     private Object parseProcessingPatternTaskDispatcher(ConfigurationContext context,
-                                                        XmlElement element) throws ConfigurationException
+                                                        XmlElement           element) throws ConfigurationException
     {
         String             displayname = element.getAttribute("displayname").getValue().toString();
 
@@ -683,7 +673,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      */
     @SuppressWarnings("unchecked")
     private Object parseCompositeTaskDispatchPolicy(ConfigurationContext context,
-                                                    XmlElement element) throws ConfigurationException
+                                                    XmlElement           element) throws ConfigurationException
     {
         List<XmlElement> elementList = element.getElementList();
 
@@ -742,7 +732,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      * @throws ConfigurationException if the configuration is invalid
      */
     private Object parseProcessingPatternLoggingDispatcher(ConfigurationContext context,
-                                                           XmlElement element) throws ConfigurationException
+                                                           XmlElement           element) throws ConfigurationException
     {
         String            displayname = element.getAttribute("displayname").getValue().toString();
         LoggingDispatcher disp        = new LoggingDispatcher(context.getEnvironment(), displayname);
@@ -762,7 +752,7 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceContentH
      * @throws ConfigurationException if the configuration is invalid
      */
     private Object parseProcessingPatternLocalExecutorDispatcher(ConfigurationContext context,
-                                                                 XmlElement element) throws ConfigurationException
+                                                                 XmlElement           element) throws ConfigurationException
     {
         String   displayname     = element.getAttribute("displayname").getValue().toString();
         int      threadPoolSize  = 1;    // Default no threads is 1

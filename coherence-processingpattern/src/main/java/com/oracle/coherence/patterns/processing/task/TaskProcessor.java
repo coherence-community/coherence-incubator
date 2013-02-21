@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,13 +26,11 @@
 package com.oracle.coherence.patterns.processing.task;
 
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediatorKey;
 import com.oracle.coherence.patterns.processing.taskprocessor.ClientLeaseMaintainer;
-
 import com.tangosol.io.pof.PortableObject;
 
 import java.io.Serializable;
@@ -83,10 +80,10 @@ public interface TaskProcessor extends PortableObject, Serializable
      * @param taskProcessorMediatorProxyFactory the {@link ObjectProxyFactory} for {@link TaskProcessorMediator}s to use.
      * @param clientLeaseMaintainer          the {@link ClientLeaseMaintainer} to use
      */
-    public void onStartup(TaskProcessorMediator taskProcessorMediator,
-                          TaskProcessorMediatorKey key,
-                          ObjectProxyFactory<Submission> submissionProxyFactory,
-                          ObjectProxyFactory<SubmissionResult> submissionResultProxyFactory,
+    public void onStartup(TaskProcessorMediator                     taskProcessorMediator,
+                          TaskProcessorMediatorKey                  key,
+                          ObjectProxyFactory<Submission>            submissionProxyFactory,
+                          ObjectProxyFactory<SubmissionResult>      submissionResultProxyFactory,
                           ObjectProxyFactory<TaskProcessorMediator> taskProcessorMediatorProxyFactory,
-                          ClientLeaseMaintainer clientLeaseMaintainer);
+                          ClientLeaseMaintainer                     clientLeaseMaintainer);
 }

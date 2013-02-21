@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,9 +26,7 @@
 package com.oracle.coherence.patterns.processing.taskprocessor;
 
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
-
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.patterns.processing.internal.DefaultProcessingSessionTest;
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionContent;
@@ -38,20 +35,13 @@ import com.oracle.coherence.patterns.processing.internal.SubmissionKeyPair;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediatorKey;
-
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.UID;
 import com.tangosol.util.UUID;
-
 import org.junit.Test;
-
 import org.mockito.Matchers;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * A {@link DefaultProcessingSessionTest}.
@@ -70,8 +60,8 @@ public class DefaultTaskProcessorTest
     @Test
     public void testStartup() throws InterruptedException
     {
-        DefaultTaskProcessor     taskprocessor            = new DefaultTaskProcessor("Test processor", 1);
-        TaskProcessorMediator    taskProcessorMediator    = mock(TaskProcessorMediator.class);
+        DefaultTaskProcessor  taskprocessor         = new DefaultTaskProcessor("Test processor", 1);
+        TaskProcessorMediator taskProcessorMediator = mock(TaskProcessorMediator.class);
         TaskProcessorMediatorKey taskProcessorMediatorKey =
             new TaskProcessorMediatorKey(StringBasedIdentifier.newInstance("TPM"),
                                          1,

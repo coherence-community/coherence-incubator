@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,9 +26,7 @@
 package com.oracle.coherence.patterns.processing.configuration;
 
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
 import com.oracle.coherence.patterns.processing.friends.DispatcherManager;
 import com.oracle.coherence.patterns.processing.internal.DefaultDispatchController;
@@ -47,11 +44,10 @@ import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMBean
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.taskprocessor.ClientLeaseMaintainer;
 import com.oracle.coherence.patterns.processing.taskprocessor.DefaultClientLeaseMaintainer;
-
 import com.tangosol.net.ConfigurableCacheFactory;
 
 /**
- * A {@link ProcessingPatternHelper} helping out in setting up the 
+ * A {@link ProcessingPatternHelper} helping out in setting up the
  * {@link Environment} for the Processing Pattern.
  * <p>
  * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
@@ -69,7 +65,7 @@ public class ProcessingPatternHelper
      */
     @SuppressWarnings("unchecked")
     public static void configureDispatchingLogic(ConfigurableCacheFactory ccFactory,
-                                                 Environment environment)
+                                                 Environment              environment)
     {
         environment.registerResource(DispatcherManager.class, new DefaultDispatcherManager(ccFactory));
         environment.registerResource(TaskProcessorDefinitionManager.class,
@@ -88,7 +84,7 @@ public class ProcessingPatternHelper
      * @param environment the {@link Environment} to use
      */
     public static void configureTaskProcessingServerSide(ConfigurableCacheFactory ccFactory,
-                                                         Environment environment)
+                                                         Environment              environment)
     {
         environment.registerResource(ServerLeaseMonitor.class, new DefaultServerLeaseMonitor(environment, 20000));
         environment.registerResource(TaskProcessorMBeanManager.class, new TaskProcessorMBeanManager());
@@ -102,7 +98,7 @@ public class ProcessingPatternHelper
      * @param environment the {@link Environment} to use
      */
     public static void configureTaskProcessing(ConfigurableCacheFactory ccFactory,
-                                               Environment environment)
+                                               Environment              environment)
     {
         environment.registerResource(TaskProcessorDefinitionManager.class,
                                      new DefaultTaskProcessorDefinitionManager(environment, ccFactory));
@@ -117,7 +113,7 @@ public class ProcessingPatternHelper
      * @param environment the {@link Environment} to use
      */
     public static void configureCore(ConfigurableCacheFactory ccFactory,
-                                     Environment environment)
+                                     Environment              environment)
     {
         environment.registerResource(TaskProcessorMediator.class,
                                      new ObjectProxyFactory<TaskProcessorMediator>(DefaultTaskProcessorMediator
@@ -140,7 +136,7 @@ public class ProcessingPatternHelper
      * @param environment the {@link Environment} to use
      */
     public static void configureFramework(ConfigurableCacheFactory ccFactory,
-                                          Environment environment)
+                                          Environment              environment)
     {
         configureCore(ccFactory, environment);
         configureDispatchingLogic(ccFactory, environment);

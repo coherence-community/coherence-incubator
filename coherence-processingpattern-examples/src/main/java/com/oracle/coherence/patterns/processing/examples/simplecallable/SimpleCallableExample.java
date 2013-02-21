@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,17 +26,14 @@
 package com.oracle.coherence.patterns.processing.examples.simplecallable;
 
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
-
 import com.oracle.coherence.patterns.processing.ProcessingSession;
 import com.oracle.coherence.patterns.processing.SubmissionOutcome;
 import com.oracle.coherence.patterns.processing.internal.DefaultProcessingSession;
 import com.oracle.coherence.patterns.processing.internal.DefaultSubmissionConfiguration;
-
 import com.tangosol.net.CacheFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.concurrent.Callable;
 
 /**

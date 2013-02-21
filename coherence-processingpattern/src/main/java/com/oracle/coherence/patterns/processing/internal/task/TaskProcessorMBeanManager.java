@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -36,26 +35,18 @@ import com.oracle.coherence.common.events.backingmap.BackingMapEntryUpdatedEvent
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.lifecycle.NamedCacheStorageReleasedEvent;
 import com.oracle.coherence.common.events.processing.EventProcessor;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.LifecycleEventFilter;
 import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.environment.extensible.dependencies.EnvironmentReference;
-
 import com.tangosol.net.CacheFactory;
-
 import com.tangosol.net.management.Registry;
 
 import java.util.Collections;
-
 import java.util.Map.Entry;
-
 import java.util.Set;
-
 import java.util.concurrent.ConcurrentHashMap;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -103,7 +94,7 @@ public class TaskProcessorMBeanManager implements DependentResource, EventProces
      * @param key the {@link TaskProcessorMediatorKey} this {@link TaskProcessorMediatorProxyMBean} represents.
      * @param mBeanProxy the {@link TaskProcessorMediatorProxy} that is to be registered
      */
-    private void addMBean(TaskProcessorMediatorKey key,
+    private void addMBean(TaskProcessorMediatorKey   key,
                           TaskProcessorMediatorProxy mBeanProxy)
     {
         localMBeans.put(key, mBeanProxy);
@@ -150,7 +141,7 @@ public class TaskProcessorMBeanManager implements DependentResource, EventProces
      * @param key the {@link TaskProcessorMediatorKey}
      * @param mBeanProxy the {@link TaskProcessorMediatorProxy} we are registering
      */
-    protected void registerMBean(TaskProcessorMediatorKey key,
+    protected void registerMBean(TaskProcessorMediatorKey   key,
                                  TaskProcessorMediatorProxy mBeanProxy)
     {
         if (!shuttingDown)
@@ -210,7 +201,7 @@ public class TaskProcessorMBeanManager implements DependentResource, EventProces
      */
     @SuppressWarnings("rawtypes")
     public void process(EventDispatcher eventDispatcher,
-                        Event event)
+                        Event           event)
     {
         if (!shuttingDown)
         {

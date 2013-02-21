@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,29 +26,19 @@
 package com.oracle.coherence.patterns.processing.internal;
 
 import com.oracle.coherence.common.backingmaplisteners.Cause;
-
 import com.oracle.coherence.common.events.backingmap.BackingMapEntryDepartedEvent;
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-
 import com.oracle.coherence.common.identifiers.UUIDBasedIdentifier;
-
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
-
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.MapEvent;
-
 import org.easymock.classextension.EasyMock;
-
 import org.junit.Test;
-
 import org.junit.runner.RunWith;
-
 import org.powermock.api.easymock.PowerMock;
-
 import org.powermock.core.classloader.annotations.PrepareForTest;
-
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**

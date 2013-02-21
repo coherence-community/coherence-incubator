@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,15 +28,11 @@ package com.oracle.coherence.patterns.processing.internal;
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStoppedEvent;
-
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResourceReference;
-
 import com.oracle.coherence.patterns.processing.DispatcherFilter;
 import com.oracle.coherence.patterns.processing.SubmissionState;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
@@ -47,25 +42,19 @@ import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
 import com.oracle.coherence.patterns.processing.exceptions.NoDispatcherForSubmissionException;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorDefinitionManager;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
-
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
 import com.tangosol.util.MultiplexingMapListener;
 
 import java.util.HashSet;
 import java.util.Iterator;
-
 import java.util.Map.Entry;
-
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
-
 import java.util.concurrent.DelayQueue;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -128,7 +117,7 @@ public class DefaultDispatchController implements DispatchController
      * @param ccFactory the {@link ConfigurableCacheFactory} to use
      * @param submissionResultProxyFactory the {@link ObjectProxyFactory} to use for {@link SubmissionResult}s
      */
-    public DefaultDispatchController(ConfigurableCacheFactory ccFactory,
+    public DefaultDispatchController(ConfigurableCacheFactory             ccFactory,
                                      ObjectProxyFactory<SubmissionResult> submissionResultProxyFactory)
     {
         DefaultSubmission.setDispatchController(this);
@@ -563,7 +552,7 @@ public class DefaultDispatchController implements DispatchController
      *         REJECTED
      */
     protected DispatchOutcome tryDispatchSubmissionToDispatcher(final DefaultPendingSubmission oPendingSubmission,
-                                                                final Dispatcher dispatcher)
+                                                                final Dispatcher               dispatcher)
     {
         DispatchOutcome oResult = DispatchOutcome.REJECTED;
 

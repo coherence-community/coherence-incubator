@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,10 +26,8 @@
 package com.oracle.coherence.patterns.processing.taskprocessor;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.util.ObjectChangeCallback;
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.SubmissionState;
 import com.oracle.coherence.patterns.processing.internal.Submission;
@@ -125,12 +122,12 @@ public class TaskRunner implements Runnable, TaskExecutionEnvironment, ObjectCha
      * @param submissionResultProxyFactory   the {@link ObjectProxyFactory} for {@link SubmissionResult}s to use
      * @param taskProcessorMediatorKey  the {@link TaskProcessorMediatorKey} identifying the {@link TaskProcessor}
      */
-    public TaskRunner(final SubmissionKeyPair pendingTaskKeyPair,
-                      final TaskProcessorMediator taskProcessorMediator,
-                      final Submission submission,
-                      final Identifier submissionResultIdentifier,
+    public TaskRunner(final SubmissionKeyPair                    pendingTaskKeyPair,
+                      final TaskProcessorMediator                taskProcessorMediator,
+                      final Submission                           submission,
+                      final Identifier                           submissionResultIdentifier,
                       final ObjectProxyFactory<SubmissionResult> submissionResultProxyFactory,
-                      TaskProcessorMediatorKey taskProcessorMediatorKey)
+                      TaskProcessorMediatorKey                   taskProcessorMediatorKey)
     {
         this.pendingTaskKeyPair           = pendingTaskKeyPair;
         this.taskProcessorMediator        = taskProcessorMediator;
@@ -254,11 +251,11 @@ public class TaskRunner implements Runnable, TaskExecutionEnvironment, ObjectCha
      * @param oResult           the result object
      * @param executionDuration the duration of the execution in milliseconds
      */
-    private void checkResult(SubmissionResult submissionResult,
-                             Submission submission,
+    private void checkResult(SubmissionResult              submissionResult,
+                             Submission                    submission,
                              final SubmissionConfiguration oRequestData,
-                             final Object oResult,
-                             long executionDuration)
+                             final Object                  oResult,
+                             long                          executionDuration)
     {
         if (!isCancelled)
         {
@@ -308,9 +305,9 @@ public class TaskRunner implements Runnable, TaskExecutionEnvironment, ObjectCha
      *
      * @return true if successful, false otherwise
      */
-    private boolean doExecuteTask(SubmissionResult submissionResult,
-                                  Submission submission,
-                                  final ResumableTask task,
+    private boolean doExecuteTask(SubmissionResult              submissionResult,
+                                  Submission                    submission,
+                                  final ResumableTask           task,
                                   final SubmissionConfiguration configuration)
     {
         if (setProcessingStarted(submissionResult))
@@ -350,7 +347,7 @@ public class TaskRunner implements Runnable, TaskExecutionEnvironment, ObjectCha
      * @return whether it was possible to set the SubmissionResult to failed.
      */
     private boolean setProcessingFailed(SubmissionResult submissionResult,
-                                        final Exception oException)
+                                        final Exception  oException)
     {
         taskProcessorMediator.taskDone(pendingTaskKeyPair.getKey(), 0, false);
 
@@ -380,8 +377,8 @@ public class TaskRunner implements Runnable, TaskExecutionEnvironment, ObjectCha
      * @return true if it was possible to set the {@link SubmissionResult} to DONE.
      */
     private boolean setProcessingSucceeded(SubmissionResult submissionResult,
-                                           final Object oResult,
-                                           long executionDuration)
+                                           final Object     oResult,
+                                           long             executionDuration)
     {
         taskProcessorMediator.taskDone(pendingTaskKeyPair.getKey(), executionDuration, false);
 
@@ -403,10 +400,10 @@ public class TaskRunner implements Runnable, TaskExecutionEnvironment, ObjectCha
      * @return true if yield is successful
      */
     private boolean yield(SubmissionResult submissionResult,
-                          Submission submission,
-                          final Object intermediateState,
-                          long delay,
-                          long executionDuration)
+                          Submission       submission,
+                          final Object     intermediateState,
+                          long             delay,
+                          long             executionDuration)
     {
         if (logger.isLoggable(Level.FINER))
         {

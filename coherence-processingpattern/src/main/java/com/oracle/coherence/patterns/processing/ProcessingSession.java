@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -54,7 +53,7 @@ public interface ProcessingSession
      *         asynchronous processing
      * @throws Throwable if the submit fails
      */
-    public SubmissionOutcome submit(Object oPayload,
+    public SubmissionOutcome submit(Object                  oPayload,
                                     SubmissionConfiguration oConfiguration) throws Throwable;
 
 
@@ -73,8 +72,8 @@ public interface ProcessingSession
      *         asynchronous processing
      * @throws Throwable  if the submit fails
      */
-    public SubmissionOutcome submit(Object oPayload,
-                                    SubmissionConfiguration oConfigurationData,
+    public SubmissionOutcome submit(Object                    oPayload,
+                                    SubmissionConfiguration   oConfigurationData,
                                     SubmissionOutcomeListener oListener) throws Throwable;
 
 
@@ -97,9 +96,9 @@ public interface ProcessingSession
      *         asynchronous processing
      * @throws Throwable if the submit fails
      */
-    public SubmissionOutcome submit(Object oPayload,
-                                    SubmissionConfiguration oConfiguration,
-                                    Identifier identifier,
+    public SubmissionOutcome submit(Object                    oPayload,
+                                    SubmissionConfiguration   oConfiguration,
+                                    Identifier                identifier,
                                     SubmissionRetentionPolicy retentionPolicy,
                                     SubmissionOutcomeListener oListener) throws Throwable;
 
@@ -120,7 +119,7 @@ public interface ProcessingSession
      *         asynchronous processing
      * @throws Throwable if the submit fails
      */
-    public SubmissionOutcome acquireSubmission(Identifier identifier,
+    public SubmissionOutcome acquireSubmission(Identifier                identifier,
                                                SubmissionRetentionPolicy retentionPolicy,
                                                SubmissionOutcomeListener oListener) throws Throwable;
 

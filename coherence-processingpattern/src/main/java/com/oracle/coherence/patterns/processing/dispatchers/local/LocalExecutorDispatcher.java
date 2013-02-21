@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,15 +26,11 @@
 package com.oracle.coherence.patterns.processing.dispatchers.local;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
-
 import com.oracle.coherence.common.util.ObjectChangeCallback;
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.processing.SubmissionState;
 import com.oracle.coherence.patterns.processing.dispatchers.AbstractDispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
@@ -45,22 +40,17 @@ import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionContent;
 import com.oracle.coherence.patterns.processing.internal.SubmissionKeyPair;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.CacheFactory;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -145,12 +135,12 @@ public class LocalExecutorDispatcher extends AbstractDispatcher implements Exter
      * @param numberOfThreads the number of threads in the thread pool for this {@link LocalExecutorDispatcher}
      */
     @SuppressWarnings("unchecked")
-    public LocalExecutorDispatcher(Environment environment,
+    public LocalExecutorDispatcher(Environment  environment,
                                    final String sName,
-                                   int numberOfThreads)
+                                   int          numberOfThreads)
     {
         super(sName);
-        this.environment                  = environment;
+        this.environment = environment;
         this.submissionResultProxyFactory =
             (ObjectProxyFactory<SubmissionResult>) environment.getResource(SubmissionResult.class);
         this.submissionProxyFactory = (ObjectProxyFactory<Submission>) environment.getResource(Submission.class);
@@ -210,7 +200,7 @@ public class LocalExecutorDispatcher extends AbstractDispatcher implements Exter
     @Override
     public void onStartup(final DispatchController dispatchController)
     {
-        this.environment             = (Environment) dispatchController.getConfigurableCacheFactory();
+        this.environment = (Environment) dispatchController.getConfigurableCacheFactory();
         submissionResultProxyFactory =
             (ObjectProxyFactory<SubmissionResult>) environment.getResource(SubmissionResult.class);
         submissionProxyFactory = (ObjectProxyFactory<Submission>) environment.getResource(Submission.class);
@@ -352,9 +342,9 @@ public class LocalExecutorDispatcher extends AbstractDispatcher implements Exter
          * @param submission the {@link Submission} to run
          */
         public ProcessRunner(final ObjectProxyFactory<SubmissionResult> submissionResultProxyFactory,
-                             final SubmissionKeyPair submissionKeyPair,
-                             final Identifier submissionResultIdentifier,
-                             final Submission submission)
+                             final SubmissionKeyPair                    submissionKeyPair,
+                             final Identifier                           submissionResultIdentifier,
+                             final Submission                           submission)
         {
             this.submissionResultProxyFactory = submissionResultProxyFactory;
             this.submissionResultIdentifier   = submissionResultIdentifier;

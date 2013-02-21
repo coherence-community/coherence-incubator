@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -33,28 +32,21 @@ import com.oracle.coherence.common.events.backingmap.BackingMapEntryEvictedEvent
 import com.oracle.coherence.common.events.backingmap.BackingMapEntryInsertedEvent;
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
-
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.util.ChangeIndication;
-
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.SubmissionState;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.UUID;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -136,11 +128,11 @@ public class DefaultSubmission extends AbstractAsynchronousEventProcessor implem
      * @param sessionId         the {@link Identifier} for the
      *        {@link com.oracle.coherence.patterns.processing.ProcessingSession} of this {@link DefaultSubmission}
      */
-    public DefaultSubmission(final UUID submissionUUID,
-                             final Object payload,
+    public DefaultSubmission(final UUID                    submissionUUID,
+                             final Object                  payload,
                              final SubmissionConfiguration configurationData,
-                             final Identifier resultIdentifier,
-                             final Identifier sessionId)
+                             final Identifier              resultIdentifier,
+                             final Identifier              sessionId)
     {
         this.submissionUUID    = submissionUUID;
         this.payload           = new DefaultSubmissionContent(payload, configurationData);
@@ -279,7 +271,7 @@ public class DefaultSubmission extends AbstractAsynchronousEventProcessor implem
      */
     @Override
     public void processLater(EventDispatcher eventDispatcher,
-                             Event event)
+                             Event           event)
     {
         if (event instanceof BackingMapEntryInsertedEvent)
         {
