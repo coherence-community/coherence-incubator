@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,30 +26,21 @@
 package com.oracle.coherence.patterns.functor.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.ExecutionEnvironment;
-
 import com.oracle.coherence.patterns.functor.Functor;
 import com.oracle.coherence.patterns.functor.FunctorSubmitter;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.ExternalizableHelper;
-
 import com.tangosol.util.filter.NotFilter;
 import com.tangosol.util.filter.PresentFilter;
-
 import com.tangosol.util.processor.ConditionalPut;
 
 import java.io.DataInput;
@@ -105,8 +95,8 @@ public class SingleFunctorCommand<C extends Context, T> implements Command<C>, E
      * @param functorResultIdentifier
      * @param functor
      */
-    public SingleFunctorCommand(Identifier functorSubmitterIdentifier,
-                                Identifier functorResultIdentifier,
+    public SingleFunctorCommand(Identifier    functorSubmitterIdentifier,
+                                Identifier    functorResultIdentifier,
                                 Functor<C, T> functor)
     {
         this.functorSubmitterIdentifier = functorSubmitterIdentifier;
