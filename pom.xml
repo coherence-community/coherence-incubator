@@ -70,7 +70,6 @@
 
         <module>coherence-pushreplicationpattern</module>
         <module>coherence-pushreplicationpattern-examples</module>
-        <module>coherence-scratch</module>
 
         <module>coherence-incubator-all</module>
         <module>coherence-incubator-site</module>
