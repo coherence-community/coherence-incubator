@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +26,6 @@
 package com.oracle.coherence.common.events.dispatching.listeners;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.events.backingmap.BackingMapEntryArrivedEvent;
@@ -43,19 +41,13 @@ import com.oracle.coherence.common.events.processing.EventProcessorFactory;
 import com.oracle.coherence.common.events.processing.annotations.EventProcessorFor;
 import com.oracle.coherence.common.events.processing.annotations.LiveObject;
 import com.oracle.coherence.common.events.processing.annotations.SupportsEventProcessing;
-
 import com.oracle.coherence.configuration.caching.CacheMapping;
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
-
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
-
 import com.tangosol.net.cache.CacheEvent;
-
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.ExternalizableHelper;
@@ -63,12 +55,9 @@ import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
 
 import java.lang.reflect.Method;
-
 import java.util.LinkedHashMap;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -151,7 +140,7 @@ public class DelegatingBackingMapListener implements MapListener
      * @param cacheName                The cache name associated with this listener
      */
     public DelegatingBackingMapListener(BackingMapManagerContext backingMapManagerContext,
-                                        String cacheName)
+                                        String                   cacheName)
     {
         this(backingMapManagerContext, cacheName, ((Environment) CacheFactory.getConfigurableCacheFactory()));
     }
@@ -169,12 +158,12 @@ public class DelegatingBackingMapListener implements MapListener
      */
     @SuppressWarnings("unchecked")
     public DelegatingBackingMapListener(BackingMapManagerContext backingMapManagerContext,
-                                        String cacheName,
-                                        Environment environment)
+                                        String                   cacheName,
+                                        Environment              environment)
     {
-        m_ctxBackingMapManager             = backingMapManagerContext;
-        m_sCacheName                       = cacheName;
-        m_environment                      = environment;
+        m_ctxBackingMapManager = backingMapManagerContext;
+        m_sCacheName           = cacheName;
+        m_environment          = environment;
         m_mapEventProcessingMethodsByClass = new ConcurrentHashMap<Class<?>,
                                                                    LinkedHashMap<Class<? extends Event>,
                                                                                  EventProcessor<? extends Event>>>();
@@ -263,7 +252,7 @@ public class DelegatingBackingMapListener implements MapListener
      * @return true if the decoration has been removed from the event's new value
      */
     protected boolean isDecorationRemoved(MapEvent evt,
-                                          int nDecorationId)
+                                          int      nDecorationId)
     {
         Binary                   binOldValue = (Binary) evt.getOldValue();
         Binary                   binNewValue = (Binary) evt.getNewValue();
@@ -482,7 +471,7 @@ public class DelegatingBackingMapListener implements MapListener
                 else
                 {
                     // determine the event processor based on annotated object and methods
-                    Class<?>                                                               clzValue = oValue.getClass();
+                    Class<?> clzValue = oValue.getClass();
 
                     LinkedHashMap<Class<? extends Event>, EventProcessor<? extends Event>> mapEventProcessingMethods =
                         getEventProcessingMethods(clzValue);
@@ -556,7 +545,7 @@ public class DelegatingBackingMapListener implements MapListener
          * {@inheritDoc}
          */
         public void process(EventDispatcher eventDispatcher,
-                            EntryEvent<?> event)
+                            EntryEvent<?>   event)
         {
             try
             {

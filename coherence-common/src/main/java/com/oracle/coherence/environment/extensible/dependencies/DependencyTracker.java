@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -32,12 +31,10 @@ import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStoppedEvent;
 import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
 import com.oracle.coherence.common.events.processing.EventProcessor;
-
 import com.oracle.coherence.environment.Environment;
 
 import java.util.HashMap;
 import java.util.Iterator;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -103,7 +100,7 @@ public class DependencyTracker extends AbstractAsynchronousEventProcessor<Lifecy
      *                    life-cycles.
      * @param dependentResource The {@link DependentResource} whose dependencies require tracking.
      */
-    public DependencyTracker(Environment environment,
+    public DependencyTracker(Environment       environment,
                              DependentResource dependentResource)
     {
         this.environment       = environment;
@@ -167,7 +164,7 @@ public class DependencyTracker extends AbstractAsynchronousEventProcessor<Lifecy
      * @param eventDispatcher The {@link EventDispatcher} that raised the {@link LifecycleEvent}.
      * @param event The {@link LifecycleEvent} that was raised.
      */
-    public void processLater(EventDispatcher eventDispatcher,
+    public void processLater(EventDispatcher   eventDispatcher,
                              LifecycleEvent<?> event)
     {
         if (logger.isLoggable(Level.FINER))

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,16 +26,12 @@
 package com.oracle.coherence.configuration.parameters;
 
 import com.oracle.coherence.common.util.Value;
-
 import com.oracle.coherence.configuration.expressions.Constant;
 import com.oracle.coherence.configuration.expressions.Expression;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -89,7 +84,7 @@ public class Parameter implements Expression, ExternalizableLite, PortableObject
      * @param name The name of the parameter
      * @param value The value for the parameter
      */
-    public Parameter(String name,
+    public Parameter(String  name,
                      boolean value)
     {
         this.name       = name;
@@ -104,7 +99,7 @@ public class Parameter implements Expression, ExternalizableLite, PortableObject
      * @param name The name of the {@link Parameter}
      * @param expression The {@link Expression} for the {@link Parameter}
      */
-    public Parameter(String name,
+    public Parameter(String     name,
                      Expression expression)
     {
         this.name       = name;
@@ -150,8 +145,8 @@ public class Parameter implements Expression, ExternalizableLite, PortableObject
      * @param type The expected type of the {@link Parameter}
      * @param expression The {@link Expression} for the {@link Parameter}
      */
-    public Parameter(String name,
-                     String type,
+    public Parameter(String     name,
+                     String     type,
                      Expression expression)
     {
         this.name       = name;
@@ -169,7 +164,7 @@ public class Parameter implements Expression, ExternalizableLite, PortableObject
      */
     public Parameter(String name,
                      String type,
-                     Value value)
+                     Value  value)
     {
         this.name       = name;
         this.type       = type;

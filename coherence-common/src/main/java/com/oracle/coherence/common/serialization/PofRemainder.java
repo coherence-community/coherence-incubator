@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +26,6 @@
 package com.oracle.coherence.common.serialization;
 
 import com.oracle.coherence.common.serialization.annotations.PofType;
-
 import com.tangosol.util.Binary;
 
 import java.lang.reflect.Field;
@@ -66,7 +64,7 @@ public final class PofRemainder
      * @param fromVersion The version of the User Type from which the {@link PofRemainder} was created.
      * @param remainder The {@link Binary} remainder of the User Type from a Pof stream.
      */
-    public PofRemainder(int fromVersion,
+    public PofRemainder(int    fromVersion,
                         Binary remainder)
     {
         this.fromVersion = fromVersion;

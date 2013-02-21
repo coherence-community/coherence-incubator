@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -111,9 +110,9 @@ public class LogHelper
      *  @param params       an array of parameters for the method call
      */
     @SuppressWarnings("nls")
-    public static void entering(Logger logger,
-                                String sourceClass,
-                                String sourceMethod,
+    public static void entering(Logger   logger,
+                                String   sourceClass,
+                                String   sourceMethod,
                                 Object[] params)
     {
         if (!logger.isLoggable(Level.FINEST))
@@ -213,9 +212,9 @@ public class LogHelper
      * @param sourceMethod the method name
      * @param thrown       the {@code Throwable} object
      */
-    public static void throwing(Logger logger,
-                                String sourceClass,
-                                String sourceMethod,
+    public static void throwing(Logger    logger,
+                                String    sourceClass,
+                                String    sourceMethod,
                                 Throwable thrown)
     {
         if (!logger.isLoggable(Level.FINEST))

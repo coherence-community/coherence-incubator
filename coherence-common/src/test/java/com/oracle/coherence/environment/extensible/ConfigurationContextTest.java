@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,39 +26,29 @@
 package com.oracle.coherence.environment.extensible;
 
 import com.oracle.coherence.common.builders.BuilderRegistry;
-
 import com.oracle.coherence.configuration.Mandatory;
 import com.oracle.coherence.configuration.Property;
-
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContextTest.TestScheme.Switch;
 import com.oracle.coherence.environment.extensible.namespaces.CoherenceNamespaceContentHandler;
 import com.oracle.coherence.environment.extensible.namespaces.ValueNamespaceContentHandler;
-
 import com.oracle.tools.junit.AbstractTest;
-
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlHelper;
-
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UnknownFormatConversionException;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * The unit tests for the {@link ConfigurationContext}.
@@ -298,7 +287,7 @@ public class ConfigurationContextTest extends AbstractTest
 
         when(env.getResource(BuilderRegistry.class)).thenReturn(schemeRegistry);
 
-        ConfigurationContext             context          = new DefaultConfigurationContext(env);
+        ConfigurationContext context = new DefaultConfigurationContext(env);
 
         CoherenceNamespaceContentHandler namespaceHandler =
             (CoherenceNamespaceContentHandler) context.ensureNamespaceContentHandler("",

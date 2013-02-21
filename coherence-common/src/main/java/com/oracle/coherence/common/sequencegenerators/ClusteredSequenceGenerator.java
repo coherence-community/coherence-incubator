@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,20 +27,14 @@ package com.oracle.coherence.common.sequencegenerators;
 
 import com.oracle.coherence.common.ranges.Range;
 import com.oracle.coherence.common.ranges.Ranges;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.ExternalizableHelper;
-
 import com.tangosol.util.InvocableMap.Entry;
-
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
@@ -81,7 +74,7 @@ public class ClusteredSequenceGenerator implements SequenceGenerator
      *                     exist in the cluster.
      */
     public ClusteredSequenceGenerator(String sequenceName,
-                                      long initialValue)
+                                      long   initialValue)
     {
         this.sequenceName = sequenceName;
         this.initialValue = initialValue;
@@ -103,8 +96,8 @@ public class ClusteredSequenceGenerator implements SequenceGenerator
     public Range next(long sequenceSize)
     {
         NamedCache namedCache = CacheFactory.getCache(State.CACHENAME);
-        long       from       = (Long) namedCache.invoke(sequenceName,
-                                                         new GenerateSequenceNumberProcessor(initialValue, sequenceSize));
+        long from = (Long) namedCache.invoke(sequenceName,
+                                             new GenerateSequenceNumberProcessor(initialValue, sequenceSize));
 
         return Ranges.newRange(from, from + sequenceSize - 1);
     }

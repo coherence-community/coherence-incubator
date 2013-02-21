@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,29 +27,23 @@ package com.oracle.coherence.environment.extensible.namespaces;
 
 import com.oracle.coherence.common.builders.BuilderRegistry;
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.DefaultConfigurationContext;
-
 import com.oracle.tools.junit.AbstractTest;
-
+import com.sun.jndi.dns.DnsContext;
 import org.junit.Assert;
 import org.junit.Test;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import com.sun.jndi.dns.DnsContext;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * The {@link JndiNamespaceContentHandlerTest} contains unit tests for the {@link JndiNamespaceContentHandler}.

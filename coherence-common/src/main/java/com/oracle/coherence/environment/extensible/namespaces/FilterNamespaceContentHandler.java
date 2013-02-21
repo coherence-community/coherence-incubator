@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,19 +26,14 @@
 package com.oracle.coherence.environment.extensible.namespaces;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.ElementContentHandler;
 import com.oracle.coherence.environment.extensible.QualifiedName;
-
 import com.tangosol.run.xml.XmlElement;
-
 import com.tangosol.util.Filter;
 import com.tangosol.util.QueryHelper;
-
 import com.tangosol.util.filter.AllFilter;
 import com.tangosol.util.filter.AlwaysFilter;
 import com.tangosol.util.filter.AndFilter;
@@ -73,8 +67,8 @@ public class FilterNamespaceContentHandler extends AbstractNamespaceContentHandl
         {
             @SuppressWarnings("unchecked")
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 Object result = context.processOnlyElementOf(xmlElement);
 
@@ -135,8 +129,8 @@ public class FilterNamespaceContentHandler extends AbstractNamespaceContentHandl
          * {@inheritDoc}
          */
         public Object onElement(ConfigurationContext context,
-                                QualifiedName qualifiedName,
-                                XmlElement xmlElement) throws ConfigurationException
+                                QualifiedName        qualifiedName,
+                                XmlElement           xmlElement) throws ConfigurationException
         {
             // process all of the contained filters
             Map<String, Filter> mapFilters = context.processElementsOf(xmlElement, Filter.class);
@@ -190,8 +184,8 @@ public class FilterNamespaceContentHandler extends AbstractNamespaceContentHandl
          * {@inheritDoc}
          */
         public Object onElement(ConfigurationContext context,
-                                QualifiedName qualifiedName,
-                                XmlElement xmlElement) throws ConfigurationException
+                                QualifiedName        qualifiedName,
+                                XmlElement           xmlElement) throws ConfigurationException
         {
             return filter;
         }
@@ -225,8 +219,8 @@ public class FilterNamespaceContentHandler extends AbstractNamespaceContentHandl
          * {@inheritDoc}
          */
         public Object onElement(ConfigurationContext context,
-                                QualifiedName qualifiedName,
-                                XmlElement xmlElement) throws ConfigurationException
+                                QualifiedName        qualifiedName,
+                                XmlElement           xmlElement) throws ConfigurationException
         {
             // process all of the contained filters
             Map<String, Filter> mapFilters = context.processElementsOf(xmlElement, Filter.class);
@@ -272,8 +266,8 @@ public class FilterNamespaceContentHandler extends AbstractNamespaceContentHandl
          */
         @Override
         public Object onElement(ConfigurationContext context,
-                                QualifiedName qualifiedName,
-                                XmlElement xmlElement) throws ConfigurationException
+                                QualifiedName        qualifiedName,
+                                XmlElement           xmlElement) throws ConfigurationException
         {
             // get the contained filter
             Object oFilter = context.processOnlyElementOf(xmlElement);
@@ -302,8 +296,8 @@ public class FilterNamespaceContentHandler extends AbstractNamespaceContentHandl
          */
         @Override
         public Object onElement(ConfigurationContext context,
-                                QualifiedName qualifiedName,
-                                XmlElement xmlElement) throws ConfigurationException
+                                QualifiedName        qualifiedName,
+                                XmlElement           xmlElement) throws ConfigurationException
         {
             // get the expression for which we'll build a Filter
             String expression = xmlElement.getString("");

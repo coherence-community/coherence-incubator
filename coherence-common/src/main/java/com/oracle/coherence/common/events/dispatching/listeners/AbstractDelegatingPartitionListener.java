@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -35,13 +34,10 @@ import com.oracle.coherence.common.events.partition.PartitionLostEvent;
 import com.oracle.coherence.common.events.partition.PartitionRecoveringEvent;
 import com.oracle.coherence.common.events.processing.EventProcessor;
 import com.oracle.coherence.common.events.processing.EventProcessorFactory;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.PartitionedService;
-
 import com.tangosol.net.partition.PartitionListener;
 
 /**

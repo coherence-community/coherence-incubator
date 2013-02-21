@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,16 +26,12 @@
 package com.oracle.coherence.common.serialization.fieldserializers;
 
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.common.serialization.FieldSerializer;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 
 import java.io.IOException;
-
 import java.lang.reflect.Field;
-
 import java.util.Collection;
 
 /**
@@ -59,7 +54,7 @@ public final class CollectionFieldSerializer extends AbstractGenericFieldSeriali
      * @param field         The {@link Field} containing the {@link Collection} to serialize.
      * @param preferredType The preferred type of {@link Collection} to instantiate when deserializing.
      */
-    public CollectionFieldSerializer(Field field,
+    public CollectionFieldSerializer(Field    field,
                                      Class<?> preferredType)
     {
         super(field, preferredType);
@@ -70,10 +65,10 @@ public final class CollectionFieldSerializer extends AbstractGenericFieldSeriali
      * {@inheritDoc}
      */
     @Override
-    public void readField(Object object,
-                          Field field,
+    public void readField(Object    object,
+                          Field     field,
                           PofReader reader,
-                          int index) throws IllegalArgumentException, IllegalAccessException, IOException
+                          int       index) throws IllegalArgumentException, IllegalAccessException, IOException
     {
         // determine the existing collection (we'll populate this if there is one)
         Collection<?> collection = (Collection<?>) field.get(object);
@@ -101,10 +96,10 @@ public final class CollectionFieldSerializer extends AbstractGenericFieldSeriali
      * {@inheritDoc}
      */
     @Override
-    public void writeField(Object object,
-                           Field field,
+    public void writeField(Object    object,
+                           Field     field,
                            PofWriter writer,
-                           int index) throws IllegalArgumentException, IOException, IllegalAccessException
+                           int       index) throws IllegalArgumentException, IOException, IllegalAccessException
     {
         // when we have concrete type information we can write out a uniform collection (more efficient)
         if (typeArguments == null)

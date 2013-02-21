@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -51,6 +50,6 @@ public interface ReflectiveBuilder<T> extends Builder<T>
      *                          {@link com.oracle.coherence.configuration.parameters.Parameter}s possibly used by the builder.
      * @return <code>true</code> if the specified {@link Class} may be realized by the {@link ReflectiveBuilder}.
      */
-    public boolean realizesClassOf(Class<?> clazz,
+    public boolean realizesClassOf(Class<?>          clazz,
                                    ParameterProvider parameterProvider);
 }

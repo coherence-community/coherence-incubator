@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,11 +26,9 @@
 package com.oracle.coherence.common.serialization;
 
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.common.serialization.annotations.PofField;
 import com.oracle.coherence.common.serialization.annotations.PofIgnore;
 import com.oracle.coherence.common.serialization.annotations.PofType;
-
 import com.tangosol.io.pof.ConfigurablePofContext;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofSerializer;
@@ -86,7 +83,7 @@ public class ReflectiveSerializer implements PofSerializer
     @Override
     public Object deserialize(PofReader reader) throws IOException
     {
-        int                 userTypeId = reader.getUserTypeId();
+        int userTypeId = reader.getUserTypeId();
         ReflectedSerializer serializer =
             getReflectedPofContext().ensurePofSerializer(reader.getPofContext().getClass(userTypeId),
                                                          reader.getPofContext());
@@ -119,9 +116,9 @@ public class ReflectiveSerializer implements PofSerializer
      */
     @Override
     public void serialize(PofWriter writer,
-                          Object object) throws IOException
+                          Object    object) throws IOException
     {
-        int                 userTypeId = writer.getUserTypeId();
+        int userTypeId = writer.getUserTypeId();
         ReflectedSerializer serializer =
             getReflectedPofContext().ensurePofSerializer(writer.getPofContext().getClass(userTypeId),
                                                          writer.getPofContext());

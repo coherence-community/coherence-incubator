@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,11 +27,10 @@ package com.oracle.coherence.common.applications;
 
 import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
 
-import java.util.Properties;
-
 import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
+import java.util.Properties;
 
 /**
  * <strong>This package is now deprecated.  Please use the com.oracle.tools package instead.</strong>
@@ -119,7 +117,7 @@ public interface JavaApplication extends Application
      * @throws UnsupportedOperationException If JMX is not enabled for the {@link JavaApplication}.
      */
     public <T> T getMBeanProxy(ObjectName objectName,
-                               Class<T> clazz);
+                               Class<T>   clazz);
 
 
     /**
@@ -153,5 +151,5 @@ public interface JavaApplication extends Application
      * @throws UnsupportedOperationException If JMX is not enabled for the {@link JavaApplication}.
      */
     public MBeanInfo getMBeanInfo(ObjectName objectName,
-                                  long waitTimeMS);
+                                  long       waitTimeMS);
 }

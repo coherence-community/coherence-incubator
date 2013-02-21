@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,17 +28,13 @@ package com.oracle.coherence.common.events.dispatching;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.events.processing.EventProcessor;
 import com.oracle.coherence.common.events.processing.LifecycleAwareEventProcessor;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.tangosol.util.Filter;
 
 import java.util.Set;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -94,7 +89,7 @@ public class SimpleEventDispatcher implements EventDispatcher
     /**
      * {@inheritDoc}
      */
-    public <E extends Event> void dispatchEvent(E event,
+    public <E extends Event> void dispatchEvent(E                 event,
                                                 EventProcessor<E> eventProcessor)
     {
         // have the specified event processed with the specified event processor
@@ -135,7 +130,7 @@ public class SimpleEventDispatcher implements EventDispatcher
     /**
      * {@inheritDoc}
      */
-    public <E extends Event> boolean registerEventProcessor(Filter filter,
+    public <E extends Event> boolean registerEventProcessor(Filter            filter,
                                                             EventProcessor<E> eventProcessor)
     {
         // while the underlying data-structures are thread-safe, we need to guard against
@@ -176,7 +171,7 @@ public class SimpleEventDispatcher implements EventDispatcher
     /**
      * {@inheritDoc}
      */
-    public <E extends Event> void unregisterEventProcessor(Filter filter,
+    public <E extends Event> void unregisterEventProcessor(Filter            filter,
                                                            EventProcessor<E> eventProcessor)
     {
         // while the underlying data-structures are thread-safe, we need to guard against

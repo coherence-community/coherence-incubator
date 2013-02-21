@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -60,8 +59,8 @@ public abstract class AbstractEnrichmentSupport implements EnrichmentSupport
     @Override
     @SuppressWarnings("unchecked")
     public <T, N> void addEnrichment(java.lang.Class<T> type,
-                                     N enrichmentKey,
-                                     T enrichment)
+                                     N                  enrichmentKey,
+                                     T                  enrichment)
     {
         HashMap<N, T> namedEnrichments = (HashMap<N, T>) enrichmentsByType.get(type);
 
@@ -100,7 +99,7 @@ public abstract class AbstractEnrichmentSupport implements EnrichmentSupport
     @Override
     @SuppressWarnings("unchecked")
     public <T, N> T getEnrichment(java.lang.Class<T> type,
-                                  N enrichmentKey)
+                                  N                  enrichmentKey)
     {
         return (T) (enrichmentsByType.containsKey(type) ? enrichmentsByType.get(type).get(enrichmentKey) : null);
     }
@@ -142,7 +141,7 @@ public abstract class AbstractEnrichmentSupport implements EnrichmentSupport
      */
     @Override
     public <T, N> boolean hasEnrichment(java.lang.Class<T> type,
-                                        N enrichmentKey)
+                                        N                  enrichmentKey)
     {
         return getEnrichment(type, enrichmentKey) != null;
     }

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,50 +29,37 @@ import com.oracle.coherence.common.builders.BuilderRegistry;
 import com.oracle.coherence.common.builders.ClassSchemeBasedParameterizedBuilder;
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.builders.StaticFactoryClassSchemeBasedParameterizedBuilder;
-
 import com.oracle.coherence.common.util.Value;
-
 import com.oracle.coherence.configuration.caching.CacheMapping;
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
-
 import com.oracle.coherence.configuration.expressions.Constant;
 import com.oracle.coherence.configuration.expressions.Expression;
-
 import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.configuration.parameters.SimpleParameterProvider;
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.ElementContentHandler;
 import com.oracle.coherence.environment.extensible.QualifiedName;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlValue;
-
 import com.tangosol.util.Base;
 import com.tangosol.util.UUID;
 
 import java.io.File;
-
 import java.math.BigDecimal;
-
 import java.net.URI;
-
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -127,8 +113,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
         registerContentHandler("class-scheme", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 ParameterizedBuilder<?> builder;
 
@@ -190,8 +176,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
         registerContentHandler("cache-mapping", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 // FUTURE: when we're only using CacheMappings throughout the ExtensibleEnvironment, we can remove the
                 // following line.
@@ -229,8 +215,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
         {
             @SuppressWarnings("unchecked")
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 // process the child elements (this allows them to modify the dom if required)
                 context.processElementsOf(xmlElement);
@@ -264,8 +250,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
             @SuppressWarnings("unchecked")
             @Override
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 // process the children of the defaults element adding their xml to the defaults maps so we
                 // can later provide this to the DCCF
@@ -296,8 +282,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
         registerContentHandler("init-param", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 // when there is no param-name defined, use a newly generated UUID
                 final String name = context.getOptionalProperty("param-name",
@@ -350,8 +336,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
         {
             @SuppressWarnings("unchecked")
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 // construct a scope to hold the specified init-params
                 MutableParameterProvider parameterProvider = new SimpleParameterProvider();
@@ -384,8 +370,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
         registerContentHandler("param-type", new ElementContentHandler()
         {
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 String className = xmlElement.getString();
 
@@ -453,8 +439,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
      */
     @Override
     public Object onUnknownElement(ConfigurationContext context,
-                                   QualifiedName qualifiedName,
-                                   XmlElement xmlElement) throws ConfigurationException
+                                   QualifiedName        qualifiedName,
+                                   XmlElement           xmlElement) throws ConfigurationException
     {
         // when an element is unknown we just process/ignore it as Coherence is non-strict.
         return context.processElementsOf(xmlElement);
@@ -466,8 +452,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
      */
     @Override
     public void onStartScope(ConfigurationContext context,
-                             String prefix,
-                             URI uri)
+                             String               prefix,
+                             URI                  uri)
     {
         super.onStartScope(context, prefix, uri);
 
@@ -530,8 +516,8 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
      */
     @SuppressWarnings("unchecked")
     private void build(StringBuilder builder,
-                       XmlElement xmlElement,
-                       int indent)
+                       XmlElement    xmlElement,
+                       int           indent)
     {
         String padding = Base.dup(' ', indent * 4);
 

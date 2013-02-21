@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -31,13 +30,12 @@ import com.tangosol.net.CacheFactoryBuilder;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.Service;
-
 import com.tangosol.run.xml.XmlElement;
-
-import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * This is a utility class derived from an Easymock variant of this class in main Coherence.
@@ -95,7 +93,7 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
     /**
      * {@inheritDoc}
      */
-    public synchronized NamedCache ensureCache(String sCacheName,
+    public synchronized NamedCache ensureCache(String      sCacheName,
                                                ClassLoader loader)
     {
         NamedCache mockNamedCache = m_mockNamedCacheMap.get(sCacheName);
@@ -187,7 +185,7 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
         /**
          * {@inheritDoc}
          */
-        public ConfigurableCacheFactory getConfigurableCacheFactory(String sConfigURI,
+        public ConfigurableCacheFactory getConfigurableCacheFactory(String      sConfigURI,
                                                                     ClassLoader loader)
         {
             return m_cacheFactory;
@@ -198,7 +196,7 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
          * {@inheritDoc}
          */
         public void setCacheConfiguration(ClassLoader loader,
-                                          XmlElement xmlConfig)
+                                          XmlElement  xmlConfig)
         {
             throw new UnsupportedOperationException();
         }
@@ -207,9 +205,9 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
         /**
          * {@inheritDoc}
          */
-        public void setCacheConfiguration(String sConfigURI,
+        public void setCacheConfiguration(String      sConfigURI,
                                           ClassLoader loader,
-                                          XmlElement xmlConfig)
+                                          XmlElement  xmlConfig)
         {
             throw new UnsupportedOperationException();
         }

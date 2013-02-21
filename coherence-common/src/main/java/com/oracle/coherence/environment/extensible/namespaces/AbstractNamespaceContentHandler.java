@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -32,12 +31,10 @@ import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.ElementContentHandler;
 import com.oracle.coherence.environment.extensible.NamespaceContentHandler;
 import com.oracle.coherence.environment.extensible.QualifiedName;
-
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlValue;
 
 import java.net.URI;
-
 import java.util.HashMap;
 
 /**
@@ -88,7 +85,7 @@ public abstract class AbstractNamespaceContentHandler implements NamespaceConten
      * @param localName The local name of the {@link ElementContentHandler}
      * @param elementContentHandler The {@link ElementContentHandler} for the local name
      */
-    public void registerContentHandler(String localName,
+    public void registerContentHandler(String                localName,
                                        ElementContentHandler elementContentHandler)
     {
         // TODO: ensure that we've not already registered the element content handler
@@ -102,7 +99,7 @@ public abstract class AbstractNamespaceContentHandler implements NamespaceConten
      * @param localName The local name of the {@link AttributeContentHandler}
      * @param attributeContentHandler The {@link AttributeContentHandler} for the local name
      */
-    public void registerContentHandler(String localName,
+    public void registerContentHandler(String                  localName,
                                        AttributeContentHandler attributeContentHandler)
     {
         // TODO: ensure that we've not already registered the attribute content handler
@@ -125,8 +122,8 @@ public abstract class AbstractNamespaceContentHandler implements NamespaceConten
      * {@inheritDoc}
      */
     public void onStartScope(ConfigurationContext context,
-                             String prefix,
-                             URI uri)
+                             String               prefix,
+                             URI                  uri)
     {
         this.prefix = prefix;
     }
@@ -136,8 +133,8 @@ public abstract class AbstractNamespaceContentHandler implements NamespaceConten
      * {@inheritDoc}
      */
     public void onEndScope(ConfigurationContext context,
-                           String prefix,
-                           URI uri)
+                           String               prefix,
+                           URI                  uri)
     {
         // nothing to do here. may be overridden by sub-classes
     }
@@ -147,8 +144,8 @@ public abstract class AbstractNamespaceContentHandler implements NamespaceConten
      * {@inheritDoc}
      */
     public final Object onElement(ConfigurationContext context,
-                                  QualifiedName qualifiedName,
-                                  XmlElement xmlElement) throws ConfigurationException
+                                  QualifiedName        qualifiedName,
+                                  XmlElement           xmlElement) throws ConfigurationException
     {
         // look up the ElementContentHandler and have it process the XmlElement
         if (elementContentHandlers.containsKey(qualifiedName.getLocalName()))
@@ -177,8 +174,8 @@ public abstract class AbstractNamespaceContentHandler implements NamespaceConten
      * @return An object to be used by the parent {@link XmlElement} or <code>null</code> if nothing required.
      */
     public Object onUnknownElement(ConfigurationContext context,
-                                   QualifiedName qualifiedName,
-                                   XmlElement xmlElement) throws ConfigurationException
+                                   QualifiedName        qualifiedName,
+                                   XmlElement           xmlElement) throws ConfigurationException
     {
         throw new ConfigurationException(String
             .format("The NamespaceContentHandler [%s] can't process the element [%s] as it is unknown.",
@@ -193,8 +190,8 @@ public abstract class AbstractNamespaceContentHandler implements NamespaceConten
      * {@inheritDoc}
      */
     public final void onAttribute(ConfigurationContext context,
-                                  QualifiedName qualifiedName,
-                                  XmlValue xmlValue) throws ConfigurationException
+                                  QualifiedName        qualifiedName,
+                                  XmlValue             xmlValue) throws ConfigurationException
     {
         // look up the AttributeContentHandler and have it process the xmlValue
         if (attributeContentHandlers.containsKey(qualifiedName.getLocalName()))
@@ -220,8 +217,8 @@ public abstract class AbstractNamespaceContentHandler implements NamespaceConten
      * @throws ConfigurationException when a configuration problem was encountered
      */
     public final void onUnknownAttribute(ConfigurationContext context,
-                                         QualifiedName qualifiedName,
-                                         XmlValue xmlValue) throws ConfigurationException
+                                         QualifiedName        qualifiedName,
+                                         XmlValue             xmlValue) throws ConfigurationException
     {
         // SKIP: by default we don't do anything if the attribute is unknown
     }

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,7 +27,6 @@ package com.oracle.coherence.common.serialization;
 
 import com.oracle.coherence.common.serialization.annotations.PofField;
 import com.oracle.coherence.common.serialization.annotations.PofType;
-
 import junit.framework.Assert;
 
 /**
@@ -40,8 +38,8 @@ import junit.framework.Assert;
 )
 public class VersionedType
 {
-    /** 
-     *Field description 
+    /**
+     * Field description
      */
     public static final byte[] binaryRemainder = new byte[] {7, 115, 8, 125, 9, 69, 64, 62, 0, 0, 0, 0, 0, 0, 10, 75,
                                                              40, 11, 97, 12, 64, 60, 13, 66, -122, 1};

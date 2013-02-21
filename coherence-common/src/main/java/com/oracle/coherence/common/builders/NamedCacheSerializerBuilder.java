@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,19 +27,14 @@ package com.oracle.coherence.common.builders;
 
 import com.oracle.coherence.configuration.expressions.Constant;
 import com.oracle.coherence.configuration.expressions.Expression;
-
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
-
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -111,7 +105,7 @@ public class NamedCacheSerializerBuilder implements ParameterizedBuilder<Seriali
      * {@inheritDoc}
      */
     @Override
-    public boolean realizesClassOf(Class<?> clazz,
+    public boolean realizesClassOf(Class<?>          clazz,
                                    ParameterProvider parameterProvider)
     {
         return clazz.isAssignableFrom(NamedCache.class);

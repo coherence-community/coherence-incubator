@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -64,8 +63,8 @@ public abstract class AbstractDeferredResourceProvider<T> extends AbstractResour
      *                              before we fail.
      */
     public AbstractDeferredResourceProvider(String resourceName,
-                                            long retryDelayDurationMS,
-                                            long totalRetryDurationMS)
+                                            long   retryDelayDurationMS,
+                                            long   totalRetryDurationMS)
     {
         super(resourceName);
 

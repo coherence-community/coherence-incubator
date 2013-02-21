@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,10 +26,8 @@
 package com.oracle.coherence.environment.extensible;
 
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.net.cache.ContinuousQueryCache;
 import com.tangosol.net.cache.WrapperNamedCache;
-
 import com.tangosol.util.filter.AlwaysFilter;
 
 /**
@@ -51,7 +48,7 @@ public class WrapperContinuousQueryCache extends WrapperNamedCache
      * @param cacheName     the name of the wrapped cache
      */
     public WrapperContinuousQueryCache(NamedCache wrappedCache,
-                                       String cacheName)
+                                       String     cacheName)
     {
         super(new ContinuousQueryCache(wrappedCache, AlwaysFilter.INSTANCE), cacheName);
     }

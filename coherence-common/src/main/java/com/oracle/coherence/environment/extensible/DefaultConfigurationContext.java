@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,42 +27,30 @@ package com.oracle.coherence.environment.extensible;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.builders.ReflectiveBuilder;
-
 import com.oracle.coherence.common.logging.LogHelper;
-
 import com.oracle.coherence.common.util.AbstractEnrichmentSupport;
 import com.oracle.coherence.common.util.EnrichmentSupport;
 import com.oracle.coherence.common.util.Value;
-
 import com.oracle.coherence.configuration.Mandatory;
 import com.oracle.coherence.configuration.Property;
 import com.oracle.coherence.configuration.SubType;
 import com.oracle.coherence.configuration.Type;
-
 import com.oracle.coherence.configuration.expressions.Constant;
 import com.oracle.coherence.configuration.expressions.Expression;
 import com.oracle.coherence.configuration.expressions.MacroParameterExpression;
-
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.namespaces.NullNamespaceContentHandler;
-
 import com.tangosol.net.DefaultConfigurableCacheFactory;
-
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlHelper;
 import com.tangosol.run.xml.XmlValue;
-
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.UUID;
 
 import java.lang.reflect.Method;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -71,7 +58,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -120,7 +106,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      * {@inheritDoc}
      */
     public NamespaceContentHandler ensureNamespaceContentHandler(String prefix,
-                                                                 URI uri)
+                                                                 URI    uri)
     {
         // find an existing NamespaceContentHandler exist for the uri
         NamespaceContentHandler namespaceContentHandler = getNamespaceContentHandler(uri);
@@ -336,7 +322,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
 
         for (String key : attributeMap.keySet())
         {
-            QualifiedName           attributeQName                   = new QualifiedName(key);
+            QualifiedName attributeQName = new QualifiedName(key);
             NamespaceContentHandler attributeNamespaceContentHandler =
                 getNamespaceContentHandler(attributeQName.getPrefix());
 
@@ -404,9 +390,9 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public <T> T processElementOf(XmlElement xmlElement,
+    public <T> T processElementOf(XmlElement    xmlElement,
                                   QualifiedName qualifiedName,
-                                  T defaultValue) throws ConfigurationException
+                                  T             defaultValue) throws ConfigurationException
     {
         // find the child element using the qualified name
         XmlElement childElement = xmlElement.getElement(qualifiedName.toString());
@@ -437,8 +423,8 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      */
     @SuppressWarnings("unchecked")
     public <T> T processElementOf(XmlElement xmlElement,
-                                  String id,
-                                  T defaultValue) throws ConfigurationException
+                                  String     id,
+                                  T          defaultValue) throws ConfigurationException
     {
         // find the element with the specified id
         XmlElement childElement = null;
@@ -482,7 +468,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public Map<String, ?> processElementsOf(XmlElement xmlElement,
+    public Map<String, ?> processElementsOf(XmlElement       xmlElement,
                                             QualifiedName... except) throws ConfigurationException
     {
         HashSet<QualifiedName> exceptions = new HashSet<QualifiedName>();
@@ -526,7 +512,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
     @SuppressWarnings("unchecked")
     @Override
     public <T> Map<String, T> processElementsOf(XmlElement xmlElement,
-                                                Class<T> expectedType) throws ConfigurationException
+                                                Class<T>   expectedType) throws ConfigurationException
     {
         LinkedHashMap<String, T> result = new LinkedHashMap<String, T>();
 
@@ -571,9 +557,9 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      * {@inheritDoc}
      */
     @Override
-    public boolean isPropertyDefined(String propertyName,
+    public boolean isPropertyDefined(String        propertyName,
                                      QualifiedName qualifiedName,
-                                     XmlElement xmlElement) throws ConfigurationException
+                                     XmlElement    xmlElement) throws ConfigurationException
     {
         // attempt to find an attribute with the specified name
         // when not found, attempt to find an element with the specified property name
@@ -606,9 +592,9 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      * {@inheritDoc}
      */
     @Override
-    public void configure(Object object,
+    public void configure(Object        object,
                           QualifiedName qualifiedName,
-                          XmlElement xmlElement) throws ConfigurationException
+                          XmlElement    xmlElement) throws ConfigurationException
     {
         if (logger.isLoggable(Level.FINER))
         {
@@ -702,7 +688,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      * @param element xml configuration
      * @return whether the method is required
      */
-    protected boolean isMandatory(final Method m,
+    protected boolean isMandatory(final Method     m,
                                   final XmlElement element)
     {
         return m.getAnnotation(Mandatory.class) != null && element.getElement("scheme-ref") == null;
@@ -714,11 +700,11 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getMandatoryProperty(String propertyName,
-                                      Class<T> propertyType,
-                                      Class<?> propertySubType,
+    public <T> T getMandatoryProperty(String        propertyName,
+                                      Class<T>      propertyType,
+                                      Class<?>      propertySubType,
                                       QualifiedName qualifiedName,
-                                      XmlElement xmlElement) throws ConfigurationException
+                                      XmlElement    xmlElement) throws ConfigurationException
     {
         // attempt to find an attribute with the specified name
         Value value = new Value(xmlElement.getAttribute(propertyName));
@@ -913,10 +899,10 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      * {@inheritDoc}
      */
     @Override
-    public <T> T getMandatoryProperty(String propertyName,
-                                      Class<T> propertyType,
+    public <T> T getMandatoryProperty(String        propertyName,
+                                      Class<T>      propertyType,
                                       QualifiedName qualifiedName,
-                                      XmlElement xmlElement) throws ConfigurationException
+                                      XmlElement    xmlElement) throws ConfigurationException
     {
         return getMandatoryProperty(propertyName, propertyType, null, qualifiedName, xmlElement);
     }
@@ -926,12 +912,12 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      * {@inheritDoc}
      */
     @Override
-    public <T> T getOptionalProperty(String propertyName,
+    public <T> T getOptionalProperty(String             propertyName,
                                      java.lang.Class<T> propertyType,
                                      java.lang.Class<?> propertySubType,
-                                     T defaultValue,
-                                     QualifiedName qualifiedName,
-                                     XmlElement xmlElement) throws ConfigurationException
+                                     T                  defaultValue,
+                                     QualifiedName      qualifiedName,
+                                     XmlElement         xmlElement) throws ConfigurationException
     {
         if (isPropertyDefined(propertyName, qualifiedName, xmlElement))
         {
@@ -948,11 +934,11 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      * {@inheritDoc}
      */
     @Override
-    public <T> T getOptionalProperty(String propertyName,
+    public <T> T getOptionalProperty(String             propertyName,
                                      java.lang.Class<T> propertyType,
-                                     T defaultValue,
-                                     QualifiedName qualifiedName,
-                                     XmlElement xmlElement) throws ConfigurationException
+                                     T                  defaultValue,
+                                     QualifiedName      qualifiedName,
+                                     XmlElement         xmlElement) throws ConfigurationException
     {
         if (isPropertyDefined(propertyName, qualifiedName, xmlElement))
         {
@@ -970,7 +956,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      */
     @Override
     public <T, N> boolean hasEnrichment(Class<T> type,
-                                        N decorationKey)
+                                        N        decorationKey)
     {
         return getCurrentScope().hasEnrichment(type, decorationKey);
     }
@@ -981,7 +967,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      */
     @Override
     public <T, N> T getEnrichment(Class<T> type,
-                                  N decorationKey)
+                                  N        decorationKey)
     {
         T decoration = null;
 
@@ -1031,8 +1017,8 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
      */
     @Override
     public <T, N> void addEnrichment(Class<T> type,
-                                     N decorationKey,
-                                     T decoration)
+                                     N        decorationKey,
+                                     T        decoration)
     {
         getCurrentScope().addEnrichment(type, decorationKey, decoration);
     }
@@ -1099,7 +1085,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
          * @param xmlElement The {@link XmlElement} for which this {@link Scope} was created. (may be null)
          */
         Scope(ConfigurationContext context,
-              XmlElement xmlElement)
+              XmlElement           xmlElement)
         {
             this.context                  = context;
             this.xmlElement               = xmlElement;
@@ -1155,7 +1141,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
          * @return The {@link NamespaceContentHandler} for the specified {@link URI}.
          */
         NamespaceContentHandler establishNamespaceContentHandlerFor(String prefix,
-                                                                    URI uri)
+                                                                    URI    uri)
         {
             String scheme = uri.getScheme();
 

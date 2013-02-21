@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -145,7 +144,7 @@ public class SimpleModel<S extends Enum<S>> implements Model<S>
      * @param state             the state
      * @param stateEntryAction  the {@link StateEntryAction} for the state
      */
-    public void addStateEntryAction(S state,
+    public void addStateEntryAction(S                   state,
                                     StateEntryAction<S> stateEntryAction)
     {
         m_stateEntryActions.put(state, stateEntryAction);
@@ -169,7 +168,7 @@ public class SimpleModel<S extends Enum<S>> implements Model<S>
      * @param state             the state
      * @param stateExitAction  the {@link StateExitAction} for the state
      */
-    public void addStateExitAction(S state,
+    public void addStateExitAction(S                  state,
                                    StateExitAction<S> stateExitAction)
     {
         m_stateExitActions.put(state, stateExitAction);

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -32,25 +31,19 @@ import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStoppedEvent;
 import com.oracle.coherence.common.events.lifecycle.NamedCacheStorageReleasedEvent;
 import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
-
 import com.oracle.coherence.common.processors.CreateRemoteObjectProcessor;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.LifecycleEventFilter;
 import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.environment.extensible.dependencies.EnvironmentReference;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
-
 import java.util.Collections;
 import java.util.Set;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -98,7 +91,7 @@ public class ObjectProxyFactory<InterfaceType> extends AbstractAsynchronousEvent
      * @param cacheName the {@link NamedCache}
      * @param clazz the {@link Class} for the interface that the proxy implements.
      */
-    public ObjectProxyFactory(String cacheName,
+    public ObjectProxyFactory(String               cacheName,
                               Class<InterfaceType> clazz)
     {
         this.cacheName = cacheName;
@@ -124,9 +117,9 @@ public class ObjectProxyFactory<InterfaceType> extends AbstractAsynchronousEvent
             NamedCache               cache   = ensureCache();
 
             NamedCacheObjectProxy<?> handler = new NamedCacheObjectProxy<Object>(key, cache);
-            InterfaceType            proxy   = (InterfaceType) Proxy.newProxyInstance(mClass.getClassLoader(),
-                                                                                      new Class[] {mClass},
-                                                                                      handler);
+            InterfaceType proxy = (InterfaceType) Proxy.newProxyInstance(mClass.getClassLoader(),
+                                                                         new Class[] {mClass},
+                                                                         handler);
 
             if (logger.isLoggable(Level.FINEST))
             {
@@ -157,7 +150,7 @@ public class ObjectProxyFactory<InterfaceType> extends AbstractAsynchronousEvent
      *
      * @throws Throwable throws
      */
-    public InterfaceType createRemoteObjectIfNotExists(Object key,
+    public InterfaceType createRemoteObjectIfNotExists(Object   key,
                                                        Class<?> objectType,
                                                        Object[] parameters) throws Throwable
     {
@@ -215,7 +208,7 @@ public class ObjectProxyFactory<InterfaceType> extends AbstractAsynchronousEvent
      * @param callback the {@link ObjectChangeCallback} to register
      */
     @SuppressWarnings("unchecked")
-    public void registerChangeCallback(InterfaceType proxyObject,
+    public void registerChangeCallback(InterfaceType                       proxyObject,
                                        ObjectChangeCallback<InterfaceType> callback)
     {
         if (!isProxy(proxyObject))
@@ -240,7 +233,7 @@ public class ObjectProxyFactory<InterfaceType> extends AbstractAsynchronousEvent
      */
 
     @SuppressWarnings("unchecked")
-    public void unregisterChangeCallback(InterfaceType proxyObject,
+    public void unregisterChangeCallback(InterfaceType                       proxyObject,
                                          ObjectChangeCallback<InterfaceType> callback)
     {
         if (!isProxy(proxyObject))
@@ -368,7 +361,7 @@ public class ObjectProxyFactory<InterfaceType> extends AbstractAsynchronousEvent
      * {@inheritDoc}
      */
     @Override
-    public void processLater(EventDispatcher eventDispatcher,
+    public void processLater(EventDispatcher   eventDispatcher,
                              LifecycleEvent<?> event)
     {
         if (event instanceof NamedCacheStorageReleasedEvent)

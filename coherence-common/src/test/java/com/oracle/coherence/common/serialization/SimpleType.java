@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,14 +26,13 @@
 package com.oracle.coherence.common.serialization;
 
 import com.oracle.coherence.common.serialization.annotations.PofType;
-
 import junit.framework.Assert;
 
 /**
  * Class description
  *
  * @version        Enter version here..., 12/08/20
- * @author         Enter your name here...    
+ * @author         Enter your name here...
  */
 @PofType(id = 1002)
 public class SimpleType

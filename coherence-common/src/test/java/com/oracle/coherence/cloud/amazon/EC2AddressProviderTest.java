@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,32 +26,25 @@
 package com.oracle.coherence.cloud.amazon;
 
 import com.amazonaws.auth.AWSCredentials;
-
 import com.amazonaws.services.ec2.AmazonEC2;
-
 import com.amazonaws.services.ec2.model.Address;
 import com.amazonaws.services.ec2.model.DescribeAddressesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
-
 import com.oracle.tools.junit.AbstractTest;
-
 import com.oracle.tools.runtime.network.Constants;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
-
 import java.io.IOException;
-
 import java.net.InetSocketAddress;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.stub;
 
 /**
  * A {@link EC2AddressProviderTest} class testing the combinations of Elastic IP to instance mappings that the EC2 API can yield.

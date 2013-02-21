@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,26 +26,18 @@
 package com.oracle.coherence.common.util;
 
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
-
 import com.oracle.tools.junit.AbstractTest;
-
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
-
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import java.lang.reflect.Method;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.verify;
-
-import java.lang.reflect.Method;
+import static org.mockito.Mockito.*;
 
 /**
  * A {@link NamedCacheObjectProxyTest} testing the dynamic proxy Invocation handler.

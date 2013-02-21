@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -63,8 +62,8 @@ public class ResourceProviderManager
      * @param name                          The unique name (for the class) of the {@link ResourceProvider}
      * @param supervisedResourceProvider    The {@link ResourceProvider}
      */
-    public <T> void registerResourceProvider(Class<T> clazz,
-                                             String name,
+    public <T> void registerResourceProvider(Class<T>            clazz,
+                                             String              name,
                                              ResourceProvider<T> supervisedResourceProvider)
     {
         resourceProvidersByName.putIfAbsent(name + clazz.getName(), supervisedResourceProvider);
@@ -83,7 +82,7 @@ public class ResourceProviderManager
      */
     @SuppressWarnings("unchecked")
     public <T> ResourceProvider<T> getResourceProvider(Class<T> clazz,
-                                                       String name)
+                                                       String   name)
     {
         return (ResourceProvider<T>) resourceProvidersByName.get(name + clazz.getName());
     }

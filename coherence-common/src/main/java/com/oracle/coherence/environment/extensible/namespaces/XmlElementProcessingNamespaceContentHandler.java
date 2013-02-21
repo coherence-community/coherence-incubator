@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,16 +27,12 @@ package com.oracle.coherence.environment.extensible.namespaces;
 
 import com.oracle.coherence.configuration.expressions.Expression;
 import com.oracle.coherence.configuration.expressions.MacroParameterExpression;
-
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.environment.extensible.AttributeContentHandler;
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.QualifiedName;
-
 import com.tangosol.net.DefaultConfigurableCacheFactory;
-
 import com.tangosol.run.xml.XmlDocument;
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlHelper;
@@ -81,8 +76,8 @@ public class XmlElementProcessingNamespaceContentHandler extends AbstractNamespa
         {
             @Override
             public void onAttribute(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlValue xmlValue) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlValue             xmlValue) throws ConfigurationException
             {
                 // make sure we're in a "cache-config".  if we're not throw an exception
                 if (xmlValue.getParent().getName().equals("cache-config"))
@@ -124,15 +119,15 @@ public class XmlElementProcessingNamespaceContentHandler extends AbstractNamespa
             @SuppressWarnings("unchecked")
             @Override
             public void onAttribute(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlValue xmlValue) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlValue             xmlValue) throws ConfigurationException
             {
                 // determine the parent element we're going to replace.
                 XmlElement xmlElement = xmlValue.getParent();
 
                 // load the specified file to inherit
-                Expression exprUri     = new MacroParameterExpression(xmlValue.getString());
-                String     uri         = exprUri.evaluate(SystemPropertyParameterProvider.INSTANCE).getString();
+                Expression exprUri = new MacroParameterExpression(xmlValue.getString());
+                String     uri     = exprUri.evaluate(SystemPropertyParameterProvider.INSTANCE).getString();
                 XmlElement rootElement = XmlHelper.loadFileOrResource(uri,
                                                                       "replace-with-file",
                                                                       context.getClassLoader());

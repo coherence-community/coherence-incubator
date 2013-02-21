@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -32,7 +31,6 @@ import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.ElementContentHandler;
 import com.oracle.coherence.environment.extensible.NamespaceContentHandler;
 import com.oracle.coherence.environment.extensible.QualifiedName;
-
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlValue;
 
@@ -58,8 +56,8 @@ public class NullNamespaceContentHandler implements NamespaceContentHandler,
      */
     @Override
     public void onStartScope(ConfigurationContext context,
-                             String prefix,
-                             URI uri)
+                             String               prefix,
+                             URI                  uri)
     {
         // deliberately empty
     }
@@ -70,8 +68,8 @@ public class NullNamespaceContentHandler implements NamespaceContentHandler,
      */
     @Override
     public void onEndScope(ConfigurationContext context,
-                           String prefix,
-                           URI uri)
+                           String               prefix,
+                           URI                  uri)
     {
         // deliberately empty
     }
@@ -82,8 +80,8 @@ public class NullNamespaceContentHandler implements NamespaceContentHandler,
      */
     @Override
     public Object onElement(ConfigurationContext context,
-                            QualifiedName qualifiedName,
-                            XmlElement xmlElement) throws ConfigurationException
+                            QualifiedName        qualifiedName,
+                            XmlElement           xmlElement) throws ConfigurationException
     {
         return null;
     }
@@ -94,8 +92,8 @@ public class NullNamespaceContentHandler implements NamespaceContentHandler,
      */
     @Override
     public void onAttribute(ConfigurationContext context,
-                            QualifiedName qualifiedName,
-                            XmlValue xmlValue) throws ConfigurationException
+                            QualifiedName        qualifiedName,
+                            XmlValue             xmlValue) throws ConfigurationException
     {
         // deliberately empty
     }
