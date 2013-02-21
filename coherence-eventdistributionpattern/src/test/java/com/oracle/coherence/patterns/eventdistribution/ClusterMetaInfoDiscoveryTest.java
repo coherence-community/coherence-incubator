@@ -3,7 +3,7 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of 
+ * The contents of this file are subject to the terms and conditions of
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
 
+import com.oracle.tools.runtime.console.SystemApplicationConsole;
 import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
 
@@ -156,7 +157,7 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
             JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> serverBuilder =
                 new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
 
-            server = serverBuilder.realize(serverSchema, "DCGNRI");
+            server = serverBuilder.realize(serverSchema, "DCGNRI", new SystemApplicationConsole());
 
             // wait for the server cluster to start
             server.getClusterMBeanInfo();
@@ -218,7 +219,7 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
             JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> serverBuilder =
                 new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
 
-            server = serverBuilder.realize(serverSchema, "SCGNRI");
+            server = serverBuilder.realize(serverSchema, "SCGNRI", new SystemApplicationConsole());
 
             // wait for the server cluster to start
             server.getClusterMBeanInfo();
@@ -279,7 +280,7 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
             JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> serverBuilder =
                 new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
 
-            server = serverBuilder.realize(serverSchema, "DCGNRI");
+            server = serverBuilder.realize(serverSchema, "DCGNRI", new SystemApplicationConsole());
 
             // wait for the server cluster to start
             server.getClusterMBeanInfo();
@@ -336,7 +337,7 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
             JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> serverBuilder =
                 new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
 
-            server = serverBuilder.realize(serverSchema, "SCGNRC");
+            server = serverBuilder.realize(serverSchema, "SCGNRC", new SystemApplicationConsole());
 
             // wait for the server cluster to start
             server.getClusterMBeanInfo();

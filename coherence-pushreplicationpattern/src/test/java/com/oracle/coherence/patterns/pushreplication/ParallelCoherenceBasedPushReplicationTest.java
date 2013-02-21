@@ -1,5 +1,5 @@
 /*
- * File: CoherenceBasedPushReplicationTest.java
+ * File: ParallelCoherenceBasedPushReplicationTest.java
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -26,22 +26,20 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
-import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
-
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
 
 import org.junit.Test;
 
 /**
- * The {@link CoherenceBasedPushReplicationTest} is an {@link AbstractPushReplicationTest} designed
- * to test the Coherence-based {@link EventDistributor}.
+ * The {@link com.oracle.coherence.patterns.pushreplication.ParallelCoherenceBasedPushReplicationTest} is an {@link com.oracle.coherence.patterns.pushreplication.AbstractPushReplicationTest} designed
+ * to test the Coherence-based {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor}.
  * <p>
  * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
  */
-public class CoherenceBasedPushReplicationTest extends AbstractPushReplicationTest
+public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushReplicationTest
 {
     /**
      * {@inheritDoc}
@@ -49,9 +47,10 @@ public class CoherenceBasedPushReplicationTest extends AbstractPushReplicationTe
     protected ClusterMemberSchema newBaseClusterMemberSchema(int iPort)
     {
         return super.newBaseClusterMemberSchema(iPort).setSystemProperty("event.distributor.config",
-                                                                    "test-coherence-based-distributor-config.xml")
-                                                                        .setSystemProperty("proxy.port",
-                                                                                           getAvailablePortIterator());
+                                                                         "test-coherence-based-distributor-config.xml")
+                                                                             .setSystemProperty("proxy.port",
+                                                                                                getAvailablePortIterator())
+                                                                                                    .setPreferIPv4(true);
     }
 
 
@@ -72,8 +71,8 @@ public class CoherenceBasedPushReplicationTest extends AbstractPushReplicationTe
     @Override
     protected ClusterMemberSchema newActiveClusterMemberSchema(int iPort)
     {
-        return newBaseClusterMemberSchema(iPort).setCacheConfigURI("test-remotecluster-eventchannel-cache-config.xml")
-            .setClusterName("active");
+        return newBaseClusterMemberSchema(iPort)
+            .setCacheConfigURI("test-remotecluster-paralleleventchannel-cache-config.xml").setClusterName("active");
     }
 
 

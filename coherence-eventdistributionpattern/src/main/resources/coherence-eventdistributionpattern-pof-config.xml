@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
     File: coherence-eventdistributionpattern-pof-config.xml
- 
+
     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-    
-    The contents of this file are subject to the terms and conditions of 
+
+    The contents of this file are subject to the terms and conditions of
     the Common Development and Distribution License 1.0 (the "License").
 
     You may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
     If applicable, add the following below the License Header, with the fields
     enclosed by brackets [] replaced by your own identifying information:
     "Portions Copyright [year] [name of copyright owner]"
-    
+
     Copyright (c) 2011. All Rights Reserved. Oracle Corporation.
  -->
 <pof-config>
@@ -178,6 +178,10 @@
 			<type-id>13401</type-id>
 			<class-name>com.oracle.coherence.patterns.eventdistribution.distributors.jms.JMSEventChannelControllerInitializationProcessor</class-name>
 		</user-type>
+
+        <user-type>
+            <type-id>13402</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.ParallelLocalCacheEventChannelBuilder</class-name>
+        </user-type>
 	</user-type-list>
 </pof-config>
- 

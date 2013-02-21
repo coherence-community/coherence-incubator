@@ -3,7 +3,7 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of 
+ * The contents of this file are subject to the terms and conditions of
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import com.oracle.coherence.patterns.eventdistribution.channels.FileEventChannel
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.channels.StdErrEventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.channels.cache.LocalCacheEventChannelBuilder;
+import com.oracle.coherence.patterns.eventdistribution.channels.cache.ParallelLocalCacheEventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.distributors.EventChannelControllerManager;
 import com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder;
@@ -320,6 +321,22 @@ public class EventDistributionNamespaceContentHandler extends AbstractNamespaceC
                 return context.processOnlyElementOf(xmlElement);
             }
         });
+
+        registerContentHandler("local-parallel-cache-channel-scheme", new ElementContentHandler()
+                {
+                    public Object onElement(ConfigurationContext context,
+                                            QualifiedName        qualifiedName,
+                                            XmlElement           xmlElement) throws ConfigurationException
+                    {
+                        // create a configurable builder for the LocalCacheEventChannelBuilder
+                        ParallelLocalCacheEventChannelBuilder builder = new ParallelLocalCacheEventChannelBuilder();
+
+                        // configure the builder from the XmlElement
+                        context.configure(builder, qualifiedName, xmlElement);
+
+                        return builder;
+                    }
+                });
 
         registerContentHandler("local-cache-channel-scheme", new ElementContentHandler()
         {

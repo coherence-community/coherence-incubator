@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
     File: test-passive-cluster-cache-config.xml
- 
+
     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-    
-    The contents of this file are subject to the terms and conditions of 
+
+    The contents of this file are subject to the terms and conditions of
     the Common Development and Distribution License 1.0 (the "License").
 
     You may not use this file except in compliance with the License.
@@ -23,13 +23,18 @@
     If applicable, add the following below the License Header, with the fields
     enclosed by brackets [] replaced by your own identifying information:
     "Portions Copyright [year] [name of copyright owner]"
-    
+
     Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
  -->
 <cache-config
 	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd">
+    xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
+
+    xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+
+    element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
 
 	<defaults>
 		<serializer>pof</serializer>
@@ -68,4 +73,3 @@
         </proxy-scheme>
 	</caching-schemes>
 </cache-config>
-		
