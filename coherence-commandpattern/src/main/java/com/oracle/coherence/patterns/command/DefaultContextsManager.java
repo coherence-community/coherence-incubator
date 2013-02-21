@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,20 +28,14 @@ package com.oracle.coherence.patterns.command;
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
 import com.oracle.coherence.common.identifiers.UUIDBasedIdentifier;
-
 import com.oracle.coherence.patterns.command.internal.ContextWrapper;
 import com.oracle.coherence.patterns.command.internal.CreateContextProcessor;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.ValueExtractor;
-
 import com.tangosol.util.extractor.ChainedExtractor;
 import com.tangosol.util.extractor.ReflectionExtractor;
-
 import com.tangosol.util.filter.PresentFilter;
-
 import com.tangosol.util.processor.ConditionalProcessor;
 import com.tangosol.util.processor.ExtractorProcessor;
 
@@ -75,8 +68,8 @@ public class DefaultContextsManager implements ContextsManager
     /**
      * {@inheritDoc}
      */
-    public Identifier registerContext(Identifier contextIdentifier,
-                                      Context context,
+    public Identifier registerContext(Identifier           contextIdentifier,
+                                      Context              context,
                                       ContextConfiguration contextConfiguration)
     {
         // attempt to create the context
@@ -92,7 +85,7 @@ public class DefaultContextsManager implements ContextsManager
      * {@inheritDoc}
      */
     public Identifier registerContext(Identifier contextIdentifier,
-                                      Context context)
+                                      Context    context)
     {
         return registerContext(contextIdentifier, context, new DefaultContextConfiguration());
     }
@@ -101,8 +94,8 @@ public class DefaultContextsManager implements ContextsManager
     /**
      * {@inheritDoc}
      */
-    public Identifier registerContext(String contextName,
-                                      Context context,
+    public Identifier registerContext(String               contextName,
+                                      Context              context,
                                       ContextConfiguration contextConfiguration)
     {
         return registerContext(StringBasedIdentifier.newInstance(contextName), context, contextConfiguration);
@@ -112,7 +105,7 @@ public class DefaultContextsManager implements ContextsManager
     /**
      * {@inheritDoc}
      */
-    public Identifier registerContext(String contextName,
+    public Identifier registerContext(String  contextName,
                                       Context context)
     {
         return registerContext(contextName, context, new DefaultContextConfiguration());
@@ -122,7 +115,7 @@ public class DefaultContextsManager implements ContextsManager
     /**
      * {@inheritDoc}
      */
-    public Identifier registerContext(Context context,
+    public Identifier registerContext(Context              context,
                                       ContextConfiguration contextConfiguration)
     {
         return registerContext(UUIDBasedIdentifier.newInstance(), context, contextConfiguration);
@@ -152,7 +145,7 @@ public class DefaultContextsManager implements ContextsManager
     /**
      * {@inheritDoc}
      */
-    public Object extractValueFromContext(Identifier identifier,
+    public Object extractValueFromContext(Identifier     identifier,
                                           ValueExtractor valueExtractor)
     {
         NamedCache contextsCache = CacheFactory.getCache(ContextWrapper.CACHENAME);

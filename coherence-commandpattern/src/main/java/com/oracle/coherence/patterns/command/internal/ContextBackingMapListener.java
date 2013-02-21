@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,15 +27,10 @@ package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.backingmaplisteners.AbstractMultiplexingBackingMapListener;
 import com.oracle.coherence.common.backingmaplisteners.Cause;
-
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.patterns.command.Context;
-
 import com.tangosol.net.BackingMapManagerContext;
-
 import com.tangosol.util.MapEvent;
 
 import java.util.concurrent.TimeUnit;
@@ -68,7 +62,7 @@ public class ContextBackingMapListener extends AbstractMultiplexingBackingMapLis
     /**
      * {@inheritDoc}
      */
-    public void onBackingMapEvent(MapEvent mapEvent,
+    public void onBackingMapEvent(MapEvent    mapEvent,
                                   final Cause cause)
     {
         if (mapEvent.getId() == MapEvent.ENTRY_INSERTED)

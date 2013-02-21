@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,31 +26,23 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.ticketing.Ticket;
-
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.CommandSubmitter;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStrategy;
 import com.oracle.coherence.patterns.command.ExecutionEnvironment;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.net.cache.KeyAssociation;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.Date;
 
 /**
@@ -431,8 +422,8 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
          * @param ticket
          * @param managementStrategy
          */
-        public Key(Identifier contextIdentifier,
-                   Ticket ticket,
+        public Key(Identifier         contextIdentifier,
+                   Ticket             ticket,
                    ManagementStrategy managementStrategy)
         {
             this.contextIdentifier  = contextIdentifier;

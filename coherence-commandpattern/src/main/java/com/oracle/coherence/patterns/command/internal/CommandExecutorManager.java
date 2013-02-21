@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,14 +26,10 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
-
 import com.oracle.coherence.patterns.command.Context;
-
 import com.tangosol.net.BackingMapManagerContext;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,7 +79,7 @@ public final class CommandExecutorManager
      *
      * @return {@link CommandExecutor}
      */
-    public static CommandExecutor ensureCommandExecutor(Identifier contextIdentifier,
+    public static CommandExecutor ensureCommandExecutor(Identifier               contextIdentifier,
                                                         BackingMapManagerContext backingMapManagerContext)
     {
         CommandExecutor commandExecutor = commandExecutors.get(contextIdentifier);
@@ -164,7 +159,7 @@ public final class CommandExecutorManager
      * @param timeUnit The {@link TimeUnit} for the specified delay
      */
     public static void schedule(Runnable runnable,
-                                long delay,
+                                long     delay,
                                 TimeUnit timeUnit)
     {
         if (delay == 0)
@@ -187,7 +182,7 @@ public final class CommandExecutorManager
 
         commandExecutors           = new ConcurrentHashMap<Identifier, CommandExecutor>();
         executorServiceThreadGroup = new ThreadGroup("CommandExecutorManager");
-        executorService            =
+        executorService =
             ExecutorServiceFactory
                 .newScheduledThreadPool(5, ThreadFactories
                     .newThreadFactory(true, "CommandExecutor", executorServiceThreadGroup));
