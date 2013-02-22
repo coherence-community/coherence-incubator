@@ -57,7 +57,13 @@
     
         <menu name="Oracle Coherence Incubator">
             <item name="Welcome" href="index.html"/>
+            <item name="What's New" href="whats-new.html"/>
             <item name="History" href="history.html"/>
+            <item name="Upgrading" href="upgrading.html"/>
+            <item name="Source Code" href="source-code.html"/>
+            <item name="Building" href="building.html"/>
+            <item name="Getting Help" href="forums.html"/>
+            <item name="License" href="license.html"/>
         </menu>
     
         <menu name="Modules">
@@ -94,13 +100,9 @@
         </menu>
     
         <menu name="Development">
-            <item name="Forums" href="forums.html"/>
-            <item name="Issue Tracking" href="issue-tracking.html"/>
-            <item name="Source Code" href="source-code.html"/>
-            <item name="License" href="license.html"/>
             <item name="Contributions" href="contributions.html"/>
+            <item name="Issue Tracking" href="issue-tracking.html"/>
             <item name="Release Numbers" href="release-numbers.html"/>
-            <item name="Build Instructions" href="building.html"/>
             <item name="Logging" href="logging.html"/>
         </menu>
     

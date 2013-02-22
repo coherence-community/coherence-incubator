@@ -15,78 +15,11 @@ of [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.
 
 The modules themselves consist of a collection of common utilities, tools, 
 traditional software pattern implementations, third-party integrations, and 
-distributed computing solutions that of which may use be used as-is or for 
-inclusion into applications.
+distributed computing solutions that of which may be used as-is, for research,
+learning, extension or for direct inclusion into applications.
   
 Complete source code together with documentation is provided to aid in your 
 adoption, use and understanding.
-
-
-What's New?
------------
-
-For the most part Oracle Coherence Incubator 11 remains functionally and 
-semantically compatible with the projects released as part of Oracle Coherence 
-Incubator 10.  Very few changes to the underlying project implementations have 
-occurred, apart from resolving minor defect fixes and any necessary dependency updates.  
-
-The most significant change is in how the Oracle Coherence Incubator is
-now licensed, structured, built and organized.  In a nut shell, the following changes
-have occurred: 
-
-1.  Refactored all of the projects to be arranged in a single source tree, with 
-    separate folders for each project and their associated examples.
-2.  Restructured all of the projects to follow classical [Apache Maven](http://maven.apache.org/)-style
-    conventions.
-3.  Completely re-wrote the build system to use [Apache Maven](http://maven.apache.org/)
-    instead of Apache Ant.
-4.  Ratified and released all of the projects under a standard open source 
-    license (CDDL).
-5.  Formalized the mechanism and process for accepting Coherence Community contributions.
-6.  Completely migrated the existing Atlassian Confluence-based
-    documentation (from coherence.oracle.com) to be part of the source tree, thus
-    enabling documentation version control and Coherence Community Contributions.
-7.  Rationalized all projects to use a single Oracle Coherence Incubator version 
-    number instead of individual version numbers.
-8.  Migrated the source repository to GitHub.
-9.  Migrated the issue tracking to java.net.
-10. Introduced "uber" jar generation support to produce the entire Oracle
-    Coherence Incubator in a single jar. 
-
-For more detailed information concerning changes in this release please consult the 
-project [history](history.html).
-
-Migrating from Previous Releases
---------------------------------
-
-Migrating from Oracle Coherence Incubator 10 to this release is typically as simple
-as replacing previous `jars` with the new `jars`, those of which are available for
-download (if you're not using Maven) from [maven.java.net](http://maven.java.net).
-
-If you're using all of the Oracle Coherence Incubator projects (or most of them),
-you can now use the new "uber" distribution, simply by adding the following
-following dependency declaration to your Maven-based application.
-
-    <dependency>
-        <groupId>com.oracle.coherence.incubator<groupId>
-        <artifactId>coherence-incubator-all</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-
-However should you require individual project distributions, the artifacts are
-identified as follows:
-
-    coherence-common, coherence-commandpattern, coherence-functorpattern,
-    coherence-processingpattern, coherence-messagingpattern,
-    coherence-eventdistributionpattern, coherence-pushreplicationpattern
-
-While the source code is readily available on [github](http://github.com/coherence-community),
-the source code and java documentation for each released version additionally
-published to [maven.java.net](http://maven.java.net).
-
-Migrating from releases prior to Oracle Coherence Incubator 10 requires more effort,
-typically refactoring configuration.  Some patterns may require more effort than
-others, however once migrated to this release, moving forward will be much easier.
 
 Project Modules
 ---------------
@@ -146,20 +79,6 @@ devices (including other clusters separated by WANs).
 **The Push Replication Pattern Examples:**
 
 Provides example uses of the Push Replication Pattern.
-
-Supported Coherence Versions
-----------------------------
-
-While most of the code may work fine with older Coherence releases, versions 
-of Coherence prior 3.7.1 are not officially supported.  All builds and routine
-testing occurs only on Coherence 3.7.1.x+.
-
-Supported Java Versions
------------------------
-
-This version of the Coherence Incubator targets Java 6 language features.  This
-however does not restrict it's usage with later versions of Java, including Java 7
-and 8 (though these are not routinely tested).
 
 Contributions
 -------------
