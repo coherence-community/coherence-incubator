@@ -78,12 +78,10 @@
         Welcome</a>
             </li>
                   
-      <li>
+      <li class="active">
     
-                          <a href="whats-new.html" title="What's New">
-          <i class="none"></i>
-        What's New</a>
-            </li>
+            <a href="#"><i class="none"></i>What's New</a>
+          </li>
                   
       <li>
     
@@ -99,10 +97,12 @@
         Upgrading</a>
             </li>
                   
-      <li class="active">
+      <li>
     
-            <a href="#"><i class="none"></i>Source Code</a>
-          </li>
+                          <a href="source-code.html" title="Source Code">
+          <i class="none"></i>
+        Source Code</a>
+            </li>
                   
       <li>
     
@@ -336,39 +336,40 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h2>Source Code</h2>
+            <h2>What's New</h2>
 
-<p>The Source Code for the entire Oracle Coherence Incubator is hosted by <a href="https://github.com">github.com</a>.</p>
+<p>For the most part Oracle Coherence Incubator 11 remains functionally and 
+semantically compatible with the projects released as part of Oracle Coherence 
+Incubator 10.  Very few changes to the underlying project implementations have 
+occurred, apart from resolving minor defect fixes and any necessary dependency updates.  </p>
 
-<p>It is located here:
-<a href="https://github.com/coherence-community/coherence-incubator">https://github.com/coherence-community/coherence-incubator</a></p>
-
-<p>Alternatively if you're not using or want to avoid setting up <a href="http://git-scm.com">git</a>
-can download a zip containing of the latest development branch from here:</p>
-
-<p><a href="https://github.com/coherence-community/coherence-incubator/archive/develop-11.zip">https://github.com/coherence-community/coherence-incubator/archive/develop-11.zip</a></p>
-
-<p>The branching model adopted for development and releases is as outlined by Vincent Driessen in
-<a href="http://nvie.com/posts/a-successful-git-branching-model">A successful Git branching model</a></p>
-
-<p>Active development is carried out in the branch: <strong>develop-11</strong>.  Nightly builds, snapshots
-and continuous integration typically occurs on this branch.  Snapshot releases from this
-branch are made available on <a href="http://maven.java.net">http://maven.java.net</a> in the snapshot
-repository.</p>
-
-<p>Official Releases are made from the branch: <strong>release-11</strong> (once integrated from
-the development branch).  Each official release is tagged.   Official releases are
-published to <a href="http://maven.java.net">http://maven.java.net</a> and later (usually
-with in 4 hours) to Maven Central.</p>
-
-<h4>Important:</h4>
+<p>The most significant change is in how the Oracle Coherence Incubator is
+now licensed, structured, built and organized.  In a nut shell, the following changes
+have occurred: </p>
 
 <ol>
-<li><p>Source Code and Documentation is licensed under <a href="license.html">CDDL-1.0</a>.</p></li>
-<li><p><strong>Read-Only Access</strong> is provided to the public.</p></li>
-<li><p><strong>Pull Requests</strong> are never accepted
-(unless they are from official <a href="contributions.html">contributors</a>)</p></li>
+<li>Refactored all of the projects to be arranged in a single source tree, with 
+separate folders for each project and their associated examples.</li>
+<li>Restructured all of the projects to follow classical <a href="http://maven.apache.org/">Apache Maven</a>-style
+conventions.</li>
+<li>Completely re-wrote the build system to use <a href="http://maven.apache.org/">Apache Maven</a>
+instead of Apache Ant.</li>
+<li>Ratified and released all of the projects under a standard open source 
+license (CDDL).</li>
+<li>Formalized the mechanism and process for accepting Coherence Community contributions.</li>
+<li>Completely migrated the existing Atlassian Confluence-based
+documentation (from coherence.oracle.com) to be part of the source tree, thus
+enabling documentation version control and Coherence Community Contributions.</li>
+<li>Rationalized all projects to use a single Oracle Coherence Incubator version 
+number instead of individual version numbers.</li>
+<li>Migrated the source repository to GitHub.</li>
+<li>Migrated the issue tracking to java.net.</li>
+<li>Introduced "uber" jar generation support to produce the entire Oracle
+Coherence Incubator in a single jar.</li>
 </ol>
+
+<p>For more detailed information concerning changes in this release please consult the 
+project <a href="history.html">history</a>.</p>
 
                   </div>
             </div>

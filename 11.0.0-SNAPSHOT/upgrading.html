@@ -92,17 +92,17 @@
         History</a>
             </li>
                   
-      <li>
-    
-                          <a href="upgrading.html" title="Upgrading">
-          <i class="none"></i>
-        Upgrading</a>
-            </li>
-                  
       <li class="active">
     
-            <a href="#"><i class="none"></i>Source Code</a>
+            <a href="#"><i class="none"></i>Upgrading</a>
           </li>
+                  
+      <li>
+    
+                          <a href="source-code.html" title="Source Code">
+          <i class="none"></i>
+        Source Code</a>
+            </li>
                   
       <li>
     
@@ -336,39 +336,46 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h2>Source Code</h2>
+            <h2>Upgrading from Previous Releases</h2>
 
-<p>The Source Code for the entire Oracle Coherence Incubator is hosted by <a href="https://github.com">github.com</a>.</p>
+<p>Upgrading from Oracle Coherence Incubator 10 to this release is typically as
+simple as replacing previous <code>jars</code> with the new <code>jars</code>, those of which are
+available for download (if you're not using Maven) from <a href="http://maven.java.net">maven.java.net</a>.</p>
 
-<p>It is located here:
-<a href="https://github.com/coherence-community/coherence-incubator">https://github.com/coherence-community/coherence-incubator</a></p>
+<p>If you're using all of the Oracle Coherence Incubator projects (or most of them),
+you can now use the new "uber" distribution, simply by adding the following
+following dependency declaration to your Maven-based application.</p>
 
-<p>Alternatively if you're not using or want to avoid setting up <a href="http://git-scm.com">git</a>
-can download a zip containing of the latest development branch from here:</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.oracle.coherence.incubator&lt;groupId&gt;
+    &lt;artifactId&gt;coherence-incubator-all&lt;/artifactId&gt;
+    &lt;version&gt;11.0.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
 
-<p><a href="https://github.com/coherence-community/coherence-incubator/archive/develop-11.zip">https://github.com/coherence-community/coherence-incubator/archive/develop-11.zip</a></p>
+<p>However should you require individual project artifacts, these are identified as
+follows:  (just as they were in Oracle Coherence Incubator 10).</p>
 
-<p>The branching model adopted for development and releases is as outlined by Vincent Driessen in
-<a href="http://nvie.com/posts/a-successful-git-branching-model">A successful Git branching model</a></p>
+<pre><code>coherence-common, coherence-commandpattern, coherence-functorpattern,
+coherence-processingpattern, coherence-messagingpattern,
+coherence-eventdistributionpattern, coherence-pushreplicationpattern
+</code></pre>
 
-<p>Active development is carried out in the branch: <strong>develop-11</strong>.  Nightly builds, snapshots
-and continuous integration typically occurs on this branch.  Snapshot releases from this
-branch are made available on <a href="http://maven.java.net">http://maven.java.net</a> in the snapshot
-repository.</p>
+<blockquote>
+  <p>  The Apache Maven <code>groupId</code> for all Coherence Incubator 11 modules is
+    <code>com.oracle.oracle.incubator</code></p>
+</blockquote>
 
-<p>Official Releases are made from the branch: <strong>release-11</strong> (once integrated from
-the development branch).  Each official release is tagged.   Official releases are
-published to <a href="http://maven.java.net">http://maven.java.net</a> and later (usually
-with in 4 hours) to Maven Central.</p>
+<p>While the source code is readily available on <a href="http://github.com/coherence-community">github</a>,
+the source code and java documentation for each released version additionally
+published to <a href="http://maven.java.net">maven.java.net</a>.  This enables simple and
+clean integration with all development environments supporting Maven.</p>
 
-<h4>Important:</h4>
-
-<ol>
-<li><p>Source Code and Documentation is licensed under <a href="license.html">CDDL-1.0</a>.</p></li>
-<li><p><strong>Read-Only Access</strong> is provided to the public.</p></li>
-<li><p><strong>Pull Requests</strong> are never accepted
-(unless they are from official <a href="contributions.html">contributors</a>)</p></li>
-</ol>
+<p>Migrating from releases prior to Oracle Coherence Incubator 10 requires more effort.
+In most cases the changes will require refactoring previous configurations to use
+newer styles and technologies.  Some patterns, like Push Replication, may require
+more effort than others, however once migrated to this release, moving forward
+will be much easier.</p>
 
                   </div>
             </div>
