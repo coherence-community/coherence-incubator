@@ -41,7 +41,7 @@ used to support the implementation of other Oracle Coherence Incubator modules.
 
 Provides a distributed implementation of the classic Command Pattern.
 
-**The Command Pattern Examples:**
+[**The Command Pattern Examples:**](commandpattern/simple-example.html)
 
 Provides example uses of the Command Pattern.
 

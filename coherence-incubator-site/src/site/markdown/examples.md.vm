@@ -1,0 +1,18 @@
+Examples
+--------
+
+The Oracle Coherence Incubator [Source Code](source-code.html) ships with a number
+of examples for several of the contained projects.
+
+In order to run and work with the examples you must first build and install the
+Oracle Coherence Incubator, at least locally, after which you will be able
+to run the examples.
+
+To build and install the Oracle Coherence Incubator follow the instructions located
+here: [Building the Oracle Coherence Incubator](building.html).
+
+Once built follow the Example instructions for each of the desired projects.
+
+>   In addition to the provided examples we recommend that the integrated
+>   unit and integration tests be consulted as these will additionally provide
+>   further detail use-cases and/or configurations.
