@@ -3,9 +3,9 @@ The Command Pattern Example
 
 <h4>Prerequisites</h4>
 
-In order to run the following example the Oracle Coherence Incubator must be
-built and installed locally from the available source code.  Instructions on how
-to achieve this are located here: [Building the Oracle Coherence Incubator](building.html).
+To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+[Building the Oracle Coherence Incubator](building.html).
 
 <h4>Overview</h4>
 

@@ -82,7 +82,7 @@ The following examples are provided for the Push Replication Pattern:
 
 1.  The [Active Passive](pushreplicationpattern/active-passive-example.html) Topology
 
-2.  The Active Active Topology
+2.  The [Active Active](pushreplicationpattern/active-active-example.html) Topology
 
 3.  The Hub and Spoke Topology
 
