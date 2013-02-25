@@ -84,7 +84,7 @@
                 <item name="Simple Example" href="commandpattern/simple-example.html"/>
             </item>
             <item name="The Functor Pattern" href="functorpattern/index.html">
-                <!-- <item name="Simple Example" href="functorpattern/simple-example.html"/>  -->
+                <item name="Simple Example" href="functorpattern/simple-example.html"/>
             </item>
             <item name="The Processing Pattern" href="processingpattern/index.html">
                 <item name="Configuration" href="processingpattern/configuration.html"/>

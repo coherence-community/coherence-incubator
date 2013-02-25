@@ -10,8 +10,9 @@ to achieve this are located here: [Building the Oracle Coherence Incubator](buil
 <h4>Overview</h4>
 
 The Command Pattern example demonstrates how to use the Command Pattern to set
-the value of an attribute on a Command `Context`.  It illustrates the three main
-elements of the Command Pattern, A `Context`, the `CommandSubmitter` and a `Command`.
+the value of an attribute on a Command `Context` asynchronously.  It illustrates
+the three main elements of the Command Pattern, A `Context`, the `CommandSubmitter`
+and a `Command`.
 
 There are four classes in the example:
 
