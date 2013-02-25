@@ -113,12 +113,10 @@
         Building</a>
             </li>
                   
-      <li>
+      <li class="active">
     
-                          <a href="examples.html" title="Examples">
-          <i class="none"></i>
-        Examples</a>
-            </li>
+            <a href="#"><i class="none"></i>Examples</a>
+          </li>
                   
       <li>
     
@@ -321,10 +319,12 @@
         Issue Tracking</a>
             </li>
                   
-      <li class="active">
+      <li>
     
-            <a href="#"><i class="none"></i>Release Numbers</a>
-          </li>
+                          <a href="release-numbers.html" title="Release Numbers">
+          <i class="none"></i>
+        Release Numbers</a>
+            </li>
                   
       <li>
     
@@ -352,41 +352,25 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h2>Release Numbers</h2>
+            <h2>Examples</h2>
 
-<p>Release numbers for the Oracle Coherence Incubator are represented as three 
-separate numbers, each separated by a full-stop in the form <code>x.y.z</code> where by
-the meaning of the individual numbers in the release number is as follows:</p>
+<p>The Oracle Coherence Incubator <a href="source-code.html">Source Code</a> ships with a number
+of examples for several of the contained projects.</p>
 
-<p><strong>x</strong>:  Represents a specific Oracle Coherence version or set of Coherence
-versions that a release of the Oracle Coherence Incubator is designed to run
-against.</p>
+<p>In order to run and work with the examples you must first build and install the
+Oracle Coherence Incubator, at least locally, after which you will be able
+to run the examples.</p>
 
-<p>For example:</p>
+<p>To build and install the Oracle Coherence Incubator follow the instructions located
+here: <a href="building.html">Building the Oracle Coherence Incubator</a>.</p>
 
-<pre><code> 8 = Oracle Coherence versions 3.5.?
- 9 = Oracle Coherence versions 3.6.?
-10 = Oracle Coherence versions 3.7.0.? and 3.7.1.?.
-11 = Oracle Coherence versions 3.7.1.?  (first CDDL release)
-12 = Next generation Oracle Coherence
-</code></pre>
+<p>Once built follow the Example instructions for each of the desired projects.</p>
 
-<p>Increments in this number typically represent a major or new generation of 
-the Oracle Coherence Incubator that of which introduces new functionality that 
-depend on a new version of Oracle Coherence.  In most cases this means maintaining 
-complete backwards compatibility between releases is impossible.</p>
-
-<p>This number is also used to identify the "edition" of the Oracle Coherence 
-Incubator.  For example:  Oracle Coherence Incubator 11.    </p>
-
-<p><strong>y</strong>:  Represents a minor upgrade of the Oracle Coherence Incubator.
-Such releases typically introduce some new functionality or refactoring. </p>
-
-<p>Sometimes these changes may break some backwards compatibility. </p>
-
-<p><strong>z</strong>:  Represents a patch or fix release of the Oracle Coherence Incubator.
-Such releases rarely break backwards compatibility.  Typically these are used
-for documentation and non-breaking dependency upgrades.    </p>
+<blockquote>
+  <p>  In addition to the provided examples we recommend that the integrated
+    unit and integration tests be consulted as these will additionally provide
+    further detail use-cases and/or configurations.</p>
+</blockquote>
 
                   </div>
             </div>
