@@ -1,13 +1,13 @@
 The Push Replication Pattern Active-Passive Tutorial
 ----------------------------------------------------
 
-The following is a brief tutorial for configuring the Push Replication Pattern
-using a simple "active-passive" topology.  In this topology one cluster, the
-"source" cluster, uses applications that perform read/write operations.  These
-operations are then replicated to another cluster, the "destination" cluster,
+The following is a brief tutorial outlining the use of the Push Replication Pattern
+in a simple "active-passive" topology.  In this topology one cluster, the
+"active" cluster, uses an application that performs read/write operations.  These
+operations are then replicated to another cluster, the "passive" cluster,
 that of which is being used predominantly in a read-only mode.  Entries that
 may be updated by applications in the "destination" cluster are not replicated
-back to the "source" cluster.
+back to the "active" cluster.
 
 ![The Active Passive Topology](../images/pushreplicationpattern/active-passive.png)
 

@@ -78,7 +78,16 @@ devices (including other clusters separated by WANs).
 
 **The Push Replication Pattern Examples:**
 
-Provides example uses of the Push Replication Pattern.
+The following examples are provided for the Push Replication Pattern:
+
+1.  The [Active Passive](pushreplicationpattern/active-passive-example.html) Topology
+
+2.  The Active Active Topology
+
+3.  The Hub and Spoke Topology
+
+4.  The Auction Example (active-active)
+
 
 Contributions
 -------------

@@ -37,11 +37,14 @@ encapuslated approach.  The second is using a client-server mode in which an
 Coherence Extend-based Client runs the actual `FunctorPatternExample`, backed by
 a Coherence Proxy-enabled Server the hosts the `GenericContext`.
 
+>   The following instructions assume that `$COHERENCE_INCUBATOR` is the directory
+>   in which the Oracle Coherence Incubator source code has been downloaded,
+>   unpacked and built according to the prerequisites outlined above.
+
+
 <h4>Running the Simple Example</h4>
 
-Assuming `$COHERENCE_INCUBATOR` is the directory in which the Oracle Coherence
-Incubator source code has downloaded, unpacked and built according to the prerequisites o
-utlined above, perform the following shell commands to run the example.
+Execute the following shell commands to run the Simple Example.
 
 In a new Terminal / Shell Console for the "Example"
 
@@ -56,9 +59,7 @@ In a new Terminal / Shell Console for the "Example"
 
 <h4>Running in Client-Server Mode</h4>
 
-Assuming `$COHERENCE_INCUBATOR` is the directory in which the Oracle Coherence
-Incubator source code has downloaded, unpacked and built according to the prerequisites o
-utlined above, perform the following shell commands to run the example.
+Execute the following shell commands to run the example in Client-Server Mode.
 
 In a new Terminal / Shell Console for the "Server"
 
