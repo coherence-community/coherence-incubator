@@ -229,7 +229,7 @@
             </li>
               </ul>
         </li>
-                                                              
+                                                                        
       <li>
     
                           <a href="../functorpattern/index.html" title="The Functor Pattern">
@@ -237,12 +237,10 @@
         The Functor Pattern</a>
                     <ul class="nav nav-list">
                       
-      <li>
+      <li class="active">
     
-                          <a href="../functorpattern/simple-example.html" title="Simple Example">
-          <i class="none"></i>
-        Simple Example</a>
-            </li>
+            <a href="#"><i class="none"></i>Simple Example</a>
+          </li>
               </ul>
         </li>
                                                                                                   
@@ -282,11 +280,13 @@
           <i class="none"></i>
         The Messaging Pattern</a>
             </li>
-                                                                  
-      <li class="active">
+                                                              
+      <li>
     
-            <a href="#"><i class="icon-chevron-down"></i>The Event Distribution Pattern</a>
-                  <ul class="nav nav-list">
+                          <a href="../eventdistributionpattern/index.html" title="The Event Distribution Pattern">
+          <i class="icon-chevron-down"></i>
+        The Event Distribution Pattern</a>
+                    <ul class="nav nav-list">
                       
       <li>
     
@@ -361,65 +361,94 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h2>The Event Distribution Pattern</h2>
+            <h2>The Functor Pattern Example</h2>
+
+<h4>Prerequisites</h4>
+
+<p>In order to run the following example the Oracle Coherence Incubator must be
+built and installed locally from the available source code.  Instructions on how
+to achieve this are located here: <a href="building.html">Building the Oracle Coherence Incubator</a>.</p>
 
 <h4>Overview</h4>
 
-<p>The Event Distribution Pattern provides a simple mechanism distribute application 
-defined Events via one or more Event Channels.   Specifically the Event Distribution 
-Pattern allows the definition, construction and use of Event Distributors, that 
-of which have the responsibility of guaranteeing in-order asynchronous delivery 
-of Events via the defined Event Channels.</p>
+<p>The Functor Pattern example demonstrates how to use the Functor Pattern to set,
+increment and get the value of an attribute on a <code>Context</code> asynchronously.</p>
 
-<p>There are several Event Distributor implementations, each based on different 
-internal technologies to provide Event delivery guarantees.  Levels of performance, 
-scalability and quality of service may differ between implementations.  As of writing, 
-there are two out-of-the-box Event Distributor implementations; one based on 
-Oracle Coherence itself (using the <a href="../messagingpattern/index.html">Messaging Pattern</a>, 
-another that leverages the Java Messaging Service (JMS) providers.</p>
+<p>It illustrates the main elements of the Functor Pattern, a <code>Context</code>, the
+<code>FunctorSubmitter</code> and a <code>Functor</code>.</p>
 
-<p>Like Event Distributors, there are many Event Channels each of which provides 
-different capabilities and ultimate destinations for events being distributed. <br />
-Ultimately it's the responsibility of an Event Channel to perform the actual 
-distribution of Events.  Commonly used Event Channel implementations include:</p>
+<p>There are four classes in the example:</p>
 
-<ul>
-<li><p><code>FileEventChannel</code> - Writes Events to a File.</p></li>
-<li><p><code>LocalCacheEventChannel</code> - Replays Events into a Cache hosted by the Cluster 
-in which the Events occurred.</p></li>
-<li><p><code>RemoteCacheEventChannel</code> - Replays Events into a Remote Cache defined by
-a Oracle Coherence *Extend connection to a remote Cluster.</p></li>
-<li><p><code>RemoteClusterEventChannel</code> - Distributes Events to another Oracle Coherence
-Cluster, again over an *Extend connection (where by said Events may be further 
-distributed locally).</p></li>
-<li><p><code>StdErrEventChannel</code> - Writes Events to stdout.</p></li>
-</ul>
+<ol>
+<li><p><code>FunctorPatternExample</code> - The main application class.</p></li>
+<li><p><code>Counter</code> - An mutable implementation of the <code>Context</code> interface that
+represents a running counter.</p></li>
+<li><p><code>NextValueFunctor</code> - A <code>Functor</code> that wil increment a <code>Counter</code>.</p></li>
+<li><p><code>LoggingCommand</code> - A <code>Command</code> that will log the current state of a
+<code>Context</code>, in this case the <code>Counter</code>.</p></li>
+</ol>
 
-<p>Ultimately the purpose of this pattern is to provide an extensible, high-performance, 
-highly-available, general purpose scalable framework to distribute application 
-events occurring in one Coherence Cluster to one or more possibly distributed 
-Coherence Clusters, Caches or other Devices.  As such, the Event Distribution 
-Pattern is used as core infrastructure for the <a href="../pushreplicationpattern/index.html">Push Replication Pattern</a>.</p>
+<p>The <code>FunctorPatternExample</code> creates a new <code>Counter</code> which is then registered
+with the <code>ContextsManager</code>.  The example then submits a
+<code>LoggingCommand</code> indicating that the application has commenced.  In a tight loop, the
+<code>Counter</code> is incremented 50 times using the <code>NextValueFunctor</code>.</p>
 
-<h4>Distribution</h4>
+<p>There are two approaches to running the example.  First is using a simple entirely
+encapuslated approach.  The second is using a client-server mode in which an
+Coherence Extend-based Client runs the actual <code>FunctorPatternExample</code>, backed by
+a Coherence Proxy-enabled Server the hosts the <code>GenericContext</code>.</p>
 
-<p>The Event Distribution Pattern implementation is distributed in the jar file
-called: <code>coherence-eventdistributionpattern-11.0.0-SNAPSHOT.jar</code>.</p>
+<h4>Running the Simple Example</h4>
 
-<p>However as the Event Distribution Pattern has several other dependencies, we **strongly
-recommend** that developers adopt and use tools like Apache Maven/Ivy/Gradle to
-transitively resolve the said dependencies, instead of attempting to do so manually.</p>
+<p>Assuming <code>$COHERENCE_INCUBATOR</code> is the directory in which the Oracle Coherence
+Incubator source code has downloaded, unpacked and built according to the prerequisites o
+utlined above, perform the following shell commands to run the example.</p>
 
-<p>To configure your Apache Maven-based application to use the Event Distribution Pattern,
-simply add the following declaration to your application <code>pom.xml</code> file
-<code>&lt;dependencies&gt;</code> element.</p>
+<p>In a new Terminal / Shell Console for the "Example"</p>
 
-<pre><code>&lt;dependency&gt;
-    &lt;groupId&gt;com.oracle.coherence.incubator&lt;/groupId&gt;
-    &lt;artifactId&gt;coherence-eventdistributionpattern&lt;/artifactId&gt;
-    &lt;version&gt;11.0.0-SNAPSHOT&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
+<ol>
+<li><p>Change to the Functor Pattern Examples directory.</p>
+
+<p><code>cd $COHERENCE_INCUBATOR/coherence-functorpattern-examples/target</code></p></li>
+<li><p>Run the Simple Example</p>
+
+<p><code>java -jar coherence-functorpattern-examples-11.0.0-SNAPSHOT.jar simple.properties</code></p></li>
+</ol>
+
+<h4>Running in Client-Server Mode</h4>
+
+<p>Assuming <code>$COHERENCE_INCUBATOR</code> is the directory in which the Oracle Coherence
+Incubator source code has downloaded, unpacked and built according to the prerequisites o
+utlined above, perform the following shell commands to run the example.</p>
+
+<p>In a new Terminal / Shell Console for the "Server"</p>
+
+<ol>
+<li><p>Change to the Functor Pattern Examples directory.</p>
+
+<p><code>cd $COHERENCE_INCUBATOR/coherence-functorpattern-examples/target</code></p></li>
+<li><p>Start the Coherence Server (and Proxy) Process/</p>
+
+<p><code>java -jar coherence-functorpattern-examples-11.0.0-SNAPSHOT.jar server.properties</code></p></li>
+</ol>
+
+<p>In a new Terminal / Shell Console for the "Client"</p>
+
+<ol>
+<li><p>Change to the Functor Pattern Examples directory.</p>
+
+<p><code>cd $COHERENCE_INCUBATOR/coherence-functorpattern-examples/target</code></p></li>
+<li><p>Start the Coherence Extend-based Client Application (example)</p>
+
+<p><code>java -jar coherence-functorpattern-examples-11.0.0-SNAPSHOT.jar client.properties</code></p></li>
+</ol>
+
+<p>You will notice the "Server" console that the logging commands are executing in
+the server, where are the "Client" console displays no such logging.   This is
+because the <code>Functors</code> are executed at the <code>Context</code>, that of which is hosted
+by the "Server".</p>
+
+<p>After this you may kill the "Server" application and close the consoles.</p>
 
                   </div>
             </div>
