@@ -134,7 +134,7 @@
         License</a>
             </li>
                               <li class="nav-header">Modules</li>
-                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                              
       <li>
     
                           <a href="../common/index.html" title="The Common Package">
@@ -177,10 +177,12 @@
         The Element Namespace</a>
             </li>
                       
-      <li class="active">
+      <li>
     
-            <a href="#"><i class="none"></i>The Filter Namespace</a>
-          </li>
+                          <a href="../common/filter-namespace.html" title="The Filter Namespace">
+          <i class="none"></i>
+        The Filter Namespace</a>
+            </li>
                       
       <li>
     
@@ -317,7 +319,7 @@
             </li>
               </ul>
         </li>
-                                                                                                                                      
+                                                                                                                                                
       <li>
     
                           <a href="../pushreplicationpattern/index.html" title="The Push Replication Pattern">
@@ -346,12 +348,10 @@
         Active Active Example</a>
             </li>
                       
-      <li>
+      <li class="active">
     
-                          <a href="../pushreplicationpattern/hub-and-spoke-example.html" title="Hub And Spoke Example">
-          <i class="none"></i>
-        Hub And Spoke Example</a>
-            </li>
+            <a href="#"><i class="none"></i>Hub And Spoke Example</a>
+          </li>
                       
       <li>
     
@@ -410,326 +410,134 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h2>The Filter Namespace</h2>
+            <h2>The Push Replication Hub & Spoke Example</h2>
 
-<p>The Filter Namespace provides the ability to declare Coherence Filters with in 
-a Cache Configuration.  It is typically used with other Namespaces that require 
-Filters to be specified.  In particular, the Filter Namespace is designed to 
-allow declarative specification of the Coherence filters as documented in the 
-<a href="http://download.oracle.com/docs/cd/E15357_01/coh.360/e15725/com/tangosol/util/filter/package-summary.html">API</a>.</p>
+<h4>Prerequisites</h4>
 
-<h4>Namespace Content Handler</h4>
+<p>To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+<a href="building.html">Building the Oracle Coherence Incubator</a>.</p>
 
-<p>The implementation is provided by the <code>com.oracle.coherence.environment.extensible.namespaces.FilterNamespaceContentHandler</code> 
-class.</p>
+<h4>Source Code</h4>
 
-<h4>Declaration</h4>
+<p>The source code for this example is located in the <code>coherence-pushreplicationpattern-examples</code>
+module of the Oracle Coherence Incubator.</p>
 
-<p>The common prefix used for this namespace in Cache Configurations is <code>filter</code>, 
-however as with all XML namespace declarations this can be defined arbitrarily 
-when declaring the namespace.</p>
+<h4>Overview</h4>
 
-<p>To use the namespace you should declare it as follows:</p>
+<p>This example demonstrates Push Replication Pattern configured in a "Hub &amp; Spoke"
+topology, where by one cluster, the "hub"/"active" cluster, uses an application that
+performs read/write operations.  These operations are then replicated to two or more
+other "spoke"/"passive" clusters, that of which are predominantly being used in a
+read-only mode.  Entries that may be updated by applications in the "spoke"
+clusters are not replicated back to the "hub" cluster.</p>
 
-<pre><code>&lt;cache-config xmlns:filter="class://com.oracle.coherence.environment.extensible.namespaces.FilterNamespaceContentHandler"&gt;
+<p><img src="../images/pushreplicationpattern/hub-and-spoke.png" alt="The Hub and Spoke Topology" /></p>
 
-   ...
+<p>There are six applications to run as part of this example.  The following details
+the intent, instructions and the order in which to run these applictions.</p>
 
-&lt;/cache-config&gt;
-</code></pre>
+<blockquote>
+  <p>  The following instructions assume that <code>$COHERENCE_INCUBATOR</code> is the directory
+    in which the Oracle Coherence Incubator source code has been downloaded,
+    unpacked and built according to the prerequisites outlined above.</p>
+</blockquote>
 
-<h4>Elements</h4>
+<h4>Step 1. Running the Active Server (Site 1)</h4>
 
-<p>The following section outlines the elements defined by this Namespace.  </p>
+<p>Execute the following shell commands to start the "Active Server".</p>
 
-<p>These are: <a href="#all">all</a>, <a href="#always">always</a>, <a href="#and">and</a>, <a href="#any">any</a>, <a href="#custom">custom</a>, 
-<a href="#never">never</a>, <a href="#not">not</a>, <a href="#or">or</a>, <a href="#present">present</a>, <a href="#where">where</a> and
-<a href="#xor">xor</a>.</p>
+<p>In a new Terminal / Shell Console for the "Active Server (Site 1)"</p>
 
-<h2></h2>
+<ol>
+<li><p>Change to the Push Replication Pattern Examples directory.</p>
 
-<p><a name="all"><h5>&lt;filter:all&gt;</h5></a></p>
+<p><code>cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target</code></p></li>
+<li><p>Run the "Active Server (Site 1)"</p>
 
-<p>The <code>filter:all</code> element defines an <code>com.tangosol.util.filter.AllFilter</code>.</p>
+<p><code>java -jar coherence-pushreplicationpattern-examples-11.0.0-SNAPSHOT.jar hubspoke-active-server.properties</code></p></li>
+</ol>
 
-<p><em>Resolved Element Type:</em></p>
+<h4>Step 2. Running the Passive Server (Site 2)</h4>
 
-<p>When processed this element will be resolved to produce an <code>com.tangosol.util.filter.AllFilter</code>.</p>
+<p>Execute the following shell commands to start the "Passive Server (Site 2)".</p>
 
-<p><em>Child Elements:</em></p>
+<p>In a new Terminal / Shell Console for the "Passive Server (Site 2)"</p>
 
-<p>This element requires zero or more child elements that each resolve to an 
-instance of a <code>com.tangosol.util.filter.Filter</code>.  Child elements are typically 
-from this namespace and may be nested.</p>
+<ol>
+<li><p>Change to the Push Replication Pattern Examples directory.</p>
 
-<p><em>Examples:</em></p>
+<p><code>cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target</code></p></li>
+<li><p>Run the "Passive Server (Site 2)"</p>
 
-<p>An empty <code>all</code> filter:</p>
+<p><code>java -jar coherence-pushreplicationpattern-examples-11.0.0-SNAPSHOT.jar hubspoke-passive1-server.properties</code></p></li>
+</ol>
 
-<pre><code>&lt;filter:all/&gt;
-</code></pre>
+<h4>Step 3. Running the Passive Listener (Site 2) Application</h4>
 
-<p>A simple <code>all</code> filter:</p>
+<p>Execute the following shell commands to start the "Passive Listener (Site 2)".  This
+application will output cache events detailing the updates occuring in the
+"Passive Server (Site 2)".  These updates originate from the "Active Server (Site 1)".</p>
 
-<pre><code>&lt;filter:all&gt;
-    &lt;filter:and&gt;
-        ...
-    &lt;/filter:and&gt;
-    &lt;filter:or&gt;
-        ...
-    &lt;/filter:or&gt;
-&lt;/filter:all&gt;
-</code></pre>
+<p>In a new Terminal / Shell Console for the "Passive Listener (Site 2)"</p>
 
-<h2></h2>
+<ol>
+<li><p>Change to the Push Replication Pattern Examples directory.</p>
 
-<p><a name="always"><h5>&lt;filter:always&gt;</h5></a></p>
+<p><code>cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target</code></p></li>
+<li><p>Run the "Passive Listener (Site 2)"</p>
 
-<p>The <code>filter:always</code> element defines an <code>com.tangosol.util.filter.AlwaysFilter</code>.</p>
+<p><code>java -jar coherence-pushreplicationpattern-examples-11.0.0-SNAPSHOT.jar hubspoke-listener1.properties</code></p></li>
+</ol>
 
-<p><em>Resolved Element Type:</em></p>
+<h4>Step 4. Running the Passive Server (Site 3)</h4>
 
-<p>When processed this element will be resolved to produce an <code>com.tangosol.util.filter.AlwaysFilter</code>.</p>
+<p>Execute the following shell commands to start the "Passive Server (Site 3)".</p>
 
-<p><em>Example:</em></p>
+<p>In a new Terminal / Shell Console for the "Passive Server (Site 3)"</p>
 
-<p>An <code>always</code> filter:</p>
+<ol>
+<li><p>Change to the Push Replication Pattern Examples directory.</p>
 
-<pre><code>&lt;filter:always/&gt;
-</code></pre>
+<p><code>cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target</code></p></li>
+<li><p>Run the "Passive Server (Site 3)"</p>
 
-<h2></h2>
+<p><code>java -jar coherence-pushreplicationpattern-examples-11.0.0-SNAPSHOT.jar hubspoke-passive2-server.properties</code></p></li>
+</ol>
 
-<p><a name="and"><h5>&lt;filter:and&gt;</h5></a></p>
+<h4>Step 5. Running the Passive Listener (Site 3) Application</h4>
 
-<p>The <code>filter:and</code> element defines an <code>com.tangosol.util.filter.AndFilter</code>.</p>
+<p>Execute the following shell commands to start the "Passive Listener (Site 3)".  This
+application will output cache events detailing the updates occuring in the
+"Passive Server (Site 3)".  These updates originate from the "Active Server (Site 1)".</p>
 
-<p><em>Resolved Element Type:</em></p>
+<p>In a new Terminal / Shell Console for the "Passive Listener (Site 3)"</p>
 
-<p>When processed this element will be resolved to produce an <code>com.tangosol.util.filter.AndFilter</code>.</p>
+<ol>
+<li><p>Change to the Push Replication Pattern Examples directory.</p>
 
-<p><em>Child Elements:</em></p>
+<p><code>cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target</code></p></li>
+<li><p>Run the "Passive Listener (Site 3)"</p>
 
-<p>This element requires precisely two child elements that each resolve to an 
-instance of a <code>com.tangosol.util.filter.Filter</code>.  Child elements are typically 
-from this namespace and may be nested.</p>
+<p><code>java -jar coherence-pushreplicationpattern-examples-11.0.0-SNAPSHOT.jar hubspoke-listener2.properties</code></p></li>
+</ol>
 
-<p><em>Examples:</em></p>
+<h4>Step 6. Running the Active Publisher (Site 1) Application</h4>
 
-<p>A simple <code>and</code> filter:</p>
+<p>Execute the following shell commands to start the "Active Publisher (Site 1)".  This
+application will insert, update and remove entries in the "Active Server (Site 1)", that
+of which will then "push" said updates to the "Spoke" / "Passive Servers".</p>
 
-<pre><code>&lt;filter:and&gt;
-    &lt;filter:custom&gt;...&lt;/filter:custom&gt;
-    &lt;filter:all&gt;...&lt;/filter:all&gt;
-&lt;/filter:and&gt;
-</code></pre>
+<p>In a new Terminal / Shell Console for the "Active Publisher (Site 1)"</p>
 
-<h2></h2>
+<ol>
+<li><p>Change to the Push Replication Pattern Examples directory.</p>
 
-<p><a name="any"><h5>&lt;filter:any&gt;</h5></a></p>
+<p><code>cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target</code></p></li>
+<li><p>Run the "Active Publisher (Site 1)"</p>
 
-<p>The <code>filter:any</code> element defines an <code>com.tangosol.util.filter.AnyFilter</code>.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce an <code>com.tangosol.util.filter.AnyFilter</code>.</p>
-
-<p><em>Child Elements:</em></p>
-
-<p>This element requires zero or more child elements that each resolve to an 
-instance of a <code>com.tangosol.util.filter.Filter</code>.  Child elements are typically 
-from this namespace and may be nested.</p>
-
-<p><em>Examples:</em></p>
-
-<p>An empty <code>any</code> filter:</p>
-
-<pre><code>&lt;filter:any/&gt;
-</code></pre>
-
-<p>A simple <code>any</code> filter:</p>
-
-<pre><code>&lt;filter:any&gt;
-    &lt;filter:and&gt;
-        ...
-    &lt;/filter:and&gt;
-    &lt;filter:or&gt;
-        ...
-    &lt;/filter:or&gt;
-&lt;/filter:any&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="custom"><h5>&lt;filter:custom&gt;</h5></a></p>
-
-<p>The <code>filter:custom</code> element defines a <code>com.tangosol.util.filter.Filter</code> based
-on a <code>ParameterizedBuilder&lt;Filter&gt;</code>.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>com.tangosol.util.filter.Filter</code>.</p>
-
-<p><em>Child Elements:</em></p>
-
-<p>The child element of a <code>filter:custom</code> element must produce a 
-<code>ParameterizedBuilder&lt;Filter&gt;</code>.</p>
-
-<p><em>Examples:</em></p>
-
-<p>A simple <code>custom</code> filter:</p>
-
-<pre><code>&lt;filter:custom&gt;
-    &lt;instance&gt;
-        &lt;class-name&gt;MyCustomFilter&lt;/class-name&gt;
-    &lt;/instance&gt;
-&lt;/filter:custom&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="never"><h5>&lt;filter:never&gt;</h5></a></p>
-
-<p>The <code>filter:never</code> element defines an <code>com.tangosol.util.filter.NeverFilter</code>.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>com.tangosol.util.filter.NeverFilter</code>.</p>
-
-<p><em>Child Elements:</em></p>
-
-<p>(none)</p>
-
-<p><em>Example:</em></p>
-
-<p>A 'never' filter:</p>
-
-<pre><code>&lt;filter:never/&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="not"><h5>&lt;filter:not&gt;</h5></a></p>
-
-<p>The <code>filter:not</code> element defines a <code>com.tangosol.util.filter.NotFilter</code>.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>com.tangosol.util.filter.NotFilter</code>.</p>
-
-<p><em>Child Elements:</em></p>
-
-<p>This element requires precisely one child element, that of which resolves to an 
-instance of a <code>com.tangosol.util.filter.Filter</code>.  The child element is typically 
-from this namespace and may be nested.</p>
-
-<p><em>Examples:</em></p>
-
-<p>A simple <code>not</code> filter:</p>
-
-<pre><code>&lt;filter:not&gt;
-    &lt;filter:and&gt;
-        ...
-    &lt;/filter:and&gt;
-&lt;/filter:not&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="or"><h5>&lt;filter:or&gt;</h5></a></p>
-
-<p>The <code>filter:or</code> element defines an <code>com.tangosol.util.filter.OrFilter</code>.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce an <code>com.tangosol.util.filter.OrFilter</code>.</p>
-
-<p><em>Child Elements:</em></p>
-
-<p>This element requires precisely two child elements that each resolve to an 
-instance of a <code>com.tangosol.util.filter.Filter</code>.  Child elements are typically 
-from this namespace and may be nested.</p>
-
-<p><em>Examples:</em></p>
-
-<p>A simple <code>or</code> filter:</p>
-
-<pre><code>&lt;filter:or&gt;
-    &lt;filter:custom&gt;...&lt;/filter:custom&gt;
-    &lt;filter:all&gt;...&lt;/filter:all&gt;
-&lt;/filter:or&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="present"><h5>&lt;filter:present&gt;</h5></a></p>
-
-<p>The <code>filter:present</code> element defines a <code>com.tangosol.util.filter.PresentFilter</code>.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>com.tangosol.util.filter.PresentFilter</code>.</p>
-
-<p><em>Child Elements:</em></p>
-
-<p>(none)</p>
-
-<p><em>Example:</em></p>
-
-<p>A 'present' filter:</p>
-
-<pre><code>&lt;filter:present/&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="where"><h5>&lt;filter:where&gt;</h5></a></p>
-
-<p>The <code>filter:where</code> element defines a <code>com.tangosol.util.filter.Filter</code> based on 
-a user-defined <a href="http://docs.oracle.com/cd/E15357_01/coh.360/e15723/api_cq.htm#CEGFGEBA">CohQL Where Clause</a>.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce a <code>com.tangosol.util.filter.Filter</code>.</p>
-
-<p><em>Child Elements:</em></p>
-
-<p>(none)</p>
-
-<p><em>Example:</em></p>
-
-<p>A 'where' filter:</p>
-
-<pre><code>&lt;filter:where&gt;value() like "%Gudday World%"&lt;/filter:where&gt;
-</code></pre>
-
-<h2></h2>
-
-<p><a name="xor"><h5>&lt;filter:xor&gt;</h5></a></p>
-
-<p>The <code>filter:xor</code> element defines an <code>com.tangosol.util.filter.XorFilter</code>.</p>
-
-<p><em>Resolved Element Type:</em></p>
-
-<p>When processed this element will be resolved to produce an <code>com.tangosol.util.filter.XorFilter</code>.</p>
-
-<p><em>Child Elements:</em></p>
-
-<p>This element requires precisely two child elements that each resolve to an 
-instance of a <code>com.tangosol.util.filter.Filter</code>.  Child elements are typically 
-from this namespace and may be nested.</p>
-
-<p><em>Examples:</em></p>
-
-<p>A simple <code>xor</code> filter:</p>
-
-<pre><code>&lt;filter:xor&gt;
-    &lt;filter:custom&gt;...&lt;/filter:custom&gt;
-    &lt;filter:all&gt;...&lt;/filter:all&gt;
-&lt;/filter:xor&gt;
-</code></pre>
-
-<h2></h2>
+<p><code>java -jar coherence-pushreplicationpattern-examples-11.0.0-SNAPSHOT.jar hubspoke-publisher.properties</code></p></li>
+</ol>
 
                   </div>
             </div>
