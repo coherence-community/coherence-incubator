@@ -37,9 +37,10 @@ reverse chronological order.
 *   Rationalized all modules to use a single Coherence Incubator version number
     instead of individual version numbers.
        
-*   Migrated the source repository to GitHub.
+*   Migrated the source repository to [GitHub](http://github.com).
 
-*   Migrated the issue tracking to java.net.
+*   Migrated the [Issue Tracking](http://java.net/jira/browse/COHINC) to
+    [java.net](http://java.net).
 
 *   Introduced "uber" jar generation support to produce the entire Oracle
     Coherence Incubator in a single jar.
@@ -54,6 +55,9 @@ reverse chronological order.
     (developed by Jonathan Knight). 
 
 *   Upgraded projects to use Oracle Coherence 3.7.1.7
+
+*   Migrated binary distribution mechanism to use [maven.java.net](http://maven.java.net)
+    instead of download links.
 
 <h4>coherence-incubator-all</h4>
 
