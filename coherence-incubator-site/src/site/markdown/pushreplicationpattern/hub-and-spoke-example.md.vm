@@ -7,6 +7,11 @@ To run this example the Oracle Coherence Incubator must be built and
 installed locally.  Instructions on how to achieve this are located here:
 [Building the Oracle Coherence Incubator](building.html).
 
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-pushreplicationpattern-examples`
+module of the Oracle Coherence Incubator.
+
 <h4>Overview</h4>
 
 This example demonstrates Push Replication Pattern configured in a "Hub & Spoke"
@@ -26,7 +31,7 @@ the intent, instructions and the order in which to run these applictions.
 >   unpacked and built according to the prerequisites outlined above.
 
 
-<h4>Running the Active Server (Site 1)</h4>
+<h4>Step 1. Running the Active Server (Site 1)</h4>
 
 Execute the following shell commands to start the "Active Server".
 
@@ -42,7 +47,7 @@ In a new Terminal / Shell Console for the "Active Server (Site 1)"
     `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar hubspoke-active-server.properties`
 
 
-<h4>Running the Passive Server (Site 2)</h4>
+<h4>Step 2. Running the Passive Server (Site 2)</h4>
 
 Execute the following shell commands to start the "Passive Server (Site 2)".
 
@@ -58,7 +63,7 @@ In a new Terminal / Shell Console for the "Passive Server (Site 2)"
     `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar hubspoke-passive1-server.properties`
 
 
-<h4>Running the Passive Listener (Site 2) Application</h4>
+<h4>Step 3. Running the Passive Listener (Site 2) Application</h4>
 
 Execute the following shell commands to start the "Passive Listener (Site 2)".  This
 application will output cache events detailing the updates occuring in the
@@ -76,7 +81,7 @@ In a new Terminal / Shell Console for the "Passive Listener (Site 2)"
     `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar hubspoke-listener1.properties`
 
 
-<h4>Running the Passive Server (Site 3)</h4>
+<h4>Step 4. Running the Passive Server (Site 3)</h4>
 
 Execute the following shell commands to start the "Passive Server (Site 3)".
 
@@ -92,7 +97,7 @@ In a new Terminal / Shell Console for the "Passive Server (Site 3)"
     `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar hubspoke-passive2-server.properties`
 
 
-<h4>Running the Passive Listener (Site 3) Application</h4>
+<h4>Step 5. Running the Passive Listener (Site 3) Application</h4>
 
 Execute the following shell commands to start the "Passive Listener (Site 3)".  This
 application will output cache events detailing the updates occuring in the
@@ -110,7 +115,7 @@ In a new Terminal / Shell Console for the "Passive Listener (Site 3)"
     `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar hubspoke-listener2.properties`
 
 
-<h4>Running the Active Publisher (Site 1) Application</h4>
+<h4>Step 6. Running the Active Publisher (Site 1) Application</h4>
 
 Execute the following shell commands to start the "Active Publisher (Site 1)".  This
 application will insert, update and remove entries in the "Active Server (Site 1)", that

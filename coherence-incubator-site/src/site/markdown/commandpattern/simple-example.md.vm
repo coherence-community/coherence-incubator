@@ -7,6 +7,11 @@ To run this example the Oracle Coherence Incubator must be built and
 installed locally.  Instructions on how to achieve this are located here:
 [Building the Oracle Coherence Incubator](building.html).
 
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-commandpattern-examples`
+module of the Oracle Coherence Incubator.
+
 <h4>Overview</h4>
 
 The Command Pattern example demonstrates how to use the Command Pattern to set

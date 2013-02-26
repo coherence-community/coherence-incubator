@@ -1,0 +1,162 @@
+The Push Replication Auction Example
+------------------------------------
+
+<h4>Prerequisites</h4>
+
+To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+[Building the Oracle Coherence Incubator](building.html).
+
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-pushreplicationpattern-examples`
+module of the Oracle Coherence Incubator.
+
+<h4>Overview</h4>
+
+This example demonstrates how a real-time distributed auction, the items
+of which are concurrently and simultaneously bid against in two clusters.
+
+More specifically, this example highlights the use of multiple topologies with
+Push Replications, namely "Active-Active" for bid replication and "Active-Passive"
+for auction control.
+
+This examples uses two clusters, "Site 1" displayed as "London" and "Site 2"
+displayed as "New York".
+
+"Site 1" is special in that this is where the Auction state is maintained by the
+Auctioneer.  The Auction state controls if an auction is running and how long one
+has to run.  This information is only updated in "Site 1", but it is actively replicated
+to "Site 2" so that Bidders there may know if/when/how long they may make bids.
+
+Each site allows Bidders to concurrently make Bids, on any item in the Auction
+while an Auction is running.
+
+Bidders always offer Bids "locally" in the cluster to which they are connected.
+They don't make bids in both clusters.  If a bid is higher than want is currently
+available "locally", the bid is accepted.  After a bid is accepted, the Push
+Replication Pattern pushes the bid to the other cluster where by it is compared
+with any existing bids there.  Should it be higher, the bid is accepted.  This
+logic is implemented using a custom `ConflictResolver`.  As you will soon see
+when running the example, this custom `ConflictResolver` implementation ensures
+that both clusters eventually become and remain synchronized.  That is, both
+clusters will eventually show the same winning bids.
+
+>   The following instructions assume that `$COHERENCE_INCUBATOR` is the directory
+>   in which the Oracle Coherence Incubator source code has been downloaded,
+>   unpacked and built according to the prerequisites outlined above.
+
+
+<h4>Step 1. Running the Active Server for Site 1</h4>
+
+Execute the following shell commands to start the "Active Server for Site 1".
+
+In a new Terminal / Shell Console for the "Active Server for Site 1"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Active Server for Site 1"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar auction-site1-server.properties`
+
+
+<h4>Step 2. Running the Active Server for Site 2</h4>
+
+Execute the following shell commands to start the "Active Server for Site 2".
+
+In a new Terminal / Shell Console for the "Active Server for Site 2"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Active Server for Site 2"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar auction-site2-server.properties`
+
+
+<h4>Step 3. Running the Auction Application for Site 1</h4>
+
+Execute the following shell commands to start the "Auction Application for Site 1".
+This while launch a GUI to both control the Auction and make Bids in Site 1.
+
+In a new Terminal / Shell Console for the "Auction Application for Site 1"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Auction Application for Site 1"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar auction-site1.properties`
+
+The application interface should look something like the following:
+
+![Auction Applcation for Site 1](../images/pushreplicationpattern/auction-step3.png)
+
+<h4>Step 4. Running the Auction Application for Site 2</h4>
+
+Execute the following shell commands to start the "Auction Application for Site 2".
+This while launch a GUI to make Bids in Site 2.
+
+In a new Terminal / Shell Console for the "Auction Application for Site 2"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Auction Application for Site 2"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar auction-site2.properties`
+
+The application interface should look something like the following:
+
+![Auction Applcation for Site 2](../images/pushreplicationpattern/auction-step4.png)
+
+<h4>Step 5. Running the Auction.</h4>
+
+Now that you have both sites and auction applications running, the next step is
+to start the Auction.  To do this simply press the "Start" button in the Site 1
+(London) application.
+
+![Starting the Auction in Site 1](../images/pushreplicationpattern/auction-step5-1.png)
+
+Notice once you do this the auction will start and there will be a count-down
+timer indicating the remaining duration of the auction.
+
+![The Auction Count Down Timer in Site 1](../images/pushreplicationpattern/auction-step5-2.png)
+
+At this point in time there are no bids being placed.   To start the bidding
+process you need to change to the "Automated Bidding" tab and increase either, or
+both, the bidding rate and/or the number of bidders.
+
+![The Automated Bidding Tab in Site 1](../images/pushreplicationpattern/auction-step5-3.png)
+
+Once you have done this press the "Start" button to have Bidding commence.
+
+![The Automated Bidders in Site 1](../images/pushreplicationpattern/auction-step5-4.png)
+
+Now change back to the "Auction Monitor" tab to see the bids being placed.
+
+![The Auction Monitor Tab in Site 1](../images/pushreplicationpattern/auction-step5-5.png)
+
+![The Auction Monitor Showing Bids in Site 1](../images/pushreplicationpattern/auction-step5-6.png)
+
+Notice that the bids being displayed in Site 1 (London) are also being replicated
+to the Site 2 (New York).
+
+To see the two-way concurrent bids taking place, add some "Bidders" to the New York
+site.
+
+Once the auction as ended, or if you press "Stop" on the Site 1 (London) application,
+you'll be able to see that both sites have the same auction outcome.
+
+![Completed Auction in Site 1](../images/pushreplicationpattern/auction-step5-7a.png)
+
+![Completed Auction in Site 2](../images/pushreplicationpattern/auction-step5-7b.png)

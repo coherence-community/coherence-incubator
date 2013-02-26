@@ -17,7 +17,7 @@ back to the "active" cluster.
 >   are an invaluable resource for learning how to configure Push Replication
 >   in a variety of topologies.
 
-<h5>Step 1: A Simple Cache Configuration</h5>
+<h5>Step 1. A Simple Cache Configuration</h5>
 
 Consider the following Coherence Cache Configuration that defines a simple
 Distributed Cache called `my-cache`, that of which we'd like to replicated to
@@ -48,7 +48,7 @@ another cluster.
         </caching-schemes>
     </cache-config>
 
-<h5>Step 2: Adding a Publishing Cache Store</h5>
+<h5>Step 2. Adding a Publishing Cache Store</h5>
 
 The first change to the configuration to enable Push Eeplication is to modify
 the `<backing-map-scheme>` configuration to introduce a specialized `CacheStore`
@@ -109,7 +109,7 @@ While this configuration is valid for Coherence, it's not yet enough to work
 correctly with Push Replication.   Although we've defined our `PublishingCacheStore`
 we still need to define the `EventDistributor`.
 
-<h5>Step 3: Configuring An Event Distributor</h5>
+<h5>Step 3. Configuring An Event Distributor</h5>
 
 The purpose of an `EventDistributor` is to distribute `Events` to one or more
 `Event Channels`, those of which may be used to process and replay the said `Events`.
@@ -192,7 +192,7 @@ additionally must "introduce" the cache configuration required for Coherence Mes
 Now that we've defined an `EventDistributor` the next task is to define appropriate
 `Event Channels` that can appropriately process and replay `Events`.
 
-<h5>Step 4: Configuring A Logging Event Channel</h5>
+<h5>Step 4. Configuring A Logging Event Channel</h5>
 
 The simplest type of `EventChannel` to configure is one that logs `Events`.  As
 with all `EventChannels`, configuring a `StdErrEventChannel` for logging to `stderr`
@@ -282,7 +282,7 @@ For detailed information on the variety of out-of-the-box `EventChannel` impleme
 that are available, together with their configuration, please refer to the
 [Event Namespace](../eventdistributionpattern/event-namespace.html).
 
-<h5>Step 5: Configuring A Remote Cache Channel</h5>
+<h5>Step 5. Configuring A Remote Cache Channel</h5>
 
 The purpose of a `RemoteCacheChannel` is to replay cache `Events` in a configured
 remote cache.  Consequently in order to configure a `RemoteCacheChannel` one must:
@@ -397,7 +397,7 @@ A Coherence Cache Configuration for this is as follows:
 >   Furthermore, `RemoteClusterChannels` offer a greater variety of modes and
 >   flexibility.
 
-<h5>Step 6: Configuring A Remote Cluster Channel</h5>
+<h5>Step 6. Configuring A Remote Cluster Channel</h5>
 
 In most situations the Event Distribution Channel implementation to use for
 Push Replication is the `RemoteClusterChannel`.

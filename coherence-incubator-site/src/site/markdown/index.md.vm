@@ -86,7 +86,7 @@ The following examples are provided for the Push Replication Pattern:
 
 3.  The [Hub and Spoke](pushreplicationpattern/hub-and-spoke-example.html) Topology
 
-4.  The Auction Example (active-active)
+4.  The [Auction Example](pushreplicationpattern/auction-example.html) (using an Active Active and Active Passive Topologies)
 
 
 Contributions
