@@ -29,7 +29,7 @@ package com.oracle.coherence.common.finitestatemachines;
  * A {@link RollbackTransitionException} may be thrown during an {@link TransitionAction} for a {@link Transition}
  * if the said {@link Transition} should be aborted.  ie: no state change should occur
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

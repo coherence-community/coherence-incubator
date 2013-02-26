@@ -40,7 +40,7 @@ import java.lang.annotation.Target;
  * Note: The signature of the annotated method should be the same as that defined by
  * {@link TransitionAction#onTransition(String, Enum, Enum, com.oracle.coherence.common.finitestatemachines.Event, ExecutionContext)
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

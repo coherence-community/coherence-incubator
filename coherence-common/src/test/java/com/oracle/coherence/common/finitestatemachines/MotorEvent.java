@@ -28,7 +28,7 @@ package com.oracle.coherence.common.finitestatemachines;
 /**
  * The {@link Event}s that can occur on a {@link Motor}.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

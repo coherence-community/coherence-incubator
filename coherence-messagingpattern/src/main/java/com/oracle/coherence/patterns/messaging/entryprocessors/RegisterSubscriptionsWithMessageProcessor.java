@@ -43,7 +43,7 @@ import java.io.IOException;
  * The {@link RegisterSubscriptionsWithMessageProcessor} is used to indicate that a
  * {@link Message} has been made visible to a set of subscriptions.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Paul Mackin

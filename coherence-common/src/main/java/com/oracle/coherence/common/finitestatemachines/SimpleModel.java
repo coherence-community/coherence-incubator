@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * A {@link SimpleModel} is a basic implementation of a {@link Model} for a {@link FiniteStateMachine}.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @param <S>  the type of state

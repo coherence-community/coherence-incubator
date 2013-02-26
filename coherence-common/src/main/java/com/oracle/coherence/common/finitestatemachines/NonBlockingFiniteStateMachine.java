@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  * queued for a single thread to later perform the appropriate transition to
  * the requested state.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

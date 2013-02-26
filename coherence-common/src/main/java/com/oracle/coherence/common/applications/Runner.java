@@ -35,7 +35,7 @@ import java.util.Properties;
  * Execute a Java Application based on information defined in a .properties
  * file located on the classpath.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -65,7 +65,7 @@ public class Runner
     {
         System.out.println("-----------------------------------------------------------");
         System.out.println("Oracle Java Application Runner");
-        System.out.println("Copyright (c) 2012. Oracle Corporation");
+        System.out.println("Copyright (c) 2013. Oracle Corporation");
         System.out.println("-----------------------------------------------------------");
         System.out.println();
 

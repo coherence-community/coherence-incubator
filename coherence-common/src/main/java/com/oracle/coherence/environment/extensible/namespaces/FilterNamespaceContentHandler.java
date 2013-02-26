@@ -51,7 +51,7 @@ import java.util.Map;
  * The {@link FilterNamespaceContentHandler} provides the ability to declare (and construct) Coherence {@link Filter}
  * instances in a cache configuration file.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

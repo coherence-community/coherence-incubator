@@ -45,7 +45,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * Unit tests for the {@link NonBlockingFiniteStateMachine}
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
