@@ -46,7 +46,7 @@ In a new Terminal / Shell Console for the "Simple Server"
 
 Execute the following shell commands to start the "Simple Submission Application".
 This application will submit `Callables` to the "Simple Server", that
-of which will appropriate execute and return the results.
+of which will appropriately execute the submitted `Callables` and return the results.
 
 In a new Terminal / Shell Console for the "Simple Submission Application"
 

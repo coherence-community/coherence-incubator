@@ -1,0 +1,67 @@
+The Processing Pattern Pi Calculation Example
+---------------------------------------------
+
+<h4>Prerequisites</h4>
+
+To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+[Building the Oracle Coherence Incubator](building.html).
+
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-processingpattern-examples`
+module of the Oracle Coherence Incubator.
+
+<h4>Overview</h4>
+
+This example demonstrates calculating an approximation of Pi using the
+[Leibnitz formula](http://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80). The
+Leibnitz formula for calculating Pi is defined as:
+
+    PI * 4 = 1 - 1/3 + 1/5 - 1/7 + 1/9 - 1/11....
+
+>   You need a fairly large number of iterations to get the error down as the error is 4/N.
+
+
+There are two applications to run as part of this example.  The following details
+the intent, instructions and the order in which to run these applictions.
+
+>   The following instructions assume that `$COHERENCE_INCUBATOR` is the directory
+>   in which the Oracle Coherence Incubator source code has been downloaded,
+>   unpacked and built according to the prerequisites outlined above.
+
+
+<h4>Step 1. Running the Grid Calculation Server</h4>
+
+Execute the following shell commands to start the "Grid Calculation Server", that
+of which will execute submitted `Callables` and `Tasks`.
+
+In a new Terminal / Shell Console for the "Grid Calculation Server"
+
+1.  Change to the Processing Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-processingpattern-examples/target`
+
+
+2.  Run the "Grid Calculation Server"
+
+    `java -jar coherence-processingpattern-examples-${project.version}.jar grid-server.properties`
+
+
+<h4>Step 2. Running the Pi Calculation Application</h4>
+
+Execute the following shell commands to start the "Pi Calculation Application".
+This application will submit tasks to the "Grid Calculation Server", that
+of which will appropriately execute the submitted tasks and return the results.
+
+In a new Terminal / Shell Console for the "Pi Calculation Application"
+
+1.  Change to the Processing Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-processingpattern-examples/target`
+
+
+2.  Run the "Pi Calculation Application"
+
+    `java -jar coherence-processingpattern-examples-${project.version}.jar picalculation.properties`
+
