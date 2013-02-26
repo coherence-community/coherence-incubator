@@ -319,7 +319,7 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
         // let everyone know that they are using the Extensible Environment for Coherence cache configuration
         CacheFactory.log("", 0);
         CacheFactory.log("Using the Incubator Extensible Environment for Coherence Cache Configuration", 0);
-        CacheFactory.log("Copyright (c) 2011, Oracle Corporation. All Rights Reserved.", 0);
+        CacheFactory.log("Copyright (c) 2013, Oracle Corporation. All Rights Reserved.", 0);
         CacheFactory.log("", 0);
 
         // create the new map of resources
