@@ -59,7 +59,13 @@ Provides an mechanism to perform distributed, grid computing with Coherence.
 
 **The Processing Pattern Examples:**
 
-Provides example uses of the Processing Pattern.
+The following examples are provided for the Processing Pattern:
+
+1.  The [Simple Callable Example](processingpattern/simple-example.html)
+
+2.  The Pi Calculation Example
+
+3.  The Task Execution Example
 
 [**The Messaging Pattern:**](messagingpattern/index.html)
 
