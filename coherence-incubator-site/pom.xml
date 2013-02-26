@@ -65,7 +65,7 @@
                 <configuration>
                     <message>${project.version} Site</message>
                     <path>${project.version}</path>
-                    <merge>false</merge>
+                    <merge>true</merge>
                     <repositoryName>coherence-incubator</repositoryName>
                     <repositoryOwner>coherence-community</repositoryOwner>
                 </configuration>
