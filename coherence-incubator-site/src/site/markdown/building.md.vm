@@ -1,38 +1,51 @@
-Building Instructions
----------------------
+Building
+--------
 
-As the Oracle Coherence Incubator uses [Apache Maven](http://maven.apache.org/) 
-(Version 3.0.4) as a build technology for the most part building from source
-tree is as simple as:
+To build the Oracle Coherence Incubator you need to have the following software
+installed:
+
+1.  Java SE Development Kit 6, 7 or 8.
+
+    Available from: [Oracle Java SE Downloads](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+
+2.  [Apache Maven](http://maven.apache.org/) Version 3.0.4 (not 3.0.3)
+
+    Available here: [Apache Maven Downloads](http://maven.apache.org/download.cgi)
+
+3.  The [source code](source-code.html).
+
+Once you have these installed building the entire source tree is as simple as
+executing the following shell command (from the root of the source directory):
 
     $ mvn clean install
 
 However the fact that the Oracle Coherence Incubator depends on a commercial product, 
 namely [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html) 
-that of which is not available in a public Maven Repository, means that your 
-first build is highly likely to fail because of a missing dependency on 
-`coherence.jar`.
+that of which is not available in a public Maven Repository, probably means that your
+first build is likely to fail because of a missing dependency on `coherence.jar`.
 
 Should this problem occur you will need to manually install a suitable 
 `coherence.jar` into your local repository or your organization's repository 
 manager.
 
-To install `coherence.jar` into a local repository change to `$COHERENCE_HOME/lib` 
-directory and run the following command:
+To install the standard `coherence.jar` into your local Apache Maven repository,
+simply change to `$COHERENCE_HOME/lib` directory and run the following command:
 
     $ mvn install:install-file  \
           -DgroupId=com.oracle.coherence  \
           -DartifactId=coherence  \
-          -Dversion=3.7.1.5  \
+          -Dversion=3.7.1.7  \
           -Dfile=coherence.jar  \
           -Dpackaging=jar \
           -DgeneratePom=true
 
-**Note:** The `groupId`, `artifactId` and `version` are critically important. 
+>   The `groupId`, `artifactId` and `version` are critically important.  They must
+>   be as indicated above otherwise the Oracle Coherence Incubator won't build.
 
-Of course the above assumes that you are installing the Coherence 3.7.1.5 `jar` 
+
+Of course the above assumes that you are installing the Coherence 3.7.1.7 `jar`
 file. If you want to install one of the more recent releases, change the version 
 number in the command above accordingly.
 
-Once the `coherence.jar` is properly installed into your Maven repository, 
+Once the `coherence.jar` is properly installed into your Apache Maven repository,
 you should be able to build the Oracle Coherence Incubator.

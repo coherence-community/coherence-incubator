@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,7 +29,7 @@ package com.oracle.coherence.common.finitestatemachines;
  * A {@link RollbackTransitionException} may be thrown during an {@link TransitionAction} for a {@link Transition}
  * if the said {@link Transition} should be aborted.  ie: no state change should occur
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -58,7 +57,7 @@ public class RollbackTransitionException extends Exception
      */
     public RollbackTransitionException(Enum<?> stateFrom,
                                        Enum<?> stateTo,
-                                       String rationale)
+                                       String  rationale)
     {
         super(String.format("Rollback of transition from %s to %s occurred. %s", stateFrom, stateTo, rationale));
         m_stateFrom = stateFrom;
@@ -73,8 +72,8 @@ public class RollbackTransitionException extends Exception
      * @param stateTo    the state to which the {@link Transition} was being made
      * @param cause      the underlying exception that caused the rollback
      */
-    public RollbackTransitionException(Enum<?> stateFrom,
-                                       Enum<?> stateTo,
+    public RollbackTransitionException(Enum<?>   stateFrom,
+                                       Enum<?>   stateTo,
                                        Throwable cause)
     {
         super(String.format("Rollback of transition from %s to %s occured due to an exception.", stateFrom, stateTo),

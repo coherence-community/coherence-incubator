@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +26,6 @@
 package com.oracle.coherence.common.backingmaplisteners;
 
 import com.tangosol.net.BackingMapManagerContext;
-
 import com.tangosol.util.MapEvent;
 
 /**
@@ -69,7 +67,7 @@ public class DelegatingBackingMapListener extends AbstractMultiplexingBackingMap
      * {@inheritDoc}
      */
     public void onBackingMapEvent(MapEvent mapEvent,
-                                  Cause cause)
+                                  Cause    cause)
     {
         if ((mapEvent.getId() == MapEvent.ENTRY_INSERTED || mapEvent.getId() == MapEvent.ENTRY_UPDATED)
             && mapEvent.getNewValue() instanceof LifecycleAwareCacheEntry)

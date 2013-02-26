@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,45 +27,35 @@ package com.oracle.coherence.patterns.processing.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.UUIDBasedIdentifier;
-
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
-
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.processing.ProcessingSession;
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.SubmissionOutcome;
 import com.oracle.coherence.patterns.processing.SubmissionOutcomeListener;
 import com.oracle.coherence.patterns.processing.SubmissionRetentionPolicy;
 import com.oracle.coherence.patterns.processing.SubmissionState;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.Filter;
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
 import com.tangosol.util.MultiplexingMapListener;
 import com.tangosol.util.UUID;
-
 import com.tangosol.util.filter.EqualsFilter;
 import com.tangosol.util.filter.MapEventFilter;
 import com.tangosol.util.filter.NotFilter;
 import com.tangosol.util.filter.PresentFilter;
-
 import com.tangosol.util.processor.ConditionalPut;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -151,9 +140,9 @@ public class DefaultProcessingSession implements ProcessingSession
             ExecutorServiceFactory
                 .newSingleThreadScheduledExecutor(ThreadFactories
                     .newThreadFactory(true, "DefaultProcessingSession", null));
-        this.shutdownSync                 = new Object();
-        this.sessionId                    = sessionIdentifier;
-        this.submissionOutcomeMap         = new ConcurrentHashMap<Object, DefaultSubmissionOutcome>();
+        this.shutdownSync         = new Object();
+        this.sessionId            = sessionIdentifier;
+        this.submissionOutcomeMap = new ConcurrentHashMap<Object, DefaultSubmissionOutcome>();
         this.submissionResultProxyFactory =
             (ObjectProxyFactory<SubmissionResult>) environment.getResource(SubmissionResult.class);
 
@@ -174,10 +163,10 @@ public class DefaultProcessingSession implements ProcessingSession
      *
      * @param sessionIdentifier is the {@link Identifier} for this Session.
      */
-    public DefaultProcessingSession(ConfigurableCacheFactory ccFactory,
-                                    ObjectProxyFactory<Submission> submissionProxyFactory,
+    public DefaultProcessingSession(ConfigurableCacheFactory             ccFactory,
+                                    ObjectProxyFactory<Submission>       submissionProxyFactory,
                                     ObjectProxyFactory<SubmissionResult> submissionResultProxyFactory,
-                                    Identifier sessionIdentifier)
+                                    Identifier                           sessionIdentifier)
     {
         this.executorService =
             ExecutorServiceFactory
@@ -237,7 +226,7 @@ public class DefaultProcessingSession implements ProcessingSession
      * @param key the key to the {@link SubmissionResult} that changed
      */
     protected void handleResultChange(SubmissionResult submissionResult,
-                                      Object key)
+                                      Object           key)
     {
         // the SubmissionResult is delivered to us as the
         // mapEvent new value
@@ -334,7 +323,7 @@ public class DefaultProcessingSession implements ProcessingSession
      * @param resultId the key to the {@link SubmissionResult}
      */
     private void removeCacheObjectsAsynch(final SubmissionKey submissionKey,
-                                          final Identifier resultId)
+                                          final Identifier    resultId)
     {
         executorService.execute(new Runnable()
         {
@@ -362,7 +351,7 @@ public class DefaultProcessingSession implements ProcessingSession
     /**
      * {@inheritDoc}
      */
-    public SubmissionOutcome submit(final Object oPayload,
+    public SubmissionOutcome submit(final Object                  oPayload,
                                     final SubmissionConfiguration oRequestData) throws Throwable
     {
         synchronized (shutdownSync)
@@ -388,8 +377,8 @@ public class DefaultProcessingSession implements ProcessingSession
     /**
      * {@inheritDoc}
      */
-    public SubmissionOutcome submit(final Object oPayload,
-                                    final SubmissionConfiguration oRequestData,
+    public SubmissionOutcome submit(final Object                    oPayload,
+                                    final SubmissionConfiguration   oRequestData,
                                     final SubmissionOutcomeListener oListener) throws Throwable
     {
         synchronized (shutdownSync)
@@ -418,9 +407,9 @@ public class DefaultProcessingSession implements ProcessingSession
     /**
      * {@inheritDoc}
      */
-    public SubmissionOutcome submit(Object oPayload,
-                                    SubmissionConfiguration oConfiguration,
-                                    Identifier identifier,
+    public SubmissionOutcome submit(Object                    oPayload,
+                                    SubmissionConfiguration   oConfiguration,
+                                    Identifier                identifier,
                                     SubmissionRetentionPolicy retentionPolicy,
                                     SubmissionOutcomeListener oListener) throws Throwable
     {
@@ -471,7 +460,7 @@ public class DefaultProcessingSession implements ProcessingSession
     /**
      * {@inheritDoc}
      */
-    public SubmissionOutcome acquireSubmission(Identifier identifier,
+    public SubmissionOutcome acquireSubmission(Identifier                identifier,
                                                SubmissionRetentionPolicy retentionPolicy,
                                                SubmissionOutcomeListener oListener)
     {

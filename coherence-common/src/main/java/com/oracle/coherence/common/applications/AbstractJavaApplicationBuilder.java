@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,11 +27,9 @@ package com.oracle.coherence.common.applications;
 
 import com.oracle.coherence.common.network.AvailablePortIterator;
 import com.oracle.coherence.common.network.Constants;
-
 import com.tangosol.util.UUID;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -350,8 +347,8 @@ public abstract class AbstractJavaApplicationBuilder<A extends JavaApplication, 
      * @throws IOException Thrown if a problem occurs while starting the application.
      */
     @Override
-    public A realize(B defaultBuilder,
-                     String name,
+    public A realize(B                  defaultBuilder,
+                     String             name,
                      ApplicationConsole console) throws IOException
     {
         // construct the command to start the Java process
@@ -430,11 +427,11 @@ public abstract class AbstractJavaApplicationBuilder<A extends JavaApplication, 
      *
      * @return An A.
      */
-    protected abstract A createJavaApplication(Process process,
-                                               String name,
+    protected abstract A createJavaApplication(Process            process,
+                                               String             name,
                                                ApplicationConsole console,
-                                               Properties environmentVariables,
-                                               Properties systemProperties);
+                                               Properties         environmentVariables,
+                                               Properties         systemProperties);
 
 
     /**
@@ -464,7 +461,7 @@ public abstract class AbstractJavaApplicationBuilder<A extends JavaApplication, 
      *
      * @throws IOException Thrown if a problem occurs while starting the application.
      */
-    public A realize(String name,
+    public A realize(String             name,
                      ApplicationConsole console) throws IOException
     {
         return realize(null, name, console);

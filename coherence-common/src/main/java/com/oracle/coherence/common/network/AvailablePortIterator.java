@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,12 +26,10 @@
 package com.oracle.coherence.common.network;
 
 import java.io.IOException;
-
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -129,8 +126,8 @@ public class AvailablePortIterator implements Iterator<Integer>
      * @param portRangeEnd The port at which to stop scanning (inclusive)
      */
     public AvailablePortIterator(InetAddress inetAddress,
-                                 int portRangeStart,
-                                 int portRangeEnd)
+                                 int         portRangeStart,
+                                 int         portRangeEnd)
     {
         this.inetAddress    = inetAddress;
         this.portRangeStart = portRangeStart;
@@ -147,8 +144,8 @@ public class AvailablePortIterator implements Iterator<Integer>
      * @param portRangeEnd The port at which to stop scanning (inclusive)
      */
     public AvailablePortIterator(String host,
-                                 int portRangeStart,
-                                 int portRangeEnd) throws UnknownHostException
+                                 int    portRangeStart,
+                                 int    portRangeEnd) throws UnknownHostException
     {
         this(InetAddress.getByName(host), portRangeStart, portRangeEnd);
     }

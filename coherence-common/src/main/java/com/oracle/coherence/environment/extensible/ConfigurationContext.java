@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,17 +26,12 @@
 package com.oracle.coherence.environment.extensible;
 
 import com.oracle.coherence.common.builders.ReflectiveBuilder;
-
 import com.oracle.coherence.common.util.EnrichmentSupport;
-
 import com.oracle.coherence.configuration.Property;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.tangosol.run.xml.XmlElement;
 
 import java.net.URI;
-
 import java.util.Map;
 
 /**
@@ -64,7 +58,7 @@ public interface ConfigurationContext extends EnrichmentSupport
      * @return An instance of the {@link NamespaceContentHandler} that is suitable for processing the prefix and {@link URI}.
      */
     public NamespaceContentHandler ensureNamespaceContentHandler(String prefix,
-                                                                 URI uri);
+                                                                 URI    uri);
 
 
     /**
@@ -246,9 +240,9 @@ public interface ConfigurationContext extends EnrichmentSupport
      *
      * @return The result of processing the child element or the defaultValue if the child is not in the {@link XmlElement}.
      */
-    public <T> T processElementOf(XmlElement xmlElement,
+    public <T> T processElementOf(XmlElement    xmlElement,
                                   QualifiedName qualifiedName,
-                                  T defaultValue) throws ConfigurationException;
+                                  T             defaultValue) throws ConfigurationException;
 
 
     /**
@@ -266,8 +260,8 @@ public interface ConfigurationContext extends EnrichmentSupport
      * @return The result of processing the child element or the defaultValue if the child is not in the {@link XmlElement}.
      */
     public <T> T processElementOf(XmlElement xmlElement,
-                                  String id,
-                                  T defaultValue) throws ConfigurationException;
+                                  String     id,
+                                  T          defaultValue) throws ConfigurationException;
 
 
     /**
@@ -300,7 +294,7 @@ public interface ConfigurationContext extends EnrichmentSupport
      * @return A {@link Map} from identifiable child {@link XmlElement}s (with id="..." attributes)
      *         and their corresponding processed values.
      */
-    public Map<String, ?> processElementsOf(XmlElement xmlElement,
+    public Map<String, ?> processElementsOf(XmlElement       xmlElement,
                                             QualifiedName... except) throws ConfigurationException;
 
 
@@ -321,7 +315,7 @@ public interface ConfigurationContext extends EnrichmentSupport
      *         and their corresponding processed values.
      */
     public <T> Map<String, T> processElementsOf(XmlElement xmlElement,
-                                                Class<T> expectedType) throws ConfigurationException;
+                                                Class<T>   expectedType) throws ConfigurationException;
 
 
     /**
@@ -334,9 +328,9 @@ public interface ConfigurationContext extends EnrichmentSupport
      *
      * @throws ConfigurationException if a configuration is not valid
      */
-    public void configure(Object object,
+    public void configure(Object        object,
                           QualifiedName qualifiedName,
-                          XmlElement xmlElement) throws ConfigurationException;
+                          XmlElement    xmlElement) throws ConfigurationException;
 
 
     /**
@@ -349,9 +343,9 @@ public interface ConfigurationContext extends EnrichmentSupport
      * @return <code>true</code> if the property is defined in the {@link XmlElement}, <code>false</code> otherwise.
      * @throws ConfigurationException if a configuration is not valid
      */
-    public boolean isPropertyDefined(String propertyName,
+    public boolean isPropertyDefined(String        propertyName,
                                      QualifiedName qualifiedName,
-                                     XmlElement xmlElement) throws ConfigurationException;
+                                     XmlElement    xmlElement) throws ConfigurationException;
 
 
     /**
@@ -369,11 +363,11 @@ public interface ConfigurationContext extends EnrichmentSupport
      * @return the mandatory property
      * @throws ConfigurationException if a configuration is not valid
      */
-    public <T> T getMandatoryProperty(String propertyName,
-                                      Class<T> propertyType,
-                                      Class<?> propertySubType,
+    public <T> T getMandatoryProperty(String        propertyName,
+                                      Class<T>      propertyType,
+                                      Class<?>      propertySubType,
                                       QualifiedName qualifiedName,
-                                      XmlElement xmlElement) throws ConfigurationException;
+                                      XmlElement    xmlElement) throws ConfigurationException;
 
 
     /**
@@ -388,10 +382,10 @@ public interface ConfigurationContext extends EnrichmentSupport
      * @return the mandatory property
      * @throws ConfigurationException if a configuration is not valid
      */
-    public <T> T getMandatoryProperty(String propertyName,
-                                      Class<T> propertyType,
+    public <T> T getMandatoryProperty(String        propertyName,
+                                      Class<T>      propertyType,
                                       QualifiedName qualifiedName,
-                                      XmlElement xmlElement) throws ConfigurationException;
+                                      XmlElement    xmlElement) throws ConfigurationException;
 
 
     /**
@@ -409,12 +403,12 @@ public interface ConfigurationContext extends EnrichmentSupport
      * @return the optional property
      * @throws ConfigurationException if a configuration is not valid
      */
-    public <T> T getOptionalProperty(String propertyName,
-                                     Class<T> propertyType,
-                                     Class<?> propertySubType,
-                                     T defaultValue,
+    public <T> T getOptionalProperty(String        propertyName,
+                                     Class<T>      propertyType,
+                                     Class<?>      propertySubType,
+                                     T             defaultValue,
                                      QualifiedName qualifiedName,
-                                     XmlElement xmlElement) throws ConfigurationException;
+                                     XmlElement    xmlElement) throws ConfigurationException;
 
 
     /**
@@ -430,9 +424,9 @@ public interface ConfigurationContext extends EnrichmentSupport
      * @return the optional property
      * @throws ConfigurationException if a configuration is not valid
      */
-    public <T> T getOptionalProperty(String propertyName,
-                                     Class<T> propertyType,
-                                     T defaultValue,
+    public <T> T getOptionalProperty(String        propertyName,
+                                     Class<T>      propertyType,
+                                     T             defaultValue,
                                      QualifiedName qualifiedName,
-                                     XmlElement xmlElement) throws ConfigurationException;
+                                     XmlElement    xmlElement) throws ConfigurationException;
 }

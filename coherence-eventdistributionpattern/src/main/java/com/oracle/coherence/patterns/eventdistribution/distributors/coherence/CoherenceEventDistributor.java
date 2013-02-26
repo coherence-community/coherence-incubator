@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,18 +26,13 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.coherence;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.events.Event;
-
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
-
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
-
 import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.DefaultSubscriptionConfiguration;
 import com.oracle.coherence.patterns.messaging.Destination;
@@ -46,16 +40,12 @@ import com.oracle.coherence.patterns.messaging.MessagingSession;
 import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionConfiguration;
 import com.oracle.coherence.patterns.messaging.entryprocessors.TopicSubscribeProcessor;
-
 import com.tangosol.io.Serializer;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.Base;
 
 import java.util.List;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

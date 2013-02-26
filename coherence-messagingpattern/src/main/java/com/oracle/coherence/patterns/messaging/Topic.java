@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -33,14 +32,11 @@ import com.oracle.coherence.common.events.backingmap.BackingMapEntryRemovedEvent
 import com.oracle.coherence.common.events.backingmap.BackingMapEntryUpdatedEvent;
 import com.oracle.coherence.common.events.processing.EventProcessor;
 import com.oracle.coherence.common.events.processing.EventProcessorFactory;
-
 import com.oracle.coherence.patterns.messaging.Subscription.Status;
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeMessageProcessor;
 import com.oracle.coherence.patterns.messaging.management.MessagingMBeanManager;
 import com.oracle.coherence.patterns.messaging.management.TopicProxy;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.net.CacheFactory;
 
 import java.util.ArrayList;
@@ -79,9 +75,9 @@ public class Topic extends Destination implements EventProcessorFactory<EntryEve
     /**
      * {@inheritDoc}
      */
-    public void subscribe(SubscriptionIdentifier subscriptionIdentifier,
+    public void subscribe(SubscriptionIdentifier    subscriptionIdentifier,
                           SubscriptionConfiguration subscriptionConfiguration,
-                          Subscription subscription)
+                          Subscription              subscription)
     {
         super.subscribe(subscriptionIdentifier,
                         subscriptionConfiguration,
@@ -96,7 +92,7 @@ public class Topic extends Destination implements EventProcessorFactory<EntryEve
      * {@inheritDoc}
      */
     public void unsubscribe(SubscriptionIdentifier subscriptionIdentifier,
-                            MessageTracker messageTracker)
+                            MessageTracker         messageTracker)
     {
         ArrayList<MessageKey> messageKeys = messageTracker.getMessageKeys(getIdentifier());
 

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -32,34 +31,25 @@ import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStoppedEvent;
 import com.oracle.coherence.common.events.lifecycle.NamedCacheStorageReleasedEvent;
 import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
-
 import com.oracle.coherence.common.leasing.Lease;
-
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
-
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.LifecycleEventFilter;
 import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResourceReference;
-
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Set;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -116,10 +106,10 @@ public class DefaultServerLeaseMonitor extends AbstractAsynchronousEventProcesso
      *                                   {@link Lease}s are checked.
      */
     public DefaultServerLeaseMonitor(Environment environment,
-                                     long leaseValidityCheckingDelay)
+                                     long        leaseValidityCheckingDelay)
     {
         DefaultTaskProcessorMediator.setLeaseMonitor(this);
-        this.environment     = environment;
+        this.environment = environment;
         this.executorService =
             ExecutorServiceFactory
                 .newSingleThreadScheduledExecutor(ThreadFactories.newThreadFactory(true, "ServerLeaseMonitor", null));
@@ -132,7 +122,7 @@ public class DefaultServerLeaseMonitor extends AbstractAsynchronousEventProcesso
      * {@inheritDoc}
      */
     public void registerLease(TaskProcessorMediatorKey leaseOwner,
-                              Lease lease)
+                              Lease                    lease)
     {
         if (logger.isLoggable(Level.FINER))
         {
@@ -209,7 +199,7 @@ public class DefaultServerLeaseMonitor extends AbstractAsynchronousEventProcesso
      * {@inheritDoc}
      */
     @Override
-    public void processLater(EventDispatcher eventDispatcher,
+    public void processLater(EventDispatcher   eventDispatcher,
                              LifecycleEvent<?> event)
     {
         if (event instanceof NamedCacheStorageReleasedEvent)

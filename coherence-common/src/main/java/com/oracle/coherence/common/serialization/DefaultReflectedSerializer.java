@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,26 +26,21 @@
 package com.oracle.coherence.common.serialization;
 
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.common.serialization.annotations.PofField;
 import com.oracle.coherence.common.serialization.annotations.PofIgnore;
 import com.oracle.coherence.common.serialization.annotations.PofType;
-
 import com.tangosol.io.pof.PofContext;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofSerializer;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 
 import java.io.IOException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -131,9 +125,9 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
      * @param reflectedPofContext   The {@link ReflectedContext} in which this {@link PofSerializer} exists.
      * @param pofContext
      */
-    protected DefaultReflectedSerializer(Class<?> type,
+    protected DefaultReflectedSerializer(Class<?>         type,
                                          ReflectedContext reflectedPofContext,
-                                         PofContext pofContext)
+                                         PofContext       pofContext)
     {
         this.type                     = type;
         this.reflectedPofSerializer   = reflectedPofContext;
@@ -186,7 +180,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
      * @param version the version of the type to scan
      */
     private void scanFields(FieldSerializationProvider fieldSerializer,
-                            int version)
+                            int                        version)
     {
         // extract all of the field information for the type using
         // reflection
@@ -202,13 +196,13 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
             public int compare(Field field1,
                                Field field2)
             {
-                PofField pofField1  = field1.getAnnotation(PofField.class);
-                String   fieldName1 = pofField1 == null
+                PofField pofField1 = field1.getAnnotation(PofField.class);
+                String fieldName1 = pofField1 == null
                                     ? field1.getName()
                                     : pofField1.name().isEmpty() ? field1.getName() : pofField1.name();
 
-                PofField pofField2  = field2.getAnnotation(PofField.class);
-                String   fieldName2 = pofField2 == null
+                PofField pofField2 = field2.getAnnotation(PofField.class);
+                String fieldName2 = pofField2 == null
                                     ? field2.getName()
                                     : pofField2.name().isEmpty() ? field2.getName() : pofField2.name();
 
@@ -276,7 +270,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
      * @return
      */
     private boolean includeField(Field field,
-                                 int iSince)
+                                 int   iSince)
     {
         PofField annotation = field.getAnnotation(PofField.class);
 
@@ -430,7 +424,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
      * @throws NoSuchMethodException
      */
     public void deserializeInto(PofReader reader,
-                                Object object)
+                                Object    object)
                                     throws IllegalArgumentException, IllegalAccessException, IOException,
                                            SecurityException, InstantiationException, InvocationTargetException,
                                            NoSuchMethodException
@@ -463,7 +457,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
      */
     @Override
     public void serialize(PofWriter writer,
-                          Object object) throws IOException
+                          Object    object) throws IOException
     {
         if (implementsPortableObject)
         {
@@ -547,7 +541,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
      * @throws IOException
      */
     private void readRemainder(PofReader reader,
-                               Object object) throws IOException
+                               Object    object) throws IOException
     {
         if (remainderField == null)
         {
@@ -596,7 +590,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
      * @throws IOException
      */
     private void writeRemainder(PofWriter writer,
-                                Object object) throws IOException
+                                Object    object) throws IOException
     {
         // when there is no remainder or the version of the type has been forced to something less than detected
         // we always write an empty remainder
@@ -692,11 +686,11 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
          * @param type              The desired type of the {@link Field} values.
          * @param fieldSerializer   The {@link FieldSerializer} to use for serialization of the {@link Field}.
          */
-        public FieldMetaInfo(Field field,
-                             int pofIndex,
-                             String name,
-                             Class<?> type,
-                             int sinceVersion,
+        public FieldMetaInfo(Field           field,
+                             int             pofIndex,
+                             String          name,
+                             Class<?>        type,
+                             int             sinceVersion,
                              FieldSerializer fieldSerializer)
         {
             this.field           = field;

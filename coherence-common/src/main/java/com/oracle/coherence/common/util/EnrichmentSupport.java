@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -53,7 +52,7 @@ public interface EnrichmentSupport
      *         <code>false</code> otherwise.
      */
     public <T, N> boolean hasEnrichment(Class<T> type,
-                                        N enrichmentKey);
+                                        N        enrichmentKey);
 
 
     /**
@@ -67,7 +66,7 @@ public interface EnrichmentSupport
      * @return The enrichment or <code>null</code> if the enrichment is not defined.
      */
     public <T, N> T getEnrichment(Class<T> type,
-                                  N enrichmentKey);
+                                  N        enrichmentKey);
 
 
     /**
@@ -109,8 +108,8 @@ public interface EnrichmentSupport
      * @param enrichment The enrichment to add
      */
     public <T, N> void addEnrichment(Class<T> type,
-                                     N enrichmentKey,
-                                     T enrichment);
+                                     N        enrichmentKey,
+                                     T        enrichment);
 
 
     /**

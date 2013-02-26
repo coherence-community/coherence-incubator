@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,9 +26,7 @@
 package com.oracle.coherence.common.runtime;
 
 import java.io.IOException;
-
 import java.net.URL;
-
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -132,7 +129,7 @@ public class PropertiesBuilder
      * @return The {@link PropertiesBuilder} to which the property was added so that further chained method calls, like
      *         to other <code>setProperty(...)</code> methods on this class may be used.
      */
-    public PropertiesBuilder setProperty(String name,
+    public PropertiesBuilder setProperty(String      name,
                                          Iterator<?> iterator)
     {
         if (containsProperty(name))
@@ -160,7 +157,7 @@ public class PropertiesBuilder
      * @return The {@link PropertiesBuilder} to which the property was added so that further chained method calls, like
      *         to other <code>setProperty(...)</code> methods on this class may be used.
      */
-    public PropertiesBuilder setDefaultProperty(String name,
+    public PropertiesBuilder setDefaultProperty(String      name,
                                                 Iterator<?> defaultIterator)
     {
         if (containsProperty(name))

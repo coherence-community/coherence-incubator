@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,9 +26,7 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.messaging.entryprocessors.PublishMessageProcessor;
-
 import com.tangosol.net.BackingMapManager;
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
@@ -39,7 +36,6 @@ import com.tangosol.net.NamedCache;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-
 import java.util.Map.Entry;
 
 /**
@@ -151,7 +147,7 @@ public class MessagePublisherManager
      * @return MessagePublisher or null if the publisher doesn't exist
      */
     MessagePublisher getPublisher(Identifier destinationIdentifier,
-                                  int partitionId)
+                                  int        partitionId)
     {
         return getPublisher(destinationIdentifier, partitionId, false);
     }
@@ -194,8 +190,8 @@ public class MessagePublisherManager
      *
      */
     private synchronized MessagePublisher getPublisher(Identifier destinationIdentifier,
-                                                       int partitionId,
-                                                       boolean bCreate)
+                                                       int        partitionId,
+                                                       boolean    bCreate)
     {
         // Get the message publisher using the destinationId and partitionId as
         // the composite key.

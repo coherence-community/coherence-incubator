@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,38 +27,29 @@ package com.oracle.coherence.patterns.processing.taskprocessor;
 
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
-
 import com.oracle.coherence.common.leasing.Lease;
-
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
-
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResourceReference;
-
 import com.oracle.coherence.patterns.processing.dispatchers.task.DefaultTaskDispatcher;
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;
 import com.oracle.coherence.patterns.processing.internal.task.DefaultTaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediatorKey;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -117,7 +107,7 @@ public class DefaultClientLeaseMaintainer implements DependentResource, ClientLe
      * @param leaseValidityCheckingDelay the period by which lease validity checking is performed
      */
     public DefaultClientLeaseMaintainer(Environment environment,
-                                        long leaseValidityCheckingDelay)
+                                        long        leaseValidityCheckingDelay)
     {
         this.environment                = environment;
         this.leases                     = new ConcurrentHashMap<TaskProcessorMediatorKey, Lease>();
@@ -141,7 +131,7 @@ public class DefaultClientLeaseMaintainer implements DependentResource, ClientLe
      * {@inheritDoc}
      */
     public void addLease(TaskProcessorMediatorKey taskProcessorKey,
-                         Lease lease)
+                         Lease                    lease)
     {
         leases.put(taskProcessorKey, lease);
     }
@@ -153,7 +143,7 @@ public class DefaultClientLeaseMaintainer implements DependentResource, ClientLe
     public void onDependenciesSatisfied(Environment environment)
     {
         this.taskProcessorMediatorCache = CacheFactory.getCache(DefaultTaskProcessorMediator.CACHENAME);
-        this.executorService            =
+        this.executorService =
             ExecutorServiceFactory
                 .newSingleThreadScheduledExecutor(ThreadFactories
                     .newThreadFactory(true, "ClientLeaseCoordinator", null));
@@ -194,7 +184,7 @@ public class DefaultClientLeaseMaintainer implements DependentResource, ClientLe
      * {@inheritDoc}
      */
     public void removeLease(TaskProcessorMediatorKey taskProcessorKey,
-                            Lease lease)
+                            Lease                    lease)
     {
         if (logger.isLoggable(Level.FINER))
         {

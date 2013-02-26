@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,31 +28,24 @@ package com.oracle.coherence.common.finitestatemachines;
 import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMachine.CoalescedEvent;
 import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMachine.CoalescedEvent.Process;
 import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMachine.SubsequentEvent;
-
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
-
 import com.oracle.tools.deferred.DeferredAssert;
-
 import junit.framework.Assert;
-
 import org.junit.Test;
+
+import java.util.EnumSet;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.oracle.tools.deferred.DeferredHelper.eventually;
 import static com.oracle.tools.deferred.DeferredHelper.invoking;
-
 import static org.hamcrest.core.Is.is;
-
-import java.util.EnumSet;
-
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Unit tests for the {@link NonBlockingFiniteStateMachine}
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -295,16 +287,16 @@ public class TestNonBlockingFiniteStateMachine
                                                            Singularity.PROCESSING,
                                                            ExecutorServiceFactory.newSingleThreadScheduledExecutor(),
                                                            false);
-        
+
         Assert.assertEquals(0, actionTransition.getExecutionCount());
         Assert.assertEquals(0, actionExit.getExecutionCount());
         Assert.assertEquals(1, actionEntry.getExecutionCount());
 
-        for(int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
-        	machine.process(new Instruction.TransitionTo<Singularity>(Singularity.PROCESSING));
+            machine.process(new Instruction.TransitionTo<Singularity>(Singularity.PROCESSING));
         }
-        
+
         DeferredAssert.assertThat(eventually(invoking(actionTransition).getExecutionCount()), is(10L));
         DeferredAssert.assertThat(eventually(invoking(actionExit).getExecutionCount()), is(10L));
         DeferredAssert.assertThat(eventually(invoking(actionEntry).getExecutionCount()), is(11L));

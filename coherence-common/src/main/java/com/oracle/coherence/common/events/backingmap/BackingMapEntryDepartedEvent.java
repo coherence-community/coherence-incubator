@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -50,8 +49,8 @@ public class BackingMapEntryDepartedEvent extends BackingMapEntryRemovedEvent
      * @param entry                    The {@link Entry} associated with this event
      */
     public BackingMapEntryDepartedEvent(BackingMapManagerContext backingMapManagerContext,
-                                        String cacheName,
-                                        Entry<?, ?> entry)
+                                        String                   cacheName,
+                                        Entry<?, ?>              entry)
     {
         super(backingMapManagerContext, cacheName, entry);
     }
@@ -66,9 +65,9 @@ public class BackingMapEntryDepartedEvent extends BackingMapEntryRemovedEvent
      * @param value                    The value associated with this event
      */
     public BackingMapEntryDepartedEvent(BackingMapManagerContext backingMapManagerContext,
-                                        String cacheName,
-                                        Object key,
-                                        Object value)
+                                        String                   cacheName,
+                                        Object                   key,
+                                        Object                   value)
     {
         super(backingMapManagerContext, cacheName, key, value);
     }

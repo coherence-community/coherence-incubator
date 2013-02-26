@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +26,6 @@
 package com.oracle.coherence.patterns.processing.taskprocessor;
 
 import com.oracle.coherence.common.leasing.Lease;
-
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediatorKey;
 
 /**
@@ -48,7 +46,7 @@ public interface ClientLeaseMaintainer
      * @param lease            the {@link Lease} to be maintained
      */
     public void addLease(TaskProcessorMediatorKey taskProcessorKey,
-                         Lease lease);
+                         Lease                    lease);
 
 
     /**
@@ -58,5 +56,5 @@ public interface ClientLeaseMaintainer
      * @param lease the {@link Lease} to remove
      */
     public void removeLease(TaskProcessorMediatorKey taskProcessorKey,
-                            Lease lease);
+                            Lease                    lease);
 }

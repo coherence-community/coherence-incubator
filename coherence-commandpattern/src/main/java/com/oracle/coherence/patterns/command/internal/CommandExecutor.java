@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,16 +26,12 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.common.sequencegenerators.ClusteredSequenceGenerator;
 import com.oracle.coherence.common.sequencegenerators.SequenceGenerator;
-
 import com.oracle.coherence.common.ticketing.Ticket;
 import com.oracle.coherence.common.ticketing.TicketAggregator;
 import com.oracle.coherence.common.ticketing.TicketBook;
-
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.CommandSubmitter;
 import com.oracle.coherence.patterns.command.Context;
@@ -45,7 +40,6 @@ import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStra
 import com.oracle.coherence.patterns.command.ContextsManager;
 import com.oracle.coherence.patterns.command.ExecutionEnvironment;
 import com.oracle.coherence.patterns.command.PriorityCommand;
-
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
@@ -53,22 +47,16 @@ import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.Member;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.PartitionedService;
-
 import com.tangosol.net.management.Registry;
-
 import com.tangosol.run.component.ExecutionContext;
-
 import com.tangosol.util.Filter;
-
 import com.tangosol.util.filter.EqualsFilter;
 import com.tangosol.util.filter.KeyAssociatedFilter;
-
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -307,7 +295,7 @@ public class CommandExecutor implements CommandExecutorMBean
      * @param contextIdentifier
      * @param backingMapManagerContext
      */
-    public CommandExecutor(Identifier contextIdentifier,
+    public CommandExecutor(Identifier               contextIdentifier,
                            BackingMapManagerContext backingMapManagerContext)
     {
         this.contextIdentifier        = contextIdentifier;
@@ -609,7 +597,7 @@ public class CommandExecutor implements CommandExecutorMBean
             }
 
             // claim ownership of the Context
-            NamedCache     contextsCache  = CacheFactory.getCache(ContextWrapper.CACHENAME);
+            NamedCache contextsCache = CacheFactory.getCache(ContextWrapper.CACHENAME);
             ContextWrapper contextWrapper = (ContextWrapper) contextsCache.invoke(contextIdentifier,
                                                                                   new ClaimContextProcessor(CacheFactory
                                                                                       .getCluster().getLocalMember()
@@ -1017,7 +1005,8 @@ public class CommandExecutor implements CommandExecutorMBean
                     {
                         // get the ContextWrapper for the Context for which we're executing CommandExecutionRequests
                         NamedCache     contextWrapperCache = CacheFactory.getCache(ContextWrapper.CACHENAME);
-                        ContextWrapper contextWrapper      = (ContextWrapper) contextWrapperCache.get(contextIdentifier);
+                        ContextWrapper contextWrapper      =
+                            (ContextWrapper) contextWrapperCache.get(contextIdentifier);
 
                         // remember the last number of commands we've executed
                         totalCommandsExecuted = contextWrapper.getTotalCommandsExecuted();
@@ -1140,7 +1129,7 @@ public class CommandExecutor implements CommandExecutorMBean
                                                                                                  - commandExecutionRequest
                                                                                                      .getInstantQueued());
 
-                                        localCommandExecutionDuration        += localLastCommandExecutionDuration;
+                                        localCommandExecutionDuration += localLastCommandExecutionDuration;
                                         localMaximumCommandExecutionDuration =
                                             Math.max(localMaximumCommandExecutionDuration,
                                                      localLastCommandExecutionDuration);
@@ -1461,10 +1450,10 @@ public class CommandExecutor implements CommandExecutorMBean
          * @param isRecovering
          * @param checkpoint
          */
-        public void configure(Ticket ticket,
+        public void configure(Ticket             ticket,
                               ManagementStrategy managementStrategy,
-                              boolean isRecovering,
-                              Object checkpoint)
+                              boolean            isRecovering,
+                              Object             checkpoint)
         {
             this.isContextUpdated   = false;
             this.ticket             = ticket;

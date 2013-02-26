@@ -1,0 +1,47 @@
+What's New
+----------
+
+For the most part Oracle Coherence Incubator 11 remains functionally and 
+semantically compatible with the projects released as part of Oracle Coherence 
+Incubator 10.  Very few changes to the underlying project implementations have 
+occurred, apart from resolving minor defect fixes and making necessary dependency
+updates.
+
+The most significant change is in how the Oracle Coherence Incubator is
+now licensed, structured, built and organized.  In a nut shell, the following changes
+have occurred: 
+
+1.  Refactored all of the projects to be arranged into a single source tree, with
+    separate folders for each project and their associated examples instead of
+    having individual project source trees and versions.
+
+2.  Restructured all of the projects to follow classical
+    [Apache Maven](http://maven.apache.org/)-style multi-module conventions.
+
+3.  Completely re-wrote the build system to use [Apache Maven](http://maven.apache.org/)
+    instead of Apache Ant.
+
+4.  Ratified and released all of the projects under a standard open source 
+    license (CDDL).
+
+5.  Formalized the mechanism and process for accepting Coherence Community contributions.
+
+6.  Completely migrated the existing Atlassian Confluence-based
+    documentation (from [coherence.oracle.com](http://coherence.oracle.com)) to
+    be part of the source tree, thus enabling documentation version control and
+    Coherence Community Contributions.
+
+7.  Rationalized all projects to use a single Oracle Coherence Incubator version
+    number instead of individual version numbers.
+
+8.  Migrated the source repository to GitHub.
+
+9.  Migrated the internal private Issue Tracking system to the public
+    [Issue Tracking](http://java.net/jira/browse/COHINC) system provided by
+    [java.net](http://java.net).
+
+10. Introduced "uber" jar generation support to produce the entire Oracle
+    Coherence Incubator in a single jar. 
+
+For more detailed information concerning changes in this release please consult the 
+project [history](history.html).

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,18 +26,13 @@
 package com.oracle.coherence.common.serialization;
 
 import com.oracle.tools.junit.AbstractTest;
-
 import com.tangosol.io.ByteArrayWriteBuffer;
-
 import com.tangosol.io.pof.ConfigurablePofContext;
-
 import junit.framework.Assert;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-
 import java.util.Arrays;
 
 /**
@@ -49,14 +43,14 @@ import java.util.Arrays;
  */
 public class ReflectiveSerializationTest extends AbstractTest
 {
-    /** 
-     *Field description 
+    /**
+     * Field description
      */
     public static final byte[] simpleTypePofStream = new byte[] {-86, 15, 0, 1, 65, 1, 2, 107, 3, 108, 4, 109, 5, 97, 6,
                                                                  111, 7, 112, 64};
 
-    /** 
-     *Field description 
+    /**
+     * Field description
      */
     public static final byte[] collectionTypePofStream = new byte[] {-84, 15, 0, 1, 93, 78, 78, 4, 3, 116, 119, 111, 3,
                                                                      116, 118, 97, 3, 111, 110, 101, 3, 101, 116, 116,
@@ -79,22 +73,22 @@ public class ReflectiveSerializationTest extends AbstractTest
                                                                      116, 5, 116, 104, 114, 101, 101, 3, 116, 114, 101,
                                                                      3, 116, 119, 111, 3, 116, 118, 97, 64};
 
-    /** 
-     *Field description 
+    /**
+     * Field description
      */
     public static final byte[] versionedTypePofStreamV0 = new byte[] {-85, 15, 0, 1, 65, 1, 2, 107, 3, 108, 4, 109, 5,
                                                                       97, 6, 111, 7, 112, 64};
 
-    /** 
-     *Field description 
+    /**
+     * Field description
      */
     public static final byte[] versionedTypePofStreamV1 = new byte[] {-85, 15, 1, 1, 65, 1, 2, 107, 3, 108, 4, 109, 5,
                                                                       97, 6, 111, 7, 112, 8, 115, 9, 125, 10, 69, 64,
                                                                       62, 0, 0, 0, 0, 0, 0, 11, 75, 40, 12, 97, 13, 64,
                                                                       60, 14, 66, -122, 1, 64};
 
-    /** 
-     *Field description 
+    /**
+     * Field description
      */
     public static final byte[] basicTypePofStream = new byte[] {-88, 15, 1, 0, -88, 15, 1, 1, 65, -86, -86, 5, 2, 65,
                                                                 -69, -18, 93, 3, 78, 9, 65, 65, 65, 66, 66, 66, 67, 67,
@@ -104,8 +98,8 @@ public class ReflectiveSerializationTest extends AbstractTest
                                                                 87, 1, 4, 3, 65, 2, 65, 3, 65, 4, 8, 88, 65, 3, 4, 2, 3,
                                                                 64};
 
-    /** 
-     *Field description 
+    /**
+     * Field description
      */
     public static final byte[] nakedTypePofStream = new byte[] {-83, 15, 0, 1, 65, -86, -86, 5, 2, 65, -69, -18, 93, 3,
                                                                 78, 9, 65, 65, 65, 66, 66, 66, 67, 67, 67, 64};
@@ -253,9 +247,9 @@ public class ReflectiveSerializationTest extends AbstractTest
         Assert.assertEquals(0, buffer.length());
 
         // force the serializer for the class to use version 0.
-        int                  userTypeId             = pofContext.getUserTypeIdentifier(type);
-        ReflectiveSerializer reflectiveSerializer   = (ReflectiveSerializer) pofContext.getPofSerializer(userTypeId);
-        ReflectedSerializer  reflectedPofSerializer =
+        int                  userTypeId           = pofContext.getUserTypeIdentifier(type);
+        ReflectiveSerializer reflectiveSerializer = (ReflectiveSerializer) pofContext.getPofSerializer(userTypeId);
+        ReflectedSerializer reflectedPofSerializer =
             reflectiveSerializer.getReflectedPofContext().ensurePofSerializer(type.getClass(),
                                                                               pofContext);
 
@@ -300,10 +294,10 @@ public class ReflectiveSerializationTest extends AbstractTest
     @Test
     public void testVersionedTypeV1Serialization() throws IOException
     {
-        VersionedType        type                   = new VersionedType();
-        int                  userTypeId             = pofContext.getUserTypeIdentifier(type);
-        ReflectiveSerializer reflectiveSerializer   = (ReflectiveSerializer) pofContext.getPofSerializer(userTypeId);
-        ReflectedSerializer  reflectedPofSerializer =
+        VersionedType        type                 = new VersionedType();
+        int                  userTypeId           = pofContext.getUserTypeIdentifier(type);
+        ReflectiveSerializer reflectiveSerializer = (ReflectiveSerializer) pofContext.getPofSerializer(userTypeId);
+        ReflectedSerializer reflectedPofSerializer =
             reflectiveSerializer.getReflectedPofContext().ensurePofSerializer(type.getClass(),
                                                                               pofContext);
 
@@ -388,9 +382,9 @@ public class ReflectiveSerializationTest extends AbstractTest
         buffer.write(0, versionedTypePofStreamV1);
 
         // force the serializer to think it's version 0 so we can downgrade when we deserialize
-        int                  userTypeId             = pofContext.getUserTypeIdentifier(VersionedType.class);
-        ReflectiveSerializer reflectiveSerializer   = (ReflectiveSerializer) pofContext.getPofSerializer(userTypeId);
-        ReflectedSerializer  reflectedPofSerializer =
+        int                  userTypeId           = pofContext.getUserTypeIdentifier(VersionedType.class);
+        ReflectiveSerializer reflectiveSerializer = (ReflectiveSerializer) pofContext.getPofSerializer(userTypeId);
+        ReflectedSerializer reflectedPofSerializer =
             reflectiveSerializer.getReflectedPofContext().ensurePofSerializer(VersionedType.class,
                                                                               pofContext);
 

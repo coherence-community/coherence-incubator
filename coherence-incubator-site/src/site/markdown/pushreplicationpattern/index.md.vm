@@ -1,5 +1,28 @@
 The Push Replication Pattern
 ----------------------------
 
-<h4>TO BE COMPLETED...</h4>
+<h4>Overview</h4>
+
+Provides a simple implementation mechanism to *push* cache operations, like
+inserts, updates and deletes from one cluster to one or more channels (and other
+clusters).
+
+<h4>Distribution</h4>
+
+The Push Replication Pattern implementation is distributed in the jar file
+called: `coherence-pushreplicationpattern-${project.version}.jar`.
+
+However, as the Push Replication Pattern has many dependencies, we **strongly
+recommend** that developers adopt and use tools like Apache Maven/Ivy/Gradle to
+transitively resolve the said dependencies, instead of attempting to do so manually.
+
+To configure your Apache Maven-based application to use the Push Replication
+Pattern, simply add the following declaration to your application `pom.xml` file
+`<dependencies>` element.
+
+    <dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-pushreplicationpattern</artifactId>
+        <version>${project.version}</version>
+    </dependency>
 

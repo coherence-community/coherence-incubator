@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,9 +27,7 @@ package com.oracle.coherence.common.applications;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -38,7 +35,7 @@ import java.util.Properties;
  * Execute a Java Application based on information defined in a .properties
  * file located on the classpath.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -62,13 +59,13 @@ public class Runner
      *      <li>Argumentn=valuen</li>
      * </ol>
      *
-     * @param arguments  the arguments for the {@link ExampleRunner}
+     * @param arguments  the arguments for the {@link Runner}
      */
     public static void main(String[] arguments)
     {
         System.out.println("-----------------------------------------------------------");
         System.out.println("Oracle Java Application Runner");
-        System.out.println("Copyright (c) 2012. Oracle Corporation");
+        System.out.println("Copyright (c) 2013. Oracle Corporation");
         System.out.println("-----------------------------------------------------------");
         System.out.println();
 

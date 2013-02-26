@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -31,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * A Tracking Action for {@link StateEntryAction}s.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @param <S>  the type of the state
@@ -40,9 +39,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class StateEntryTrackingAction<S extends Enum<S>> implements StateEntryAction<S>
 {
-	/** 
-	 * The number of times the action has been executed.
-	 */
+    /**
+     * The number of times the action has been executed.
+     */
     private AtomicLong m_executionCount;
 
 

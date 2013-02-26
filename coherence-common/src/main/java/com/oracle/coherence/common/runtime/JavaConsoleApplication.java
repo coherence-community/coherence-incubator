@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,22 +29,18 @@ import com.oracle.coherence.common.resourcing.AbstractDeferredResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
 
-import java.io.IOException;
-
-import java.net.MalformedURLException;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 import javax.management.JMX;
 import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * <strong>This package is now deprecated.  Please use the com.oracle.tools package instead.</strong>
@@ -92,11 +87,11 @@ public class JavaConsoleApplication extends AbstractApplication implements JavaA
      * @param environmentVariables  The environment variables used when starting the {@link JavaApplication}.
      * @param systemProperties      The system properties provided to the {@link JavaApplication}
      */
-    public JavaConsoleApplication(Process process,
-                                  String name,
+    public JavaConsoleApplication(Process            process,
+                                  String             name,
                                   ApplicationConsole console,
-                                  Properties environmentVariables,
-                                  Properties systemProperties)
+                                  Properties         environmentVariables,
+                                  Properties         systemProperties)
     {
         super(process, name, console, environmentVariables);
 
@@ -255,7 +250,7 @@ public class JavaConsoleApplication extends AbstractApplication implements JavaA
      */
     @Override
     public <T> T getMBeanProxy(ObjectName objectName,
-                               Class<T> clazz)
+                               Class<T>   clazz)
     {
         return JMX.newMBeanProxy(getMBeanServerConnection(), objectName, clazz);
     }
@@ -266,7 +261,7 @@ public class JavaConsoleApplication extends AbstractApplication implements JavaA
      */
     @Override
     public MBeanInfo getMBeanInfo(final ObjectName objectName,
-                                  final long waitTimeMS)
+                                  final long       waitTimeMS)
     {
         try
         {

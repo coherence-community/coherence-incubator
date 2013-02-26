@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,10 +27,9 @@ package com.oracle.coherence.common.runtime;
 
 import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
 
-import java.util.Properties;
-
 import javax.management.MBeanInfo;
 import javax.management.ObjectName;
+import java.util.Properties;
 
 /**
  * <strong>This package is now deprecated.  Please use the com.oracle.tools package instead.</strong>
@@ -57,11 +55,11 @@ public class ClusterMember extends JavaConsoleApplication
      * @param environmentVariables  The environment variables used when starting the {@link ClusterMember}.
      * @param systemProperties      The system properties provided to the {@link ClusterMember}
      */
-    ClusterMember(Process process,
-                  String name,
+    ClusterMember(Process            process,
+                  String             name,
                   ApplicationConsole console,
-                  Properties environmentVariables,
-                  Properties systemProperties)
+                  Properties         environmentVariables,
+                  Properties         systemProperties)
     {
         super(process, name, console, environmentVariables, systemProperties);
     }
@@ -125,7 +123,7 @@ public class ClusterMember extends JavaConsoleApplication
      * @throws UnsupportedOperationException If JMX is not enabled for the {@link JavaApplication}.
      */
     public MBeanInfo getServiceMBeanInfo(String serviceName,
-                                         int nodeId)
+                                         int    nodeId)
     {
         try
         {

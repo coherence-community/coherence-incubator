@@ -9,7 +9,7 @@ Official information about this project including the definition, licensing, con
 [http://java.net/projects/cohinc](http://java.net/projects/cohinc)
 
 Detailed project documentation for the latest snapshot release is available here:
-[http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/](http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/)
+[http://coherence-community.github.com/coherence-incubator/11.0.1-SNAPSHOT/](http://coherence-community.github.com/coherence-incubator/11.0.1-SNAPSHOT/)
 
 > **NOTE**
 >

@@ -1,0 +1,98 @@
+The Command Pattern Example
+---------------------------
+
+<h4>Prerequisites</h4>
+
+To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+[Building the Oracle Coherence Incubator](building.html).
+
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-commandpattern-examples`
+module of the Oracle Coherence Incubator.
+
+<h4>Overview</h4>
+
+The Command Pattern example demonstrates how to use the Command Pattern to set
+the value of an attribute on a Command `Context` asynchronously.  It illustrates
+the three main elements of the Command Pattern, A `Context`, the `CommandSubmitter`
+and a `Command`.
+
+There are four classes in the example:
+
+1.  `CommandPatternExample` - The main application class.
+
+2.  `GenericContext` - An mutable implementation of the `Context` interface that
+    will hold a specific type of object.
+
+3.  `LoggingCommand` - A `Command`  that will write a log message
+    to the Coherence logs.
+
+4.  `SetValueCommand` - A `Command` that will call the `setValue()` method on
+    the `GenericContext`.
+
+The `CommandPatternExample` creates a new `GenericContext` (that holds a `Long`)
+which is registered with the `ContextsManager`.  The example then submits a
+`LoggingCommand` stating that the application has commenced.  In a tight loop, the
+value of the `Long` is set 10000 times using the `SetValueCommand`.  After each
+1000th iteration a `PriorityCommand` is submitted to log what number the
+iteration is at.
+
+There are two approaches to running the example.  First is using a simple entirely
+encapuslated approach.  The second is using a client-server mode in which an
+Coherence Extend-based Client runs the actual `CommandPatternExample`, backed by
+a Coherence Proxy-enabled Server the hosts the `GenericContext`.
+
+>   The following instructions assume that `$COHERENCE_INCUBATOR` is the directory
+>   in which the Oracle Coherence Incubator source code has been downloaded,
+>   unpacked and built according to the prerequisites outlined above.
+
+<h4>Running the Simple Example</h4>
+
+Execute the following shell commands to run the Simple Example.
+
+In a new Terminal / Shell Console for the "Example"
+
+1.  Change to the Command Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-commandpattern-examples/target`
+
+
+2.  Run the Simple Example
+
+    `java -jar coherence-commandpattern-examples-${project.version}.jar simple.properties`
+
+You will notice that the application will output logs showing the iteration and
+logging of priority commands.
+
+<h4>Running in Client-Server Mode</h4>
+
+Execute the following shell commands to run the example in Client-Server Mode.
+
+In a new Terminal / Shell Console for the "Server"
+
+1.  Change to the Command Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-commandpattern-examples/target`
+
+2.  Start the Coherence Server (and Proxy) Process/
+
+    `java -jar coherence-commandpattern-examples-${project.version}.jar server.properties`
+
+In a new Terminal / Shell Console for the "Client"
+
+3.  Change to the Command Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-commandpattern-examples/target`
+
+4.  Start the Coherence Extend-based Client Application (example)
+
+    `java -jar coherence-commandpattern-examples-${project.version}.jar client.properties`
+
+You will notice the "Server" console that the logging commands are executing in
+the server, where are the "Client" console displays no such logging.   This is
+because the `Commands` are executed at the `Context`, that of which is hosted
+by the "Server".
+
+After this you may kill the "Server" application and close the consoles.

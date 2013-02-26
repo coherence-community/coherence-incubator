@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,17 +26,14 @@
 package com.oracle.coherence.patterns.command;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStrategy;
 import com.oracle.coherence.patterns.command.internal.CancelCommandProcessor;
 import com.oracle.coherence.patterns.command.internal.CommandExecutionRequest;
 import com.oracle.coherence.patterns.command.internal.ContextWrapper;
 import com.oracle.coherence.patterns.command.internal.SubmissionOutcome;
 import com.oracle.coherence.patterns.command.internal.SubmitCommandExecutionRequestProcessor;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.extractor.ReflectionExtractor;
 
 /**
@@ -81,14 +77,14 @@ public class DefaultCommandSubmitter implements CommandSubmitter
      */
     public <C extends Context> Identifier submitCommand(Identifier contextIdentifier,
                                                         Command<C> command,
-                                                        boolean acceptCommandIfContextDoesNotExist)
+                                                        boolean    acceptCommandIfContextDoesNotExist)
     {
         // create a CommandExecutionRequest to wrap the provided Command
         // (we do this as we need to track internal state around a Command)
         CommandExecutionRequest commandExecutionRequest = new CommandExecutionRequest(contextIdentifier, command);
 
         // submit the command to the context
-        NamedCache        contextsCache     = CacheFactory.getCache(ContextWrapper.CACHENAME);
+        NamedCache contextsCache = CacheFactory.getCache(ContextWrapper.CACHENAME);
         SubmissionOutcome submissionOutcome = (SubmissionOutcome) contextsCache.invoke(contextIdentifier,
                                                                                        new SubmitCommandExecutionRequestProcessor(commandExecutionRequest,
             acceptCommandIfContextDoesNotExist));
@@ -125,7 +121,7 @@ public class DefaultCommandSubmitter implements CommandSubmitter
     {
         SubmissionOutcome.Accepted submissionOutcome = (SubmissionOutcome.Accepted) commandIdentifier;
 
-        NamedCache                 commandsCache     =
+        NamedCache commandsCache =
             CacheFactory.getCache(CommandExecutionRequest.getCacheName(submissionOutcome.getManagementStrategy()));
 
         Boolean result = (Boolean) commandsCache.invoke(submissionOutcome.getCommandExecutionRequestKey(),

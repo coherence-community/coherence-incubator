@@ -1,11 +1,17 @@
 Source Code
 -----------
 
-The Source Code for the Oracle Coherence Incubator is hosted by github.com.  
-It can be found here: 
+The Source Code for the entire Oracle Coherence Incubator is hosted by [github.com](https://github.com).
+
+It is located here:
 [https://github.com/coherence-community/coherence-incubator](https://github.com/coherence-community/coherence-incubator)
 
-The branching model adopted for development is as outlined by Vincent Driessen in
+Alternatively if you're not using or want to avoid setting up [git](http://git-scm.com)
+can download a zip containing of the latest development branch from here:
+
+[https://github.com/coherence-community/coherence-incubator/archive/develop-11.zip](https://github.com/coherence-community/coherence-incubator/archive/develop-11.zip)
+
+The branching model adopted for development and releases is as outlined by Vincent Driessen in
 [A successful Git branching model](http://nvie.com/posts/a-successful-git-branching-model)
 
 Active development is carried out in the branch: **develop-11**.  Nightly builds, snapshots
@@ -15,8 +21,8 @@ repository.
 
 Official Releases are made from the branch: **release-11** (once integrated from
 the development branch).  Each official release is tagged.   Official releases are
-published to [http://maven.java.net](http://maven.java.net) and Maven Central
-(after they are promoted).
+published to [http://maven.java.net](http://maven.java.net) and later (usually
+with in 4 hours) to Maven Central.
 
 <h4>Important:</h4>
 
@@ -24,6 +30,5 @@ published to [http://maven.java.net](http://maven.java.net) and Maven Central
 
 2.  **Read-Only Access** is provided to the public.
 
-3.  **Pull Requests** are never accepted.  
-
-4.  Only submissions by official [contributors](contributions.html) are accepted.
+3.  **Pull Requests** are never accepted
+    (unless they are from official [contributors](contributions.html))

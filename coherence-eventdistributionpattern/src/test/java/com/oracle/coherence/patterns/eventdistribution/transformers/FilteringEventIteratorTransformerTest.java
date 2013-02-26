@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,23 +29,17 @@ import com.oracle.coherence.common.events.EntryInsertedEvent;
 import com.oracle.coherence.common.events.EntryRemovedEvent;
 import com.oracle.coherence.common.events.EntryUpdatedEvent;
 import com.oracle.coherence.common.events.Event;
-
 import com.oracle.coherence.common.util.SimpleBinaryEntry;
-
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryInsertedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryRemovedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryUpdatedEvent;
-
 import com.tangosol.util.BinaryEntry;
-
 import com.tangosol.util.filter.LikeFilter;
 import com.tangosol.util.filter.NeverFilter;
-
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,10 +26,8 @@
 package com.oracle.coherence.patterns.functor.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.functor.Functor;
 import com.oracle.coherence.patterns.functor.FunctorSubmitter;
-
 import com.tangosol.net.CacheFactory;
 
 import java.util.concurrent.CancellationException;
@@ -92,8 +89,8 @@ public class SingleFunctorFuture<T> implements FunctorFuture, Future<T>
      * @param functorResultIdentifier
      * @param functorSubmitter
      */
-    public SingleFunctorFuture(Identifier functorSubmitterIdentifier,
-                               Identifier functorResultIdentifier,
+    public SingleFunctorFuture(Identifier       functorSubmitterIdentifier,
+                               Identifier       functorResultIdentifier,
                                FunctorSubmitter functorSubmitter)
     {
         this.functorSubmitterIdentifier = functorSubmitterIdentifier;
@@ -225,7 +222,7 @@ public class SingleFunctorFuture<T> implements FunctorFuture, Future<T>
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public T get(long time,
+    public T get(long     time,
                  TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException
     {
         if (isCanceled)

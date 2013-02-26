@@ -1,0 +1,61 @@
+The Processing Pattern Task Execution Example
+---------------------------------------------
+
+<h4>Prerequisites</h4>
+
+To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+[Building the Oracle Coherence Incubator](building.html).
+
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-processingpattern-examples`
+module of the Oracle Coherence Incubator.
+
+<h4>Overview</h4>
+
+This example demonstrates calculating different types of `Tasks` using the
+Processing Pattern, namely `Single` and `Grid`-based tasks.
+
+There are two applications to run as part of this example.  The following details
+the intent, instructions and the order in which to run these applictions.
+
+>   The following instructions assume that `$COHERENCE_INCUBATOR` is the directory
+>   in which the Oracle Coherence Incubator source code has been downloaded,
+>   unpacked and built according to the prerequisites outlined above.
+
+
+<h4>Step 1. Running the Grid Calculation Server</h4>
+
+Execute the following shell commands to start the "Grid Calculation Server", that
+of which will execute submitted `Callables` and `Tasks`.
+
+In a new Terminal / Shell Console for the "Grid Calculation Server"
+
+1.  Change to the Processing Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-processingpattern-examples/target`
+
+
+2.  Run the "Grid Calculation Server"
+
+    `java -jar coherence-processingpattern-examples-${project.version}.jar grid-server.properties`
+
+
+<h4>Step 2. Running the Task Execution Application</h4>
+
+Execute the following shell commands to start the "Task Execution Application".
+This application will submit tasks to the "Grid Calculation Server", that
+of which will appropriately execute the submitted tasks and return the results.
+
+In a new Terminal / Shell Console for the "Task Execution Application"
+
+1.  Change to the Processing Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-processingpattern-examples/target`
+
+
+2.  Run the "Task Execution Application"
+
+    `java -jar coherence-processingpattern-examples-${project.version}.jar taskexecution.properties`
+

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,9 +26,7 @@
 package com.oracle.coherence.patterns.command.examples;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.patterns.command.CommandSubmitter;
 import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStrategy;
 import com.oracle.coherence.patterns.command.ContextsManager;
@@ -37,7 +34,6 @@ import com.oracle.coherence.patterns.command.DefaultCommandSubmitter;
 import com.oracle.coherence.patterns.command.DefaultContextConfiguration;
 import com.oracle.coherence.patterns.command.DefaultContextsManager;
 import com.oracle.coherence.patterns.command.commands.PriorityCommandAdapter;
-
 import com.tangosol.net.CacheFactory;
 
 import java.io.IOException;
@@ -74,12 +70,12 @@ public class CommandPatternExample
                 DefaultContextConfiguration contextConfiguration =
                     new DefaultContextConfiguration(ManagementStrategy.DISTRIBUTED);
 
-                String          contextName       = "Context for " + Thread.currentThread().getName();
+                String          contextName     = "Context for " + Thread.currentThread().getName();
 
-                ContextsManager contextsManager   = DefaultContextsManager.getInstance();
-                Identifier      contextIdentifier = contextsManager.registerContext(contextName,
-                                                                                    new GenericContext<Long>(0L),
-                                                                                    contextConfiguration);
+                ContextsManager contextsManager = DefaultContextsManager.getInstance();
+                Identifier contextIdentifier = contextsManager.registerContext(contextName,
+                                                                               new GenericContext<Long>(0L),
+                                                                               contextConfiguration);
 
                 CommandSubmitter commandSubmitter = DefaultCommandSubmitter.getInstance();
 
@@ -110,9 +106,9 @@ public class CommandPatternExample
             }
         };
 
+        int      THREAD_COUNT = 10;
+        Thread[] threads      = new Thread[THREAD_COUNT];
 
-        int THREAD_COUNT = 10;
-        Thread[] threads = new Thread[THREAD_COUNT];
         for (int i = 0; i < THREAD_COUNT; i++)
         {
             threads[i] = new Thread(runnable);

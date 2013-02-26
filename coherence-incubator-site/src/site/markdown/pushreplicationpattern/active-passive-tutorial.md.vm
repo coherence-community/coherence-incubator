@@ -1,0 +1,529 @@
+The Push Replication Pattern Active-Passive Tutorial
+----------------------------------------------------
+
+The following is a brief tutorial outlining the use of the Push Replication Pattern
+in a simple "active-passive" topology.  In this topology one cluster, the
+"active" cluster, uses an application that performs read/write operations.  These
+operations are then replicated to another cluster, the "passive" cluster,
+that of which is being used predominantly in a read-only mode.  Entries that
+may be updated by applications in the "destination" cluster are not replicated
+back to the "active" cluster.
+
+![The Active Passive Topology](../images/pushreplicationpattern/active-passive.png)
+
+>   The `coherence-pushreplicationpattern-examples` project contains several
+>   detailed applications anc configurations for Push Replication, including those
+>   for the Active-Passive, Active-Active and Hub-And-Spoke topologies.  This
+>   are an invaluable resource for learning how to configure Push Replication
+>   in a variety of topologies.
+
+<h5>Step 1. A Simple Cache Configuration</h5>
+
+Consider the following Coherence Cache Configuration that defines a simple
+Distributed Cache called `my-cache`, that of which we'd like to replicated to
+another cluster.
+
+    <cache-config>
+        <defaults>
+            <serializer>pof</serializer>
+        </defaults>
+
+        <caching-scheme-mapping>
+            <cache-mapping>
+                <cache-name>my-cache</cache-name>
+                <scheme-name>my-distributed-scheme</scheme-name>
+            </cache-mapping>
+        </caching-scheme-mapping>
+
+        <caching-schemes>
+            <distributed-scheme>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <backing-map-scheme>
+                    <local-scheme />
+                </backing-map-scheme>
+
+                <autostart>true</autostart>
+            </distributed-scheme>
+        </caching-schemes>
+    </cache-config>
+
+<h5>Step 2. Adding a Publishing Cache Store</h5>
+
+The first change to the configuration to enable Push Eeplication is to modify
+the `<backing-map-scheme>` configuration to introduce a specialized `CacheStore`
+implementation called the `PublishingCacheStore`.
+
+Unlike most `CacheStore` implementations that typically read/write to a Database,
+the purpose of a `PublishingCacheStore` is to *publish* operations that occur on
+a cache as `Events` to an `EventDistributor`.
+
+The configuration of a `PublishingCacheStore` is like any other `CacheStore` in
+that we need to introduce a `<read-write-backing-map-scheme>`.
+
+A Coherence Cache Configuration for this is as follows:
+
+    <cache-config>
+        <defaults>
+            <serializer>pof</serializer>
+        </defaults>
+
+        <caching-scheme-mapping>
+            <cache-mapping>
+                <cache-name>my-cache</cache-name>
+                <scheme-name>my-distributed-scheme</scheme-name>
+            </cache-mapping>
+        </caching-scheme-mapping>
+
+        <caching-schemes>
+            <distributed-scheme>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <backing-map-scheme>
+                    <read-write-backing-map-scheme>
+                        <internal-cache-scheme>
+                            <local-scheme>
+                            </local-scheme>
+                        </internal-cache-scheme>
+
+                        <cachestore-scheme>
+                            <class-scheme>
+                                <class-name>com.oracle.coherence.patterns.pushreplication.PublishingCacheStore</class-name>
+                                <init-params>
+                                    <init-param>
+                                        <param-type>java.lang.String</param-type>
+                                        <param-value>{cache-name}</param-value>
+                                    </init-param>
+                                </init-params>
+                            </class-scheme>
+                        </cachestore-scheme>
+                    </read-write-backing-map-scheme>
+                </backing-map-scheme>
+
+                <autostart>true</autostart>
+            </distributed-scheme>
+        </caching-schemes>
+    </cache-config>
+
+While this configuration is valid for Coherence, it's not yet enough to work
+correctly with Push Replication.   Although we've defined our `PublishingCacheStore`
+we still need to define the `EventDistributor`.
+
+<h5>Step 3. Configuring An Event Distributor</h5>
+
+The purpose of an `EventDistributor` is to distribute `Events` to one or more
+`Event Channels`, those of which may be used to process and replay the said `Events`.
+
+The configuration of an `EventDistributor` occurs *inside* and *together* with the
+`<cache-mapping>` of the cache that is to be replicated.
+
+A Coherence Cache Configuration for this is as follows:
+
+    <cache-config
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+        element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
+
+        <defaults>
+            <serializer>pof</serializer>
+        </defaults>
+
+        <caching-scheme-mapping>
+            <cache-mapping>
+                <cache-name>my-cache</cache-name>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <event:distributor>
+                    <event:distributor-name>{cache-name}</event:distributor-name>
+                    <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
+
+                    <event:distributor-scheme>
+                        <event:coherence-based-distributor-scheme/>
+                    </event:distributor-scheme>
+                </event:distributor>
+
+            </cache-mapping>
+        </caching-scheme-mapping>
+
+        <caching-schemes>
+            <distributed-scheme>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <backing-map-scheme>
+                    <read-write-backing-map-scheme>
+                        <internal-cache-scheme>
+                            <local-scheme>
+                            </local-scheme>
+                        </internal-cache-scheme>
+
+                        <cachestore-scheme>
+                            <class-scheme>
+                                <class-name>com.oracle.coherence.patterns.pushreplication.PublishingCacheStore</class-name>
+                                <init-params>
+                                    <init-param>
+                                        <param-type>java.lang.String</param-type>
+                                        <param-value>{cache-name}</param-value>
+                                    </init-param>
+                                </init-params>
+                            </class-scheme>
+                        </cachestore-scheme>
+                    </read-write-backing-map-scheme>
+                </backing-map-scheme>
+
+                <autostart>true</autostart>
+            </distributed-scheme>
+        </caching-schemes>
+    </cache-config>
+
+>   One of the main requirements for configuring Push Replication is that of
+>   appropriately configuring the [Event Distribution Pattern](../eventdistributionpattern/index.html).
+>   Consequently we strongly recommend investing some time in understanding the
+>   configuration options that are available, especially through the reference
+>   documentation for the [`event` Namespace](../eventdistributionpattern/event-namespace.html)
+
+The above configuration defines an `EventDistributor` that will be
+named the same as the declared cache name (hence the `{cache-name}`).  The exact
+implementation will be based on Coherence (hence the `<event:coherence-based-distributor-scheme>`)
+that of which is internally based on the [Coherence Messaging Pattern](../messagingpattern/index.html).
+
+As a consequence of using the Coherence-based implementation, the above configuration
+additionally must "introduce" the cache configuration required for Coherence Messaging.
+
+Now that we've defined an `EventDistributor` the next task is to define appropriate
+`Event Channels` that can appropriately process and replay `Events`.
+
+<h5>Step 4. Configuring A Logging Event Channel</h5>
+
+The simplest type of `EventChannel` to configure is one that logs `Events`.  As
+with all `EventChannels`, configuring a `StdErrEventChannel` for logging to `stderr`
+occurs as part of configuring the `EventDistributor`.
+
+A Coherence Cache Configuration for this is as follows:
+
+    <cache-config
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+        element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
+
+        <defaults>
+            <serializer>pof</serializer>
+        </defaults>
+
+        <caching-scheme-mapping>
+            <cache-mapping>
+                <cache-name>my-cache</cache-name>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <event:distributor>
+                    <event:distributor-name>{cache-name}</event:distributor-name>
+                    <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
+
+                    <event:distributor-scheme>
+                        <event:coherence-based-distributor-scheme/>
+                    </event:distributor-scheme>
+
+                    <event:distribution-channels>
+                        <event:distribution-channel>
+                            <event:channel-name>Logger</event:channel-name>
+                            <event:starting-mode>enabled</event:starting-mode>
+
+                            <event:channel-scheme>
+                                <event:stderr-channel-scheme/>
+                            </event:channel-scheme>
+                        </event:distribution-channel>
+                    </event:distribution-channels>
+                </event:distributor>
+
+            </cache-mapping>
+        </caching-scheme-mapping>
+
+        <caching-schemes>
+            <distributed-scheme>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <backing-map-scheme>
+                    <read-write-backing-map-scheme>
+                        <internal-cache-scheme>
+                            <local-scheme>
+                            </local-scheme>
+                        </internal-cache-scheme>
+
+                        <cachestore-scheme>
+                            <class-scheme>
+                                <class-name>com.oracle.coherence.patterns.pushreplication.PublishingCacheStore</class-name>
+                                <init-params>
+                                    <init-param>
+                                        <param-type>java.lang.String</param-type>
+                                        <param-value>{cache-name}</param-value>
+                                    </init-param>
+                                </init-params>
+                            </class-scheme>
+                        </cachestore-scheme>
+                    </read-write-backing-map-scheme>
+                </backing-map-scheme>
+
+                <autostart>true</autostart>
+            </distributed-scheme>
+        </caching-schemes>
+    </cache-config>
+
+While this configuration only defines a single `EventChannel`, it's possible to define
+more than one.   That is, every `EventDistributor` is actually capable of distributing
+`Events` concurrently to many independently defined and managed `EventChannels`.
+This approach provides a flexible means of handling, processing and distributing
+`Events` across multiple channel implementations, including those that connect to
+other clusters.
+
+In what follows we'll discuss how to configure a `RemoteCacheChannel`, that of
+which is capable of replaying `Events` in another cluster, thus replicating the
+underlying cache operations that caused the said `Events`.
+
+For detailed information on the variety of out-of-the-box `EventChannel` implementations
+that are available, together with their configuration, please refer to the
+[Event Namespace](../eventdistributionpattern/event-namespace.html).
+
+<h5>Step 5. Configuring A Remote Cache Channel</h5>
+
+The purpose of a `RemoteCacheChannel` is to replay cache `Events` in a configured
+remote cache.  Consequently in order to configure a `RemoteCacheChannel` one must:
+
+1.  Define a Remote Cache Scheme, that of which will be used to specify the
+    remote cache configuration.
+
+2.  Establish another Cluster, together with Proxy service to which the
+    Remote Cache Scheme will contect.
+
+3.  Define a `RemoteCacheChannel`, that of which refers to the Remote Cache Scheme.
+
+A Coherence Cache Configuration for this is as follows:
+
+    <cache-config
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+        element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
+
+        <defaults>
+            <serializer>pof</serializer>
+        </defaults>
+
+        <caching-scheme-mapping>
+            <cache-mapping>
+                <cache-name>my-cache</cache-name>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <event:distributor>
+                    <event:distributor-name>{cache-name}</event:distributor-name>
+                    <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
+
+                    <event:distributor-scheme>
+                        <event:coherence-based-distributor-scheme/>
+                    </event:distributor-scheme>
+
+                    <event:distribution-channels>
+                        <event:distribution-channel>
+                            <event:channel-name>Remote Cache</event:channel-name>
+                            <event:starting-mode>enabled</event:starting-mode>
+
+                            <event:channel-scheme>
+                                <event:remote-cache-channel-scheme>
+                                    <event:remote-cache-service-name>my-remote-cache-scheme</event:remote-cache-service-name>
+                                </event:remote-cache-channel-scheme>
+                            </event:channel-scheme>
+                        </event:distribution-channel>
+                    </event:distribution-channels>
+                </event:distributor>
+
+            </cache-mapping>
+        </caching-scheme-mapping>
+
+        <caching-schemes>
+            <distributed-scheme>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <backing-map-scheme>
+                    <read-write-backing-map-scheme>
+                        <internal-cache-scheme>
+                            <local-scheme>
+                            </local-scheme>
+                        </internal-cache-scheme>
+
+                        <cachestore-scheme>
+                            <class-scheme>
+                                <class-name>com.oracle.coherence.patterns.pushreplication.PublishingCacheStore</class-name>
+                                <init-params>
+                                    <init-param>
+                                        <param-type>java.lang.String</param-type>
+                                        <param-value>{cache-name}</param-value>
+                                    </init-param>
+                                </init-params>
+                            </class-scheme>
+                        </cachestore-scheme>
+                    </read-write-backing-map-scheme>
+                </backing-map-scheme>
+
+                <autostart>true</autostart>
+            </distributed-scheme>
+
+            <!-- the remote cache scheme -->
+            <remote-cache-scheme>
+                <scheme-name>my-remote-cache-scheme</scheme-name>
+                <initiator-config>
+                    <tcp-initiator>
+                        <remote-addresses>
+                            <socket-address>
+                                <address system-property="remote.address">localhost</address>
+                                <port system-property="remote.port">10000</port>
+                            </socket-address>
+                        </remote-addresses>
+                        <connect-timeout>10s</connect-timeout>
+                    </tcp-initiator>
+                    <outgoing-message-handler>
+                        <request-timeout>10s</request-timeout>
+                    </outgoing-message-handler>
+                </initiator-config>
+            </remote-cache-scheme>
+        </caching-schemes>
+    </cache-config>
+
+>   The name of the cache into which the `Events` will be replayed is always
+>   the same as the cache from which the `Events` originated.   To replay the
+>   `Events into a different cache, you should use a `RemoveClusterChannel`.
+
+
+>   It is highly recommended that you use a `RemoteClusterChannel` instead of
+>   a `RemoteCacheChannel` as remote cluster channels perform all `Event`
+>   processing in configurable batches.  This `RemoteCacheChannel` will only
+>   perform simple updates, one at a time, regardless of the configured batch size.
+>   Furthermore, `RemoteClusterChannels` offer a greater variety of modes and
+>   flexibility.
+
+<h5>Step 6. Configuring A Remote Cluster Channel</h5>
+
+In most situations the Event Distribution Channel implementation to use for
+Push Replication is the `RemoteClusterChannel`.
+
+The `RemoteClusterChannel` offers significant advantages over the `RemoteCacheChannel`
+as it performs distribution and replay operations in configurable batches.   This
+can significantly reduce network round-trips between clusters, dramatically improving
+through-put over `RemoteCacheChannels`.  Like `RemoteCacheChannels`, configuring
+a `RemoteClusterChannel` requires a few steps.
+
+1.  Define a Remote Invocation Scheme, that of which will be used to send, invoke
+    and perform batches of updates on a remote cluster.
+
+2.  Establish another Cluster, together with Proxy service to which the
+    Remote Invocation Scheme will contect.
+
+3.  Define a `RemoteClusterChannel`, part of which includes defining the channel
+    in which to distribute `Events` on the remote cluster.
+
+This last point is particularly important.   A `RemoteClusterChannel` simply
+delivers `Events` in batches to a remote cluster.  Once the batches arrive, they
+need to be applied in some manner to the remote cluster (locally).  To achieve this
+one must specify a `<remote-channel-scheme>`, that of which is used to process and
+replay the delivered `Events` in the remote cluster.   Typically this is simply
+to a local cache, and thus a `<local-cache-channel-scheme>` is often appropriate.
+However, this is not mandatory.  The `<remote-channel-scheme>` may also be any
+other `Channel`, in which case a `RemoteClusterChannel` could be configured to
+distribute `Events` to a remote cluster, in which the said `Events` are then
+processed/replayed into a `CacheStoreChannel` that of which updates a local database
+(at the remote site).
+
+A Coherence Cache Configuration for a `RemoteClusterChannel` is as follows:
+
+    <cache-config
+        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+        element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
+
+        <defaults>
+            <serializer>pof</serializer>
+        </defaults>
+
+        <caching-scheme-mapping>
+            <cache-mapping>
+                <cache-name>my-cache</cache-name>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <event:distributor>
+                    <event:distributor-name>{cache-name}</event:distributor-name>
+                    <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
+
+                    <event:distributor-scheme>
+                        <event:coherence-based-distributor-scheme/>
+                    </event:distributor-scheme>
+
+                    <event:distribution-channels>
+                        <event:distribution-channel>
+                            <event:channel-name>Remote Cache</event:channel-name>
+                            <event:starting-mode>enabled</event:starting-mode>
+
+                            <event:channel-scheme>
+                                <event:remote-cluster-channel-scheme>
+                                    <event:remote-invocation-service-name>remote-invocation-scheme</event:remote-invocation-service-name>
+                                    <event:remote-channel-scheme>
+                                        <event:local-cache-channel-scheme>
+                                            <event:target-cache-name>passive-cache</event:target-cache-name>
+                                        </event:local-cache-channel-scheme>
+                                    </event:remote-channel-scheme>
+                                </event:remote-cluster-channel-scheme>
+                            </event:channel-scheme>
+                        </event:distribution-channel>
+                    </event:distribution-channels>
+                </event:distributor>
+
+            </cache-mapping>
+        </caching-scheme-mapping>
+
+        <caching-schemes>
+            <distributed-scheme>
+                <scheme-name>my-distributed-scheme</scheme-name>
+
+                <backing-map-scheme>
+                    <read-write-backing-map-scheme>
+                        <internal-cache-scheme>
+                            <local-scheme>
+                            </local-scheme>
+                        </internal-cache-scheme>
+
+                        <cachestore-scheme>
+                            <class-scheme>
+                                <class-name>com.oracle.coherence.patterns.pushreplication.PublishingCacheStore</class-name>
+                                <init-params>
+                                    <init-param>
+                                        <param-type>java.lang.String</param-type>
+                                        <param-value>{cache-name}</param-value>
+                                    </init-param>
+                                </init-params>
+                            </class-scheme>
+                        </cachestore-scheme>
+                    </read-write-backing-map-scheme>
+                </backing-map-scheme>
+
+                <autostart>true</autostart>
+            </distributed-scheme>
+
+            <!-- the remote invocation scheme -->
+            <remote-invocation-scheme>
+                <service-name>remote-invocation-scheme</service-name>
+                <initiator-config>
+                    <tcp-initiator>
+                        <remote-addresses>
+                            <socket-address>
+                                <address>localhost</address>
+                                <port>20002</port>
+                            </socket-address>
+                        </remote-addresses>
+                        <connect-timeout>2s</connect-timeout>
+                    </tcp-initiator>
+                    <outgoing-message-handler>
+                        <request-timeout>5s</request-timeout>
+                    </outgoing-message-handler>
+                </initiator-config>
+            </remote-invocation-scheme>
+        </caching-schemes>
+    </cache-config>
+
+>   In this example configuration we demonstrate how to target a different
+>   cache in the remote cluster, simply through the use of the `<event:target-cache-name>`
+>   parameter to the `<event:local-cache-channel-scheme>`.

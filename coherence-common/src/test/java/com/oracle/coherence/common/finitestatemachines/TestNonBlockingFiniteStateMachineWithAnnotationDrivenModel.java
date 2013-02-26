@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,21 +29,17 @@ import com.oracle.coherence.common.finitestatemachines.annotations.OnEnterState;
 import com.oracle.coherence.common.finitestatemachines.annotations.OnTransition;
 import com.oracle.coherence.common.finitestatemachines.annotations.Transition;
 import com.oracle.coherence.common.finitestatemachines.annotations.Transitions;
-
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
-
 import junit.framework.Assert;
-
 import org.junit.Test;
 
 import java.util.concurrent.ScheduledExecutorService;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Unit tests for the {@link NonBlockingFiniteStateMachine}
  *  <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -218,7 +213,7 @@ public class TestNonBlockingFiniteStateMachineWithAnnotationDrivenModel
         @OnEnterState("ON")
         public Instruction turnedOn(Light            previousState,
                                     Light            newState,
-                                    Event<Light>	 event,
+                                    Event<Light>     event,
                                     ExecutionContext context)
         {
             System.out.println("The light is on.");
@@ -235,7 +230,7 @@ public class TestNonBlockingFiniteStateMachineWithAnnotationDrivenModel
         @OnEnterState("OFF")
         public Instruction turnedOff(Light            previousState,
                                      Light            newState,
-                                     Event<Light>	  event,
+                                     Event<Light>     event,
                                      ExecutionContext context)
         {
             System.out.println("The light is off.");
@@ -251,7 +246,7 @@ public class TestNonBlockingFiniteStateMachineWithAnnotationDrivenModel
         @OnEnterState("BROKEN")
         public Instruction broken(Light            previousState,
                                   Light            newState,
-                                  Event<Light>	   event,
+                                  Event<Light>     event,
                                   ExecutionContext context)
         {
             System.out.println("The light is broken.");

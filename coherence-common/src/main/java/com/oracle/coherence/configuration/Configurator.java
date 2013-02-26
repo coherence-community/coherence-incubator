@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,11 +26,9 @@
 package com.oracle.coherence.configuration;
 
 import com.oracle.coherence.common.builders.ReflectiveBuilder;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.QualifiedName;
-
 import com.tangosol.run.xml.XmlElement;
 
 /**
@@ -62,10 +59,10 @@ public class Configurator
      *
      * @throws ConfigurationException if a configuration is not valid
      */
-    public static void configure(Object object,
+    public static void configure(Object               object,
                                  ConfigurationContext context,
-                                 QualifiedName qualifiedName,
-                                 XmlElement xmlElement) throws ConfigurationException
+                                 QualifiedName        qualifiedName,
+                                 XmlElement           xmlElement) throws ConfigurationException
     {
         // TODO: Add a warning that this method is deprecated
         context.configure(object, qualifiedName, xmlElement);
@@ -84,10 +81,10 @@ public class Configurator
      * @throws ConfigurationException if a configuration is not valid
      */
     @Deprecated
-    public static boolean isPropertyDefined(String propertyName,
+    public static boolean isPropertyDefined(String               propertyName,
                                             ConfigurationContext context,
-                                            QualifiedName qualifiedName,
-                                            XmlElement xmlElement) throws ConfigurationException
+                                            QualifiedName        qualifiedName,
+                                            XmlElement           xmlElement) throws ConfigurationException
     {
         // TODO: Add a warning that this method is deprecated
         return context.isPropertyDefined(propertyName, qualifiedName, xmlElement);
@@ -110,12 +107,12 @@ public class Configurator
      * @return the mandatory property
      * @throws ConfigurationException if a configuration is not valid
      */
-    public static <T> T getMandatoryProperty(String propertyName,
-                                             Class<T> propertyType,
-                                             Class<?> propertySubType,
+    public static <T> T getMandatoryProperty(String               propertyName,
+                                             Class<T>             propertyType,
+                                             Class<?>             propertySubType,
                                              ConfigurationContext context,
-                                             QualifiedName qualifiedName,
-                                             XmlElement xmlElement) throws ConfigurationException
+                                             QualifiedName        qualifiedName,
+                                             XmlElement           xmlElement) throws ConfigurationException
     {
         // TODO: Add a warning that this method is deprecated
         return (T) context.getMandatoryProperty(propertyName, propertyType, propertySubType, qualifiedName, xmlElement);
@@ -135,11 +132,11 @@ public class Configurator
      * @return the mandatory property
      * @throws ConfigurationException if a configuration is not valid
      */
-    public static <T> T getMandatoryProperty(String propertyName,
-                                             Class<T> propertyType,
+    public static <T> T getMandatoryProperty(String               propertyName,
+                                             Class<T>             propertyType,
                                              ConfigurationContext context,
-                                             QualifiedName qualifiedName,
-                                             XmlElement xmlElement) throws ConfigurationException
+                                             QualifiedName        qualifiedName,
+                                             XmlElement           xmlElement) throws ConfigurationException
     {
         // TODO: Add a warning that this method is deprecated
         return (T) context.getMandatoryProperty(propertyName, propertyType, null, qualifiedName, xmlElement);
@@ -161,13 +158,13 @@ public class Configurator
      * @return the optional property
      * @throws ConfigurationException if a configuration is not valid
      */
-    public static <T> T getOptionalProperty(String propertyName,
-                                            Class<T> propertyType,
-                                            Class<?> propertySubType,
-                                            T defaultValue,
+    public static <T> T getOptionalProperty(String               propertyName,
+                                            Class<T>             propertyType,
+                                            Class<?>             propertySubType,
+                                            T                    defaultValue,
                                             ConfigurationContext context,
-                                            QualifiedName qualifiedName,
-                                            XmlElement xmlElement) throws ConfigurationException
+                                            QualifiedName        qualifiedName,
+                                            XmlElement           xmlElement) throws ConfigurationException
     {
         // TODO: Add a warning that this method is deprecated
         return (T) context.getOptionalProperty(propertyName,
@@ -193,12 +190,12 @@ public class Configurator
      * @return the optional property
      * @throws ConfigurationException if a configuration is not valid
      */
-    public static <T> T getOptionalProperty(String propertyName,
-                                            Class<T> propertyType,
-                                            T defaultValue,
+    public static <T> T getOptionalProperty(String               propertyName,
+                                            Class<T>             propertyType,
+                                            T                    defaultValue,
                                             ConfigurationContext context,
-                                            QualifiedName qualifiedName,
-                                            XmlElement xmlElement) throws ConfigurationException
+                                            QualifiedName        qualifiedName,
+                                            XmlElement           xmlElement) throws ConfigurationException
     {
         // TODO: Add a warning that this method is deprecated
         return (T) context.getOptionalProperty(propertyName, propertyType, defaultValue, qualifiedName, xmlElement);

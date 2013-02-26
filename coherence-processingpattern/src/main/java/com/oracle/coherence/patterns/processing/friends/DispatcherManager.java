@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +26,6 @@
 package com.oracle.coherence.patterns.processing.friends;
 
 import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
-
 import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
 
 /**
@@ -48,7 +46,7 @@ public interface DispatcherManager extends DependentResource
      *                   NOTE: no two dispatchers can be registered with the same priority
      * @param dispatcher the {@link Dispatcher} to register
      */
-    public void registerDispatcher(int priority,
+    public void registerDispatcher(int        priority,
                                    Dispatcher dispatcher);
 
 
@@ -58,6 +56,6 @@ public interface DispatcherManager extends DependentResource
      * @param priority   the priority of the {@link Dispatcher} to remove
      * @param dispatcher the {@link Dispatcher} to unregister
      */
-    public void unregisterDispatcher(int priority,
+    public void unregisterDispatcher(int        priority,
                                      Dispatcher dispatcher);
 }

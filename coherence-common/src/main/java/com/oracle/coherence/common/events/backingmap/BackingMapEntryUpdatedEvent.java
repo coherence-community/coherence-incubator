@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,9 +26,7 @@
 package com.oracle.coherence.common.events.backingmap;
 
 import com.oracle.coherence.common.events.EntryUpdatedEvent;
-
 import com.tangosol.net.BackingMapManagerContext;
-
 import com.tangosol.util.BinaryEntry;
 
 import java.util.Map.Entry;
@@ -60,10 +57,10 @@ public class BackingMapEntryUpdatedEvent extends AbstractBackingMapEntryEvent im
      * @param newValue                 The new value for this entry
      */
     public BackingMapEntryUpdatedEvent(BackingMapManagerContext backingMapManagerContext,
-                                       String cacheName,
-                                       Object key,
-                                       Object originalValue,
-                                       Object newValue)
+                                       String                   cacheName,
+                                       Object                   key,
+                                       Object                   originalValue,
+                                       Object                   newValue)
     {
         super(backingMapManagerContext, cacheName, key, newValue);
         this.originalEntry = new EventEntry(key, originalValue);

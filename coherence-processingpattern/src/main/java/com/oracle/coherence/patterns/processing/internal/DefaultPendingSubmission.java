@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,15 +26,12 @@
 package com.oracle.coherence.patterns.processing.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 
 import java.util.NoSuchElementException;
-
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
@@ -95,10 +91,10 @@ public class DefaultPendingSubmission implements PendingSubmission
      * @param requestData      the {@link DefaultSubmissionConfiguration} of the {@link DefaultSubmission}
      * @param delay            the delay before execution of the submission
      */
-    public DefaultPendingSubmission(final SubmissionKey submissionKey,
-                                    final Identifier resultIdentifier,
+    public DefaultPendingSubmission(final SubmissionKey           submissionKey,
+                                    final Identifier              resultIdentifier,
                                     final SubmissionConfiguration requestData,
-                                    final long delay)
+                                    final long                    delay)
     {
         this.submissionKey    = submissionKey;
         this.requestData      = requestData;

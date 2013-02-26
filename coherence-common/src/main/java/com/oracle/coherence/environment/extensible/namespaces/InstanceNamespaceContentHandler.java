@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,14 +27,11 @@ package com.oracle.coherence.environment.extensible.namespaces;
 
 import com.oracle.coherence.common.builders.Builder;
 import com.oracle.coherence.common.builders.VarArgsParameterizedBuilder;
-
 import com.oracle.coherence.common.util.ReflectionHelper;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.ElementContentHandler;
 import com.oracle.coherence.environment.extensible.QualifiedName;
-
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlValue;
 
@@ -64,8 +60,8 @@ public class InstanceNamespaceContentHandler extends AbstractNamespaceContentHan
         {
             @SuppressWarnings({"unchecked"})
             public Object onElement(ConfigurationContext context,
-                                    QualifiedName qualifiedName,
-                                    XmlElement xmlElement) throws ConfigurationException
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
             {
                 // attempt to create a Scheme based on the information in the xmlElement
 

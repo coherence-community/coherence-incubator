@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,12 +29,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-
 import java.lang.reflect.Field;
-
 import java.util.Properties;
 
 /**
@@ -92,10 +88,10 @@ public abstract class AbstractApplication implements Application
      * @param console               The {@link ApplicationConsole} that will be used for I/O by the {@link Application}.
      * @param environmentVariables  The environment variables used when establishing the {@link Application}.
      */
-    public AbstractApplication(Process process,
-                               String name,
+    public AbstractApplication(Process            process,
+                               String             name,
                                ApplicationConsole console,
-                               Properties environmentVariables)
+                               Properties         environmentVariables)
     {
         m_process              = process;
         m_name                 = name;

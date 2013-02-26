@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,9 +26,7 @@
 package com.oracle.coherence.patterns.messaging.management;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.patterns.messaging.Destination;
 import com.oracle.coherence.patterns.messaging.Queue;
 import com.oracle.coherence.patterns.messaging.QueueSubscription;
@@ -37,9 +34,7 @@ import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
 import com.oracle.coherence.patterns.messaging.Topic;
 import com.oracle.coherence.patterns.messaging.TopicSubscription;
-
 import com.tangosol.net.CacheFactory;
-
 import com.tangosol.net.management.Registry;
 
 import java.util.HashMap;
@@ -102,7 +97,7 @@ public class MessagingMBeanManager
      */
     @SuppressWarnings("unchecked")
     public String registerMBean(Object object,
-                                Class proxyClass,
+                                Class  proxyClass,
                                 String mbeanName)
     {
         Registry registry;
@@ -170,9 +165,9 @@ public class MessagingMBeanManager
      */
     @SuppressWarnings("unchecked")
     private synchronized void addMBean(Registry registry,
-                                       Class proxyClass,
-                                       String key,
-                                       Object managedObject)
+                                       Class    proxyClass,
+                                       String   key,
+                                       Object   managedObject)
     {
         try
         {
@@ -205,7 +200,7 @@ public class MessagingMBeanManager
      * @param key map key
      */
     private synchronized void removeMBean(Registry registry,
-                                          String key)
+                                          String   key)
     {
         Object mbean = mbeanMap.get(key);
 
@@ -250,7 +245,7 @@ public class MessagingMBeanManager
      * @return MBean name
      */
     private String buildDestinationMBeanName(Identifier destinationIdentifier,
-                                             String destinationType)
+                                             String     destinationType)
     {
         return String.format("type=Messaging" + ",destination=" + destinationType + ",destinationId=%s",
                              destinationIdentifier);
@@ -292,13 +287,14 @@ public class MessagingMBeanManager
      * @param subscriptionIdentifier subscription identifier
      * @return MBean name
      */
-    private String buildSubscriptionMBeanName(String destinationMbeanName,
+    private String buildSubscriptionMBeanName(String                 destinationMbeanName,
                                               SubscriptionIdentifier subscriptionIdentifier)
     {
         // Replace all commas with dashes to prevent the jconsole tree from
         // displaying an extra child
         String subId = subscriptionIdentifier.toString().replace(',', '-');
-        String name  = String.format(destinationMbeanName + ",subscription=Subscriptions" + ",subscriptionId=%s", subId);
+        String name  = String.format(destinationMbeanName + ",subscription=Subscriptions" + ",subscriptionId=%s",
+                                     subId);
 
         return name;
     }

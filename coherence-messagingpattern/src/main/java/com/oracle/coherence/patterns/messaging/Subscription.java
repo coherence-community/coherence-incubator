@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,26 +27,20 @@ package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.backingmaplisteners.Cause;
 import com.oracle.coherence.common.backingmaplisteners.LifecycleAwareCacheEntry;
-
 import com.oracle.coherence.common.ranges.Ranges;
-
 import com.oracle.coherence.patterns.messaging.management.MessagingMBeanManager;
 import com.oracle.coherence.patterns.messaging.management.QueueSubscriptionProxy;
 import com.oracle.coherence.patterns.messaging.management.SubscriptionProxy;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.MapEvent;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -137,7 +130,7 @@ public abstract class Subscription implements ExternalizableLite, PortableObject
      * @param subscriptionIdentifier subscription identifier
      */
     public Subscription(SubscriptionIdentifier subscriptionIdentifier,
-                        Status status)
+                        Status                 status)
     {
         this.subscriptionIdentifier = subscriptionIdentifier;
         this.createVisibleMessageTracker();
@@ -339,7 +332,7 @@ public abstract class Subscription implements ExternalizableLite, PortableObject
      *         otherwise.
      */
     public Boolean acceptOneMessage(MessageIdentifier messageIdentifier,
-                                    Boolean forceAccept)
+                                    Boolean           forceAccept)
     {
         // we should only accept a message if the subscription is enabled
         if (status == Status.ENABLED)
@@ -473,7 +466,7 @@ public abstract class Subscription implements ExternalizableLite, PortableObject
      * {@inheritDoc}
      */
     public void onCacheEntryLifecycleEvent(MapEvent mapEvent,
-                                           Cause cause)
+                                           Cause    cause)
     {
         if (this instanceof LeasedSubscription)
         {

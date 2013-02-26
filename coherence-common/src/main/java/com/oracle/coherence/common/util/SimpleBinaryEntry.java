@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,10 +27,8 @@ package com.oracle.coherence.common.util;
 
 import com.tangosol.io.DefaultSerializer;
 import com.tangosol.io.Serializer;
-
 import com.tangosol.net.BackingMapContext;
 import com.tangosol.net.BackingMapManagerContext;
-
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
@@ -40,7 +37,6 @@ import com.tangosol.util.InvocableMapHelper;
 import com.tangosol.util.ObservableMap;
 import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.ValueUpdater;
-
 import com.tangosol.util.extractor.AbstractUpdater;
 
 import java.io.IOException;
@@ -161,8 +157,8 @@ public class SimpleBinaryEntry implements BinaryEntry
      * @param binaryValue           The {@link Binary} Value
      */
     public SimpleBinaryEntry(Serializer serializer,
-                             Binary binaryKey,
-                             Binary binaryValue)
+                             Binary     binaryKey,
+                             Binary     binaryValue)
     {
         this(serializer, binaryKey, binaryValue, null);
     }
@@ -177,9 +173,9 @@ public class SimpleBinaryEntry implements BinaryEntry
      * @param binaryOriginalValue   The {@link Binary} Original Value
      */
     public SimpleBinaryEntry(Serializer serializer,
-                             Binary binaryKey,
-                             Binary binaryValue,
-                             Binary binaryOriginalValue)
+                             Binary     binaryKey,
+                             Binary     binaryValue,
+                             Binary     binaryOriginalValue)
     {
         this.serializer          = serializer;
         this.binaryKey           = binaryKey;
@@ -378,7 +374,7 @@ public class SimpleBinaryEntry implements BinaryEntry
      * {@inheritDoc}
      */
     @Override
-    public void setValue(Object value,
+    public void setValue(Object  value,
                          boolean isSynthetic)
     {
         setValue(value);
@@ -410,7 +406,7 @@ public class SimpleBinaryEntry implements BinaryEntry
      */
     @Override
     public void update(ValueUpdater valueUpdater,
-                       Object value)
+                       Object       value)
     {
         if (valueUpdater instanceof AbstractUpdater)
         {

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,11 +26,8 @@
 package com.oracle.coherence.patterns.processing.dispatchers.task;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.processing.dispatchers.AbstractDispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchOutcome;
@@ -49,20 +45,16 @@ import com.oracle.coherence.patterns.processing.task.TaskProcessor;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorType;
 import com.oracle.coherence.patterns.processing.taskprocessor.ClientLeaseMaintainer;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.CacheService;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.Member;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
@@ -71,15 +63,11 @@ import com.tangosol.util.MultiplexingMapListener;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.Iterator;
 import java.util.Map;
-
 import java.util.Map.Entry;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -208,8 +196,8 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
      * @param name name of the dispatcher
      * @param taskdispatchpolicy the {@link TaskDispatchPolicy}
      */
-    public DefaultTaskDispatcher(Environment environment,
-                                 final String name,
+    public DefaultTaskDispatcher(Environment              environment,
+                                 final String             name,
                                  final TaskDispatchPolicy taskdispatchpolicy)
     {
         super(name);
@@ -231,12 +219,12 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
      * @param submissionResultProxyFactory the {@link ObjectProxyFactory} for {@link SubmissionResult}s to use
      * @param submissionProxyFactory the {@link ObjectProxyFactory} for {@link Submission}s to use
      */
-    public DefaultTaskDispatcher(Environment environment,
-                                 final String name,
-                                 final TaskDispatchPolicy taskdispatchpolicy,
+    public DefaultTaskDispatcher(Environment                               environment,
+                                 final String                              name,
+                                 final TaskDispatchPolicy                  taskdispatchpolicy,
                                  ObjectProxyFactory<TaskProcessorMediator> taskProcessorMediatorFactory,
-                                 ObjectProxyFactory<SubmissionResult> submissionResultProxyFactory,
-                                 ObjectProxyFactory<Submission> submissionProxyFactory)
+                                 ObjectProxyFactory<SubmissionResult>      submissionResultProxyFactory,
+                                 ObjectProxyFactory<Submission>            submissionProxyFactory)
     {
         this(environment, name, taskdispatchpolicy);
         this.taskProcessorMediatorFactory = taskProcessorMediatorFactory;
@@ -345,7 +333,7 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
      * @return whether dispatching was successful
      */
     protected boolean dispatchTask(final PendingSubmission pendingSubmission,
-                                   Task task)
+                                   Task                    task)
     {
         if (task != null)
         {
@@ -394,8 +382,8 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
 
                     while (iter.hasNext() &&!result)
                     {
-                        TaskProcessorMediatorKey taskProcessorKey           = iter.next();
-                        TaskProcessorMediator    taskProcessorMediatorProxy =
+                        TaskProcessorMediatorKey taskProcessorKey = iter.next();
+                        TaskProcessorMediator taskProcessorMediatorProxy =
                             taskProcessorMediatorFactory.getProxy(taskProcessorKey);
 
                         // We must first assign it to the key before offering
@@ -491,9 +479,9 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
     }
 
 
-    private void setSubmissionToRetryStatus(final PendingSubmission pendingSubmission,
+    private void setSubmissionToRetryStatus(final PendingSubmission  pendingSubmission,
                                             TaskProcessorMediatorKey taskProcessorKey,
-                                            SubmissionResult submissionResult)
+                                            SubmissionResult         submissionResult)
     {
         boolean retryResult = submissionResult.retry();
 
@@ -527,13 +515,13 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
     @SuppressWarnings("unchecked")
     private void initialize(final ConfigurableCacheFactory oCCFactory)
     {
-        this.environment             = (Environment) oCCFactory;
+        this.environment = (Environment) oCCFactory;
         submissionResultProxyFactory =
             (ObjectProxyFactory<SubmissionResult>) environment.getResource(SubmissionResult.class);
-        submissionProxyFactory       = (ObjectProxyFactory<Submission>) environment.getResource(Submission.class);
+        submissionProxyFactory = (ObjectProxyFactory<Submission>) environment.getResource(Submission.class);
         taskProcessorMediatorFactory =
             (ObjectProxyFactory<TaskProcessorMediator>) environment.getResource(TaskProcessorMediator.class);
-        taskProcessorMediatorCache        = oCCFactory.ensureCache(DefaultTaskProcessorMediator.CACHENAME, null);
+        taskProcessorMediatorCache = oCCFactory.ensureCache(DefaultTaskProcessorMediator.CACHENAME, null);
         taskProcessorMediatorMBeanFactory =
             new ObjectProxyFactory<TaskProcessorMediatorProxyMBean>(DefaultTaskProcessorMediator.CACHENAME,
                                                                     TaskProcessorMediatorProxyMBean.class);
@@ -750,7 +738,7 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
      * @throws Throwable if an error occurs
      */
     private void handleTaskProcessorDefinition(final ConfigurableCacheFactory oCCFactory,
-                                               final TaskProcessorDefinition oTaskProcessorDefinition) throws Throwable
+                                               final TaskProcessorDefinition  oTaskProcessorDefinition) throws Throwable
     {
         if (oTaskProcessorDefinition.getTaskProcessorType() == TaskProcessorType.GRID)
         {
@@ -768,10 +756,10 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
                 // We create a {@link TaskProcessorMediatorKey} for this
                 // TaskProcessor
 
-                Member                   member = CacheFactory.getCluster().getLocalMember();
-                TaskProcessorMediatorKey key    = new TaskProcessorMediatorKey(oTaskProcessorDefinition.getIdentifier(),
-                                                                               member.getId(),
-                                                                               member.getUid());
+                Member member = CacheFactory.getCluster().getLocalMember();
+                TaskProcessorMediatorKey key = new TaskProcessorMediatorKey(oTaskProcessorDefinition.getIdentifier(),
+                                                                            member.getId(),
+                                                                            member.getUid());
 
                 if (logger.isLoggable(Level.FINER))
                 {

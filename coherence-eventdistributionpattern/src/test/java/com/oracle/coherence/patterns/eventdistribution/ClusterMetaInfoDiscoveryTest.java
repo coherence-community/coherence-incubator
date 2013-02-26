@@ -3,14 +3,13 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,41 +26,32 @@
 package com.oracle.coherence.patterns.eventdistribution;
 
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
-
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel.GetClusterMetaInfoAgent;
 import com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannel;
-
 import com.oracle.tools.junit.AbstractTest;
-
 import com.oracle.tools.runtime.PropertiesBuilder;
-
 import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
-
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
 import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
-
 import com.oracle.tools.runtime.network.AvailablePortIterator;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.InvocationService;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.net.UnknownHostException;
-
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * The {@link ClusterMetaInfoDiscoveryTest} is designed to exercise the implementations that {@link EventDistributor}

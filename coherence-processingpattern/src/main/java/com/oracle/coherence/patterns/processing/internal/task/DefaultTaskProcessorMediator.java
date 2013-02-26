@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,35 +28,26 @@ package com.oracle.coherence.patterns.processing.internal.task;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.events.processing.EventProcessor;
 import com.oracle.coherence.common.events.processing.EventProcessorFactory;
-
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.leasing.Lease;
 import com.oracle.coherence.common.leasing.Leasing;
-
 import com.oracle.coherence.common.util.ChangeIndication;
-
 import com.oracle.coherence.patterns.processing.internal.SubmissionKey;
 import com.oracle.coherence.patterns.processing.internal.SubmissionKeyPair;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -208,7 +198,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public DefaultTaskProcessorMediator(final TaskProcessorMediatorKey taskProcessorKey,
-                                        Map map)
+                                        Map                            map)
     {
         this();
         this.taskProcessorKey = taskProcessorKey;
@@ -329,7 +319,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
      * {@inheritDoc}
      */
     public void enqueueTask(final SubmissionKey taskId,
-                            Identifier resultid)
+                            Identifier          resultid)
     {
         if (tasks == null)
         {
@@ -387,8 +377,8 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
      * {@inheritDoc}
      */
     public void taskDone(final SubmissionKey oSubmissionKey,
-                         long executiontime,
-                         boolean yield)
+                         long                executiontime,
+                         boolean             yield)
     {
         for (SubmissionKeyPair tp : tasksInProgress)
         {
@@ -487,7 +477,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
      * {@inheritDoc}
      */
     public boolean offerTask(SubmissionKey submissionKey,
-                             Identifier resultid)
+                             Identifier    resultid)
     {
         if (stateEnum == TaskProcessorStateEnum.ACTIVE)
         {

@@ -57,7 +57,16 @@
     
         <menu name="Oracle Coherence Incubator">
             <item name="Welcome" href="index.html"/>
+            <item name="What's New" href="whats-new.html"/>
             <item name="History" href="history.html"/>
+            <item name="Upgrading" href="upgrading.html"/>
+            <item name="Source Code" href="source-code.html"/>
+            <item name="Building" href="building.html"/>
+            <item name="Examples" href="examples.html"/>
+            <item name="Getting Help" href="forums.html"/>
+            <item name="Issue Tracking" href="issue-tracking.html"/>
+            <item name="License" href="license.html"/>
+            <item name="Contributions" href="contributions.html"/>
         </menu>
     
         <menu name="Modules">
@@ -74,31 +83,34 @@
                 <item name="Working with Amazon EC2" href="common/amazon-ec2-addressprovider.html"/>
             </item>
             <item name="The Command Pattern" href="commandpattern/index.html">
-                <!--  <item name="Examples" href="commandpattern/examples.html"/> -->
+                <item name="Simple Example" href="commandpattern/simple-example.html"/>
             </item>
             <item name="The Functor Pattern" href="functorpattern/index.html">
-                <!-- <item name="Examples" href="functorpattern/examples.html"/>  -->
+                <item name="Simple Example" href="functorpattern/simple-example.html"/>
             </item>
             <item name="The Processing Pattern" href="processingpattern/index.html">
                 <item name="Configuration" href="processingpattern/configuration.html"/>
                 <item name="Monitoring" href="processingpattern/monitoring.html"/>
                 <item name="The Processing Namespace" href="processingpattern/processing-namespace.html"/>
+                <item name="Simple Example" href="processingpattern/simple-example.html"/>
+                <item name="Pi Calculation Example" href="processingpattern/pi-calculation-example.html"/>
+                <item name="Task Execution Example" href="processingpattern/task-execution-example.html"/>
             </item>
             <item name="The Messaging Pattern" href="messagingpattern/index.html"/>
             <item name="The Event Distribution Pattern" href="eventdistributionpattern/index.html">
                 <item name="The Event Namespace" href="eventdistributionpattern/event-namespace.html"/>
             </item>
-            <item name="The Push Replication Pattern" href="pushreplicationpattern/index.html"/>
+            <item name="The Push Replication Pattern" href="pushreplicationpattern/index.html">
+                <item name="Active Passive Tutorial" href="pushreplicationpattern/active-passive-tutorial.html"/>
+                <item name="Active Passive Example" href="pushreplicationpattern/active-passive-example.html"/>
+                <item name="Active Active Example" href="pushreplicationpattern/active-active-example.html"/>
+                <item name="Hub And Spoke Example" href="pushreplicationpattern/hub-and-spoke-example.html"/>
+                <item name="Auction Example" href="pushreplicationpattern/auction-example.html"/>
+            </item>
         </menu>
     
         <menu name="Development">
-            <item name="Forums" href="forums.html"/>
-            <item name="Issue Tracking" href="issue-tracking.html"/>
-            <item name="Source Code" href="source-code.html"/>
-            <item name="License" href="license.html"/>
-            <item name="Contributions" href="contributions.html"/>
             <item name="Release Numbers" href="release-numbers.html"/>
-            <item name="Build Instructions" href="building.html"/>
             <item name="Logging" href="logging.html"/>
         </menu>
     

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,27 +28,20 @@ package com.oracle.coherence.patterns.pushreplication;
 import com.oracle.coherence.common.builders.NamedCacheSerializerBuilder;
 import com.oracle.coherence.common.builders.NoArgsBuilder;
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
 import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
-
 import com.oracle.coherence.common.events.CacheEvent;
 import com.oracle.coherence.common.events.EntryRemovedEvent;
 import com.oracle.coherence.common.events.Event;
-
 import com.oracle.coherence.common.resourcing.AbstractDeferredSingletonResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
-
 import com.oracle.coherence.configuration.caching.CacheMapping;
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
-
 import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
 import com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate;
@@ -57,18 +49,14 @@ import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryInsertedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryRemovedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryUpdatedEvent;
-
 import com.tangosol.io.Serializer;
-
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.GuardSupport;
-
 import com.tangosol.net.cache.BackingMapBinaryEntry;
 import com.tangosol.net.cache.BinaryEntryStore;
 import com.tangosol.net.cache.CacheStore;
-
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
@@ -80,7 +68,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -236,8 +223,8 @@ public class PublishingCacheStore implements BinaryEntryStore
     @SuppressWarnings({"rawtypes"})
     public void loadAll(Set setBinEntries)
     {
-        //NOTE: override this method it you'd like to support "pull-replication"
-    	//      or cache loading.
+        // NOTE: override this method it you'd like to support "pull-replication"
+        // or cache loading.
     }
 
 
@@ -528,7 +515,7 @@ public class PublishingCacheStore implements BinaryEntryStore
     @Override
     public void load(BinaryEntry binaryEntry)
     {
-        //NOTE: override this method it you'd like to support "pull-replication"
-    	//      or cache loading.
+        // NOTE: override this method it you'd like to support "pull-replication"
+        // or cache loading.
     }
 }

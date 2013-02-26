@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,26 +26,20 @@
 package com.oracle.coherence.patterns.processing.dispatchers.task;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediatorKey;
 import com.oracle.coherence.patterns.processing.task.Task;
 import com.oracle.coherence.patterns.processing.task.TaskProcessor;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
-
 import com.tangosol.util.UID;
-
 import org.easymock.EasyMock;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import java.util.concurrent.ConcurrentHashMap;
-
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -175,7 +168,7 @@ public class TaskTypeSelectionPolicyTest
         taskProcessorDefinitions.put(definition.getIdentifier(), definition);
         taskProcessorDefinitions.put(definition2.getIdentifier(), definition2);
 
-        AttributeMatchTaskDispatchPolicy                     pol    = new AttributeMatchTaskDispatchPolicy();
+        AttributeMatchTaskDispatchPolicy pol = new AttributeMatchTaskDispatchPolicy();
         Map<TaskProcessorMediatorKey, TaskProcessorMediator> result = pol.selectTaskProcessorSet(task,
                                                                                                  submissionConfiguration,
                                                                                                  taskProcessorMediators,
@@ -246,7 +239,7 @@ public class TaskTypeSelectionPolicyTest
                                                                 uidtwo), taskProcessorMediator2);
         taskProcessorDefinitions.put(definition.getIdentifier(), definition);
 
-        AttributeMatchTaskDispatchPolicy                     pol    = new AttributeMatchTaskDispatchPolicy();
+        AttributeMatchTaskDispatchPolicy pol = new AttributeMatchTaskDispatchPolicy();
         Map<TaskProcessorMediatorKey, TaskProcessorMediator> result = pol.selectTaskProcessorSet(task,
                                                                                                  submissionConfiguration,
                                                                                                  taskProcessorMediators,

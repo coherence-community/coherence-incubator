@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,38 +26,20 @@
 package com.oracle.coherence.environment.extensible;
 
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.lifecycle.LifecycleEvent;
-import com.oracle.coherence.common.events.processing.EventProcessor;
-
 import com.oracle.coherence.environment.extensible.namespaces.EnvironmentNamespaceContentHandler;
 import com.oracle.coherence.environment.extensible.namespaces.InstanceNamespaceContentHandler;
 import com.oracle.coherence.environment.extensible.namespaces.ValueNamespaceContentHandler;
-
 import com.oracle.tools.junit.AbstractTest;
-
 import com.oracle.tools.runtime.java.virtualization.Virtualization;
-
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.ConfigurableCacheFactory;
-import com.tangosol.net.NamedCache;
-
 import com.tangosol.run.xml.XmlHelper;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.awt.*;
+
 import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Matchers.isA;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.awt.Point;
-
-import java.net.UnknownHostException;
 
 /**
  * The unit tests for the {@link ExtensibleEnvironment}.

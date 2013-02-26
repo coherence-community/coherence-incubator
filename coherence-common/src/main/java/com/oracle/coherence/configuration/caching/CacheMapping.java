@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +26,6 @@
 package com.oracle.coherence.configuration.caching;
 
 import com.oracle.coherence.common.util.AbstractEnrichmentSupport;
-
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
 
@@ -66,14 +64,14 @@ public class CacheMapping extends AbstractEnrichmentSupport
      * @param schemeName The scheme for the cache
      * @param parameterProvider The {@link ParameterProvider} containing the {@link com.oracle.coherence.configuration.parameters.Parameter}s defined for the mapping.
      */
-    public CacheMapping(String cacheName,
-                        String schemeName,
+    public CacheMapping(String            cacheName,
+                        String            schemeName,
                         ParameterProvider parameterProvider)
     {
         super();
 
-        this.cacheName         = cacheName.trim();
-        this.schemeName        = schemeName.trim();
+        this.cacheName  = cacheName.trim();
+        this.schemeName = schemeName.trim();
         this.parameterProvider = parameterProvider == null
                                  ? SystemPropertyParameterProvider.INSTANCE : parameterProvider;
     }

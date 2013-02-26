@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,10 +28,10 @@ package com.oracle.coherence.common.finitestatemachines;
 import java.util.EnumSet;
 
 /**
- * A {@link Transition} represents a transition in a {@link FiniteStateMachine} 
+ * A {@link Transition} represents a transition in a {@link FiniteStateMachine}
  * from one or more possible states to a desired state.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @param <S>  the type of the state of the {@link FiniteStateMachine}
@@ -54,7 +53,7 @@ public class Transition<S extends Enum<S>>
     private EnumSet<S> m_statesFrom;
 
     /**
-     * The state of the {@link FiniteStateMachine} once the {@link TransitionAction} 
+     * The state of the {@link FiniteStateMachine} once the {@link TransitionAction}
      * has been successfully performed.
      */
     private S m_stateTo;
@@ -74,9 +73,9 @@ public class Transition<S extends Enum<S>>
      * @param statesFrom  the set of states from which this {@link Transition} may occur
      * @param stateTo     the state once the {@link TransitionAction} has been successfully performed
      */
-    public Transition(String name,
+    public Transition(String     name,
                       EnumSet<S> statesFrom,
-                      S stateTo)
+                      S          stateTo)
     {
         this(name, statesFrom, stateTo, /* no action */ null);
     }
@@ -90,8 +89,8 @@ public class Transition<S extends Enum<S>>
      * @param stateTo     the state once the {@link TransitionAction} has been successfully performed
      */
     public Transition(String name,
-                      S stateFrom,
-                      S stateTo)
+                      S      stateFrom,
+                      S      stateTo)
     {
         this(name, stateFrom, stateTo, /* no action */ null);
     }
@@ -105,9 +104,9 @@ public class Transition<S extends Enum<S>>
      * @param stateTo     the state once the {@link TransitionAction} has been successfully performed
      * @param action      the {@link TransitionAction} to be perform for the {@link Transition}
      */
-    public Transition(String name,
-                      EnumSet<S> statesFrom,
-                      S stateTo,
+    public Transition(String              name,
+                      EnumSet<S>          statesFrom,
+                      S                   stateTo,
                       TransitionAction<S> action)
     {
         m_name       = name;
@@ -125,9 +124,9 @@ public class Transition<S extends Enum<S>>
      * @param stateTo     the state once the {@link TransitionAction} has been successfully performed
      * @param action      the {@link TransitionAction} to be perform for the {@link Transition}
      */
-    public Transition(String name,
-                      S stateFrom,
-                      S stateTo,
+    public Transition(String              name,
+                      S                   stateFrom,
+                      S                   stateTo,
                       TransitionAction<S> action)
     {
         m_name       = name;

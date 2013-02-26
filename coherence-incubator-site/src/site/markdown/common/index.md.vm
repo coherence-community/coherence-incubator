@@ -8,8 +8,22 @@ the implementation of other Oracle Coherence Incubator projects.
 
 <h4>Distribution</h4>
 
-The Oracle Coherence Incubator Common Package is distributed as a single jar 
-called: `coherence-common-${project.version}.jar`
+The Common Package implementation is distributed in the jar file
+called: `coherence-common-${project.version}.jar`.
+
+However as the Common Package has several other dependencies, we **strongly
+recommend** that developers adopt and use tools like Apache Maven/Ivy/Gradle to
+transitively resolve the said dependencies, instead of attempting to do so manually.
+
+To configure your Apache Maven-based application to use the Common Package,
+simply add the following declaration to your application `pom.xml` file
+`<dependencies>` element.
+
+    <dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-common</artifactId>
+        <version>${project.version}</version>
+    </dependency>
 
 <h4>Contents</h4>
 

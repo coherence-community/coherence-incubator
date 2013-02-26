@@ -34,43 +34,42 @@
     <defaults>
         <serializer>pof</serializer>
     </defaults>
-    
+
+    <caching-scheme-mapping>
+        <cache-mapping>
+            <cache-name>publishing-cache</cache-name>
+            <scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
+
+            <event:distributor>
+                <event:distributor-name>{cache-name}</event:distributor-name>
+                <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
+
+                <event:distributor-scheme>
+                    <event:coherence-based-distributor-scheme/>
+                </event:distributor-scheme>
+
+                <event:distribution-channels>
+                    <event:distribution-channel>
+                        <event:channel-name>Active Publisher</event:channel-name>
+                        <event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
+
+                        <event:channel-scheme>
+                            <event:remote-cluster-channel-scheme>
+                                <event:remote-invocation-service-name>remote-site2</event:remote-invocation-service-name>
+                                <event:remote-channel-scheme>
+                                    <event:local-cache-channel-scheme>
+                                        <event:target-cache-name>passive-cache</event:target-cache-name>
+                                    </event:local-cache-channel-scheme>
+                                </event:remote-channel-scheme>
+                            </event:remote-cluster-channel-scheme>
+                        </event:channel-scheme>
+                    </event:distribution-channel>
+                </event:distribution-channels>
+            </event:distributor>
+        </cache-mapping>
+    </caching-scheme-mapping>
+
     <caching-schemes>
-        <caching-scheme-mapping>
-            <cache-mapping>
-                <cache-name>publishing-cache</cache-name>
-                <scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
-                
-                <event:distributor>
-                    <event:distributor-name>{cache-name}</event:distributor-name>
-                    <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
-                    
-                    <event:distributor-scheme>
-                        <event:coherence-based-distributor-scheme/>
-                    </event:distributor-scheme>
-                    
-                    <event:distribution-channels>
-                        <event:distribution-channel>
-                            <event:channel-name>Active Publisher</event:channel-name>
-                            <event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
-                            
-                            <event:channel-scheme>
-                                <event:remote-cluster-channel-scheme>
-                                    <event:remote-invocation-service-name>remote-site2</event:remote-invocation-service-name>
-                                    <event:remote-channel-scheme>
-                                        <event:local-cache-channel-scheme>
-                                            <event:target-cache-name>passive-cache</event:target-cache-name>
-                                        </event:local-cache-channel-scheme>
-                                    </event:remote-channel-scheme>
-                                </event:remote-cluster-channel-scheme>
-                            </event:channel-scheme>
-                        </event:distribution-channel>
-                    </event:distribution-channels>
-                </event:distributor>
-            </cache-mapping>
-        </caching-scheme-mapping>
-
-
         <!--
             The following scheme is required for each remote-site when
             using a RemoteInvocationPublisher
@@ -119,8 +118,6 @@
 
             <autostart>true</autostart>
         </distributed-scheme>
-        
-        <!-- END: com.oracle.coherence.patterns.pushreplication -->
     </caching-schemes>
 </cache-config>
 

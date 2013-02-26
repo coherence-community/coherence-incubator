@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -52,18 +51,13 @@ import com.oracle.coherence.common.serialization.fieldserializers.RawQuadFieldSe
 import com.oracle.coherence.common.serialization.fieldserializers.ShortArrayFieldSerializer;
 import com.oracle.coherence.common.serialization.fieldserializers.ShortFieldSerializer;
 import com.oracle.coherence.common.serialization.fieldserializers.StringFieldSerializer;
-
 import com.tangosol.io.pof.RawQuad;
-
 import com.tangosol.util.Binary;
 
 import java.lang.reflect.Field;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
 import java.sql.Date;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -232,7 +226,7 @@ public class DefaultFieldSerializationProvider implements FieldSerializationProv
     /**
      * {@inheritDoc}
      */
-    public FieldSerializer getFieldSerializer(Field field,
+    public FieldSerializer getFieldSerializer(Field              field,
                                               java.lang.Class<?> preferredType)
     {
         Class<?> fieldType = field.getType();

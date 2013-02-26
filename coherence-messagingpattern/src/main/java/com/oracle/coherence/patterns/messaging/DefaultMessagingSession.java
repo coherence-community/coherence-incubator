@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,15 +28,12 @@ package com.oracle.coherence.patterns.messaging;
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
 import com.oracle.coherence.common.identifiers.UUIDBasedIdentifier;
-
 import com.oracle.coherence.patterns.messaging.entryprocessors.CreateDestinationProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.PublishMessageProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.QueueSubscribeProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.TopicSubscribeProcessor;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.filter.LikeFilter;
 
 import java.util.Set;
@@ -116,7 +112,7 @@ public class DefaultMessagingSession implements MessagingSession
      * @param destination destination
      * @return destination identifier
      */
-    private Identifier createDestination(String destinationName,
+    private Identifier createDestination(String      destinationName,
                                          Destination destination)
     {
         return createDestination(StringBasedIdentifier.newInstance(destinationName), destination);
@@ -130,7 +126,7 @@ public class DefaultMessagingSession implements MessagingSession
      * @param destination destination
      * @return destination identifier
      */
-    private Identifier createDestination(Identifier destinationIdentifier,
+    private Identifier createDestination(Identifier  destinationIdentifier,
                                          Destination destination)
     {
         NamedCache destinationsCache = CacheFactory.getCache(Destination.CACHENAME);
@@ -156,7 +152,7 @@ public class DefaultMessagingSession implements MessagingSession
      *
      */
     public synchronized void publishMessage(Identifier destinationIdentifier,
-                                            Object payload)
+                                            Object     payload)
     {
         // Invoke the processor to put the message in the cache. Note that the
         // publisherId
@@ -186,7 +182,7 @@ public class DefaultMessagingSession implements MessagingSession
     /**
      * {@inheritDoc}
      */
-    public Subscriber subscribe(Identifier destination,
+    public Subscriber subscribe(Identifier                destination,
                                 SubscriptionConfiguration subscriptionConfiguration)
     {
         return subscribe(destination, subscriptionConfiguration, null);
@@ -197,9 +193,9 @@ public class DefaultMessagingSession implements MessagingSession
      * {@inheritDoc}
      */
     @SuppressWarnings({"unchecked"})
-    public Subscriber subscribe(Identifier destinationIdentifier,
+    public Subscriber subscribe(Identifier                destinationIdentifier,
                                 SubscriptionConfiguration subscriptionConfiguration,
-                                Subscription subscription)
+                                Subscription              subscription)
     {
         Subscriber subscriber = null;
 
@@ -230,8 +226,8 @@ public class DefaultMessagingSession implements MessagingSession
 
             // Invoke against the destination cache.
             //
-            NamedCache              destinationCache = CacheFactory.getCache(Destination.CACHENAME);
-            QueueSubscribeProcessor processor        =
+            NamedCache destinationCache = CacheFactory.getCache(Destination.CACHENAME);
+            QueueSubscribeProcessor processor =
                 new QueueSubscribeProcessor<SubscriptionConfiguration>(subscriptionIdentifier,
                                                                        (SubscriptionConfiguration) subscriptionConfiguration,
                                                                        null);
@@ -260,8 +256,8 @@ public class DefaultMessagingSession implements MessagingSession
 
             // Invoke against the destination cache.
             //
-            NamedCache              destinationCache = CacheFactory.getCache(Destination.CACHENAME);
-            TopicSubscribeProcessor processor        =
+            NamedCache destinationCache = CacheFactory.getCache(Destination.CACHENAME);
+            TopicSubscribeProcessor processor =
                 new TopicSubscribeProcessor<SubscriptionConfiguration>(subscriptionIdentifier,
                                                                        (SubscriptionConfiguration) subscriptionConfiguration,
                                                                        subscription);
@@ -276,7 +272,7 @@ public class DefaultMessagingSession implements MessagingSession
     /**
      * {@inheritDoc}
      */
-    public Subscriber subscribe(String destinationName,
+    public Subscriber subscribe(String                    destinationName,
                                 SubscriptionConfiguration subscriptionConfiguration)
     {
         return subscribe(StringBasedIdentifier.newInstance(destinationName), subscriptionConfiguration);

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -31,7 +30,7 @@ package com.oracle.coherence.common.finitestatemachines;
  * {@link Transition} in a {@link FiniteStateMachine} from one state to
  * another.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @param <S>  the type of the state of the {@link FiniteStateMachine}
@@ -51,6 +50,6 @@ public interface Event<S extends Enum<S>>
      * @return  the desired state of the {@link FiniteStateMachine} or
      *          <code>null</code> if no transition is required
      */
-    public S getDesiredState(S state,
+    public S getDesiredState(S                state,
                              ExecutionContext context);
 }

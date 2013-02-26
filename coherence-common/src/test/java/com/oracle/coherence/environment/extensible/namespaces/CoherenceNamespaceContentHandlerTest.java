@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,41 +27,30 @@ package com.oracle.coherence.environment.extensible.namespaces;
 
 import com.oracle.coherence.common.builders.BuilderRegistry;
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.configuration.caching.CacheMapping;
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
-
 import com.oracle.coherence.configuration.parameters.EmptyParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.DefaultConfigurationContext;
-
 import com.oracle.tools.junit.AbstractTest;
-
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlHelper;
-
 import org.junit.Test;
+
+import java.awt.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.awt.Point;
-import java.awt.Rectangle;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Test the {@link CoherenceNamespaceContentHandler}.
@@ -437,7 +425,7 @@ public class CoherenceNamespaceContentHandlerTest extends AbstractTest
 
         when(env.getResource(CacheMappingRegistry.class)).thenReturn(cacheMappingRegistry);
 
-        ConfigurationContext             context = new DefaultConfigurationContext(env);
+        ConfigurationContext context = new DefaultConfigurationContext(env);
         CoherenceNamespaceContentHandler handler =
             (CoherenceNamespaceContentHandler) context.ensureNamespaceContentHandler("",
                                                                                      new URI(String

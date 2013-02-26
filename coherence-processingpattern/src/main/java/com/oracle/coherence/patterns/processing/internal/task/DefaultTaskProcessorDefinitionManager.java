@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,35 +27,26 @@ package com.oracle.coherence.patterns.processing.internal.task;
 
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
-
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResourceReference;
-
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorType;
 import com.oracle.coherence.patterns.processing.taskprocessor.ClientLeaseMaintainer;
-
 import com.tangosol.io.pof.PortableException;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.CacheService;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.Filter;
 import com.tangosol.util.UID;
-
 import com.tangosol.util.filter.NotFilter;
 import com.tangosol.util.filter.PresentFilter;
-
 import com.tangosol.util.processor.ConditionalPut;
 import com.tangosol.util.processor.ConditionalRemove;
 
@@ -64,7 +54,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -117,7 +106,7 @@ public class DefaultTaskProcessorDefinitionManager implements TaskProcessorDefin
      * @param environment the {@link Environment} to use
      * @param configurableCacheFactory the {@link ConfigurableCacheFactory} to use
      */
-    public DefaultTaskProcessorDefinitionManager(Environment environment,
+    public DefaultTaskProcessorDefinitionManager(Environment              environment,
                                                  ConfigurableCacheFactory configurableCacheFactory)
     {
         this.configurableCacheFactory = configurableCacheFactory;

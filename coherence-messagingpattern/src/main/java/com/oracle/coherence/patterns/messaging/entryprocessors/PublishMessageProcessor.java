@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +26,6 @@
 package com.oracle.coherence.patterns.messaging.entryprocessors;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.Destination;
 import com.oracle.coherence.patterns.messaging.Message;
@@ -37,17 +35,12 @@ import com.oracle.coherence.patterns.messaging.MessagePublisherManager;
 import com.oracle.coherence.patterns.messaging.PublishRequestIdentifier;
 import com.oracle.coherence.patterns.messaging.Queue;
 import com.oracle.coherence.patterns.messaging.TopicSubscription;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
-
 import com.tangosol.util.InvocableMap.Entry;
-
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
@@ -62,7 +55,7 @@ import java.io.IOException;
  * asynchronously, exposing the message to either a {@link TopicSubscription} or a {@link Queue}
  * <p>
  * Each {@link DefaultMessagingSession} has a unique identifier, called the publisher key, that is
- * used to invoke the {@link PublishMessageProcessor}.  A {@link KeyStrategy} is used ensure that messages are
+ * used to invoke the {@link PublishMessageProcessor}.  A {@link KeyStrategy}�is used ensure that messages are
  * written to the same partition as the key that is used when the {@link PublishMessageProcessor} is invoked.
  * This results in an equal distribution of {@link PublishMessageProcessor}s
  * executing across the cluster.  During execution, the {@link PublishMessageProcessor} calls the {@link MessagePublisher}
@@ -112,9 +105,9 @@ public class PublishMessageProcessor extends AbstractProcessor implements Extern
      * @param requestIdentifier request identifier
      * @param payload message payload
      */
-    public PublishMessageProcessor(Identifier destinationIdentifier,
+    public PublishMessageProcessor(Identifier               destinationIdentifier,
                                    PublishRequestIdentifier requestIdentifier,
-                                   Object payload)
+                                   Object                   payload)
     {
         this.destinationIdentifier = destinationIdentifier;
         this.requestIdentifier     = requestIdentifier;

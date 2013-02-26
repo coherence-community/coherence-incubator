@@ -4,11 +4,17 @@ History
 The following sections outline Oracle Coherence Incubator changes in 
 reverse chronological order.
 
-<h3>Version ${project.version}: ${timestamp} </h3>
+<h3>Version ${project.version} @ ${timestamp} </h3>
 
 <h4>Source and Documentation Contributors</h4>
 
-*   Jonathan Knight, Paul Mackin, Brian Oliver
+*   Brian Oliver
+
+<h3>Version 11.0.0 @ 2013-02-26 15:05</h3>
+
+<h4>Source and Documentation Contributors</h4>
+
+*   Noah Arliss, Jonathan Knight, Paul Mackin, Brian Oliver, Patrick Peralta
 
 <h4>Global and Cross-Module Changes</h4>
 
@@ -37,9 +43,10 @@ reverse chronological order.
 *   Rationalized all modules to use a single Coherence Incubator version number
     instead of individual version numbers.
        
-*   Migrated the source repository to GitHub.
+*   Migrated the source repository to [GitHub](http://github.com).
 
-*   Migrated the issue tracking to java.net.
+*   Migrated the [Issue Tracking](http://java.net/jira/browse/COHINC) to
+    [java.net](http://java.net).
 
 *   Introduced "uber" jar generation support to produce the entire Oracle
     Coherence Incubator in a single jar.
@@ -53,7 +60,10 @@ reverse chronological order.
     now includes signficiant contributions from the "Grid Man" project
     (developed by Jonathan Knight). 
 
-*   Upgraded projects to use Oracle Coherence 3.7.1.5
+*   Upgraded projects to use Oracle Coherence 3.7.1.7
+
+*   Migrated binary distribution mechanism to use [maven.java.net](http://maven.java.net)
+    instead of download links.
 
 <h4>coherence-incubator-all</h4>
 
@@ -109,12 +119,17 @@ reverse chronological order.
 
 *   Refactored tests to use Oracle Tools.
 
+*   Introduced the new `ParallelLocalCacheEventChannel` providing the ability
+    to update local caches in parallel across a cluster.
+
 <h4>coherence-pushreplicationpattern</h4>
 
 *   Refactored tests to use Oracle Tools.
 
 *   Resolved issue were calling NamedCache.getAll(...) on a cache that is being
     used for Push Replication would throw an UnsupportedOperationException.
+
+*   Added new tests for the new `ParallelLocalCacheEventChannel`.
 
 <h4>coherence-pushreplicationpattern-examples</h4>
 

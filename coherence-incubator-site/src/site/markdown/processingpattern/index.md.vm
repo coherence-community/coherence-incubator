@@ -14,8 +14,22 @@ problems by managing and distributing the core state across a Coherence Data Gri
 
 <h4>Distribution</h4>
 
-The Oracle Coherence Incubator Processing Pattern is distributed as a single jar 
-called: `coherence-processingpattern-${project.version}.jar`
+The Processing Pattern implementation is distributed in the jar file
+called: `coherence-processingpattern-${project.version}.jar`.
+
+However as the Processing Pattern has many dependencies, we **strongly
+recommend** that developers adopt and use tools like Apache Maven/Ivy/Gradle to
+transitively resolve the said dependencies, instead of attempting to do so manually.
+
+To configure your Apache Maven-based application to use the Processing Pattern,
+simply add the following declaration to your application `pom.xml` file
+`<dependencies>` element.
+
+    <dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-processingpattern</artifactId>
+        <version>${project.version}</version>
+    </dependency>
 
 <h4>Introduction</h4>
 

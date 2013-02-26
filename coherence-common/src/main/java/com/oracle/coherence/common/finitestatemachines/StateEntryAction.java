@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -35,7 +34,7 @@ package com.oracle.coherence.common.finitestatemachines;
  * (to the said state) or a {@link Transition} (to the said state)
  * has successfully completed.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @param <S>  the type of the state
@@ -53,14 +52,14 @@ public interface StateEntryAction<S extends Enum<S>>
      *                       prior to the state change (may be <code>null</code>
      *                       if there was no previous state)
      * @param enteringState  the new state of the {@link FiniteStateMachine}
-     * @param event			 the {@link Event} that triggered the action
+     * @param event          the {@link Event} that triggered the action
      * @param context        the {@link ExecutionContext} for the action
      *
      * @return  the {@link Instruction} to be performed by the
      *          {@link FiniteStateMachine}
      */
-    public Instruction onEnterState(S exitingState,
-                                    S enteringState,
-                                    Event<S> event,
+    public Instruction onEnterState(S                exitingState,
+                                    S                enteringState,
+                                    Event<S>         event,
                                     ExecutionContext context);
 }

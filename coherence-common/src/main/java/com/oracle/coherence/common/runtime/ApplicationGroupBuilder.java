@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -55,10 +54,10 @@ public interface ApplicationGroupBuilder<A extends Application, S extends Applic
      * @param cRequiredInstances  The number of instances of the {@link Application} that should be realized for the
      *                            {@link ApplicationGroup} when {@link #realize(ApplicationConsole)} is called.
      */
-    public void addBuilder(B builder,
-                           S schema,
+    public void addBuilder(B      builder,
+                           S      schema,
                            String sPrefix,
-                           int cRequiredInstances);
+                           int    cRequiredInstances);
 
 
     /**

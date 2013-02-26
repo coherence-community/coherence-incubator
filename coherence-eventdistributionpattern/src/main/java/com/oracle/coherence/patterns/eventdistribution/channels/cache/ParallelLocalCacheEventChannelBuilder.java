@@ -3,14 +3,13 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,23 +26,17 @@
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.configuration.Mandatory;
 import com.oracle.coherence.configuration.Property;
 import com.oracle.coherence.configuration.SubType;
 import com.oracle.coherence.configuration.Type;
-
 import com.oracle.coherence.configuration.expressions.Constant;
 import com.oracle.coherence.configuration.expressions.Expression;
-
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.AbstractEventChannelBuilder;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -97,7 +90,7 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
      */
     public EventChannel realize(ParameterProvider parameterProvider)
     {
-        String targetCacheName = getTargetCacheName().evaluate(parameterProvider).getString();
+        String                        targetCacheName = getTargetCacheName().evaluate(parameterProvider).getString();
         String invocationServiceName = getInvocationServiceName().evaluate(parameterProvider).getString();
 
         LocalCacheEventChannelBuilder localEventChannelBuilder = new LocalCacheEventChannelBuilder();

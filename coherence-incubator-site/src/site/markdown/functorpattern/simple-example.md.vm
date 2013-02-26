@@ -1,0 +1,94 @@
+The Functor Pattern Example
+---------------------------
+
+<h4>Prerequisites</h4>
+
+To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+[Building the Oracle Coherence Incubator](building.html).
+
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-functorpattern-examples`
+module of the Oracle Coherence Incubator.
+
+<h4>Overview</h4>
+
+The Functor Pattern example demonstrates how to use the Functor Pattern to set,
+increment and get the value of an attribute on a `Context` asynchronously.
+
+It illustrates the main elements of the Functor Pattern, a `Context`, the
+`FunctorSubmitter` and a `Functor`.
+
+There are four classes in the example:
+
+1.  `FunctorPatternExample` - The main application class.
+
+2.  `Counter` - An mutable implementation of the `Context` interface that
+    represents a running counter.
+
+3.  `NextValueFunctor` - A `Functor` that wil increment a `Counter`.
+
+4.  `LoggingCommand` - A `Command` that will log the current state of a
+    `Context`, in this case the `Counter`.
+
+The `FunctorPatternExample` creates a new `Counter` which is then registered
+with the `ContextsManager`.  The example then submits a
+`LoggingCommand` indicating that the application has commenced.  In a tight loop, the
+`Counter` is incremented 50 times using the `NextValueFunctor`.
+
+There are two approaches to running the example.  First is using a simple entirely
+encapuslated approach.  The second is using a client-server mode in which an
+Coherence Extend-based Client runs the actual `FunctorPatternExample`, backed by
+a Coherence Proxy-enabled Server the hosts the `GenericContext`.
+
+>   The following instructions assume that `$COHERENCE_INCUBATOR` is the directory
+>   in which the Oracle Coherence Incubator source code has been downloaded,
+>   unpacked and built according to the prerequisites outlined above.
+
+
+<h4>Running the Simple Example</h4>
+
+Execute the following shell commands to run the Simple Example.
+
+In a new Terminal / Shell Console for the "Example"
+
+1.  Change to the Functor Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-functorpattern-examples/target`
+
+
+2.  Run the Simple Example
+
+    `java -jar coherence-functorpattern-examples-${project.version}.jar simple.properties`
+
+<h4>Running in Client-Server Mode</h4>
+
+Execute the following shell commands to run the example in Client-Server Mode.
+
+In a new Terminal / Shell Console for the "Server"
+
+1.  Change to the Functor Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-functorpattern-examples/target`
+
+2.  Start the Coherence Server (and Proxy) Process/
+
+    `java -jar coherence-functorpattern-examples-${project.version}.jar server.properties`
+
+In a new Terminal / Shell Console for the "Client"
+
+3.  Change to the Functor Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-functorpattern-examples/target`
+
+4.  Start the Coherence Extend-based Client Application (example)
+
+    `java -jar coherence-functorpattern-examples-${project.version}.jar client.properties`
+
+You will notice the "Server" console that the logging commands are executing in
+the server, where are the "Client" console displays no such logging.   This is
+because the `Functors` are executed at the `Context`, that of which is hosted
+by the "Server".
+
+After this you may kill the "Server" application and close the consoles.

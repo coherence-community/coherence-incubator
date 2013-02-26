@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,24 +26,17 @@
 package com.oracle.coherence.patterns.messaging.entryprocessors;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionConfiguration;
 import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
 import com.oracle.coherence.patterns.messaging.Topic;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
-
 import com.tangosol.util.InvocableMap.Entry;
-
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
@@ -98,7 +90,7 @@ public class TopicSubscribeProcessor<C extends SubscriptionConfiguration> extend
      * @param subscriptionConfiguration The proposed {@link SubscriptionConfiguration}
      */
     public TopicSubscribeProcessor(SubscriptionIdentifier subscriptionIdentifier,
-                                   C subscriptionConfiguration)
+                                   C                      subscriptionConfiguration)
     {
         this(subscriptionIdentifier, subscriptionConfiguration, null);
     }
@@ -112,8 +104,8 @@ public class TopicSubscribeProcessor<C extends SubscriptionConfiguration> extend
      * @param subscription The object that will managed the state of the subscription
      */
     public TopicSubscribeProcessor(SubscriptionIdentifier subscriptionIdentifier,
-                                   C subscriptionConfiguration,
-                                   Subscription subscription)
+                                   C                      subscriptionConfiguration,
+                                   Subscription           subscription)
     {
         this.subscriptionIdentifier    = subscriptionIdentifier;
         this.subscriptionConfiguration = subscriptionConfiguration;

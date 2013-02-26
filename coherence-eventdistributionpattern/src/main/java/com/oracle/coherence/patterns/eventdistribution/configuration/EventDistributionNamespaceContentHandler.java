@@ -3,14 +3,13 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,20 +26,15 @@
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.resourcing.ResourceProviderManager;
-
 import com.oracle.coherence.configuration.caching.CacheMapping;
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
-
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.ElementContentHandler;
 import com.oracle.coherence.environment.extensible.QualifiedName;
 import com.oracle.coherence.environment.extensible.namespaces.AbstractNamespaceContentHandler;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStoreEventChannelBuilder;
@@ -62,24 +56,18 @@ import com.oracle.coherence.patterns.eventdistribution.transformers.ChainedEvent
 import com.oracle.coherence.patterns.eventdistribution.transformers.CoalescingEventIteratorTransformerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.transformers.FilteringEventIteratorTransformerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformerBuilder;
-
 import com.tangosol.net.cache.BinaryEntryStore;
 import com.tangosol.net.cache.CacheStore;
-
 import com.tangosol.run.xml.XmlElement;
-
 import com.tangosol.util.Filter;
-
 import com.tangosol.util.filter.EntryFilter;
 
+import javax.jms.JMSException;
 import java.net.URI;
-
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import javax.jms.JMSException;
 
 /**
  * A {@link EventDistributionNamespaceContentHandler} handles XML Configuration processing for the
@@ -322,21 +310,21 @@ public class EventDistributionNamespaceContentHandler extends AbstractNamespaceC
             }
         });
 
-        registerContentHandler("local-parallel-cache-channel-scheme", new ElementContentHandler()
-                {
-                    public Object onElement(ConfigurationContext context,
-                                            QualifiedName        qualifiedName,
-                                            XmlElement           xmlElement) throws ConfigurationException
-                    {
-                        // create a configurable builder for the LocalCacheEventChannelBuilder
-                        ParallelLocalCacheEventChannelBuilder builder = new ParallelLocalCacheEventChannelBuilder();
+        registerContentHandler("parallel-local-cache-channel-scheme", new ElementContentHandler()
+        {
+            public Object onElement(ConfigurationContext context,
+                                    QualifiedName        qualifiedName,
+                                    XmlElement           xmlElement) throws ConfigurationException
+            {
+                // create a configurable builder for the ParallelLocalCacheEventChannelBuilder
+                ParallelLocalCacheEventChannelBuilder builder = new ParallelLocalCacheEventChannelBuilder();
 
-                        // configure the builder from the XmlElement
-                        context.configure(builder, qualifiedName, xmlElement);
+                // configure the builder from the XmlElement
+                context.configure(builder, qualifiedName, xmlElement);
 
-                        return builder;
-                    }
-                });
+                return builder;
+            }
+        });
 
         registerContentHandler("local-cache-channel-scheme", new ElementContentHandler()
         {

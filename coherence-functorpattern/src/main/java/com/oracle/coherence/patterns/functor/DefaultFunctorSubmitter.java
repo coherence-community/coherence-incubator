@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,23 +27,18 @@ package com.oracle.coherence.patterns.functor;
 
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.UUIDBasedIdentifier;
-
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.CommandSubmitter;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.DefaultCommandSubmitter;
-
 import com.oracle.coherence.patterns.functor.internal.FunctorFuture;
 import com.oracle.coherence.patterns.functor.internal.FunctorResult;
 import com.oracle.coherence.patterns.functor.internal.SingleFunctorCommand;
 import com.oracle.coherence.patterns.functor.internal.SingleFunctorFuture;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MultiplexingMapListener;
-
 import com.tangosol.util.filter.EqualsFilter;
 import com.tangosol.util.filter.MapEventFilter;
 
@@ -114,7 +108,7 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
      * @param identifier
      * @param commandSubmitter
      */
-    public DefaultFunctorSubmitter(Identifier identifier,
+    public DefaultFunctorSubmitter(Identifier       identifier,
                                    CommandSubmitter commandSubmitter)
     {
         this.identifier       = identifier;
@@ -181,7 +175,7 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
      */
     public <C extends Context> Identifier submitCommand(Identifier contextIdentifier,
                                                         Command<C> command,
-                                                        boolean allowSubmissionWhenContextDoesNotExist)
+                                                        boolean    allowSubmissionWhenContextDoesNotExist)
     {
         return commandSubmitter.submitCommand(contextIdentifier, command, allowSubmissionWhenContextDoesNotExist);
     }
@@ -190,7 +184,7 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
     /**
      * {@inheritDoc}
      */
-    public <C extends Context, T> Future<T> submitFunctor(Identifier contextIdentifier,
+    public <C extends Context, T> Future<T> submitFunctor(Identifier    contextIdentifier,
                                                           Functor<C, T> functor)
     {
         return submitFunctor(contextIdentifier, functor, false);
@@ -200,9 +194,9 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
     /**
      * {@inheritDoc}
      */
-    public <C extends Context, T> Future<T> submitFunctor(Identifier contextIdentifier,
+    public <C extends Context, T> Future<T> submitFunctor(Identifier    contextIdentifier,
                                                           Functor<C, T> functor,
-                                                          boolean allowSubmissionWhenContextDoesNotExist)
+                                                          boolean       allowSubmissionWhenContextDoesNotExist)
     {
         // create an identifier for the functor result
         Identifier functorResultIdentifier = UUIDBasedIdentifier.newInstance();

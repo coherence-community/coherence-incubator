@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,33 +29,25 @@ import com.oracle.coherence.configuration.Mandatory;
 import com.oracle.coherence.configuration.Property;
 import com.oracle.coherence.configuration.SubType;
 import com.oracle.coherence.configuration.Type;
-
 import com.oracle.coherence.configuration.expressions.Expression;
-
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.Base;
 import com.tangosol.util.ExternalizableHelper;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.Hashtable;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 /**
  * A {@link JndiBasedParameterizedBuilder} is a {@link ParameterizedBuilder} that uses JNDI to resolve resources.
@@ -148,7 +139,7 @@ public class JndiBasedParameterizedBuilder implements ParameterizedBuilder<Objec
      * {@inheritDoc}
      */
     @Override
-    public boolean realizesClassOf(Class<?> clazz,
+    public boolean realizesClassOf(Class<?>          clazz,
                                    ParameterProvider parameterProvider)
     {
         return clazz.isAssignableFrom(realize(parameterProvider).getClass());

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,15 +28,11 @@ package com.oracle.coherence.patterns.messaging;
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
-
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.messaging.entryprocessors.ExposeMessageToQueueProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.RegisterSubscriptionsWithMessageProcessor;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.util.ArrayList;
@@ -64,9 +59,9 @@ import java.util.Set;
 class MessageEventProcessors
 {
     /**
-     * A {@link AbstractMessageEventProcessor} is the base class for message event processors.  This class
+     * A {@link AbstractMessageEventProcessor}�is the base class for message event processors.  This class
      * wait until partition transfer is done.
-     *  
+     * �
      */
     public abstract static class AbstractMessageEventProcessor extends AbstractAsynchronousEventProcessor<EntryEvent>
     {
@@ -125,8 +120,8 @@ class MessageEventProcessors
 
 
     /**
-     * A {@link ExposeToQueueProcessor} exposes a batch of messages to a queue.
-     *  
+     * A {@link ExposeToQueueProcessor}�exposes a batch of messages to a queue.
+     * �
      */
     public static class ExposeToQueueProcessor extends AbstractMessageEventProcessor
     {
@@ -165,8 +160,8 @@ class MessageEventProcessors
 
 
     /**
-     * A {@link ExposeToTopicProcessor} exposes a batch of messages to a all of the subscriptions in a topic.
-     *  
+     * A {@link ExposeToTopicProcessor}�exposes a batch of messages to a all of the subscriptions in a topic.
+     * �
      */
     public static class ExposeToTopicProcessor extends AbstractMessageEventProcessor
     {

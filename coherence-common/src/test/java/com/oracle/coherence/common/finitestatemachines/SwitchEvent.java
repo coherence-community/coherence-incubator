@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,7 +28,7 @@ package com.oracle.coherence.common.finitestatemachines;
 /**
  * A {@link SwitchEvent} describes the events that may occur on a light switch
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -72,7 +71,7 @@ public enum SwitchEvent implements Event<Light>
      * {@inheritDoc}
      */
     @Override
-    public Light getDesiredState(Light currentState,
+    public Light getDesiredState(Light            currentState,
                                  ExecutionContext context)
     {
         return m_desiredState;

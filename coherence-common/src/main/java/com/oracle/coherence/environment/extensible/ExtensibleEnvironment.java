@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,60 +28,46 @@ package com.oracle.coherence.environment.extensible;
 import com.oracle.coherence.common.builders.BuilderRegistry;
 import com.oracle.coherence.common.builders.NoArgsBuilder;
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.dispatching.SimpleEventDispatcher;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
 import com.oracle.coherence.common.events.lifecycle.LifecycleStoppedEvent;
 import com.oracle.coherence.common.events.lifecycle.NamedCacheStorageRealizedEvent;
 import com.oracle.coherence.common.events.lifecycle.NamedCacheStorageReleasedEvent;
-
 import com.oracle.coherence.common.logging.CoherenceLogHandler;
 import com.oracle.coherence.common.logging.LogHelper;
-
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
-
 import com.oracle.coherence.configuration.caching.CacheMapping;
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
-
 import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.dependencies.DependencyTracker;
 import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.environment.extensible.namespaces.CoherenceNamespaceContentHandler;
-
 import com.tangosol.io.ClassLoaderAware;
-
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.CacheService;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.Service;
-
 import com.tangosol.run.xml.XmlDocument;
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlHelper;
-
 import com.tangosol.util.ServiceEvent;
 import com.tangosol.util.ServiceListener;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -182,7 +167,7 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
      * @param path The path to the configuration file.
      * @param loader The {@link ClassLoader} to use to load resources.
      */
-    public ExtensibleEnvironment(String path,
+    public ExtensibleEnvironment(String      path,
                                  ClassLoader loader)
     {
         super(path, loader);
@@ -203,7 +188,7 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
      */
     @Override
     public <R> R registerResource(Class<R> clazz,
-                                  Object resource)
+                                  Object   resource)
     {
         return registerResource(clazz, "", resource);
     }
@@ -215,7 +200,7 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
     @SuppressWarnings("unchecked")
     @Override
     public <R> R getResource(Class<R> clazz,
-                             String name)
+                             String   name)
     {
         if (resourcesByClass.containsKey(clazz))
         {
@@ -246,8 +231,8 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
      */
     @SuppressWarnings("unchecked")
     @Override
-    public synchronized <R> R registerResource(Class<R> clazz,
-                                               String name,
+    public synchronized <R> R registerResource(Class<R>         clazz,
+                                               String           name,
                                                NoArgsBuilder<R> builder)
     {
         if (name == null)
@@ -301,8 +286,8 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
      * {@inheritDoc}
      */
     @Override
-    public <R> R registerResource(Class<R> clazz,
-                                  String name,
+    public <R> R registerResource(Class<R>     clazz,
+                                  String       name,
                                   final Object resource)
     {
         return registerResource(clazz, name, new NoArgsBuilder<R>()
@@ -334,7 +319,7 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
         // let everyone know that they are using the Extensible Environment for Coherence cache configuration
         CacheFactory.log("", 0);
         CacheFactory.log("Using the Incubator Extensible Environment for Coherence Cache Configuration", 0);
-        CacheFactory.log("Copyright (c) 2011, Oracle Corporation. All Rights Reserved.", 0);
+        CacheFactory.log("Copyright (c) 2013, Oracle Corporation. All Rights Reserved.", 0);
         CacheFactory.log("", 0);
 
         // create the new map of resources
@@ -712,9 +697,9 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
     @SuppressWarnings({"rawtypes"})
     @Override
     protected void register(CacheService cacheService,
-                            String cacheName,
-                            String context,
-                            Map map)
+                            String       cacheName,
+                            String       context,
+                            Map          map)
     {
         super.register(cacheService, cacheName, context, map);
 
@@ -728,7 +713,7 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
      */
     @Override
     protected void unregister(CacheService cacheService,
-                              String cacheName)
+                              String       cacheName)
     {
         super.unregister(cacheService, cacheName);
 
@@ -755,10 +740,10 @@ public class ExtensibleEnvironment extends DefaultConfigurableCacheFactory imple
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public Object instantiateAny(CacheInfo info,
-                                 XmlElement xmlClass,
+    public Object instantiateAny(CacheInfo                info,
+                                 XmlElement               xmlClass,
                                  BackingMapManagerContext context,
-                                 ClassLoader loader)
+                                 ClassLoader              loader)
     {
         // use a registered Scheme to produce the instance (if required)
         if (xmlClass.getName().equals("class-scheme") && xmlClass.getAttributeMap().containsKey("use-scheme"))

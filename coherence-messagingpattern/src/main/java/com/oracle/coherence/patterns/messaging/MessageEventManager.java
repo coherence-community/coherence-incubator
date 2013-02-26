@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -32,21 +31,14 @@ import com.oracle.coherence.common.events.backingmap.BackingMapEntryArrivedEvent
 import com.oracle.coherence.common.events.backingmap.BackingMapEntryInsertedEvent;
 import com.oracle.coherence.common.events.dispatching.listeners.DelegatingBackingMapListener;
 import com.oracle.coherence.common.events.processing.EventProcessor;
-
 import com.oracle.coherence.common.ranges.Range;
 import com.oracle.coherence.common.ranges.Ranges;
-
 import com.oracle.coherence.common.ticketing.TicketBook;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.net.cache.ContinuousQueryCache;
-
 import com.tangosol.util.Filter;
-
 import com.tangosol.util.extractor.ChainedExtractor;
-
 import com.tangosol.util.filter.EqualsFilter;
 
 import java.util.Iterator;
@@ -235,7 +227,7 @@ class MessageEventManager
      * @param message message
      * @return event processor or null
      */
-    public EventProcessor<EntryEvent> getEventProcessor(Event e,
+    public EventProcessor<EntryEvent> getEventProcessor(Event   e,
                                                         Message message)
     {
         MessagePublisher publisher = MessagePublisherManager.getInstance().ensurePublisher(message);
@@ -297,7 +289,7 @@ class MessageEventManager
      * @return EventProcessor
      */
     private EventProcessor<EntryEvent> createEventProcessor(MessagePublisher publisher,
-                                                            Event e)
+                                                            Event            e)
     {
         EventProcessor<EntryEvent> proc = null;
 

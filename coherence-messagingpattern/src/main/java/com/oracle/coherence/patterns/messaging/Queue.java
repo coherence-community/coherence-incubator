@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -35,38 +34,28 @@ import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
 import com.oracle.coherence.common.events.processing.EventProcessor;
 import com.oracle.coherence.common.events.processing.EventProcessorFactory;
-
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
-
 import com.oracle.coherence.patterns.messaging.Subscription.Status;
 import com.oracle.coherence.patterns.messaging.management.MessagingMBeanManager;
 import com.oracle.coherence.patterns.messaging.management.QueueProxy;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.BackingMapManager;
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.CacheService;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.ObservableMap;
-
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -412,7 +401,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      * @param messageTracker message tracker
      */
     public void rollbackMessages(SubscriptionIdentifier subscriptionIdentifier,
-                                 MessageTracker messageTracker)
+                                 MessageTracker         messageTracker)
     {
         // add the range of messages to roll back to our existing set to
         // re-deliver
@@ -432,9 +421,9 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
     /**
      * {@inheritDoc}
      */
-    public void subscribe(SubscriptionIdentifier subscriptionIdentifier,
+    public void subscribe(SubscriptionIdentifier    subscriptionIdentifier,
                           SubscriptionConfiguration subscriptionConfiguration,
-                          Subscription subscription)
+                          Subscription              subscription)
     {
         super.subscribe(subscriptionIdentifier,
                         subscriptionConfiguration,
@@ -450,7 +439,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
 
      */
     public void unsubscribe(SubscriptionIdentifier subscriptionIdentifier,
-                            MessageTracker messageTracker)
+                            MessageTracker         messageTracker)
     {
         // remove the subscriber from waiting list of subscribers
         waitingSubscriptions.remove(subscriptionIdentifier);
@@ -518,11 +507,11 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      * @param forceAccept force the subscription to accept the message.
      *
      */
-    private void deliverMessage(QueueDeliveryResults results,
-                                Identifier destinationIdentifier,
+    private void deliverMessage(QueueDeliveryResults   results,
+                                Identifier             destinationIdentifier,
                                 SubscriptionIdentifier subscriptionIdentifier,
-                                MessageIdentifier messageIdentifier,
-                                boolean forceAccept)
+                                MessageIdentifier      messageIdentifier,
+                                boolean                forceAccept)
     {
         MessageKey messageKey = Message.getKey(destinationIdentifier, messageIdentifier);
 
@@ -535,10 +524,10 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
                                                                                  subscriptionIdentifier));
 
             // make the message known to the subscription.
-            NamedCache            subscriptions = CacheFactory.getCache(Subscription.CACHENAME);
-            InvokeMethodProcessor proc          = new InvokeMethodProcessor("acceptOneMessage",
-                                                                            new Object[] {messageIdentifier,
-                                                                                          Boolean.valueOf(forceAccept)});
+            NamedCache subscriptions = CacheFactory.getCache(Subscription.CACHENAME);
+            InvokeMethodProcessor proc = new InvokeMethodProcessor("acceptOneMessage",
+                                                                   new Object[] {messageIdentifier,
+                                                                                 Boolean.valueOf(forceAccept)});
             Object acceptedObj = subscriptions.invoke(subscriptionIdentifier, proc);
 
             if (acceptedObj != null)
@@ -792,7 +781,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
          * {@inheritDoc}
          */
         public void processLater(EventDispatcher dispatcher,
-                                 EntryEvent event)
+                                 EntryEvent      event)
         {
             Identifier destinationIdentifier = (Identifier) event.getEntry().getKey();
 

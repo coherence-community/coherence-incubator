@@ -1,0 +1,98 @@
+The Push Replication Active-Active Example
+-------------------------------------------
+
+<h4>Prerequisites</h4>
+
+To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+[Building the Oracle Coherence Incubator](building.html).
+
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-pushreplicationpattern-examples`
+module of the Oracle Coherence Incubator.
+
+<h4>Overview</h4>
+
+This example demonstrates Push Replication Pattern configured in an "Active-Active"
+topology, where by two or more clusters use applications that perform read/write
+operations and these operations are then replicated to the other "active" clusters.
+
+![The Active Active Topology](../images/pushreplicationpattern/active-active.png)
+
+There are four applications to run as part of this example.  The following details
+the intent, instructions and the order in which to run these applictions.
+
+>   The following instructions assume that `$COHERENCE_INCUBATOR` is the directory
+>   in which the Oracle Coherence Incubator source code has been downloaded,
+>   unpacked and built according to the prerequisites outlined above.
+
+
+<h4>Step 1. Running the Active Server for Site 1</h4>
+
+Execute the following shell commands to start the "Active Server for Site 1".
+
+In a new Terminal / Shell Console for the "Active Server for Site 1"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Active Server for Site 1"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar activeactive-active1-server.properties`
+
+
+<h4>Step 2. Running the Active Server for Site 2</h4>
+
+Execute the following shell commands to start the "Active Server for Site 2".
+
+In a new Terminal / Shell Console for the "Active Server for Site 2"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Active Server for Site 2"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar activeactive-active2-server.properties`
+
+
+<h4>Step 3. Running the Active Publisher for Site 1</h4>
+
+Execute the following shell commands to start the "Active Publisher for Site 1".  This
+application will insert, update and remove entries in the "Active Server for Site 1", that
+of which will then "push" said updates to the "Active Server for Site 2".
+
+In a new Terminal / Shell Console for the "Active Publisher for Site 1"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Active Publisher for Site 1"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar activeactive-publisher1.properties`
+
+
+<h4>Step 4. Running the Active Publisher for Site 2</h4>
+
+Execute the following shell commands to start the "Active Publisher for Site 2".  This
+application will insert, update and remove entries in the "Active Server for Site 2", that
+of which will then "push" said updates to the "Active Server for Site 1".
+
+In a new Terminal / Shell Console for the "Active Publisher for Site 2"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Active Publisher for Site 2"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar activeactive-publisher2.properties`
+
+

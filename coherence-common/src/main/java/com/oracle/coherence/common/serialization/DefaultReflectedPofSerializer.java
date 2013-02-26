@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,10 +28,8 @@ package com.oracle.coherence.common.serialization;
 import com.tangosol.io.pof.PofContext;
 
 import java.lang.reflect.Field;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -82,10 +79,10 @@ public class DefaultReflectedPofSerializer implements ReflectedContext
     {
         this.serializationProvider = serializationProvider;
 
-        this.typeSerializerMap     = new ConcurrentHashMap<Class<?>, ReflectedSerializer>(100,
-                                                                                          0.75f,
-                                                                                          Runtime.getRuntime()
-                                                                                              .availableProcessors());
+        this.typeSerializerMap = new ConcurrentHashMap<Class<?>, ReflectedSerializer>(100,
+                                                                                      0.75f,
+                                                                                      Runtime.getRuntime()
+                                                                                          .availableProcessors());
 
         this.pofSerializersByUserTypeId = new HashMap<Integer, ReflectedSerializer>();
         this.pofUserTypeIdsByClass      = new HashMap<Class<?>, Integer>();
@@ -222,7 +219,7 @@ public class DefaultReflectedPofSerializer implements ReflectedContext
     /**
      * {@inheritDoc}
      */
-    public ReflectedSerializer ensurePofSerializer(Class<?> type,
+    public ReflectedSerializer ensurePofSerializer(Class<?>   type,
                                                    PofContext pofContext)
     {
         ReflectedSerializer serializer = typeSerializerMap.get(type);

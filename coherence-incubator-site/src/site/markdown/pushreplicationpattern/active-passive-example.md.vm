@@ -1,0 +1,100 @@
+The Push Replication Active-Passive Example
+-------------------------------------------
+
+<h4>Prerequisites</h4>
+
+To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+[Building the Oracle Coherence Incubator](building.html).
+
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-pushreplicationpattern-examples`
+module of the Oracle Coherence Incubator.
+
+<h4>Overview</h4>
+
+This example demonstrates Push Replication Pattern configured in an "Active-Passive"
+topology, where by one cluster, the "active" cluster, uses an application that
+performs read/write operations.  These operations are then replicated to another
+cluster, the "passive" cluster, that of which is being used predominantly in a
+read-only mode.  Entries that may be updated by applications in the "passive"
+cluster are not replicated back to the "active" cluster.
+
+![The Active Passive Topology](../images/pushreplicationpattern/active-passive.png)
+
+There are four applications to run as part of this example.  The following details
+the intent, instructions and the order in which to run these applictions.
+
+>   The following instructions assume that `$COHERENCE_INCUBATOR` is the directory
+>   in which the Oracle Coherence Incubator source code has been downloaded,
+>   unpacked and built according to the prerequisites outlined above.
+
+
+<h4>Step 1. Running the Active Server</h4>
+
+Execute the following shell commands to start the "Active Server".
+
+In a new Terminal / Shell Console for the "Active Server"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Active Server"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar activepassive-active-server.properties`
+
+
+<h4>Step 2. Running the Passive Server</h4>
+
+Execute the following shell commands to start the "Passive Server".
+
+In a new Terminal / Shell Console for the "Passive Server"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Passive Server"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar activepassive-passive-server.properties`
+
+
+<h4>Step 3. Running the Passive Listener Application</h4>
+
+Execute the following shell commands to start the "Passive Listener".  This
+application will output cache events detailing the updates occuring in the
+"Passive Server".  This updates originate from the "Active Server".
+
+In a new Terminal / Shell Console for the "Passive Listener"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Passive Listener"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar activepassive-passive-listener.properties`
+
+
+<h4>Step 4. Running the Active Publisher Application</h4>
+
+Execute the following shell commands to start the "Active Publisher".  This
+application will insert, update and remove entries in the "Active Server", that
+of which will then "push" said updates to the "Passive Server".
+
+In a new Terminal / Shell Console for the "Active Publisher"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-examples/target`
+
+
+2.  Run the "Active Publisher"
+
+    `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar activepassive-active-publisher.properties`
+

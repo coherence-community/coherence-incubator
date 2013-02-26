@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +26,6 @@
 package com.oracle.coherence.common.serialization.fieldserializers;
 
 import com.oracle.coherence.common.logging.Logger;
-
 import com.oracle.coherence.common.serialization.FieldSerializer;
 
 import java.lang.reflect.Array;
@@ -36,7 +34,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
 import java.util.HashMap;
 
 /**
@@ -85,7 +82,7 @@ public abstract class AbstractGenericFieldSerializer implements FieldSerializer
      *              The preferred concrete type to use for instantiating a representation of the {@link Field}.
      *              (set to {@link Object}.class if the declared type of the {@link Field} should be used instead).
      */
-    protected AbstractGenericFieldSerializer(Field field,
+    protected AbstractGenericFieldSerializer(Field    field,
                                              Class<?> preferredType)
     {
         if (field.getGenericType() instanceof ParameterizedType)

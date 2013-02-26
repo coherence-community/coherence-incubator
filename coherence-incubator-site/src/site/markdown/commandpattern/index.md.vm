@@ -9,8 +9,22 @@ built using Oracle Coherence.
 
 <h4>Distribution</h4>
 
-The Oracle Coherence Incubator Command Pattern is distributed as a single jar 
-called: `coherence-commandpattern-${project.version}.jar`
+The Command Pattern implementation is distributed in the jar file
+called: `coherence-commandpattern-${project.version}.jar`.
+
+However as the Command Pattern has several other dependencies, we **strongly
+recommend** that developers adopt and use tools like Apache Maven/Ivy/Gradle to
+transitively resolve the said dependencies, instead of attempting to do so manually.
+
+To configure your Apache Maven-based application to use the Command Pattern,
+simply add the following declaration to your application `pom.xml` file
+`<dependencies>` element.
+
+    <dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-commandpattern</artifactId>
+        <version>${project.version}</version>
+    </dependency>
 
 <h4>Details</h4>
 
@@ -257,25 +271,91 @@ files are included in the source code distribution.
 
 <h4>Frequently Asked Questions</h4>
 
-**What is the relationship between the Functor Pattern, Command Pattern, 
-Entry Processors and the Invocation Service for performing work in a cluster?**
+<h6>What is the relationship between the Functor Pattern, Command Pattern,
+Entry Processors and the Invocation Service for performing work in a cluster?</h6>
 
 The following table outlines the main differences.
 
-|| || Functor Pattern || Command Pattern || EntryProcessors || InvocationService ||
-| Processing Target | A Context | A Context | A Cache Entry | A Cluster Member |
-| Submission Behavior | Non-Blocking | Non-Blocking | Blocking | Blocking and Non-Blocking |
-| Execution Order | Order of Submission | Order of Submission | Order of Submission (unless using PriorityTasks) | Order of Submission |
-| Supports Return Values? \\
-(and re-throwing Exceptions) | Yes | No | Yes | Yes |
-| Guaranteed to Execute? \\
-(if Submitter terminates after submission) | Yes | Yes | Yes (submitter blocks) | Yes (for blocking), No (for non-blocking) |
-| Guaranteed to Execute? \\
-(if Target JVM terminates during execution) | Yes | Yes | Yes (submitter automatically retries) | No (retry up to developer) |
-| Submitted requests recoverable from disk? | Yes (when using Cache Store) | Yes (when using Cache Store) | No | No |
-| Request may be cancelled? | Yes | Yes | No | Yes (for non-blocking) |
+<table class="table table-bordered"">
+    <tr class="info">
+        <td>Description</td>
+        <td>Functor Pattern</td>
+        <td>Command Pattern</td>
+        <td>EntryProcessors</td>
+        <td>InvocationService</td>
+    </tr>
+    <tr>
+        <td>Processing Target</td>
+        <td>A Context</td>
+        <td>A Context</td>
+        <td>A Cache Entry</td>
+        <td>A Cluster Member</td>
+    </tr>
+    <tr>
+        <td>Submission Behavior</td>
+        <td>Non-Blocking</td>
+        <td>Non-Blocking</td>
+        <td>Blocking</td>
+        <td>Blocking and Non-Blocking</td>
+    </tr>
+    <tr>
+        <td>Execution Order</td>
+        <td>Order of Submission</td>
+        <td>Order of Submission</td>
+        <td>Order of Submission^1</td>
+        <td>Order of Submission</td>
+    </tr>
+    <tr>
+        <td>Supports Return Values?</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+    </tr>
+    <tr>
+        <td>Guaranteed to Execute?^2</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes^3</td>
+        <td>Yes^4 and No^5</td>
+    </tr>
+    <tr>
+        <td>Guaranteed to Execute?^6</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes^7</td>
+        <td>No^8</td>
+    </tr>
+    <tr>
+        <td>Recoverable?^9</td>
+        <td>Yes^10</td>
+        <td>Yes^10</td>
+        <td>No</td>
+        <td>No</td>
+    </tr>
+    <tr>
+        <td>Request may be cancelled?</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>Yes ^5</td>
+    </tr>
+</table>
 
-**What is a `ManagementStrategy`?**
+
+1.  Unless using PriorityTasks
+2.  If Submitter terminates after submission
+3.  Submitter blocks
+4.  For blocking calls
+5.  For non-blocking calls
+6.  If Target JVM terminates during execution
+7.  Submitter automatically retries
+8.  Retry up the responsibility of the developer
+9.  Recoverable from disk
+10. When using a Cache Store
+
+
+<h6>What is a ManagementStrategy?</h6>
 
 A `ManagementStrategy` defines how `Commands` are managed in a Coherence Cluster.  
 By default `Commands` are always co-located in the JVM that is hosting the `Context` 
@@ -288,7 +368,7 @@ advantage of enabling massive capacity (scaling to the size of the cluster and
 beyond when disk storage is configured), but has the disadvantage that retrieving 
 `Commands` for execution may take longer.
 
-**How do I monitor the execution of `Commands`?**
+<h6>How do I monitor the execution of Commands?</h6>
 
 The Command Pattern `CommandExecutors` are JMX enabled by default.  In order 
 to monitor `Command` execution for a `Context`, simply enable JMX for Coherence 

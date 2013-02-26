@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,18 +26,13 @@
 package com.oracle.coherence.common.util;
 
 import com.oracle.coherence.environment.extensible.ConfigurationException;
-
 import com.tangosol.run.xml.XmlHelper;
-
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.math.BigDecimal;
-
 import java.util.UnknownFormatConversionException;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for the {@link Value} class.

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -66,7 +65,7 @@ public class FilteringIterator<T> implements Iterator<T>
      * @param filter The filter to filter out values in the {@link Iterator}.
      * @param iterator The underlying {@link Iterator} of values being filtered.
      */
-    public FilteringIterator(Filter filter,
+    public FilteringIterator(Filter      filter,
                              Iterator<T> iterator)
     {
         this.filter   = filter;

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -72,7 +71,7 @@ public interface Environment
      * @return A resource of type <R> or <code>null</code> if one could not resolved.
      */
     public <R> R getResource(Class<R> clazz,
-                             String name);
+                             String   name);
 
 
     /**
@@ -103,7 +102,7 @@ public interface Environment
      * @return The resource that already exists or was newly registered
      */
     public <R> R registerResource(Class<R> clazz,
-                                  Object resource);
+                                  Object   resource);
 
 
     /**
@@ -126,8 +125,8 @@ public interface Environment
      * @return The resource that already exists or was newly registered
      */
     public <R> R registerResource(Class<R> clazz,
-                                  String name,
-                                  Object resource);
+                                  String   name,
+                                  Object   resource);
 
 
     /**
@@ -149,8 +148,8 @@ public interface Environment
      *
      * @return The resource that already exists or was newly registered
      */
-    public <R> R registerResource(Class<R> clazz,
-                                  String name,
+    public <R> R registerResource(Class<R>         clazz,
+                                  String           name,
                                   NoArgsBuilder<R> builder);
 
 

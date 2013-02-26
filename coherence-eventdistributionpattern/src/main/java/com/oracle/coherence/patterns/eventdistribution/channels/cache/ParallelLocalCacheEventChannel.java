@@ -3,14 +3,13 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,17 +26,12 @@
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.events.Event;
-
 import com.oracle.coherence.common.resourcing.InvocationServiceSupervisedResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProviderManager;
 import com.oracle.coherence.common.resourcing.SupervisedResourceProvider;
-
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
@@ -45,7 +39,6 @@ import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.InvocationObserver;
@@ -53,7 +46,6 @@ import com.tangosol.net.InvocationService;
 import com.tangosol.net.Member;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.RequestTimeoutException;
-
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.NullImplementation;
@@ -66,11 +58,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
-import java.util.Observer;
 import java.util.Set;
-
 import java.util.concurrent.atomic.AtomicInteger;
-
 import java.util.logging.Logger;
 
 /**

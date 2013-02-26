@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,34 +26,17 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.events.Event;
-
 import com.oracle.coherence.common.tuples.Pair;
-
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController;
-
 import com.tangosol.io.Serializer;
-
 import com.tangosol.util.Binary;
-
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import java.util.concurrent.TimeUnit;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -64,6 +46,12 @@ import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A {@link JMSEventChannelController} is an implementation of a {@link EventChannelController}, specifically for

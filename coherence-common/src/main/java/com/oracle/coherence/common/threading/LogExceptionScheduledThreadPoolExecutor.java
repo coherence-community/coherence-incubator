@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,13 +27,11 @@ package com.oracle.coherence.common.threading;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,7 +74,7 @@ public class LogExceptionScheduledThreadPoolExecutor extends ScheduledThreadPool
      * @param corePoolSize      the default number of threads
      * @param threadFactory     the ThreadFactory to use
      */
-    public LogExceptionScheduledThreadPoolExecutor(int corePoolSize,
+    public LogExceptionScheduledThreadPoolExecutor(int           corePoolSize,
                                                    ThreadFactory threadFactory)
     {
         super(corePoolSize, threadFactory);
@@ -89,7 +86,7 @@ public class LogExceptionScheduledThreadPoolExecutor extends ScheduledThreadPool
      * @param r   the Runnable
      * @param t   the Throwable
      */
-    protected void afterExecute(Runnable r,
+    protected void afterExecute(Runnable  r,
                                 Throwable t)
     {
         super.afterExecute(r, t);
@@ -146,7 +143,7 @@ public class LogExceptionScheduledThreadPoolExecutor extends ScheduledThreadPool
      * @param r   the {@link Runnable}
      */
     @Override
-    protected void beforeExecute(Thread t,
+    protected void beforeExecute(Thread   t,
                                  Runnable r)
     {
         super.beforeExecute(t, r);

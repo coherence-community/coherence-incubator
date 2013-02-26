@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -34,33 +33,26 @@ import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.processing.annotations.EventProcessorFor;
 import com.oracle.coherence.common.events.processing.annotations.LiveObject;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.environment.extensible.ExtensibleEnvironment;
-
 import com.oracle.tools.junit.AbstractTest;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.Serializable;
-
 import java.util.Map.Entry;
-
 import java.util.concurrent.atomic.AtomicLong;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Functional Test for {@link LiveObject}s.
  * <p>
- * Copyright (c) 2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -171,7 +163,7 @@ public class LiveObjectTest extends AbstractTest
          * @param event       the {@link Event}
          */
         @EventProcessorFor(events = {EntryInsertedEvent.class})
-        public void onInsert(EventDispatcher dispatcher,
+        public void onInsert(EventDispatcher                                dispatcher,
                              EntryEvent<Entry<String, AnnotatedLiveObject>> event)
         {
             dispatcher.getEnvironment().getResource(AtomicLong.class, LiveObjectTest.INSERTS).incrementAndGet();
@@ -185,7 +177,7 @@ public class LiveObjectTest extends AbstractTest
          * @param event       the {@link Event}
          */
         @EventProcessorFor(events = {EntryUpdatedEvent.class})
-        public void onUpdate(EventDispatcher dispatcher,
+        public void onUpdate(EventDispatcher                                dispatcher,
                              EntryEvent<Entry<String, AnnotatedLiveObject>> event)
         {
             dispatcher.getEnvironment().getResource(AtomicLong.class, LiveObjectTest.UPDATES).incrementAndGet();
@@ -199,7 +191,7 @@ public class LiveObjectTest extends AbstractTest
          * @param event       the {@link Event}
          */
         @EventProcessorFor(events = {EntryRemovedEvent.class})
-        public void onRemove(EventDispatcher dispatcher,
+        public void onRemove(EventDispatcher                                dispatcher,
                              EntryEvent<Entry<String, AnnotatedLiveObject>> event)
         {
             dispatcher.getEnvironment().getResource(AtomicLong.class, LiveObjectTest.REMOVES).incrementAndGet();

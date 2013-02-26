@@ -3,14 +3,13 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,17 +26,18 @@
 package com.oracle.coherence.patterns.pushreplication;
 
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
-
 import org.junit.Test;
 
 /**
- * The {@link com.oracle.coherence.patterns.pushreplication.ParallelCoherenceBasedPushReplicationTest} is an {@link com.oracle.coherence.patterns.pushreplication.AbstractPushReplicationTest} designed
- * to test the Coherence-based {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor}.
+ * The {@link com.oracle.coherence.patterns.pushreplication.ParallelCoherenceBasedPushReplicationTest}
+ * is an {@link com.oracle.coherence.patterns.pushreplication.AbstractPushReplicationTest}
+ * designed to test the Coherence-based {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor}
+ * using a {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.ParallelLocalCacheEventChannel}.
  * <p>
- * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
- * @author Brian Oliver
+ * @author Noah Arliss
  */
 public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushReplicationTest
 {

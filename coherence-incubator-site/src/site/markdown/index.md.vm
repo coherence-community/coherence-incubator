@@ -2,64 +2,24 @@ Oracle Coherence Incubator 11
 =============================
 ![Incubator](images/incubator-logo-290x163.png)
 
-Version: ${project.version} on ${timestamp}
-
->   **WORK IN PROGRESS**
->   
->   This site is currently under construction.  Parts may be incomplete and 
->   inaccurate.
+**Version: ${project.version} built on ${timestamp}**
 
 The Oracle Coherence Incubator project consists of a collection of examples, organized
 as [Apache Maven](http://maven.apache.org/) modules, demonstrating advanced uses 
 of [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html).
 
-The modules themselves consist of a collection of common utilities, tools, 
-traditional software pattern implementations, third-party integrations, and 
-distributed computing solutions that of which may use be used as-is or for 
-inclusion into applications.
+The modules themselves consist of a collection of common utilities, tools,
+traditional software pattern implementations, third-party integrations, and
+distributed computing solutions that of which may be used as-is, for research,
+learning, extension or for direct inclusion into Coherence-based applications.
   
-Complete source code together with documentation is provided to aid in your 
-adoption, use and understanding.
-
-
-What's New?
------------
-
-For the most part Oracle Coherence Incubator 11 remains functionally and 
-semantically compatible with the projects released as part of Oracle Coherence 
-Incubator 10.  Very few changes to the underlying project implementations have 
-occurred, apart from resolving minor defect fixes and any necessary dependency updates.  
-
-The most significant change is in how the Oracle Coherence Incubator is
-now licensed, structured, built and organized.  In a nut shell, the following changes
-have occurred: 
-
-1.  Refactored all of the projects to be arranged in a single source tree, with 
-    separate folders for each project and their associated examples.
-2.  Restructured all of the projects to follow classical [Apache Maven](http://maven.apache.org/)-style
-    conventions.
-3.  Completely re-wrote the build system to use [Apache Maven](http://maven.apache.org/)
-    instead of Apache Ant.
-4.  Ratified and released all of the projects under a standard open source 
-    license (CDDL).
-5.  Formalized the mechanism and process for accepting Coherence Community contributions.
-6.  Completely migrated the existing Atlassian Confluence-based
-    documentation (from coherence.oracle.com) to be part of the source tree, thus
-    enabling documentation version control and Coherence Community Contributions.
-7.  Rationalized all projects to use a single Oracle Coherence Incubator version 
-    number instead of individual version numbers.
-8.  Migrated the source repository to GitHub.
-9.  Migrated the issue tracking to java.net.
-10. Introduced "uber" jar generation support to produce the entire Oracle
-    Coherence Incubator in a single jar. 
-
-For more detailed information concerning changes in this release please consult the 
-project [history](history.html).
+Complete source code together with documentation is provided to aid in adoption,
+use and understanding.
 
 Project Modules
 ---------------
 
-The following [Apache Maven](http://maven.apache.org/) Modules are defined
+The following [Apache Maven](http://maven.apache.org/) modules are defined
 by the Oracle Coherence Incubator.
 
 **The Complete Distribution Module:**
@@ -76,7 +36,7 @@ used to support the implementation of other Oracle Coherence Incubator modules.
 
 Provides a distributed implementation of the classic Command Pattern.
 
-**The Command Pattern Examples:**
+[**The Command Pattern Examples:**](commandpattern/simple-example.html)
 
 Provides example uses of the Command Pattern.
 
@@ -84,7 +44,7 @@ Provides example uses of the Command Pattern.
 
 Provides a distributed implementation of the classic Functor Pattern.
 
-**The Functor Pattern Examples:**
+[**The Functor Pattern Examples:**](functorpattern/simple-example.html)
 
 Provides example uses of the Functor Pattern.
 
@@ -94,7 +54,13 @@ Provides an mechanism to perform distributed, grid computing with Coherence.
 
 **The Processing Pattern Examples:**
 
-Provides example uses of the Processing Pattern.
+The following examples are provided for the Processing Pattern:
+
+1.  The [Simple Callable Example](processingpattern/simple-example.html)
+
+2.  The [Pi Calculation Example](processingpattern/pi-calculation-example.html)
+
+3.  The [Task Execution Example](processingpattern/task-execution-example.html)
 
 [**The Messaging Pattern:**](messagingpattern/index.html)
 
@@ -106,28 +72,23 @@ Provides a mechanism to distribute application events over multiple channels.
 This is core infrastructure for the Push Replication Pattern, but may be used 
 directly with in applications for local or global event distribution.
 
-**The Push Replication Pattern:**
+[**The Push Replication Pattern:**](pushreplicationpattern/index.html)
 
 Provides a mechanism to replicate cache entry events to other clusters and 
 devices (including other clusters separated by WANs).
 
 **The Push Replication Pattern Examples:**
 
-Provides example uses of the Push Replication Pattern.
+The following examples are provided for the Push Replication Pattern:
 
-Supported Coherence Versions
-----------------------------
+1.  The [Active Passive](pushreplicationpattern/active-passive-example.html) Topology
 
-While most of the code may work fine with older Coherence releases, versions 
-of Coherence prior 3.7.1 are not officially supported.  All builds and routine
-testing occurs only on Coherence 3.7.1.x+.
+2.  The [Active Active](pushreplicationpattern/active-active-example.html) Topology
 
-Supported Java Versions
------------------------
+3.  The [Hub and Spoke](pushreplicationpattern/hub-and-spoke-example.html) Topology
 
-This version of the Coherence Incubator targets Java 6 language features.  This
-however does not restrict it's usage with later versions of Java, including Java 7
-and 8 (though these are not routinely tested).
+4.  The [Auction Example](pushreplicationpattern/auction-example.html) (using an Active Active and Active Passive Topologies)
+
 
 Contributions
 -------------

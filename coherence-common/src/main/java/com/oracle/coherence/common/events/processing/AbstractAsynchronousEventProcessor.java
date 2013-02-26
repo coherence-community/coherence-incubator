@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,9 +27,7 @@ package com.oracle.coherence.common.events.processing;
 
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.tangosol.net.CacheFactory;
 
 import java.util.concurrent.ExecutorService;
@@ -52,7 +49,7 @@ public abstract class AbstractAsynchronousEventProcessor<E extends Event> implem
      * {@inheritDoc}
      */
     public final void process(final EventDispatcher eventDispatcher,
-                              final E event)
+                              final E               event)
     {
         // schedule the event to be processed later on another thread provided by the executor service
         Environment environment = (Environment) CacheFactory.getConfigurableCacheFactory();
@@ -77,5 +74,5 @@ public abstract class AbstractAsynchronousEventProcessor<E extends Event> implem
      * @param event The {@link Event}.
      */
     public abstract void processLater(EventDispatcher eventDispatcher,
-                                      E event);
+                                      E               event);
 }

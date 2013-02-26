@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,23 +26,17 @@
 package com.oracle.coherence.patterns.processing.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.util.ChangeIndication;
-
 import com.oracle.coherence.patterns.processing.SubmissionState;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -162,9 +155,9 @@ public class DefaultSubmissionResult implements ExternalizableLite, PortableObje
      * @param submitterIdentifier the {@link Identifier} of the
      *                            {@link com.oracle.coherence.patterns.processing.ProcessingSession}
      */
-    public DefaultSubmissionResult(final Identifier submissionResultID,
+    public DefaultSubmissionResult(final Identifier    submissionResultID,
                                    final SubmissionKey submissionKey,
-                                   final Identifier submitterIdentifier)
+                                   final Identifier    submitterIdentifier)
     {
         this.submissionResultID = submissionResultID;
         this.submissionKey      = submissionKey;
@@ -187,10 +180,10 @@ public class DefaultSubmissionResult implements ExternalizableLite, PortableObje
      * @param submissionState     is the {@link SubmissionState} of the
      *                            processing for a Submission
      */
-    public DefaultSubmissionResult(final Identifier submissionResultID,
+    public DefaultSubmissionResult(final Identifier    submissionResultID,
                                    final SubmissionKey submissionKey,
-                                   final Identifier sessionid,
-                                   final String submissionState)
+                                   final Identifier    sessionid,
+                                   final String        submissionState)
     {
         this(submissionResultID, submissionKey, sessionid);
         this.submissionState = (SubmissionState) Enum.valueOf(SubmissionState.class, submissionState);
@@ -783,7 +776,7 @@ public class DefaultSubmissionResult implements ExternalizableLite, PortableObje
         this.submissionKey      = (SubmissionKey) ExternalizableHelper.readObject(in);
         this.sessionIdentifier  = (Identifier) ExternalizableHelper.readObject(in);
         this.result             = ExternalizableHelper.readObject(in);
-        this.submissionState    = (SubmissionState) Enum.valueOf(SubmissionState.class,
+        this.submissionState = (SubmissionState) Enum.valueOf(SubmissionState.class,
                                                               ExternalizableHelper.readSafeUTF(in));
         this.progress       = ExternalizableHelper.readObject(in);
         this.submissionTime = ExternalizableHelper.readLong(in);

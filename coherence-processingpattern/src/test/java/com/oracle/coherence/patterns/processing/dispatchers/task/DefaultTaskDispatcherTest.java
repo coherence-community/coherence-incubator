@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,11 +26,8 @@
 package com.oracle.coherence.patterns.processing.dispatchers.task;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
 import com.oracle.coherence.patterns.processing.internal.Submission;
@@ -42,21 +38,17 @@ import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMedia
 import com.oracle.coherence.patterns.processing.task.ResumableTask;
 import com.oracle.coherence.patterns.processing.task.Task;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
-
 import org.junit.Test;
-
 import org.mockito.Matchers;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.stub;
 
 /**
  * A {@link DefaultTaskDispatcherTest} tests the {@link DefaultTaskDispatcher}. </p>
@@ -90,9 +82,9 @@ public class DefaultTaskDispatcherTest
         PendingSubmission     submission         = mock(PendingSubmission.class);
         TaskDispatchPolicy    taskdispatchpolicy = mock(TaskDispatchPolicy.class);
         Environment           environment        = mock(Environment.class);
-        DefaultTaskDispatcher disp               = new DefaultTaskDispatcher(environment,
-                                                                             "DefaultTaskDispatcher",
-                                                                             taskdispatchpolicy);
+        DefaultTaskDispatcher disp = new DefaultTaskDispatcher(environment,
+                                                               "DefaultTaskDispatcher",
+                                                               taskdispatchpolicy);
         ResumableTask                                          task                     = mock(ResumableTask.class);
         SubmissionConfiguration submissionConfiguration = mock(SubmissionConfiguration.class);
         ConcurrentHashMap<Identifier, TaskProcessorDefinition> taskProcessorDefinitions = mock(ConcurrentHashMap.class);
@@ -118,16 +110,16 @@ public class DefaultTaskDispatcherTest
         ObjectProxyFactory<SubmissionResult>      submissionproxy    = mock(ObjectProxyFactory.class);
         ;
         ObjectProxyFactory<Submission>            subresproxy        = mock(ObjectProxyFactory.class);
-        DefaultTaskDispatcher                     disp               = new DefaultTaskDispatcher(environment,
-                                                                                                 "DefaultTaskDispatcher",
-                                                                                                 taskdispatchpolicy,
-                                                                                                 taskproxy,
-                                                                                                 submissionproxy,
-                                                                                                 subresproxy);
-        ResumableTask                                            task                   = mock(ResumableTask.class);
+        DefaultTaskDispatcher disp = new DefaultTaskDispatcher(environment,
+                                                               "DefaultTaskDispatcher",
+                                                               taskdispatchpolicy,
+                                                               taskproxy,
+                                                               submissionproxy,
+                                                               subresproxy);
+        ResumableTask                                        task                       = mock(ResumableTask.class);
         SubmissionConfiguration submissionConfiguration = mock(SubmissionConfiguration.class);
         ConcurrentHashMap<Identifier, TaskProcessorDefinition> taskProcessorDefinitions = mock(ConcurrentHashMap.class);
-        Map<TaskProcessorMediatorKey, TaskProcessorMediator>     taskProcessorMediators = mock(Map.class);
+        Map<TaskProcessorMediatorKey, TaskProcessorMediator> taskProcessorMediators     = mock(Map.class);
         HashMap<TaskProcessorMediatorKey, TaskProcessorMediator> resultMap = new HashMap<TaskProcessorMediatorKey,
                                                                                          TaskProcessorMediator>();
         TaskProcessorMediatorKey key      = mock(TaskProcessorMediatorKey.class);
@@ -163,16 +155,16 @@ public class DefaultTaskDispatcherTest
         ObjectProxyFactory<SubmissionResult>      submissionproxy    = mock(ObjectProxyFactory.class);
         ;
         ObjectProxyFactory<Submission>            subresproxy        = mock(ObjectProxyFactory.class);
-        DefaultTaskDispatcher                     disp               = new DefaultTaskDispatcher(environment,
-                                                                                                 "DefaultTaskDispatcher",
-                                                                                                 taskdispatchpolicy,
-                                                                                                 taskproxy,
-                                                                                                 submissionproxy,
-                                                                                                 subresproxy);
-        ResumableTask                                            task                   = mock(ResumableTask.class);
+        DefaultTaskDispatcher disp = new DefaultTaskDispatcher(environment,
+                                                               "DefaultTaskDispatcher",
+                                                               taskdispatchpolicy,
+                                                               taskproxy,
+                                                               submissionproxy,
+                                                               subresproxy);
+        ResumableTask                                        task                       = mock(ResumableTask.class);
         SubmissionConfiguration submissionConfiguration = mock(SubmissionConfiguration.class);
         ConcurrentHashMap<Identifier, TaskProcessorDefinition> taskProcessorDefinitions = mock(ConcurrentHashMap.class);
-        Map<TaskProcessorMediatorKey, TaskProcessorMediator>     taskProcessorMediators = mock(Map.class);
+        Map<TaskProcessorMediatorKey, TaskProcessorMediator> taskProcessorMediators     = mock(Map.class);
         HashMap<TaskProcessorMediatorKey, TaskProcessorMediator> resultMap = new HashMap<TaskProcessorMediatorKey,
                                                                                          TaskProcessorMediator>();
         TaskProcessorMediatorKey key      = mock(TaskProcessorMediatorKey.class);
