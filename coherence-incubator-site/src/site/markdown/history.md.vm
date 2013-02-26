@@ -4,7 +4,7 @@ History
 The following sections outline Oracle Coherence Incubator changes in 
 reverse chronological order.
 
-<h3>Version ${project.version}: ${timestamp} </h3>
+<h3>Version ${project.version} @ ${timestamp} </h3>
 
 <h4>Source and Documentation Contributors</h4>
 
@@ -53,7 +53,7 @@ reverse chronological order.
     now includes signficiant contributions from the "Grid Man" project
     (developed by Jonathan Knight). 
 
-*   Upgraded projects to use Oracle Coherence 3.7.1.5
+*   Upgraded projects to use Oracle Coherence 3.7.1.7
 
 <h4>coherence-incubator-all</h4>
 

@@ -92,7 +92,7 @@
                 <item name="The Processing Namespace" href="processingpattern/processing-namespace.html"/>
                 <item name="Simple Example" href="processingpattern/simple-example.html"/>
                 <item name="Pi Calculation Example" href="processingpattern/pi-calculation-example.html"/>
-                <!-- <item name="Task Execution Example" href="processingpattern/task-execution-example.html"/>  -->
+                <item name="Task Execution Example" href="processingpattern/task-execution-example.html"/>
             </item>
             <item name="The Messaging Pattern" href="messagingpattern/index.html"/>
             <item name="The Event Distribution Pattern" href="eventdistributionpattern/index.html">

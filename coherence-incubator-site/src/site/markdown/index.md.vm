@@ -2,29 +2,24 @@ Oracle Coherence Incubator 11
 =============================
 ![Incubator](images/incubator-logo-290x163.png)
 
-Version: ${project.version} on ${timestamp}
-
->   **WORK IN PROGRESS**
->   
->   This site is currently under construction.  Parts may be incomplete and 
->   inaccurate.
+**Version: ${project.version} built on ${timestamp}**
 
 The Oracle Coherence Incubator project consists of a collection of examples, organized
 as [Apache Maven](http://maven.apache.org/) modules, demonstrating advanced uses 
 of [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html).
 
-The modules themselves consist of a collection of common utilities, tools, 
-traditional software pattern implementations, third-party integrations, and 
+The modules themselves consist of a collection of common utilities, tools,
+traditional software pattern implementations, third-party integrations, and
 distributed computing solutions that of which may be used as-is, for research,
-learning, extension or for direct inclusion into applications.
+learning, extension or for direct inclusion into Coherence-based applications.
   
-Complete source code together with documentation is provided to aid in your 
-adoption, use and understanding.
+Complete source code together with documentation is provided to aid in adoption,
+use and understanding.
 
 Project Modules
 ---------------
 
-The following [Apache Maven](http://maven.apache.org/) Modules are defined
+The following [Apache Maven](http://maven.apache.org/) modules are defined
 by the Oracle Coherence Incubator.
 
 **The Complete Distribution Module:**
@@ -65,7 +60,7 @@ The following examples are provided for the Processing Pattern:
 
 2.  The [Pi Calculation Example](processingpattern/pi-calculation-example.html)
 
-3.  The Task Execution Example
+3.  The [Task Execution Example](processingpattern/task-execution-example.html)
 
 [**The Messaging Pattern:**](messagingpattern/index.html)
 
