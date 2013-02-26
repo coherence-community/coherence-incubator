@@ -8,8 +8,8 @@ advanced uses of [Oracle Coherence](http://www.oracle.com/technology/products/co
 Official information about this project including the definition, licensing, contributors, maintainers, issue tracking, releases, source code and contact information is available at:
 [http://java.net/projects/cohinc](http://java.net/projects/cohinc)
 
-Detailed project documentation for the latest snapshot release is available here:
-[http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/](http://coherence-community.github.com/coherence-incubator/11.0.0-SNAPSHOT/)
+Detailed project documentation for this release is available here:
+[http://coherence-community.github.com/coherence-incubator/11.0.0/](http://coherence-community.github.com/coherence-incubator/11.0.0/)
 
 > **NOTE**
 >
