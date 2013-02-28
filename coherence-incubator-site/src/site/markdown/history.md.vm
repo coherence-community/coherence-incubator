@@ -4,11 +4,20 @@ History
 The following sections outline Oracle Coherence Incubator changes in 
 reverse chronological order.
 
+--------------------------------------------------------------------------------
+
 <h3>Version ${project.version} @ ${timestamp} </h3>
 
 <h4>Source and Documentation Contributors</h4>
 
 *   Brian Oliver
+
+<h4>coherence-common</h4>
+
+*   [COHINC-18](http://java.net/jira/browse/COHINC-18): Resolved incorrect
+    PortableObject.writeExternal(...) implementation.
+
+--------------------------------------------------------------------------------
 
 <h3>Version 11.0.0 @ 2013-02-26 15:05</h3>
 
