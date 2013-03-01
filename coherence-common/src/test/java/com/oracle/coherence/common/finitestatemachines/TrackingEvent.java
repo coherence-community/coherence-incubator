@@ -31,7 +31,7 @@ package com.oracle.coherence.common.finitestatemachines;
  * <p>
  * Ultimately a {@link TrackingEvent} delegates interactions with
  * a {@link FiniteStateMachine} to the wrapped {@link Event}, during which
- * time is records certain interactions.   These interactions can then be
+ * time it records certain interactions.   These interactions can then be
  * asserted during tests to ensure expected behavior.
  * <p>
  * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
@@ -49,21 +49,28 @@ public class TrackingEvent<S extends Enum<S>> implements LifecycleAwareEvent<S>
     private Event<S> m_event;
 
     /**
-     * A flag to indicate if the {@link Event} was accepted.
+     * A flag to indicate if the {@link Event} was accepted
+     * (with {@link #onAccept(ExecutionContext)}).
      */
     private boolean m_wasAccepted;
 
     /**
-     * A flag to indicate if the {@link Event} was evaluated (with
-     * {@link #getDesiredState(Enum, SimpleContext)}.
+     * A flag to indicate if the {@link Event} was evaluated
+     * (with {@link #getDesiredState(Enum, ExecutionContext)}).
      */
     private boolean m_wasEvaluated;
 
     /**
      * A flag to indicate if the {@link Event} was processed
-     * (with {@link #onProcessed(SimpleContext)}).
+     * (with {@link #onProcessed(Enum, ExecutionContext)}).
      */
     private boolean m_wasProcessed;
+
+    /**
+     * A flag to indicate if the {@link Event} failed to be processed.
+     * (with {@link #onFailure(Enum, ExecutionContext, Exception)}).
+     */
+    private boolean m_wasFailed;
 
 
     /**
@@ -77,6 +84,7 @@ public class TrackingEvent<S extends Enum<S>> implements LifecycleAwareEvent<S>
         m_wasAccepted  = false;
         m_wasEvaluated = false;
         m_wasProcessed = false;
+        m_wasFailed    = false;
     }
 
 
@@ -117,13 +125,14 @@ public class TrackingEvent<S extends Enum<S>> implements LifecycleAwareEvent<S>
      * {@inheritDoc}
      */
     @Override
-    public void onProcessed(ExecutionContext context)
+    public void onProcessed(S                stateEntered,
+                            ExecutionContext context)
     {
         m_wasProcessed = true;
 
         if (m_event instanceof LifecycleAwareEvent)
         {
-            ((LifecycleAwareEvent<S>) m_event).onProcessed(context);
+            ((LifecycleAwareEvent<S>) m_event).onProcessed(stateEntered, context);
         }
     }
 
@@ -132,11 +141,29 @@ public class TrackingEvent<S extends Enum<S>> implements LifecycleAwareEvent<S>
      * {@inheritDoc}
      */
     @Override
-    public void onProcessing(ExecutionContext context)
+    public void onProcessing(S                stateExiting,
+                             ExecutionContext context)
     {
         if (m_event instanceof LifecycleAwareEvent)
         {
-            ((LifecycleAwareEvent<S>) m_event).onProcessing(context);
+            ((LifecycleAwareEvent<S>) m_event).onProcessing(stateExiting, context);
+        }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onFailure(S                currentState,
+                          ExecutionContext context,
+                          Exception        exception)
+    {
+        m_wasFailed = true;
+
+        if (m_event instanceof LifecycleAwareEvent)
+        {
+            ((LifecycleAwareEvent<S>) m_event).onFailure(currentState, context, exception);
         }
     }
 
@@ -163,11 +190,10 @@ public class TrackingEvent<S extends Enum<S>> implements LifecycleAwareEvent<S>
 
 
     /**
-     * Determines if the {@link #getDesiredState(Enum, SimpleContext)} was called
-     * for the tracked {@link Event}.
+     * Determines if the {@link #getDesiredState(Enum, ExecutionContext)}
+     * for the tracked {@link Event} was called.
      *
-     * @return if {@link #getDesiredState(Enum, SimpleContext)} was called for the
-     *         tracked {@link Event}
+     * @return if {@link #getDesiredState(Enum, ExecutionContext)} was called
      */
     public boolean evaluated()
     {
@@ -183,5 +209,16 @@ public class TrackingEvent<S extends Enum<S>> implements LifecycleAwareEvent<S>
     public boolean processed()
     {
         return m_wasProcessed;
+    }
+
+
+    /**
+     * Determins if the tracked {@link Event} failed to be processed.
+     *
+     * @return if the tracked {@link Event} failed to be processed
+     */
+    public boolean failed()
+    {
+        return m_wasFailed;
     }
 }

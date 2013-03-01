@@ -38,7 +38,11 @@ public interface LifecycleAwareEvent<S extends Enum<S>> extends Event<S>
 {
     /**
      * Called by a {@link FiniteStateMachine} when the {@link LifecycleAwareEvent}
-     * is initially about to accepted for processing.
+     * is about to accepted for processing.
+     * <p/>
+     * This callback allows the {@link LifecycleAwareEvent} to establish internal
+     * state and/or reject being accepted for processing based on the provided
+     * {@link ExecutionContext}.
      *
      * @param context  the {@link ExecutionContext} for the {@link Event}
      *
@@ -51,18 +55,43 @@ public interface LifecycleAwareEvent<S extends Enum<S>> extends Event<S>
 
     /**
      * Called by a {@link FiniteStateMachine} when the {@link LifecycleAwareEvent}
-     * is about to be processed.
+     * is about to be processed, specifically before the Transition or Entry
+     * Actions are executed.
      *
-     * @param context  the {@link ExecutionContext} for the {@link Event}
+     * @param exitingState  the State the {@link FiniteStateMachine} is about to exit
+     * @param context       the {@link ExecutionContext} for the {@link Event}
      */
-    public void onProcessing(ExecutionContext context);
+    public void onProcessing(S                exitingState,
+                             ExecutionContext context);
 
 
     /**
      * Called by a {@link FiniteStateMachine} when the {@link LifecycleAwareEvent}
-     * has been processed.
+     * has been processed, specifically after the previous State Exit, Transition
+     * and new State Entry Actions.
      *
-     * @param context  the {@link ExecutionContext} for the {@link Event}
+     * @param enteredState  the State the {@link FiniteStateMachine} entered as
+     *                      a result of the {@link LifecycleAwareEvent}
+     * @param context       the {@link ExecutionContext} for the {@link Event}
      */
-    public void onProcessed(ExecutionContext context);
+    public void onProcessed(S                enteredState,
+                            ExecutionContext context);
+
+
+    /**
+     * Called by a {@link FiniteStateMachine} when the {@link LifecycleAwareEvent}
+     * did not complete due to a failure.  Possible failures include: could not
+     * find a valid transition to the required state, the desired state being
+     * null of if an exception occurred.
+     *
+     * @param currentState  the State the {@link FiniteStateMachine} after the
+     *                      failure
+     * @param context       the {@link ExecutionContext} for the {@link Event}
+     * @param exception     the {@link Exception} that may have caused the failure
+     *                      (this will be null in cases where a transition
+     *                       was illegal / not valid)
+     */
+    public void onFailure(S                currentState,
+                          ExecutionContext context,
+                          Exception        exception);
 }

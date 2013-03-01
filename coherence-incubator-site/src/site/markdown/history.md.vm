@@ -15,7 +15,15 @@ reverse chronological order.
 <h4>coherence-common</h4>
 
 *   [COHINC-18](http://java.net/jira/browse/COHINC-18): Resolved incorrect
-    PortableObject.writeExternal(...) implementation.
+    PortableObject.writeExternal(...) implementation for the
+    `StaticFactoryClassSchemeBasedParameterizedBuilder` class.
+
+*   [COHINC-29](http://java.net/jira/browse/COHINC-29): Improved `LifecycleAwareEvent`
+    information when using a `NonBlockingFiniteStateMachine`.
+
+    This is a **breaking** change for the `LifecycleAwareEvent` interface.  However
+    as we are only using this interface **only** with in an inner class of
+    `NonBlockingFiniteStateMachine`, it **does not** break any public interfaces.
 
 --------------------------------------------------------------------------------
 
