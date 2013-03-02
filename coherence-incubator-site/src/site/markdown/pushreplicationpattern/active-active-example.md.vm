@@ -15,8 +15,9 @@ module of the Oracle Coherence Incubator.
 <h4>Overview</h4>
 
 This example demonstrates Push Replication Pattern configured in an "Active-Active"
-topology, where by two or more clusters use applications that perform read/write
-operations and these operations are then replicated to the other "active" clusters.
+topology, where by two or more clusters use applications that simultaneously
+perform update operations on the same values.  These values are concurrently
+replicated and merged between the said clusters.
 
 ![The Active Active Topology](../images/pushreplicationpattern/active-active.png)
 
@@ -63,8 +64,9 @@ In a new Terminal / Shell Console for the "Active Server for Site 2"
 <h4>Step 3. Running the Active Publisher for Site 1</h4>
 
 Execute the following shell commands to start the "Active Publisher for Site 1".  This
-application will insert, update and remove entries in the "Active Server for Site 1", that
-of which will then "push" said updates to the "Active Server for Site 2".
+application will insert and update entries in the "Active Server for Site 1", that
+of which will then "push" said updates to the "Active Server for Site 2" where
+they will be merged.
 
 In a new Terminal / Shell Console for the "Active Publisher for Site 1"
 
@@ -81,8 +83,9 @@ In a new Terminal / Shell Console for the "Active Publisher for Site 1"
 <h4>Step 4. Running the Active Publisher for Site 2</h4>
 
 Execute the following shell commands to start the "Active Publisher for Site 2".  This
-application will insert, update and remove entries in the "Active Server for Site 2", that
-of which will then "push" said updates to the "Active Server for Site 1".
+application will insert and update entries in the "Active Server for Site 2", that
+of which will then "push" said updates to the "Active Server for Site 1" where
+they will be merged.
 
 In a new Terminal / Shell Console for the "Active Publisher for Site 2"
 
@@ -96,3 +99,4 @@ In a new Terminal / Shell Console for the "Active Publisher for Site 2"
     `java -jar coherence-pushreplicationpattern-examples-${project.version}.jar activeactive-publisher2.properties`
 
 
+After running both publisher applications, the clusters will have the same values.

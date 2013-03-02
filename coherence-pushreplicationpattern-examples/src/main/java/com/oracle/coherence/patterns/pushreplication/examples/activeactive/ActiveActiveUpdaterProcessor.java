@@ -26,6 +26,8 @@
 
 package com.oracle.coherence.patterns.pushreplication.examples.activeactive;
 
+import com.oracle.coherence.common.cluster.ClusterMetaInfo;
+import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
 import com.tangosol.io.ExternalizableLite;
 
 import com.tangosol.io.pof.PofReader;
@@ -43,36 +45,39 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * An EntryProcessor to compute the sum of two values
- * <p>
- * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
+ * An EntryProcessor that updates the value a site contributes to a multi-site
+ * sum.
+ * <p/>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Noah Arliss
+ * @author Brian Oliver
  */
-public class ActiveActiveComputeSum extends AbstractProcessor implements ExternalizableLite, PortableObject
+public class ActiveActiveUpdaterProcessor extends AbstractProcessor implements ExternalizableLite, PortableObject
 {
-    private static final long serialVersionUID = 9195305573455982252L;
-
-    private long              m_latestValue;
+    /**
+     * The value to update for the site in which the processor executes.
+     */
+    private long m_value;
 
 
     /**
-     * Constructs an {@link ActiveActiveComputeSum}.
+     * Constructs an {@link ActiveActiveUpdaterProcessor}.
      */
-    public ActiveActiveComputeSum()
+    public ActiveActiveUpdaterProcessor()
     {
     }
 
 
     /**
-     * Constructs an {@link ActiveActiveComputeSum}.
+     * Constructs an {@link ActiveActiveUpdaterProcessor}.
      *
-     * @param value
+     * @param value  the value to update for the site
      */
-    public ActiveActiveComputeSum(long value)
+    public ActiveActiveUpdaterProcessor(long value)
     {
-        m_latestValue = value;
+        m_value = value;
     }
 
 
@@ -81,31 +86,21 @@ public class ActiveActiveComputeSum extends AbstractProcessor implements Externa
      */
     public Object process(final Entry entry)
     {
-        if (entry.isPresent() && entry.getValue() instanceof ActiveActiveRunningSum)
-        {
-            ActiveActiveRunningSum runningSumItem = (ActiveActiveRunningSum) entry.getValue();
+        ActiveActiveSum sum;
 
-            String                 currentKey     = (String) entry.getKey();
-
-            if (CacheFactory.isLogEnabled(CacheFactory.LOG_DEBUG))
-            {
-                CacheFactory.log("Processing local update of [" + currentKey + "] = [" + runningSumItem.m_runningSum
-                                 + "]",
-                                 CacheFactory.LOG_DEBUG);
-
-                CacheFactory.log("Adding the following value = [" + m_latestValue + "]", CacheFactory.LOG_DEBUG);
-
-            }
-
-            runningSumItem.computeNewSum(m_latestValue);
-
-            if (CacheFactory.isLogEnabled(CacheFactory.LOG_DEBUG))
-            {
-                CacheFactory.log("New sum [" + runningSumItem.m_runningSum + "]", CacheFactory.LOG_DEBUG);
-            }
-
-            entry.setValue(runningSumItem);
+        if (entry.isPresent()) {
+            sum = (ActiveActiveSum)entry.getValue();
+        } else {
+            sum = new ActiveActiveSum();
         }
+
+        //determine the local site information
+        ClusterMetaInfo clusterMetaInfo = LocalClusterMetaInfo.getInstance();
+
+        //update the contributed value for the local site
+        sum.setValue(clusterMetaInfo.getUniqueName(), m_value);
+
+        entry.setValue(sum);
 
         return null;
     }
@@ -116,7 +111,7 @@ public class ActiveActiveComputeSum extends AbstractProcessor implements Externa
      */
     public void readExternal(PofReader reader) throws IOException
     {
-        m_latestValue = reader.readLong(0);
+        m_value = reader.readLong(0);
     }
 
 
@@ -125,7 +120,7 @@ public class ActiveActiveComputeSum extends AbstractProcessor implements Externa
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeLong(0, m_latestValue);
+        writer.writeLong(0, m_value);
     }
 
 
@@ -134,7 +129,7 @@ public class ActiveActiveComputeSum extends AbstractProcessor implements Externa
      */
     public void readExternal(DataInput reader) throws IOException
     {
-        m_latestValue = reader.readLong();
+        m_value = reader.readLong();
     }
 
 
@@ -143,6 +138,6 @@ public class ActiveActiveComputeSum extends AbstractProcessor implements Externa
      */
     public void writeExternal(DataOutput writer) throws IOException
     {
-        writer.writeLong(m_latestValue);
+        writer.writeLong(m_value);
     }
 }

@@ -38,14 +38,13 @@ import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry
 import com.tangosol.util.BinaryEntry;
 
 /**
- * The {@link ActiveActiveSumConflictResolver} supports conflict resolution between two
- * clusters which are actively publishing to each other during a distributed
- * active-active replication.
+ * A ConflictResolver that will resolve and merge {@link ActiveActiveSum} values
+ * together from different sites.
  * <p>
- * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
- * @author Robert Hanckel
+ * @author Brian Oliver
  */
 public class ActiveActiveSumConflictResolver implements ConflictResolver
 {
@@ -65,56 +64,37 @@ public class ActiveActiveSumConflictResolver implements ConflictResolver
     {
         ConflictResolution resolution = new ConflictResolution();
 
-        if (!(localEntry.isPresent()))
+        if (localEntry.isPresent())
         {
             if (entryEvent instanceof EntryRemovedEvent)
             {
-                // The source is trying to delete an entry that does not exist.
-                // This is a noop, and we set conflict resolution to retain
-                // the target entry.  (i.e. the entry will still not exist).
-
-                resolution.useLocalValue();
+                resolution.remove();
             }
-            else if (entryEvent instanceof EntryInsertedEvent)
+            else if (entryEvent instanceof EntryInsertedEvent || entryEvent instanceof EntryUpdatedEvent)
             {
-                // The source is inserting an entry that does not exist.
-                // We set conflict resolution to store the in comming entry as is.
+                ActiveActiveSum tgtSum = (ActiveActiveSum) localEntry.getValue();
+                ActiveActiveSum srcSum = (ActiveActiveSum) entryEvent.getEntry().getValue();
+                String site = entryEvent.getEntry().getClusterMetaInfo().getUniqueName();
 
-                resolution.useInComingValue();
-            }
-            else if (entryEvent instanceof EntryUpdatedEvent)
-            {
-                // The source is updating an entry that no longer exists at a target.
-                // The only way this can happen is if an update and a delete
-                // are crossing paths at the same time between source and target.
-                // We let the delete take precedence, so we set conflict resolution
-                // to retain the target entry, which is a noop.  (i.e. the entry will still not
-                // exist.
+                //contribute the srcSum site value to the tgtSum
+                boolean changed = tgtSum.setValue(site, srcSum.getValue(site));
 
-                resolution.useLocalValue();
+                if (changed) {
+                    resolution.useMergedValue(tgtSum);
+                } else {
+                    resolution.useLocalValue();
+                }
             }
         }
         else
         {
             if (entryEvent instanceof EntryRemovedEvent)
             {
-                // A delete of an existing entry causes the conflict resolution to schedule a remove.
-                resolution.remove();
+                resolution.useLocalValue();
             }
             else if (entryEvent instanceof EntryInsertedEvent || entryEvent instanceof EntryUpdatedEvent)
             {
-                // An insert or update coming from a source site resolves the same way when
-                // there is an existing value at the target.  (Typically an insert will find
-                // an empty value at the target, but there is the potential for two inserts to happen
-                // at the same time and cross paths, this case is treated like a normal update/update
-                // conflict.
-                ActiveActiveRunningSum tgtSum = (ActiveActiveRunningSum) localEntry.getValue();
-                ActiveActiveRunningSum srcSum = (ActiveActiveRunningSum) entryEvent.getEntry().getValue();
-
-                // Apply latest update value from source site to running sum on the target entry
-                tgtSum.computeNewSum(srcSum.getLatestUpdateValue());
-
-                resolution.useMergedValue(tgtSum);
+                resolution.useInComingValue();
             }
         }
 
