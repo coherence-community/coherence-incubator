@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -248,8 +249,6 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
                                        getAvailablePortIterator())
                                            .setSystemProperty("remote.port", getAvailablePortIterator());
 
-            londonServerSchema.setSystemProperty("tangosol.coherence.log",
-                                                 "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActive-london.log");
             londonServer = builder.realize(londonServerSchema, "LONDON", console);
 
             // establish the newyork server
@@ -260,8 +259,6 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
                                                                                                         londonServer
                                                                                                             .getSystemProperty("proxy.port"));
 
-            newyorkServerSchema.setSystemProperty("tangosol.coherence.log",
-                                                  "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActiveActive-ny.log");
             newyorkServer = builder.realize(newyorkServerSchema, "NEWYORK", console);
 
             // turn off local clustering so we don't connect with the process just started
@@ -393,11 +390,7 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
 
             for (int i = 0; i < nrPassiveServers; i++)
             {
-                ClusterMemberSchema passiveServerSchema =
-                    newPassiveClusterMemberSchema(iPort).setSiteName(siteName)
-                        .setSystemProperty("tangosol.coherence.log",
-                                           "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActivePassive-passive-"
-                                           + i + ".log");
+                ClusterMemberSchema passiveServerSchema = newPassiveClusterMemberSchema(iPort).setSiteName(siteName);
 
                 passiveServers.add(builder.realize(passiveServerSchema, String.format("PASSIVE %s", i), console));
             }
@@ -410,10 +403,7 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
                 ClusterMemberSchema activeServerSchema =
                     newActiveClusterMemberSchema(iPort).setSiteName(siteName).setSystemProperty("remote.port",
                                                                                                 passiveServers.get(0)
-                                                                                                    .getSystemProperty("proxy.port"))
-                                                                                                        .setSystemProperty("tangosol.coherence.log",
-                    "/Users/narliss/dev/git/coherence-incubator/coherence-pushreplicationpattern/testActivePassive-active-"
-                    + i + ".log");
+                                                                                                    .getSystemProperty("proxy.port"));
 
                 activeServers.add(builder.realize(activeServerSchema, String.format("ACTIVE  %d", i), console));
             }
