@@ -12,14 +12,16 @@ reverse chronological order.
 
 *   Brian Oliver
 
+<h4>Global and Cross-Module Changes</h4>
+
+*   [COHINC-33](http://java.net/jira/browse/COHINC-33): Upgraded to use JUnit 4.11
+    and Hamcrest 1.3
+
 <h4>coherence-common</h4>
 
 *   [COHINC-18](http://java.net/jira/browse/COHINC-18): Resolved incorrect
     PortableObject.writeExternal(...) implementation for the
     `StaticFactoryClassSchemeBasedParameterizedBuilder` class.
-
-*   [COHINC-19](http://java.net/jira/browse/COHINC-19): Fixed Active-Active
-    Push Replication Example - now correctly terminates.
 
 *   [COHINC-29](http://java.net/jira/browse/COHINC-29): Improved `LifecycleAwareEvent`
     information when using a `NonBlockingFiniteStateMachine`.
@@ -28,8 +30,20 @@ reverse chronological order.
     as we are only using this interface **only** with in an inner class of
     `NonBlockingFiniteStateMachine`, it **does not** break any public interfaces.
 
+<h4>coherence-messagingpattern</h4>
+
+*   [COHINC-28](http://java.net/jira/browse/COHINC-28): Migrated Functional Test
+    from internal Oracle Testing Framework.  These are contained in the new
+    coherence-messagingpattern-tests module.
+
+<h4>coherence-pushreplicationpattern</h4>
+
+*   [COHINC-19](http://java.net/jira/browse/COHINC-19): Fixed Active-Active
+    Push Replication Example - now correctly terminates.
+
 *   [COHINC-30](http://java.net/jira/browse/COHINC-30): Removed hardcoded logging
     path from Push Replication tests.
+
 
 --------------------------------------------------------------------------------
 
