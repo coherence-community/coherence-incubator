@@ -14,7 +14,7 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-33](http://java.net/jira/browse/COHINC-33): Upgraded to use JUnit 4.11
+*   [COHINC-33](http://java.net/jira/browse/COHINC-33): Upgraded to use JUnit 4.10
     and Hamcrest 1.3
 
 <h4>coherence-common</h4>
