@@ -106,6 +106,16 @@ public class DefaultMessagingSession implements MessagingSession
 
 
     /**
+     * {@inheritDoc}
+     */
+    public Identifier createQueue(String queueName,int maxSubscribers)
+    {
+        Queue queue = new Queue(queueName,maxSubscribers);
+        return createDestination(queueName, queue);
+    }
+
+
+    /**
      * Create either a {@link Topic} or {@link Queue}.
      *
      * @param destinationName name of destination

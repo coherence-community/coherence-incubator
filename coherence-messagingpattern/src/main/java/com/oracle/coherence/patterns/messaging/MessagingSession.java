@@ -65,6 +65,16 @@ public interface MessagingSession
      */
     public Identifier createQueue(String queueName);
 
+    /**
+     * <p>Creates a {@link Queue} {@link Destination} to which messages may be published,
+     * bounded by a maximum number of subscribers.
+     * Returns a unique {@link Identifier} for the created {@link Queue}.  If the queue
+     * already exists, the existing {@link Queue} {@link Identifier} is returned.</p>
+     *
+     * @param queueName queue name
+     * @return destination identifier
+     */
+    public Identifier createQueue(String queueName,int maxSubscribers);
 
     /**
      * Creates a {@link Subscription} to the specified {@link Destination} configured using the

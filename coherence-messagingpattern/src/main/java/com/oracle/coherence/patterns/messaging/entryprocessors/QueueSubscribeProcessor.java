@@ -130,6 +130,13 @@ public class QueueSubscribeProcessor<C extends SubscriptionConfiguration> extend
             return null;
         }
 
+        if (queue.isFullySubscribed())
+        {
+            Logger.log(Logger.INFO,
+                    "Subscription cannot be created because destination %s is fully subscribed",entry.getKey());
+            return false;
+        }
+
         // Subscribe to the queue then update the queue in the cache since it
         // has new subscription information.
         queue.subscribe(subscriptionIdentifier, subscriptionConfiguration, subscription);
