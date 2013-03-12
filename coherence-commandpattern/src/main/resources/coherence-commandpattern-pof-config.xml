@@ -26,73 +26,77 @@
  	Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
   -->
 <pof-config>
-	<user-type-list>		
-		<!-- coherence-commandpattern types -->
-		<user-type>
-       		<type-id>11000</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.DefaultContextConfiguration</class-name>
-		</user-type>
+    <user-type-list>
+        <!-- coherence-commandpattern types -->
+        <user-type>
+            <type-id>11000</type-id>
+            <class-name>com.oracle.coherence.patterns.command.DefaultContextConfiguration</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11100</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.CommandExecutionRequest</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11100</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.CommandExecutionRequest</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11101</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.CommandExecutionRequest$Key</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11101</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.CommandExecutionRequest$Key</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11102</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.ContextWrapper</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11102</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.ContextWrapper</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11103</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.CreateContextProcessor</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11103</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.CreateContextProcessor</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11104</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.SubmitCommandExecutionRequestProcessor</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11104</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.SubmitCommandExecutionRequestProcessor</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11105</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.SubmissionOutcome$Accepted</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11105</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.SubmissionOutcome$Accepted</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11106</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.SubmissionOutcome$UnknownContext</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11106</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.SubmissionOutcome$UnknownContext</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11107</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.ClaimContextProcessor</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11107</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.ClaimContextProcessor</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11108</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.UpdateContextProcessor</class-name>
-		</user-type>
-		
-		<user-type>
-       		<type-id>11109</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.CancelCommandProcessor</class-name>
-		</user-type>
-		
-		<user-type>
-       		<type-id>11110</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.internal.StartCommandProcessor</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11108</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.UpdateContextProcessor</class-name>
+        </user-type>
 
-		<user-type>
-       		<type-id>11200</type-id>
-       		<class-name>com.oracle.coherence.patterns.command.commands.PriorityCommandAdapter</class-name>
-		</user-type>
+        <user-type>
+            <type-id>11109</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.CancelCommandProcessor</class-name>
+        </user-type>
 
+        <user-type>
+            <type-id>11110</type-id>
+            <class-name>com.oracle.coherence.patterns.command.internal.StartCommandProcessor</class-name>
+        </user-type>
+
+        <user-type>
+            <type-id>11200</type-id>
+            <class-name>com.oracle.coherence.patterns.command.commands.PriorityCommandAdapter</class-name>
+        </user-type>
+
+        <user-type>
+            <type-id>11201</type-id>
+            <class-name>com.oracle.coherence.patterns.command.commands.CommandBatch</class-name>
+        </user-type>
  	</user-type-list>
 </pof-config>
  

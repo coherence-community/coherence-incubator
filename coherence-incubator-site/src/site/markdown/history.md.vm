@@ -30,6 +30,11 @@ reverse chronological order.
     as we are only using this interface **only** with in an inner class of
     `NonBlockingFiniteStateMachine`, it **does not** break any public interfaces.
 
+<h4>coherence-commandpattern</h4>
+
+*   [COHINC-34](http://java.net/jira/browse/COHINC-34): Added missing pof-type
+    declaration for the `CommandBatch` class.
+
 <h4>coherence-messagingpattern</h4>
 
 *   [COHINC-28](http://java.net/jira/browse/COHINC-28): Migrated Functional Test
