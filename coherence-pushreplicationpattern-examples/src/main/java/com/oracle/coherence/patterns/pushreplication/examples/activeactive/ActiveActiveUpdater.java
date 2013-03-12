@@ -52,7 +52,7 @@ public class ActiveActiveUpdater
 
     static private long getRandomLong(long upperBound)
     {
-        long randomLong = m_generator.nextLong();
+        long randomLong = Math.abs(m_generator.nextLong());
 
         return (randomLong % upperBound);
     }
