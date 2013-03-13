@@ -242,8 +242,11 @@ public class DefaultMessagingSession implements MessagingSession
                                                                        (SubscriptionConfiguration) subscriptionConfiguration,
                                                                        null);
 
-            destinationCache.invoke(destinationIdentifier, processor);
-
+            boolean success = (Boolean) destinationCache.invoke(destinationIdentifier, processor);
+            if (success)
+            {
+                subscriber = new QueueSubscriber(this, subscriptionIdentifier);
+            }
         }
         else
         {

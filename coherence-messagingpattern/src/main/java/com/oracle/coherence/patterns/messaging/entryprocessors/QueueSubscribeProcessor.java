@@ -127,7 +127,7 @@ public class QueueSubscribeProcessor<C extends SubscriptionConfiguration> extend
                        "Subscription cannot be created because the destination is not found for key %s",
                        entry.getKey());
 
-            return null;
+            return false;
         }
 
         if (queue.isFullySubscribed())
@@ -142,7 +142,7 @@ public class QueueSubscribeProcessor<C extends SubscriptionConfiguration> extend
         queue.subscribe(subscriptionIdentifier, subscriptionConfiguration, subscription);
         entry.setValue(queue);
 
-        return null;
+        return true;
     }
 
 

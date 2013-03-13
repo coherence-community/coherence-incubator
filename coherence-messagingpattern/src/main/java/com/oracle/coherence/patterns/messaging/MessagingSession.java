@@ -79,7 +79,9 @@ public interface MessagingSession
     /**
      * Creates a {@link Subscription} to the specified {@link Destination} configured using the
      * provided {@link SubscriptionConfiguration} and returns a {@link Subscriber} capable of
-     * consuming {@link Message}s from the said {@link Destination}.
+     * consuming {@link Message}s from the said {@link Destination}. If the {@link Destination}
+     * is subject to max subscription limits and the call to {@code subscribe} exceeds it
+     * a null Subscriber is returned.
      *
      * @param destination destination
      * @param subscriptionConfiguration subscription configuration
@@ -94,7 +96,9 @@ public interface MessagingSession
     /**
      * Creates a {@link Subscription} to the specified {@link Destination} configured using the
      * provided {@link SubscriptionConfiguration} and returns a {@link Subscriber} capable of
-     * consuming {@link Message}s from the said {@link Destination}.
+     * consuming {@link Message}s from the said {@link Destination}. If the {@link Destination}
+     * is subject to max subscription limits and the call to {@code subscribe} exceeds it
+     * a null Subscriber is returned.
      *
      * @param destination destination
      * @param subscriptionConfiguration subscription configuration
@@ -107,7 +111,9 @@ public interface MessagingSession
     /**
      * Creates a {@link Subscription} to the named {@link Destination} configured using the
      * provided {@link SubscriptionConfiguration} and returns a {@link Subscriber} capable of
-     * consuming {@link Message}s from the said {@link Destination}.
+     * consuming {@link Message}s from the said {@link Destination}. If the {@link Destination}
+     * is subject to max subscription limits and the call to {@code subscribe} exceeds it
+     * a null Subscriber is returned.
      *
      * @param destinationName name of destination
      * @param subscriptionConfiguration subscription configuration
@@ -119,7 +125,9 @@ public interface MessagingSession
 
     /**
      * Creates and returns a {@link Subscriber} for the specified {@link Destination}
-     * using a {@link DefaultSubscriptionConfiguration}.
+     * using a {@link DefaultSubscriptionConfiguration}. If the {@link Destination}
+     * is subject to max subscription limits and the call to {@code subscribe} exceeds it
+     * a null Subscriber is returned.
      *
      * @param destination destination
      * @return subscriber
@@ -129,7 +137,9 @@ public interface MessagingSession
 
     /**
      * Creates and returns a {@link Subscriber} for the named {@link Destination}
-     * using a {@link DefaultSubscriptionConfiguration}.
+     * using a {@link DefaultSubscriptionConfiguration}. If the {@link Destination}
+     * is subject to max subscription limits and the call to {@code subscribe} exceeds it
+     * a null Subscriber is returned.
      *
      * @param destinationName name of destination
      * @return subscriber

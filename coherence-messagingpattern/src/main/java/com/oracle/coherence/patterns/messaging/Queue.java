@@ -282,7 +282,8 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      * <p>Returns the maximum number of subscribers allowed in this {@link Queue}.</p>
      * @return the maximum subscribers allowed.
      */
-    public int getMaxSubscribers() {
+    public int getMaxSubscribers()
+    {
         return maxSubscribers;
     }
 
@@ -290,7 +291,8 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      * <p>Returns if the {@link Queue} is fully subscribed. On non-bounded {@link Queue}s this is always false.</p>
      * @return true if the {@link Queue} is fully subscribed, false otherwise.
      */
-    public boolean isFullySubscribed() {
+    public boolean isFullySubscribed()
+    {
         if (maxSubscribers!=-1)
         {
             return getSubscriptionIdentifiers().size() == maxSubscribers;
