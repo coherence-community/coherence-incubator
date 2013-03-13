@@ -232,8 +232,6 @@ public class DefaultMessagingSession implements MessagingSession
                                                                                        UUIDBasedIdentifier
                                                                                            .newInstance());
 
-            subscriber = new QueueSubscriber(this, subscriptionIdentifier);
-
             // Invoke against the destination cache.
             //
             NamedCache destinationCache = CacheFactory.getCache(Destination.CACHENAME);
