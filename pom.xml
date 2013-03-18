@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -73,7 +74,10 @@
 
         <module>coherence-incubator-all</module>
         <module>coherence-incubator-site</module>
-    </modules>
+
+        <module>coherence-pushreplicationpattern-cohweb-runner</module>
+        <module>coherence-pushreplicationpattern-cohweb-example</module>
+  </modules>
 
     <properties>
         <!-- project options -->
@@ -99,6 +103,7 @@
         <maven.gpg.plugin.version>1.4</maven.gpg.plugin.version>
         <maven.install.plugin.version>2.4</maven.install.plugin.version>
         <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
+        <maven.war.plugin.version>2.3</maven.war.plugin.version>
         <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
         <maven.release.plugin.version>2.2.1</maven.release.plugin.version>
         <maven.shade.plugin.version>1.7</maven.shade.plugin.version>
@@ -116,9 +121,13 @@
         <junit.version>4.10</junit.version>
         <miglayout.version>3.6</miglayout.version>
         <mockito.version>1.9.0</mockito.version>
-        <oracle.coherence.version>3.7.1.7</oracle.coherence.version>
+        <oracle.coherence.version>3.7.1.8</oracle.coherence.version>
         <oracle.tools.version>0.0.8</oracle.tools.version>
         <powermock.version>1.4.12</powermock.version>
+        <jettyVersion>8.1.0.RC0</jettyVersion>
+        <glassfish.javax.version>2.2.3</glassfish.javax.version>
+        <glassfish.javax-impl.version>2.2</glassfish.javax-impl.version>
+        <glassfish.jstl.version>1.2</glassfish.jstl.version>
     </properties>
 
     <build>

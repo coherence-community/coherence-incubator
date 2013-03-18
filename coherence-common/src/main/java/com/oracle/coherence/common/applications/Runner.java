@@ -3,7 +3,7 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of 
+ * The contents of this file are subject to the terms and conditions of
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
@@ -29,7 +29,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 /**
  * Execute a Java Application based on information defined in a .properties
@@ -90,14 +92,21 @@ public class Runner
                     new BufferedReader(new InputStreamReader(ClassLoader
                         .getSystemResourceAsStream(propertiesFileName)));
 
-                Properties applicationProperties = new Properties();
+                Properties applicationProps = new Properties();
 
-                applicationProperties.load(reader);
+                applicationProps.load(reader);
 
                 reader.close();
 
+                //Convert the properties to a treemap since we expect the arguments and system properties to come in order
+                TreeMap<String, String> applicationProperties = new TreeMap<String,String>();
+                for (String propertyName : applicationProps.stringPropertyNames())
+                    {
+                    applicationProperties.put(propertyName, applicationProps.getProperty(propertyName));
+                    }
+
                 // determine the application class name (for main)
-                String applicationClassName = applicationProperties.getProperty("Main-Class");
+                String applicationClassName = applicationProperties.get("Main-Class");
 
                 if (applicationClassName == null || applicationClassName.trim().isEmpty())
                 {
@@ -114,11 +123,11 @@ public class Runner
                         // determine the system properties and application arguments
                         ArrayList<String> applicationArguments = new ArrayList<String>();
 
-                        for (String propertyName : applicationProperties.stringPropertyNames())
+                        for (String propertyName : applicationProperties.keySet())
                         {
                             if (propertyName.startsWith("System-Property"))
                             {
-                                String   propertyDefinition = applicationProperties.getProperty(propertyName);
+                                String   propertyDefinition = applicationProperties.get(propertyName);
                                 String[] propertyParts      = propertyDefinition.split("=");
 
                                 if (propertyParts.length == 2)
@@ -137,16 +146,13 @@ public class Runner
                             {
                                 try
                                 {
-                                    String  indexNumber = propertyName.substring("Argument".length());
-                                    Integer index       = Integer.parseInt(indexNumber);
-
-                                    applicationArguments.set(index, applicationProperties.getProperty(propertyName));
+                                    applicationArguments.add(applicationProperties.get(propertyName));
                                 }
                                 catch (Exception e)
                                 {
                                     throw new IllegalArgumentException(String
                                         .format("ERROR: Invalid Argument Index for [%s=%s].  Should be of the form: ArgumentN=value (where N is an integer)\n",
-                                                propertyName, applicationProperties.getProperty(propertyName)),
+                                                propertyName, applicationProperties.get(propertyName)),
                                                                        e);
                                 }
                             }
@@ -154,10 +160,10 @@ public class Runner
 
                         // determine the Application Name and Description
                         String applicationName = applicationProperties.containsKey("Application-Name")
-                                                 ? applicationProperties.getProperty("Application-Name").trim() : null;
+                                                 ? applicationProperties.get("Application-Name").trim() : null;
                         String applicationDescription =
                             applicationProperties.containsKey("Application-Description")
-                            ? applicationProperties.getProperty("Application-Description").trim() : null;
+                            ? applicationProperties.get("Application-Description").trim() : null;
 
                         // output the application details
                         if (applicationName != null)
@@ -197,6 +203,7 @@ public class Runner
                         System.out.printf("ERROR: Failed to load and execute the Main-Class [%s] due to:\n%s",
                                           applicationClassName,
                                           e);
+                        e.printStackTrace();
                     }
                 }
             }
@@ -205,6 +212,8 @@ public class Runner
                 System.out.printf("ERROR: Unable to loaded the application properties file [%s] due to:\n%s",
                                   propertiesFileName,
                                   e);
+
+                e.printStackTrace();
             }
         }
         else

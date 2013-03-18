@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.oracle.coherence.incubator</groupId>
+    <artifactId>coherence-incubator</artifactId>
+    <version>11.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <groupId>com.oracle.coherence.incubator</groupId>
+  <artifactId>coherence-pushreplicationpattern-cohweb-runner</artifactId>
+
+  <packaging>jar</packaging>
+
+  <name>coherence-pushreplicationpattern-cohweb-runner</name>
+
+  <dependencies>
+
+      <dependency>
+           <groupId>com.oracle.coherence</groupId>
+           <artifactId>coherence</artifactId>
+           <version>${oracle.coherence.version}</version>
+      </dependency>
+
+      <dependency>
+           <groupId>com.oracle.coherence</groupId>
+           <artifactId>coherence-web</artifactId>
+           <version>${oracle.coherence.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>com.oracle.coherence.incubator</groupId>
+          <artifactId>coherence-eventdistributionpattern</artifactId>
+          <version>${project.parent.version}</version>
+      </dependency>
+
+      <dependency>
+           <groupId>com.oracle.coherence.incubator</groupId>
+           <artifactId>coherence-pushreplicationpattern</artifactId>
+           <version>${project.parent.version}</version>
+       </dependency>
+
+      <dependency>
+          <groupId>com.oracle.coherence.incubator</groupId>
+          <artifactId>coherence-common</artifactId>
+          <version>${project.parent.version}</version>
+      </dependency>
+
+      <!-- Jetty Support -->
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <version>${jettyVersion}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-webapp</artifactId>
+          <version>${jettyVersion}</version>
+      </dependency>
+
+      <!-- JSP Support -->
+      <dependency>
+          <groupId>org.glassfish.web</groupId>
+          <artifactId>javax.servlet.jsp</artifactId>
+          <version>${glassfish.javax.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.glassfish.web</groupId>
+          <artifactId>jsp-impl</artifactId>
+          <version>${glassfish.javax-impl.version}</version>
+      </dependency>
+
+      <!-- JSTL Support -->
+      <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>jstl</artifactId>
+          <version>${glassfish.jstl.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.glassfish.web</groupId>
+          <artifactId>jstl-impl</artifactId>
+          <version>${glassfish.jstl.version}</version>
+      </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.plugin.version}</version>
+                <configuration>
+                    <skipSource>true</skipSource>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven.javadoc.plugin.version}</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven.deploy.plugin.version}</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
