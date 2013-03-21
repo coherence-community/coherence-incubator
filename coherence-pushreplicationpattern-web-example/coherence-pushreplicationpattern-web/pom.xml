@@ -5,48 +5,60 @@
 
   <parent>
     <groupId>com.oracle.coherence.incubator</groupId>
-    <artifactId>coherence-incubator</artifactId>
+    <artifactId>coherence-pushreplicationpattern-web-example</artifactId>
     <version>11.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <groupId>com.oracle.coherence.incubator</groupId>
-  <artifactId>coherence-pushreplicationpattern-cohweb-runner</artifactId>
+  <artifactId>coherence-pushreplicationpattern-web</artifactId>
 
   <packaging>jar</packaging>
 
-  <name>coherence-pushreplicationpattern-cohweb-runner</name>
+  <name>coherence-pushreplicationpattern-web</name>
 
   <dependencies>
 
       <dependency>
-           <groupId>com.oracle.coherence</groupId>
-           <artifactId>coherence</artifactId>
-           <version>${oracle.coherence.version}</version>
+        <groupId>com.oracle.coherence</groupId>
+        <artifactId>coherence</artifactId>
+        <version>${oracle.coherence.version}</version>
       </dependency>
 
       <dependency>
-           <groupId>com.oracle.coherence</groupId>
-           <artifactId>coherence-web</artifactId>
-           <version>${oracle.coherence.version}</version>
+        <groupId>com.oracle.coherence</groupId>
+        <artifactId>coherence-web</artifactId>
+        <version>${oracle.coherence.version}</version>
       </dependency>
 
       <dependency>
           <groupId>com.oracle.coherence.incubator</groupId>
-          <artifactId>coherence-eventdistributionpattern</artifactId>
+          <artifactId>coherence-messagingpattern</artifactId>
           <version>${project.parent.version}</version>
       </dependency>
 
       <dependency>
-           <groupId>com.oracle.coherence.incubator</groupId>
-           <artifactId>coherence-pushreplicationpattern</artifactId>
-           <version>${project.parent.version}</version>
-       </dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-eventdistributionpattern</artifactId>
+        <version>${project.parent.version}</version>
+      </dependency>
 
       <dependency>
-          <groupId>com.oracle.coherence.incubator</groupId>
-          <artifactId>coherence-common</artifactId>
-          <version>${project.parent.version}</version>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-pushreplicationpattern</artifactId>
+        <version>${project.parent.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-common</artifactId>
+        <version>${project.parent.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.oracle.tools</groupId>
+        <artifactId>oracle-tools-coherence</artifactId>
+        <version>${oracle.tools.version}</version>
       </dependency>
 
       <!-- Jetty Support -->
@@ -125,6 +137,20 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven.shade.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

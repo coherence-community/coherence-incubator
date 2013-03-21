@@ -5,7 +5,7 @@
 <!--                                                                       -->
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <cache-config>
-    
+
   <caching-schemes>
     <remote-invocation-scheme>
       <service-name>publisher-invocation</service-name>
@@ -36,7 +36,7 @@
           </local-address>
         </tcp-acceptor>
       </acceptor-config>
-      <autostart system-property="proxy.enabled">false</autostart>
+      <autostart system-property="proxy.enabled">true</autostart>
     </proxy-scheme>
   </caching-schemes>
 </cache-config>

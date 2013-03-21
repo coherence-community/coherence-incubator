@@ -5,74 +5,26 @@
 
   <parent>
     <groupId>com.oracle.coherence.incubator</groupId>
-    <artifactId>coherence-incubator</artifactId>
+    <artifactId>coherence-pushreplicationpattern-web-example</artifactId>
     <version>11.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>com.oracle.coherence.incubator</groupId>
-  <artifactId>coherence-pushreplicationpattern-cohweb-example</artifactId>
+  <artifactId>coherence-pushreplicationpattern-web-app</artifactId>
+  <name>coherence-pushreplicationpattern-web-app</name>
 
   <packaging>war</packaging>
 
-  <name>coherence-pushreplicationpattern-cohweb-example</name>
-
   <dependencies>
-
-      <dependency>
-          <groupId>com.oracle.coherence</groupId>
-          <artifactId>coherence</artifactId>
-          <version>${oracle.coherence.version}</version>
-      </dependency>
-
-      <dependency>
-            <groupId>com.oracle.coherence</groupId>
-            <artifactId>coherence-web</artifactId>
-            <version>${oracle.coherence.version}</version>
-        </dependency>
-
-      <dependency>
-          <groupId>com.oracle.coherence.incubator</groupId>
-          <artifactId>coherence-common</artifactId>
-          <version>${project.parent.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>com.oracle.coherence.incubator</groupId>
-          <artifactId>coherence-messagingpattern</artifactId>
-          <version>${project.parent.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>com.oracle.coherence.incubator</groupId>
-          <artifactId>coherence-eventdistributionpattern</artifactId>
-          <version>${project.parent.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>com.oracle.coherence.incubator</groupId>
-          <artifactId>coherence-pushreplicationpattern</artifactId>
-          <version>${project.parent.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>com.oracle.coherence.incubator</groupId>
-          <artifactId>coherence-pushreplicationpattern-cohweb-runner</artifactId>
-          <version>${project.parent.version}</version>
-      </dependency>
-    </dependencies>
+    <dependency>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <artifactId>coherence-pushreplicationpattern-web</artifactId>
+        <version>${project.parent.version}</version>
+    </dependency>
+  </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.plugin.version}</version>
-                <configuration>
-                    <skipSource>true</skipSource>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -86,17 +38,32 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
-                    <skip>true</skip>
+                  <skip>true</skip>
                 </configuration>
             </plugin>
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>${maven.install.plugin.version}</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <packaging>jar</packaging>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <version>${project.version}</version>
+                            <file>
+                                ${project.build.directory}/${project.artifactId}-${project.version}.jar
+                            </file>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -110,12 +77,39 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven.dependency.plugin.version}</version>
+                <executions>
+                  <execution>
+                    <id>copy</id>
+                    <phase>verify</phase>
+                    <goals>
+                      <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                <groupId>com.oracle.coherence.incubator</groupId>
+                                <artifactId>coherence-pushreplicationpattern-web-app</artifactId>
+                                <version>${project.parent.version}</version>
+                                <type>war</type>
+                                <outputDirectory>${project.build.directory}</outputDirectory>
+                                <destFileName>${project.artifactId}-${project.version}.jar</destFileName>
+                            </artifactItem>
+                        </artifactItems>
+                    </configuration>
+                </execution>
+              </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${maven.war.plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.oracle.coherence.common.applications.Runner</mainClass>
+                            <mainClass>com.oracle.coherence.patterns.pushreplication.cohweb.examples.WebServer</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Version>${project.parent.version}</Version>

@@ -1,0 +1,605 @@
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building coherence-pushreplicationpattern-web-app-test 11.0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+Downloading: http://tangosol-build.us.oracle.com:8081/artifactory/internal-snapshot/com/oracle/coherence/incubator/coherence-incubator/11.0.1-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata com.oracle.coherence.incubator:coherence-incubator:11.0.1-SNAPSHOT/maven-metadata.xml from/to internal-snapshot (http://tangosol-build.us.oracle.com:8081/artifactory/internal-snapshot): tangosol-build.us.oracle.com
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ coherence-pushreplicationpattern-web-app-test ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-plugin-versions) @ coherence-pushreplicationpattern-web-app-test ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ coherence-pushreplicationpattern-web-app-test ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app-test/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ coherence-pushreplicationpattern-web-app-test ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ coherence-pushreplicationpattern-web-app-test ---
+[debug] execute contextualize
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app-test/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ coherence-pushreplicationpattern-web-app-test ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.13:test (default-test) @ coherence-pushreplicationpattern-web-app-test ---
+[INFO] Surefire report directory: /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app-test/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running com.oracle.coherence.patterns.pushreplication.cohweb.CohWebFunctionalTest
+[Site2-Web:out:38535]    1: For Testing Purposes Only
+[Site1-Web:out:38534]    1: For Testing Purposes Only
+[Site2-Web:err:38535]    1: 2013-03-21 18:54:46.559:INFO:oejs.Server:jetty-8.0.y.z-SNAPSHOT
+[Site1-Web:err:38534]    1: 2013-03-21 18:54:46.599:INFO:oejs.Server:jetty-8.0.y.z-SNAPSHOT
+[Site1-CacheServer-0:err:38532]    1: Oracle Coherence: The Manifest is corrupted or inaccessible; some functionality may be disabled
+[Site2-CacheServer-0:err:38533]    1: Oracle Coherence: The Manifest is corrupted or inaccessible; some functionality may be disabled
+[Site1-CacheServer-0:err:38532]    2: 2013-03-21 18:54:48.794/3.364 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/tangosol-coherence.xml"
+[Site1-CacheServer-0:err:38532]    3: 2013-03-21 18:54:49.429/3.999 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational overrides from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/tangosol-coherence-override-dev.xml"
+[Site1-CacheServer-0:err:38532]    4: 2013-03-21 18:54:49.430/4.000 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational overrides from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/tangosol-coherence-override.xml"
+[Site1-CacheServer-0:err:38532]    5: 2013-03-21 18:54:49.438/4.008 Oracle Coherence n/a <D5> (thread=main, member=n/a): Optional configuration override "/custom-mbeans.xml" is not specified
+[Site1-CacheServer-0:err:38532]    6: 
+[Site1-CacheServer-0:err:38532]    7: Oracle Coherence Version n/a Build n/a
+[Site1-CacheServer-0:err:38532]    8:  Grid Edition: Development mode
+[Site1-CacheServer-0:err:38532]    9: Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+[Site1-CacheServer-0:err:38532]   10: 
+[Site2-CacheServer-0:err:38533]    2: 2013-03-21 18:54:48.864/3.376 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/tangosol-coherence.xml"
+[Site2-CacheServer-0:err:38533]    3: 2013-03-21 18:54:49.517/4.029 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational overrides from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/tangosol-coherence-override-dev.xml"
+[Site2-CacheServer-0:err:38533]    4: 2013-03-21 18:54:49.518/4.030 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational overrides from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/tangosol-coherence-override.xml"
+[Site2-CacheServer-0:err:38533]    5: 2013-03-21 18:54:49.596/4.108 Oracle Coherence n/a <D5> (thread=main, member=n/a): Optional configuration override "/custom-mbeans.xml" is not specified
+[Site2-CacheServer-0:err:38533]    6: 
+[Site2-CacheServer-0:err:38533]    7: Oracle Coherence Version n/a Build n/a
+[Site2-CacheServer-0:err:38533]    8:  Grid Edition: Development mode
+[Site2-CacheServer-0:err:38533]    9: Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+[Site2-CacheServer-0:err:38533]   10: 
+[Site1-CacheServer-0:err:38532]   11: 2013-03-21 18:54:50.208/4.778 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/server-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site1-CacheServer-0:err:38532]   12: 
+[Site2-CacheServer-0:err:38533]   11: 2013-03-21 18:54:50.271/4.783 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/server-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site1-CacheServer-0:err:38532]   13: Using the Incubator Extensible Environment for Coherence Cache Configuration
+[Site1-CacheServer-0:err:38532]   14: Copyright (c) 2013, Oracle Corporation. All Rights Reserved.
+[Site1-CacheServer-0:err:38532]   15: 
+[Site2-CacheServer-0:err:38533]   12: 
+[Site2-CacheServer-0:err:38533]   13: Using the Incubator Extensible Environment for Coherence Cache Configuration
+[Site2-CacheServer-0:err:38533]   14: Copyright (c) 2013, Oracle Corporation. All Rights Reserved.
+[Site2-CacheServer-0:err:38533]   15: 
+[Site1-CacheServer-0:err:38532]   16: 2013-03-21 18:54:50.457/5.027 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/extend-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site2-CacheServer-0:err:38533]   16: 2013-03-21 18:54:50.496/5.008 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/extend-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site1-CacheServer-0:err:38532]   17: 2013-03-21 18:54:50.623/5.193 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site2-CacheServer-0:err:38533]   17: 2013-03-21 18:54:50.763/5.275 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site1-CacheServer-0:err:38532]   18: 2013-03-21 18:54:51.202/5.772 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site2-CacheServer-0:err:38533]   18: 2013-03-21 18:54:51.289/5.801 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site1-Web:err:38534]    2: 2013-03-21 18:54:51.335:INFO:oejsh.ContextHandler:started o.e.j.w.WebAppContext{/,file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/},file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar
+[Site1-Web:err:38534]    3: 2013-03-21 18:54:51.337:INFO:oejsh.ContextHandler:started o.e.j.w.WebAppContext{/,file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/},file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar
+[Site2-Web:err:38535]    2: 2013-03-21 18:54:51.373:INFO:oejsh.ContextHandler:started o.e.j.w.WebAppContext{/,file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/},file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar
+[Site2-Web:err:38535]    3: 2013-03-21 18:54:51.377:INFO:oejsh.ContextHandler:started o.e.j.w.WebAppContext{/,file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/},file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar
+[Site1-CacheServer-0:err:38532]   19: 2013-03-21 18:54:51.888/6.458 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/coherence-common-cache-config.xml"
+[Site2-CacheServer-0:err:38533]   19: 2013-03-21 18:54:51.982/6.494 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/coherence-common-cache-config.xml"
+[Site1-CacheServer-0:err:38532]   20: 2013-03-21 18:54:52.210/6.781 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site2-CacheServer-0:err:38533]   20: 2013-03-21 18:54:52.255/6.768 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site1-Web:err:38534]    4: Oracle Coherence: The Manifest is corrupted or inaccessible; some functionality may be disabled
+[Site2-Web:err:38535]    4: Oracle Coherence: The Manifest is corrupted or inaccessible; some functionality may be disabled
+[Site1-CacheServer-0:err:38532]   21: 2013-03-21 18:54:52.768/7.338 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site1-CacheServer-0:err:38532]   22: 2013-03-21 18:54:52.773/7.343 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.subscriptions</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.subscriptions</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-CacheServer-0:err:38532]   23: 2013-03-21 18:54:52.775/7.345 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.messages</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.messages</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-CacheServer-0:err:38532]   24: 2013-03-21 18:54:52.778/7.348 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.destinations</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.destinations</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-CacheServer-0:err:38533]   21: 2013-03-21 18:54:52.822/7.334 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site2-CacheServer-0:err:38533]   22: 2013-03-21 18:54:52.827/7.340 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.subscriptions</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.subscriptions</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-CacheServer-0:err:38533]   23: 2013-03-21 18:54:52.906/7.418 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.messages</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.messages</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-CacheServer-0:err:38533]   24: 2013-03-21 18:54:52.907/7.419 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.destinations</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.destinations</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-CacheServer-0:err:38532]   25: 2013-03-21 18:54:52.986/7.556 Oracle Coherence GE n/a <Warning> (thread=main, member=n/a): Environment resource [MacroParameterExpression{expression={cache-name}}] of type [class com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate] is already registered as [com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate@62402af3].  Skipping requested registration. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:registerResource
+[Site2-CacheServer-0:err:38533]   25: 2013-03-21 18:54:53.044/7.556 Oracle Coherence GE n/a <Warning> (thread=main, member=n/a): Environment resource [MacroParameterExpression{expression={cache-name}}] of type [class com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate] is already registered as [com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate@76933bcb].  Skipping requested registration. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:registerResource
+[Site1-CacheServer-0:err:38532]   26: 2013-03-21 18:54:53.969/8.539 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded Reporter configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/reports/report-group.xml"
+[Site2-CacheServer-0:err:38533]   26: 2013-03-21 18:54:54.161/8.673 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded Reporter configuration from "jar:file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar!/reports/report-group.xml"
+[Site1-Web:err:38534]    5: 2013-03-21 18:54:54.619/9.156 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/tangosol-coherence.xml"
+[Site1-Web:err:38534]    6: 2013-03-21 18:54:55.264/9.801 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational overrides from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/tangosol-coherence-override-dev.xml"
+[Site1-Web:err:38534]    7: 2013-03-21 18:54:55.266/9.803 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational overrides from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/tangosol-coherence-override.xml"
+[Site1-Web:err:38534]    8: 2013-03-21 18:54:55.320/9.857 Oracle Coherence n/a <D5> (thread=main, member=n/a): Optional configuration override "/custom-mbeans.xml" is not specified
+[Site1-Web:err:38534]    9: 
+[Site1-Web:err:38534]   10: Oracle Coherence Version n/a Build n/a
+[Site1-Web:err:38534]   11:  Grid Edition: Development mode
+[Site1-Web:err:38534]   12: Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+[Site1-Web:err:38534]   13: 
+[Site2-Web:err:38535]    5: 2013-03-21 18:54:54.775/9.301 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/tangosol-coherence.xml"
+[Site2-Web:err:38535]    6: 2013-03-21 18:54:55.388/9.914 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational overrides from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/tangosol-coherence-override-dev.xml"
+[Site2-Web:err:38535]    7: 2013-03-21 18:54:55.389/9.915 Oracle Coherence n/a <Info> (thread=main, member=n/a): Loaded operational overrides from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/tangosol-coherence-override.xml"
+[Site2-Web:err:38535]    8: 2013-03-21 18:54:55.409/9.935 Oracle Coherence n/a <D5> (thread=main, member=n/a): Optional configuration override "/custom-mbeans.xml" is not specified
+[Site2-Web:err:38535]    9: 
+[Site2-Web:err:38535]   10: Oracle Coherence Version n/a Build n/a
+[Site2-Web:err:38535]   11:  Grid Edition: Development mode
+[Site2-Web:err:38535]   12: Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+[Site2-Web:err:38535]   13: 
+[Site1-Web:err:38534]   14: 2013-03-21 18:54:56.619/11.156 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/classes/session-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site1-CacheServer-0:err:38532]   27: 2013-03-21 18:54:56.762/11.332 Oracle Coherence GE n/a <D4> (thread=main, member=n/a): TCMP bound to /192.168.1.5:8088 using SystemSocketProvider
+[Site1-Web:err:38534]   15: 
+[Site1-Web:err:38534]   16: Using the Incubator Extensible Environment for Coherence Cache Configuration
+[Site1-Web:err:38534]   17: Copyright (c) 2013, Oracle Corporation. All Rights Reserved.
+[Site1-Web:err:38534]   18: 
+[Site2-Web:err:38535]   14: 2013-03-21 18:54:56.903/11.429 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/classes/session-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site2-CacheServer-0:err:38533]   27: 2013-03-21 18:54:56.924/11.436 Oracle Coherence GE n/a <D4> (thread=main, member=n/a): TCMP bound to /192.168.1.5:8090 using SystemSocketProvider
+[Site2-Web:err:38535]   15: 
+[Site2-Web:err:38535]   16: Using the Incubator Extensible Environment for Coherence Cache Configuration
+[Site2-Web:err:38535]   17: Copyright (c) 2013, Oracle Corporation. All Rights Reserved.
+[Site2-Web:err:38535]   18: 
+[Site1-Web:err:38534]   19: 2013-03-21 18:54:57.235/11.772 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/extend-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site2-Web:err:38535]   19: 2013-03-21 18:54:57.421/11.947 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/extend-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site1-Web:err:38534]   20: 2013-03-21 18:54:57.515/12.052 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site2-Web:err:38535]   20: 2013-03-21 18:54:57.613/12.139 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site1-Web:err:38534]   21: 2013-03-21 18:54:57.904/12.441 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site2-Web:err:38535]   21: 2013-03-21 18:54:57.951/12.477 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site1-Web:err:38534]   22: 2013-03-21 18:54:58.264/12.801 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-common-cache-config.xml"
+[Site2-Web:err:38535]   22: 2013-03-21 18:54:58.279/12.805 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-common-cache-config.xml"
+[Site1-Web:err:38534]   23: 2013-03-21 18:54:58.419/12.957 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site2-Web:err:38535]   23: 2013-03-21 18:54:58.440/12.967 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site1-Web:err:38534]   24: 2013-03-21 18:54:58.752/13.289 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site1-Web:err:38534]   25: 2013-03-21 18:54:58.755/13.292 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.subscriptions</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.subscriptions</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-Web:err:38534]   26: 2013-03-21 18:54:58.756/13.293 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.messages</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.messages</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-Web:err:38534]   27: 2013-03-21 18:54:58.757/13.294 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.destinations</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.destinations</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-Web:err:38535]   24: 2013-03-21 18:54:58.771/13.305 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site2-Web:err:38535]   25: 2013-03-21 18:54:58.783/13.309 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.subscriptions</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.subscriptions</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-Web:err:38535]   26: 2013-03-21 18:54:58.783/13.309 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.messages</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.messages</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-Web:err:38535]   27: 2013-03-21 18:54:58.785/13.311 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.destinations</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.destinations</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-Web:err:38534]   28: 2013-03-21 18:54:58.844/13.381 Oracle Coherence GE n/a <Warning> (thread=main, member=n/a): Environment resource [MacroParameterExpression{expression={cache-name}}] of type [class com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate] is already registered as [com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate@6e886140].  Skipping requested registration. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:registerResource
+[Site2-Web:err:38535]   28: 2013-03-21 18:54:58.873/13.399 Oracle Coherence GE n/a <Warning> (thread=main, member=n/a): Environment resource [MacroParameterExpression{expression={cache-name}}] of type [class com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate] is already registered as [com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate@1ade25df].  Skipping requested registration. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:registerResource
+[Site1-Web:err:38534]   29: 2013-03-21 18:54:58.930/13.467 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Extensible Environment XML configuration has been reset.  Will now restart it. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:setConfig
+[Site1-Web:err:38534]   30: 2013-03-21 18:54:58.931/13.468 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Extensible Environment XML configuration has been reset.  Will now restart it. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:setConfig
+[Site1-Web:err:38534]   31: 
+[Site1-Web:err:38534]   32: Using the Incubator Extensible Environment for Coherence Cache Configuration
+[Site1-Web:err:38534]   33: Copyright (c) 2013, Oracle Corporation. All Rights Reserved.
+[Site1-Web:err:38534]   34: 
+[Site1-Web:err:38534]   35: 2013-03-21 18:54:58.942/13.479 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/extend-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site1-Web:err:38534]   36: 2013-03-21 18:54:58.946/13.483 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site1-Web:err:38534]   37: 2013-03-21 18:54:58.946/13.483 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site2-Web:err:38535]   29: 2013-03-21 18:54:58.987/13.513 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Extensible Environment XML configuration has been reset.  Will now restart it. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:setConfig
+[Site2-Web:err:38535]   30: 2013-03-21 18:54:58.988/13.514 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Extensible Environment XML configuration has been reset.  Will now restart it. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:setConfig
+[Site2-Web:err:38535]   31: 
+[Site2-Web:err:38535]   32: Using the Incubator Extensible Environment for Coherence Cache Configuration
+[Site2-Web:err:38535]   33: Copyright (c) 2013, Oracle Corporation. All Rights Reserved.
+[Site2-Web:err:38535]   34: 
+[Site2-Web:err:38535]   35: 2013-03-21 18:54:58.995/13.521 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/extend-cache-config.xml"; this document does not refer to any schema definition and has not been validated.
+[Site2-Web:err:38535]   36: 2013-03-21 18:54:59.000/13.526 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site2-Web:err:38535]   37: 2013-03-21 18:54:59.000/13.526 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site1-Web:err:38534]   38: 2013-03-21 18:54:59.256/13.793 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site2-Web:err:38535]   38: 2013-03-21 18:54:59.272/13.798 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site2-Web:err:38535]   39: 2013-03-21 18:54:59.543/14.069 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-common-cache-config.xml"
+[Site1-Web:err:38534]   39: 2013-03-21 18:54:59.551/14.088 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-common-cache-config.xml"
+[Site2-Web:err:38535]   40: 2013-03-21 18:54:59.579/14.105 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site2-Web:err:38535]   41: 2013-03-21 18:54:59.581/14.107 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site1-Web:err:38534]   40: 2013-03-21 18:54:59.640/14.177 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site1-Web:err:38534]   41: 2013-03-21 18:54:59.640/14.177 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Using the Coherence-based Event Distributor. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributorBuilder Method:<init>
+[Site1-Web:err:38534]   42: 2013-03-21 18:54:59.845/14.382 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site2-Web:err:38535]   42: 2013-03-21 18:54:59.861/14.387 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded cache configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/coherence-messagingpattern-cache-config.xml"
+[Site2-Web:err:38535]   43: 2013-03-21 18:54:59.863/14.389 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.subscriptions</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.subscriptions</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-Web:err:38535]   44: 2013-03-21 18:54:59.863/14.389 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.subscriptions</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.subscriptions</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-Web:err:38535]   45: 2013-03-21 18:54:59.863/14.389 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.messages</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.messages</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-Web:err:38535]   46: 2013-03-21 18:54:59.864/14.390 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.messages</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.messages</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-Web:err:38535]   47: 2013-03-21 18:54:59.868/14.394 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.destinations</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.destinations</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-Web:err:38535]   48: 2013-03-21 18:54:59.869/14.395 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.destinations</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.destinations</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site2-Web:err:38535]   49: 2013-03-21 18:54:59.889/14.415 Oracle Coherence GE n/a <Warning> (thread=main, member=n/a): Environment resource [MacroParameterExpression{expression={cache-name}}] of type [class com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate] is already registered as [com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate@7eddb829].  Skipping requested registration. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:registerResource
+[Site2-Web:err:38535]   50: 2013-03-21 18:54:59.890/14.416 Oracle Coherence GE n/a <Warning> (thread=main, member=n/a): Environment resource [MacroParameterExpression{expression={cache-name}}] of type [class com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate] is already registered as [com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate@7eddb829].  Skipping requested registration. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:registerResource
+[Site1-Web:err:38534]   43: 2013-03-21 18:54:59.912/14.449 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.subscriptions</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.subscriptions</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-Web:err:38534]   44: 2013-03-21 18:54:59.912/14.449 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.subscriptions</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.subscriptions</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-Web:err:38534]   45: 2013-03-21 18:54:59.915/14.452 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.messages</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.messages</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-Web:err:38534]   46: 2013-03-21 18:54:59.915/14.452 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.messages</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.messages</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-Web:err:38534]   47: 2013-03-21 18:54:59.917/14.454 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.destinations</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.destinations</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-Web:err:38534]   48: 2013-03-21 18:54:59.922/14.459 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): WARNING: The cache mapping for the <cache-name>coherence.messagingpattern.destinations</cache-name> has been duplicated/overridden.The new cache mapping declaration for <cache-name>coherence.messagingpattern.destinations</cache-name> will be ignored, but decorations will be retained and merged. Class:com.oracle.coherence.configuration.caching.CacheMappingRegistry Method:addCacheMapping
+[Site1-Web:err:38534]   49: 2013-03-21 18:54:59.968/14.505 Oracle Coherence GE n/a <Warning> (thread=main, member=n/a): Environment resource [MacroParameterExpression{expression={cache-name}}] of type [class com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate] is already registered as [com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate@7eddb829].  Skipping requested registration. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:registerResource
+[Site1-Web:err:38534]   50: 2013-03-21 18:54:59.968/14.505 Oracle Coherence GE n/a <Warning> (thread=main, member=n/a): Environment resource [MacroParameterExpression{expression={cache-name}}] of type [class com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate] is already registered as [com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate@7eddb829].  Skipping requested registration. Class:com.oracle.coherence.environment.extensible.ExtensibleEnvironment Method:registerResource
+[Site2-Web:err:38535]   51: 2013-03-21 18:54:59.978/14.504 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Session Access Debug Logging is Enabled
+[Site2-Web:err:38535]   52: Mar 21, 2013 6:54:59 PM com.tangosol.coherence.servlet.ConfigurationImpl$Builder ensureConsistent
+[Site2-Web:err:38535]   53: INFO: Session Access Debug Logging is Enabled
+[Site2-Web:err:38535]   54: 2013-03-21 18:55:00.054/14.580 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Session Access Debug Logging is Enabled
+[Site1-Web:err:38534]   51: 2013-03-21 18:55:00.057/14.594 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Session Access Debug Logging is Enabled
+[Site2-Web:err:38535]   55: Mar 21, 2013 6:55:00 PM com.tangosol.coherence.servlet.ConfigurationImpl$Builder ensureConsistent
+[Site2-Web:err:38535]   56: INFO: Session Access Debug Logging is Enabled
+[Site1-Web:err:38534]   52: Mar 21, 2013 6:55:00 PM com.tangosol.coherence.servlet.ConfigurationImpl$Builder ensureConsistent
+[Site1-Web:err:38534]   53: INFO: Session Access Debug Logging is Enabled
+[Site1-Web:err:38534]   54: 2013-03-21 18:55:00.107/14.644 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Session Access Debug Logging is Enabled
+[Site1-Web:err:38534]   55: Mar 21, 2013 6:55:00 PM com.tangosol.coherence.servlet.ConfigurationImpl$Builder ensureConsistent
+[Site1-Web:err:38534]   56: INFO: Session Access Debug Logging is Enabled
+[Site2-Web:err:38535]   57: 2013-03-21 18:55:00.390/14.916 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded Reporter configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/reports/report-group.xml"
+[Site1-CacheServer-0:err:38532]   28: 2013-03-21 18:55:00.514/15.084 Oracle Coherence GE n/a <Info> (thread=Cluster, member=n/a): Created a new cluster "cluster:0x5DDB" with Member(Id=1, Timestamp=2013-03-21 18:54:57.149, Address=192.168.1.5:8088, MachineId=23150, Location=site:Site1,machine:new-host,process:38532, Role=CacheServer, Edition=Grid Edition, Mode=Development, CpuCount=2, SocketCount=2) UID=0xC0A801050000013D8F298A7D5A6E1F98
+[Site1-CacheServer-0:err:38532]   29: 2013-03-21 18:55:00.519/15.089 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Started cluster Name=cluster:0x5DDB
+[Site1-CacheServer-0:err:38532]   30: 
+[Site1-CacheServer-0:err:38532]   31: Group{Address=224.3.7.0, Port=9001, TTL=4}
+[Site1-CacheServer-0:err:38532]   32: 
+[Site1-CacheServer-0:err:38532]   33: MasterMemberSet(
+[Site1-CacheServer-0:err:38532]   34:   ThisMember=Member(Id=1, Timestamp=2013-03-21 18:54:57.149, Address=192.168.1.5:8088, MachineId=23150, Location=site:Site1,machine:new-host,process:38532, Role=CacheServer)
+[Site1-CacheServer-0:err:38532]   35:   OldestMember=Member(Id=1, Timestamp=2013-03-21 18:54:57.149, Address=192.168.1.5:8088, MachineId=23150, Location=site:Site1,machine:new-host,process:38532, Role=CacheServer)
+[Site1-CacheServer-0:err:38532]   36:   ActualMemberSet=MemberSet(Size=1
+[Site1-CacheServer-0:err:38532]   37:     Member(Id=1, Timestamp=2013-03-21 18:54:57.149, Address=192.168.1.5:8088, MachineId=23150, Location=site:Site1,machine:new-host,process:38532, Role=CacheServer)
+[Site1-CacheServer-0:err:38532]   38:     )
+[Site1-CacheServer-0:err:38532]   39:   MemberId|ServiceVersion|ServiceJoined|MemberState
+[Site1-CacheServer-0:err:38532]   40:     1|3.7.1|2013-03-21 18:55:00.515|JOINED
+[Site1-CacheServer-0:err:38532]   41:   RecycleMillis=1200000
+[Site1-CacheServer-0:err:38532]   42:   RecycleSet=MemberSet(Size=0
+[Site1-CacheServer-0:err:38532]   43:     )
+[Site1-CacheServer-0:err:38532]   44:   )
+[Site1-CacheServer-0:err:38532]   45: 
+[Site1-CacheServer-0:err:38532]   46: TcpRing{Connections=[]}
+[Site1-CacheServer-0:err:38532]   47: IpMonitor{Addresses=0}
+[Site1-CacheServer-0:err:38532]   48: 
+[Site1-CacheServer-0:err:38532]   49: 2013-03-21 18:55:00.648/15.218 Oracle Coherence GE n/a <D5> (thread=Invocation:Management, member=1): Service Management joined the cluster with senior service member 1
+[Site1-Web:err:38534]   57: 2013-03-21 18:55:00.659/15.196 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Loaded Reporter configuration from "jar:file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar!/reports/report-group.xml"
+[Site2-CacheServer-0:err:38533]   28: 2013-03-21 18:55:00.921/15.433 Oracle Coherence GE n/a <Info> (thread=Cluster, member=n/a): Created a new cluster "cluster:0x65DB" with Member(Id=1, Timestamp=2013-03-21 18:54:57.366, Address=192.168.1.5:8090, MachineId=23151, Location=site:Site2,machine:new-host,process:38533, Role=CacheServer, Edition=Grid Edition, Mode=Development, CpuCount=2, SocketCount=2) UID=0xC0A801050000013D8F298B565A6F1F9A
+[Site2-CacheServer-0:err:38533]   29: 2013-03-21 18:55:00.925/15.437 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Started cluster Name=cluster:0x65DB
+[Site2-CacheServer-0:err:38533]   30: 
+[Site2-CacheServer-0:err:38533]   31: Group{Address=224.3.7.0, Port=10001, TTL=4}
+[Site2-CacheServer-0:err:38533]   32: 
+[Site2-CacheServer-0:err:38533]   33: MasterMemberSet(
+[Site2-CacheServer-0:err:38533]   34:   ThisMember=Member(Id=1, Timestamp=2013-03-21 18:54:57.366, Address=192.168.1.5:8090, MachineId=23151, Location=site:Site2,machine:new-host,process:38533, Role=CacheServer)
+[Site2-CacheServer-0:err:38533]   35:   OldestMember=Member(Id=1, Timestamp=2013-03-21 18:54:57.366, Address=192.168.1.5:8090, MachineId=23151, Location=site:Site2,machine:new-host,process:38533, Role=CacheServer)
+[Site2-CacheServer-0:err:38533]   36:   ActualMemberSet=MemberSet(Size=1
+[Site2-CacheServer-0:err:38533]   37:     Member(Id=1, Timestamp=2013-03-21 18:54:57.366, Address=192.168.1.5:8090, MachineId=23151, Location=site:Site2,machine:new-host,process:38533, Role=CacheServer)
+[Site2-CacheServer-0:err:38533]   38:     )
+[Site2-CacheServer-0:err:38533]   39:   MemberId|ServiceVersion|ServiceJoined|MemberState
+[Site2-CacheServer-0:err:38533]   40:     1|3.7.1|2013-03-21 18:55:00.921|JOINED
+[Site2-CacheServer-0:err:38533]   41:   RecycleMillis=1200000
+[Site2-CacheServer-0:err:38533]   42:   RecycleSet=MemberSet(Size=0
+[Site2-CacheServer-0:err:38533]   43:     )
+[Site2-CacheServer-0:err:38533]   44:   )
+[Site2-CacheServer-0:err:38533]   45: 
+[Site2-CacheServer-0:err:38533]   46: TcpRing{Connections=[]}
+[Site2-CacheServer-0:err:38533]   47: IpMonitor{Addresses=0}
+[Site2-CacheServer-0:err:38533]   48: 
+[Site2-CacheServer-0:err:38533]   49: 2013-03-21 18:55:01.077/15.589 Oracle Coherence GE n/a <D5> (thread=Invocation:Management, member=1): Service Management joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   50: 2013-03-21 18:55:01.317/15.887 Oracle Coherence GE n/a <Info> (thread=Proxy:PublisherProxyService:TcpAcceptor, member=1): TcpAcceptor now listening for connections on 192.168.1.5:9002
+[Site1-CacheServer-0:err:38532]   51: 2013-03-21 18:55:01.319/15.889 Oracle Coherence GE n/a <D5> (thread=Proxy:PublisherProxyService:TcpAcceptor, member=1): Started: TcpAcceptor{Name=Proxy:PublisherProxyService:TcpAcceptor, State=(SERVICE_STARTED), ThreadCount=0, Codec=Codec(Format=POF), Serializer=com.tangosol.io.DefaultSerializer, PingInterval=0, PingTimeout=30000, RequestTimeout=30000, SocketProvider=SystemSocketProvider, LocalAddress=[new-host.home/192.168.1.5:9002], SocketOptions{AddressReusable=true, LingerTimeout=0, KeepAliveEnabled=true, TcpDelayEnabled=false}, ListenBacklog=0, BufferPoolIn=BufferPool(BufferSize=2KB, BufferType=DIRECT, Capacity=Unlimited), BufferPoolOut=BufferPool(BufferSize=2KB, BufferType=DIRECT, Capacity=Unlimited)}
+[Site1-CacheServer-0:err:38532]   52: 2013-03-21 18:55:01.330/15.900 Oracle Coherence GE n/a <D5> (thread=Proxy:PublisherProxyService, member=1): Service PublisherProxyService joined the cluster with senior service member 1
+[Site2-CacheServer-0:err:38533]   50: 2013-03-21 18:55:01.598/16.110 Oracle Coherence GE n/a <Info> (thread=Proxy:PublisherProxyService:TcpAcceptor, member=1): TcpAcceptor now listening for connections on 192.168.1.5:10002
+[Site2-CacheServer-0:err:38533]   51: 2013-03-21 18:55:01.600/16.112 Oracle Coherence GE n/a <D5> (thread=Proxy:PublisherProxyService:TcpAcceptor, member=1): Started: TcpAcceptor{Name=Proxy:PublisherProxyService:TcpAcceptor, State=(SERVICE_STARTED), ThreadCount=0, Codec=Codec(Format=POF), Serializer=com.tangosol.io.DefaultSerializer, PingInterval=0, PingTimeout=30000, RequestTimeout=30000, SocketProvider=SystemSocketProvider, LocalAddress=[new-host.home/192.168.1.5:10002], SocketOptions{AddressReusable=true, LingerTimeout=0, KeepAliveEnabled=true, TcpDelayEnabled=false}, ListenBacklog=0, BufferPoolIn=BufferPool(BufferSize=2KB, BufferType=DIRECT, Capacity=Unlimited), BufferPoolOut=BufferPool(BufferSize=2KB, BufferType=DIRECT, Capacity=Unlimited)}
+[Site2-CacheServer-0:err:38533]   52: 2013-03-21 18:55:01.615/16.127 Oracle Coherence GE n/a <D5> (thread=Proxy:PublisherProxyService, member=1): Service PublisherProxyService joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   53: 2013-03-21 18:55:01.968/16.538 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForSequenceGenerators, member=1): Service DistributedCacheForSequenceGenerators joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   54: 2013-03-21 18:55:02.018/16.588 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForLiveObjects, member=1): Service DistributedCacheForLiveObjects joined the cluster with senior service member 1
+[Site2-Web:err:38535]   58: 2013-03-21 18:55:02.104/16.630 Oracle Coherence GE n/a <D4> (thread=main, member=n/a): TCMP bound to /192.168.1.5:8092 using SystemSocketProvider
+[Site1-CacheServer-0:err:38532]   55: 2013-03-21 18:55:02.136/16.706 Oracle Coherence GE n/a <D5> (thread=ReplicatedCache:ReplicatedCacheForLiveObjects, member=1): Service ReplicatedCacheForLiveObjects joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   56: 2013-03-21 18:55:02.176/16.746 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForSubscriptions, member=1): Service DistributedCacheForSubscriptions joined the cluster with senior service member 1
+[Site2-CacheServer-0:err:38533]   53: 2013-03-21 18:55:02.213/16.725 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForSequenceGenerators, member=1): Service DistributedCacheForSequenceGenerators joined the cluster with senior service member 1
+[Site1-Web:err:38534]   58: 2013-03-21 18:55:02.262/16.799 Oracle Coherence GE n/a <D4> (thread=main, member=n/a): TCMP bound to /192.168.1.5:8094 using SystemSocketProvider
+[Site2-CacheServer-0:err:38533]   54: 2013-03-21 18:55:02.285/16.797 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForLiveObjects, member=1): Service DistributedCacheForLiveObjects joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   57: 2013-03-21 18:55:02.340/16.910 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForMessages, member=1): Service DistributedCacheForMessages joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   58: 2013-03-21 18:55:02.428/16.998 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForDestinations, member=1): Service DistributedCacheForDestinations joined the cluster with senior service member 1
+[Site2-CacheServer-0:err:38533]   55: 2013-03-21 18:55:02.443/16.955 Oracle Coherence GE n/a <D5> (thread=ReplicatedCache:ReplicatedCacheForLiveObjects, member=1): Service ReplicatedCacheForLiveObjects joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   59: 2013-03-21 18:55:02.492/17.062 Oracle Coherence GE n/a <D5> (thread=ReplicatedCache:ReplicatedSessionsMisc, member=1): Service ReplicatedSessionsMisc joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   60: 2013-03-21 18:55:02.570/17.140 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Service DistributedCacheWithPublishingCacheStore joined the cluster with senior service member 1
+[Site2-CacheServer-0:err:38533]   56: 2013-03-21 18:55:02.584/17.096 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForSubscriptions, member=1): Service DistributedCacheForSubscriptions joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   61: 2013-03-21 18:55:02.609/17.179 Oracle Coherence GE n/a <Info> (thread=main, member=1): 
+[Site1-CacheServer-0:err:38532]   62: Services
+[Site1-CacheServer-0:err:38532]   63:   (
+[Site1-CacheServer-0:err:38532]   64:   ClusterService{Name=Cluster, State=(SERVICE_STARTED, STATE_JOINED), Id=0, Version=3.7.1, OldestMemberId=1}
+[Site1-CacheServer-0:err:38532]   65:   InvocationService{Name=Management, State=(SERVICE_STARTED), Id=1, Version=3.1, OldestMemberId=1}
+[Site1-CacheServer-0:err:38532]   66:   ProxyService{Name=PublisherProxyService, State=(SERVICE_STARTED), Id=2, Version=3.7, OldestMemberId=1}
+[Site1-CacheServer-0:err:38532]   67:   PartitionedCache{Name=DistributedCacheForSequenceGenerators, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site1-CacheServer-0:err:38532]   68:   PartitionedCache{Name=DistributedCacheForLiveObjects, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site1-CacheServer-0:err:38532]   69:   ReplicatedCache{Name=ReplicatedCacheForLiveObjects, State=(SERVICE_STARTED), Id=5, Version=3.0, OldestMemberId=1}
+[Site1-CacheServer-0:err:38532]   70:   PartitionedCache{Name=DistributedCacheForSubscriptions, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site1-CacheServer-0:err:38532]   71:   PartitionedCache{Name=DistributedCacheForMessages, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site1-CacheServer-0:err:38532]   72:   PartitionedCache{Name=DistributedCacheForDestinations, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site1-CacheServer-0:err:38532]   73:   ReplicatedCache{Name=ReplicatedSessionsMisc, State=(SERVICE_STARTED), Id=9, Version=3.0, OldestMemberId=1}
+[Site1-CacheServer-0:err:38532]   74:   PartitionedCache{Name=DistributedCacheWithPublishingCacheStore, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site1-CacheServer-0:err:38532]   75:   )
+[Site1-CacheServer-0:err:38532]   76: 
+[Site1-CacheServer-0:err:38532]   77: Started DefaultCacheServer...
+[Site1-CacheServer-0:err:38532]   78: 
+[Site1-Web:err:38534]   59: 2013-03-21 18:55:02.727/17.264 Oracle Coherence GE n/a <Info> (thread=Cluster, member=n/a): Failed to satisfy the variance: allowed=16, actual=20
+[Site2-Web:err:38535]   59: 2013-03-21 18:55:02.730/17.256 Oracle Coherence GE n/a <Info> (thread=Cluster, member=n/a): This Member(Id=2, Timestamp=2013-03-21 18:55:02.532, Address=192.168.1.5:8092, MachineId=23151, Location=site:Site2,machine:new-host,process:38535, Role=OracleCoherencePatternsWebServer, Edition=Grid Edition, Mode=Development, CpuCount=2, SocketCount=2) joined cluster "cluster:0x65DB" with senior Member(Id=1, Timestamp=2013-03-21 18:54:57.366, Address=192.168.1.5:8090, MachineId=23151, Location=site:Site2,machine:new-host,process:38533, Role=CacheServer, Edition=Grid Edition, Mode=Development, CpuCount=2, SocketCount=2)
+[Site1-Web:err:38534]   60: 2013-03-21 18:55:02.728/17.296 Oracle Coherence GE n/a <Info> (thread=Cluster, member=n/a): Increasing allowable variance to 17
+[Site2-CacheServer-0:err:38533]   57: 2013-03-21 18:55:02.718/17.230 Oracle Coherence GE n/a <D5> (thread=Cluster, member=1): Member(Id=2, Timestamp=2013-03-21 18:55:02.532, Address=192.168.1.5:8092, MachineId=23151, Location=site:Site2,machine:new-host,process:38535, Role=OracleCoherencePatternsWebServer) joined Cluster with senior member 1
+[Site2-Web:err:38535]   60: 2013-03-21 18:55:02.816/17.342 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service Management with senior member 1
+[Site2-Web:err:38535]   61: 2013-03-21 18:55:02.816/17.342 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service PublisherProxyService with senior member 1
+[Site2-Web:err:38535]   62: 2013-03-21 18:55:02.816/17.342 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service DistributedCacheForSequenceGenerators with senior member 1
+[Site2-Web:err:38535]   63: 2013-03-21 18:55:02.816/17.342 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service DistributedCacheForLiveObjects with senior member 1
+[Site2-Web:err:38535]   64: 2013-03-21 18:55:02.816/17.342 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service ReplicatedCacheForLiveObjects with senior member 1
+[Site2-Web:err:38535]   65: 2013-03-21 18:55:02.816/17.342 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service DistributedCacheForSubscriptions with senior member 1
+[Site2-Web:err:38535]   66: 2013-03-21 18:55:02.825/17.351 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Started cluster Name=cluster:0x65DB
+[Site2-Web:err:38535]   67: 
+[Site2-Web:err:38535]   68: Group{Address=224.3.7.0, Port=10001, TTL=4}
+[Site2-Web:err:38535]   69: 
+[Site2-Web:err:38535]   70: MasterMemberSet(
+[Site2-Web:err:38535]   71:   ThisMember=Member(Id=2, Timestamp=2013-03-21 18:55:02.532, Address=192.168.1.5:8092, MachineId=23151, Location=site:Site2,machine:new-host,process:38535, Role=OracleCoherencePatternsWebServer)
+[Site2-Web:err:38535]   72:   OldestMember=Member(Id=1, Timestamp=2013-03-21 18:54:57.366, Address=192.168.1.5:8090, MachineId=23151, Location=site:Site2,machine:new-host,process:38533, Role=CacheServer)
+[Site2-Web:err:38535]   73:   ActualMemberSet=MemberSet(Size=2
+[Site2-Web:err:38535]   74:     Member(Id=1, Timestamp=2013-03-21 18:54:57.366, Address=192.168.1.5:8090, MachineId=23151, Location=site:Site2,machine:new-host,process:38533, Role=CacheServer)
+[Site2-Web:err:38535]   75:     Member(Id=2, Timestamp=2013-03-21 18:55:02.532, Address=192.168.1.5:8092, MachineId=23151, Location=site:Site2,machine:new-host,process:38535, Role=OracleCoherencePatternsWebServer)
+[Site2-Web:err:38535]   76:     )
+[Site2-Web:err:38535]   77:   MemberId|ServiceVersion|ServiceJoined|MemberState
+[Site2-Web:err:38535]   78:     1|3.7.1|2013-03-21 18:54:57.366|JOINED,
+[Site2-Web:err:38535]   79:     2|3.7.1|2013-03-21 18:55:02.808|JOINED
+[Site2-Web:err:38535]   80:   RecycleMillis=1200000
+[Site2-Web:err:38535]   81:   RecycleSet=MemberSet(Size=0
+[Site2-Web:err:38535]   82:     )
+[Site2-Web:err:38535]   83:   )
+[Site2-Web:err:38535]   84: 
+[Site2-Web:err:38535]   85: TcpRing{Connections=[1]}
+[Site2-Web:err:38535]   86: IpMonitor{Addresses=0}
+[Site2-Web:err:38535]   87: 
+[Site1-Web:err:38534]   61: 2013-03-21 18:55:02.957/17.494 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Failed to satisfy the variance: allowed=17, actual=48
+[Site1-Web:err:38534]   62: 2013-03-21 18:55:02.957/17.494 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Increasing allowable variance to 20
+[Site2-CacheServer-0:err:38533]   58: 2013-03-21 18:55:03.029/17.541 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForMessages, member=1): Service DistributedCacheForMessages joined the cluster with senior service member 1
+[Site2-Web:err:38535]   88: 2013-03-21 18:55:03.065/17.591 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 joined Service DistributedCacheForMessages with senior member 1
+[Site2-CacheServer-0:err:38533]   59: 2013-03-21 18:55:03.079/17.591 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheForDestinations, member=1): Service DistributedCacheForDestinations joined the cluster with senior service member 1
+[Site2-Web:err:38535]   89: 2013-03-21 18:55:03.110/17.636 Oracle Coherence GE n/a <D5> (thread=Invocation:Management, member=2): Service Management joined the cluster with senior service member 1
+[Site2-Web:err:38535]   90: 2013-03-21 18:55:03.110/17.636 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 joined Service DistributedCacheForDestinations with senior member 1
+[Site2-CacheServer-0:err:38533]   60: 2013-03-21 18:55:03.130/17.642 Oracle Coherence GE n/a <D5> (thread=Cluster, member=1): Member 2 joined Service Management with senior member 1
+[Site2-Web:err:38535]   91: 2013-03-21 18:55:03.190/17.717 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 joined Service ReplicatedSessionsMisc with senior member 1
+[Site2-CacheServer-0:err:38533]   61: 2013-03-21 18:55:03.188/17.700 Oracle Coherence GE n/a <D5> (thread=ReplicatedCache:ReplicatedSessionsMisc, member=1): Service ReplicatedSessionsMisc joined the cluster with senior service member 1
+[Site1-Web:err:38534]   63: 2013-03-21 18:55:03.328/17.865 Oracle Coherence GE n/a <Info> (thread=Cluster, member=n/a): This Member(Id=2, Timestamp=2013-03-21 18:55:03.109, Address=192.168.1.5:8094, MachineId=23150, Location=site:Site1,machine:new-host,process:38534, Role=OracleCoherencePatternsWebServer, Edition=Grid Edition, Mode=Development, CpuCount=2, SocketCount=2) joined cluster "cluster:0x5DDB" with senior Member(Id=1, Timestamp=2013-03-21 18:54:57.149, Address=192.168.1.5:8088, MachineId=23150, Location=site:Site1,machine:new-host,process:38532, Role=CacheServer, Edition=Grid Edition, Mode=Development, CpuCount=2, SocketCount=2)
+[Site1-CacheServer-0:err:38532]   79: 2013-03-21 18:55:03.316/17.886 Oracle Coherence GE n/a <D5> (thread=Cluster, member=1): Member(Id=2, Timestamp=2013-03-21 18:55:03.109, Address=192.168.1.5:8094, MachineId=23150, Location=site:Site1,machine:new-host,process:38534, Role=OracleCoherencePatternsWebServer) joined Cluster with senior member 1
+[Site2-Web:err:38535]   92: 2013-03-21 18:55:03.418/17.944 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 joined Service DistributedCacheWithPublishingCacheStore with senior member 1
+[Site2-CacheServer-0:err:38533]   62: 2013-03-21 18:55:03.392/17.904 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Service DistributedCacheWithPublishingCacheStore joined the cluster with senior service member 1
+[Site2-CacheServer-0:err:38533]   63: 2013-03-21 18:55:03.431/17.943 Oracle Coherence GE n/a <Info> (thread=main, member=1): 
+[Site2-CacheServer-0:err:38533]   64: Services
+[Site2-CacheServer-0:err:38533]   65:   (
+[Site2-CacheServer-0:err:38533]   66:   ClusterService{Name=Cluster, State=(SERVICE_STARTED, STATE_JOINED), Id=0, Version=3.7.1, OldestMemberId=1}
+[Site2-CacheServer-0:err:38533]   67:   InvocationService{Name=Management, State=(SERVICE_STARTED), Id=1, Version=3.1, OldestMemberId=1}
+[Site2-CacheServer-0:err:38533]   68:   ProxyService{Name=PublisherProxyService, State=(SERVICE_STARTED), Id=2, Version=3.7, OldestMemberId=1}
+[Site2-CacheServer-0:err:38533]   69:   PartitionedCache{Name=DistributedCacheForSequenceGenerators, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site2-CacheServer-0:err:38533]   70:   PartitionedCache{Name=DistributedCacheForLiveObjects, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site2-CacheServer-0:err:38533]   71:   ReplicatedCache{Name=ReplicatedCacheForLiveObjects, State=(SERVICE_STARTED), Id=5, Version=3.0, OldestMemberId=1}
+[Site2-CacheServer-0:err:38533]   72:   PartitionedCache{Name=DistributedCacheForSubscriptions, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site2-CacheServer-0:err:38533]   73:   PartitionedCache{Name=DistributedCacheForMessages, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site2-CacheServer-0:err:38533]   74:   PartitionedCache{Name=DistributedCacheForDestinations, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site2-CacheServer-0:err:38533]   75:   ReplicatedCache{Name=ReplicatedSessionsMisc, State=(SERVICE_STARTED), Id=9, Version=3.0, OldestMemberId=1}
+[Site2-CacheServer-0:err:38533]   76:   PartitionedCache{Name=DistributedCacheWithPublishingCacheStore, State=(SERVICE_STARTED), LocalStorage=enabled, PartitionCount=257, BackupCount=1, AssignedPartitions=257, BackupPartitions=0}
+[Site2-CacheServer-0:err:38533]   77:   )
+[Site2-CacheServer-0:err:38533]   78: 
+[Site2-CacheServer-0:err:38533]   79: Started DefaultCacheServer...
+[Site2-CacheServer-0:err:38533]   80: 
+[Site1-Web:err:38534]   64: 2013-03-21 18:55:03.576/18.113 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service Management with senior member 1
+[Site1-Web:err:38534]   65: 2013-03-21 18:55:03.577/18.114 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service PublisherProxyService with senior member 1
+[Site1-Web:err:38534]   66: 2013-03-21 18:55:03.577/18.114 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service DistributedCacheForSequenceGenerators with senior member 1
+[Site1-Web:err:38534]   67: 2013-03-21 18:55:03.577/18.114 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service DistributedCacheForLiveObjects with senior member 1
+[Site1-Web:err:38534]   68: 2013-03-21 18:55:03.577/18.114 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service ReplicatedCacheForLiveObjects with senior member 1
+[Site1-Web:err:38534]   69: 2013-03-21 18:55:03.578/18.115 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service DistributedCacheForSubscriptions with senior member 1
+[Site1-Web:err:38534]   70: 2013-03-21 18:55:03.578/18.115 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service DistributedCacheForMessages with senior member 1
+[Site1-Web:err:38534]   71: 2013-03-21 18:55:03.578/18.115 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service DistributedCacheForDestinations with senior member 1
+[Site1-Web:err:38534]   72: 2013-03-21 18:55:03.578/18.115 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service ReplicatedSessionsMisc with senior member 1
+[Site1-Web:err:38534]   73: 2013-03-21 18:55:03.578/18.115 Oracle Coherence GE n/a <D5> (thread=Cluster, member=n/a): Member 1 joined Service DistributedCacheWithPublishingCacheStore with senior member 1
+[Site1-Web:err:38534]   74: 2013-03-21 18:55:03.580/18.117 Oracle Coherence GE n/a <Info> (thread=main, member=n/a): Started cluster Name=cluster:0x5DDB
+[Site1-Web:err:38534]   75: 
+[Site1-Web:err:38534]   76: Group{Address=224.3.7.0, Port=9001, TTL=4}
+[Site1-Web:err:38534]   77: 
+[Site1-Web:err:38534]   78: MasterMemberSet(
+[Site1-Web:err:38534]   79:   ThisMember=Member(Id=2, Timestamp=2013-03-21 18:55:03.109, Address=192.168.1.5:8094, MachineId=23150, Location=site:Site1,machine:new-host,process:38534, Role=OracleCoherencePatternsWebServer)
+[Site1-Web:err:38534]   80:   OldestMember=Member(Id=1, Timestamp=2013-03-21 18:54:57.149, Address=192.168.1.5:8088, MachineId=23150, Location=site:Site1,machine:new-host,process:38532, Role=CacheServer)
+[Site1-Web:err:38534]   81:   ActualMemberSet=MemberSet(Size=2
+[Site1-Web:err:38534]   82:     Member(Id=1, Timestamp=2013-03-21 18:54:57.149, Address=192.168.1.5:8088, MachineId=23150, Location=site:Site1,machine:new-host,process:38532, Role=CacheServer)
+[Site1-Web:err:38534]   83:     Member(Id=2, Timestamp=2013-03-21 18:55:03.109, Address=192.168.1.5:8094, MachineId=23150, Location=site:Site1,machine:new-host,process:38534, Role=OracleCoherencePatternsWebServer)
+[Site1-Web:err:38534]   84:     )
+[Site1-Web:err:38534]   85:   MemberId|ServiceVersion|ServiceJoined|MemberState
+[Site1-Web:err:38534]   86:     1|3.7.1|2013-03-21 18:54:57.149|JOINED,
+[Site1-Web:err:38534]   87:     2|3.7.1|2013-03-21 18:55:03.555|JOINED
+[Site1-Web:err:38534]   88:   RecycleMillis=1200000
+[Site1-Web:err:38534]   89:   RecycleSet=MemberSet(Size=0
+[Site1-Web:err:38534]   90:     )
+[Site1-Web:err:38534]   91:   )
+[Site1-Web:err:38534]   92: 
+[Site1-Web:err:38534]   93: TcpRing{Connections=[1]}
+[Site1-Web:err:38534]   94: IpMonitor{Addresses=0}
+[Site1-Web:err:38534]   95: 
+[Site1-Web:err:38534]   96: 2013-03-21 18:55:03.778/18.315 Oracle Coherence GE n/a <D5> (thread=Invocation:Management, member=2): Service Management joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   80: 2013-03-21 18:55:03.787/18.357 Oracle Coherence GE n/a <D5> (thread=Cluster, member=1): Member 2 joined Service Management with senior member 1
+[Site2-Web:err:38535]   93: 2013-03-21 18:55:04.444/18.970 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=2): Service DistributedCacheWithPublishingCacheStore joined the cluster with senior service member 1
+[Site2-CacheServer-0:err:38533]   81: 2013-03-21 18:55:04.482/18.994 Oracle Coherence GE n/a <D5> (thread=Cluster, member=1): Member 2 joined Service DistributedCacheWithPublishingCacheStore with senior member 1
+[Site2-Web:err:38535]   94: 2013-03-21 18:55:04.718/19.244 Oracle Coherence GE n/a <Info> (thread=main, member=2): Configured session model "MonolithicHttpSessionCollection":
+[Site2-Web:err:38535]   95:   Clustered Session Cache Name=session-storage
+[Site2-Web:err:38535]   96:   Local Session Cache Name=local-session-storage
+[Site2-Web:err:38535]   97:   Local Session Attribute Cache Name=local-attribute-storage
+[Site2-Web:err:38535]   98:   Death Certificate Cache Name=session-death-certificates
+[Site2-Web:err:38535]   99:   SessionDistributionController Class Name=
+[Site2-Web:err:38535]  100:   AttributeScopeController Class Name=com.tangosol.coherence.servlet.AbstractHttpSessionCollection$ApplicationScopeController
+[Site2-Web:err:38535]  101:   Maximum Session Inactive Seconds=1800
+[Site2-Web:err:38535]  102:   Session ID Character Length=12
+[Site2-Web:err:38535]  103:   Session Locking Enforced=false
+[Site2-Web:err:38535]  104:   Member Session Locking Enforced=false
+[Site2-Web:err:38535]  105:   Application Session Locking Enforced=false
+[Site2-Web:err:38535]  106:   Thread Session Locking Enforced=false
+[Site2-Web:err:38535]  107:   Session Get Lock Timeout=300
+[Site2-Web:err:38535]  108:   Suspect Attribute Detection=true
+[Site2-Web:err:38535]  109:   Strict "Servlet Specification" Exception Handling=true
+[Site2-Web:err:38535]  110:   Sticky Session Ownership=false
+[Site2-Web:err:38535]  111:   Sticky Session Ownership Service Name=SessionOwnership
+[Site2-Web:err:38535]  112:   Assume Session Locality for Reaping=false
+[Site2-Web:err:38535]  113:   Parallel Session Reaping=true
+[Site2-Web:err:38535]  114:   Allow Local Attributes=false
+[Site2-Web:err:38535]  115:   Use Default Session ID Decoding=true
+[Site2-Web:err:38535]  116:   Use Default Session ID Encoding=false
+[Site2-Web:err:38535]  117:   Session ID Affinity Token=null
+[Site2-Web:err:38535]  118:   Session Expiry Filter Factory=com.oracle.coherence.patterns.pushreplication.cohweb.examples.SiteSessionExpiryFilterFactory
+[Site2-Web:err:38535]  119:   Session Access Debug Logging Enabled=true
+[Site2-Web:err:38535]  120:   Session Access Debug Logging Filter=
+[Site2-Web:err:38535]  121: Mar 21, 2013 6:55:04 PM com.tangosol.coherence.servlet.AbstractHttpSessionCollection configure
+[Site2-Web:err:38535]  122: INFO: Configured session model "MonolithicHttpSessionCollection":
+[Site2-Web:err:38535]  123:   Clustered Session Cache Name=session-storage
+[Site2-Web:err:38535]  124:   Local Session Cache Name=local-session-storage
+[Site2-Web:err:38535]  125:   Local Session Attribute Cache Name=local-attribute-storage
+[Site2-Web:err:38535]  126:   Death Certificate Cache Name=session-death-certificates
+[Site2-Web:err:38535]  127:   SessionDistributionController Class Name=
+[Site2-Web:err:38535]  128:   AttributeScopeController Class Name=com.tangosol.coherence.servlet.AbstractHttpSessionCollection$ApplicationScopeController
+[Site2-Web:err:38535]  129:   Maximum Session Inactive Seconds=1800
+[Site2-Web:err:38535]  130:   Session ID Character Length=12
+[Site2-Web:err:38535]  131:   Session Locking Enforced=false
+[Site2-Web:err:38535]  132:   Member Session Locking Enforced=false
+[Site2-Web:err:38535]  133:   Application Session Locking Enforced=false
+[Site2-Web:err:38535]  134:   Thread Session Locking Enforced=false
+[Site2-Web:err:38535]  135:   Session Get Lock Timeout=300
+[Site2-Web:err:38535]  136:   Suspect Attribute Detection=true
+[Site2-Web:err:38535]  137:   Strict "Servlet Specification" Exception Handling=true
+[Site2-Web:err:38535]  138:   Sticky Session Ownership=false
+[Site2-Web:err:38535]  139:   Sticky Session Ownership Service Name=SessionOwnership
+[Site2-Web:err:38535]  140:   Assume Session Locality for Reaping=false
+[Site2-Web:err:38535]  141:   Parallel Session Reaping=true
+[Site2-Web:err:38535]  142:   Allow Local Attributes=false
+[Site2-Web:err:38535]  143:   Use Default Session ID Decoding=true
+[Site2-Web:err:38535]  144:   Use Default Session ID Encoding=false
+[Site2-Web:err:38535]  145:   Session ID Affinity Token=null
+[Site2-Web:err:38535]  146:   Session Expiry Filter Factory=com.oracle.coherence.patterns.pushreplication.cohweb.examples.SiteSessionExpiryFilterFactory
+[Site2-Web:err:38535]  147:   Session Access Debug Logging Enabled=true
+[Site2-Web:err:38535]  148:   Session Access Debug Logging Filter=
+[Site2-Web:err:38535]  149: 2013-03-21 18:55:04.829/19.355 Oracle Coherence GE n/a <Info> (thread=main, member=2): Registering MBean using object name "type=HttpSessionManager,nodeId=2,appId=web"
+[Site2-Web:err:38535]  150: Mar 21, 2013 6:55:04 PM com.tangosol.coherence.servlet.SessionHelper registerMBean
+[Site2-Web:err:38535]  151: INFO: Registering MBean using object name "type=HttpSessionManager,nodeId=2,appId=web"
+[Site2-Web:err:38535]  152: 2013-03-21 18:55:04.866:INFO:oejsh.ContextHandler:started o.e.j.w.WebAppContext{/,file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site2/webapp/},file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar
+[Site2-Web:err:38535]  153: 2013-03-21 18:55:05.086:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:9080 STARTING
+[Site1-Web:err:38534]   97: 2013-03-21 18:55:05.157/19.694 Oracle Coherence GE n/a <D5> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=2): Service DistributedCacheWithPublishingCacheStore joined the cluster with senior service member 1
+[Site1-CacheServer-0:err:38532]   81: 2013-03-21 18:55:05.198/19.768 Oracle Coherence GE n/a <D5> (thread=Cluster, member=1): Member 2 joined Service DistributedCacheWithPublishingCacheStore with senior member 1
+[Site1-Web:err:38534]   98: 2013-03-21 18:55:05.429/19.966 Oracle Coherence GE n/a <Info> (thread=main, member=2): Configured session model "MonolithicHttpSessionCollection":
+[Site1-Web:err:38534]   99:   Clustered Session Cache Name=session-storage
+[Site1-Web:err:38534]  100:   Local Session Cache Name=local-session-storage
+[Site1-Web:err:38534]  101:   Local Session Attribute Cache Name=local-attribute-storage
+[Site1-Web:err:38534]  102:   Death Certificate Cache Name=session-death-certificates
+[Site1-Web:err:38534]  103:   SessionDistributionController Class Name=
+[Site1-Web:err:38534]  104:   AttributeScopeController Class Name=com.tangosol.coherence.servlet.AbstractHttpSessionCollection$ApplicationScopeController
+[Site1-Web:err:38534]  105:   Maximum Session Inactive Seconds=1800
+[Site1-Web:err:38534]  106:   Session ID Character Length=12
+[Site1-Web:err:38534]  107:   Session Locking Enforced=false
+[Site1-Web:err:38534]  108:   Member Session Locking Enforced=false
+[Site1-Web:err:38534]  109:   Application Session Locking Enforced=false
+[Site1-Web:err:38534]  110:   Thread Session Locking Enforced=false
+[Site1-Web:err:38534]  111:   Session Get Lock Timeout=300
+[Site1-Web:err:38534]  112:   Suspect Attribute Detection=true
+[Site1-Web:err:38534]  113:   Strict "Servlet Specification" Exception Handling=true
+[Site1-Web:err:38534]  114:   Sticky Session Ownership=false
+[Site1-Web:err:38534]  115:   Sticky Session Ownership Service Name=SessionOwnership
+[Site1-Web:err:38534]  116:   Assume Session Locality for Reaping=false
+[Site1-Web:err:38534]  117:   Parallel Session Reaping=true
+[Site1-Web:err:38534]  118:   Allow Local Attributes=false
+[Site1-Web:err:38534]  119:   Use Default Session ID Decoding=true
+[Site1-Web:err:38534]  120:   Use Default Session ID Encoding=false
+[Site1-Web:err:38534]  121:   Session ID Affinity Token=null
+[Site1-Web:err:38534]  122:   Session Expiry Filter Factory=com.oracle.coherence.patterns.pushreplication.cohweb.examples.SiteSessionExpiryFilterFactory
+[Site1-Web:err:38534]  123:   Session Access Debug Logging Enabled=true
+[Site1-Web:err:38534]  124:   Session Access Debug Logging Filter=
+[Site1-Web:err:38534]  125: Mar 21, 2013 6:55:05 PM com.tangosol.coherence.servlet.AbstractHttpSessionCollection configure
+[Site1-Web:err:38534]  126: INFO: Configured session model "MonolithicHttpSessionCollection":
+[Site1-Web:err:38534]  127:   Clustered Session Cache Name=session-storage
+[Site1-Web:err:38534]  128:   Local Session Cache Name=local-session-storage
+[Site1-Web:err:38534]  129:   Local Session Attribute Cache Name=local-attribute-storage
+[Site1-Web:err:38534]  130:   Death Certificate Cache Name=session-death-certificates
+[Site1-Web:err:38534]  131:   SessionDistributionController Class Name=
+[Site1-Web:err:38534]  132:   AttributeScopeController Class Name=com.tangosol.coherence.servlet.AbstractHttpSessionCollection$ApplicationScopeController
+[Site1-Web:err:38534]  133:   Maximum Session Inactive Seconds=1800
+[Site1-Web:err:38534]  134:   Session ID Character Length=12
+[Site1-Web:err:38534]  135:   Session Locking Enforced=false
+[Site1-Web:err:38534]  136:   Member Session Locking Enforced=false
+[Site1-Web:err:38534]  137:   Application Session Locking Enforced=false
+[Site1-Web:err:38534]  138:   Thread Session Locking Enforced=false
+[Site1-Web:err:38534]  139:   Session Get Lock Timeout=300
+[Site1-Web:err:38534]  140:   Suspect Attribute Detection=true
+[Site1-Web:err:38534]  141:   Strict "Servlet Specification" Exception Handling=true
+[Site1-Web:err:38534]  142:   Sticky Session Ownership=false
+[Site1-Web:err:38534]  143:   Sticky Session Ownership Service Name=SessionOwnership
+[Site1-Web:err:38534]  144:   Assume Session Locality for Reaping=false
+[Site1-Web:err:38534]  145:   Parallel Session Reaping=true
+[Site1-Web:err:38534]  146:   Allow Local Attributes=false
+[Site1-Web:err:38534]  147:   Use Default Session ID Decoding=true
+[Site1-Web:err:38534]  148:   Use Default Session ID Encoding=false
+[Site1-Web:err:38534]  149:   Session ID Affinity Token=null
+[Site1-Web:err:38534]  150:   Session Expiry Filter Factory=com.oracle.coherence.patterns.pushreplication.cohweb.examples.SiteSessionExpiryFilterFactory
+[Site1-Web:err:38534]  151:   Session Access Debug Logging Enabled=true
+[Site1-Web:err:38534]  152:   Session Access Debug Logging Filter=
+[Site1-Web:err:38534]  153: 2013-03-21 18:55:05.477/20.014 Oracle Coherence GE n/a <Info> (thread=main, member=2): Registering MBean using object name "type=HttpSessionManager,nodeId=2,appId=web"
+[Site1-Web:err:38534]  154: Mar 21, 2013 6:55:05 PM com.tangosol.coherence.servlet.SessionHelper registerMBean
+[Site1-Web:err:38534]  155: INFO: Registering MBean using object name "type=HttpSessionManager,nodeId=2,appId=web"
+[Site1-Web:err:38534]  156: 2013-03-21 18:55:05.524:INFO:oejsh.ContextHandler:started o.e.j.w.WebAppContext{/,file:/private/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/Site1/webapp/},file:/Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web-app/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.jar
+[Site1-Web:err:38534]  157: 2013-03-21 18:55:05.662:INFO:oejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:8080 STARTING
+[Site1-CacheServer-0:err:38532]   82: 2013-03-21 18:55:07.110/21.680 Oracle Coherence GE n/a <Info> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Establising Event Distributors for the Cache [session-storage]. Class:com.oracle.coherence.patterns.pushreplication.PublishingCacheStore$1 Method:ensureResource
+[Site1-CacheServer-0:err:38532]   83: 2013-03-21 18:55:07.114/21.684 Oracle Coherence GE n/a <Info> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Using Coherence-based Event Distributor [session-storage] (Site1-cluster:0x5DDB-session-storage). Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributor Method:<init>
+[Site1-CacheServer-0:err:38532]   84: 2013-03-21 18:55:07.175/21.745 Oracle Coherence GE n/a <Info> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Establishing Event Channel [Session-Channel] for Event Distributor [session-storage (Site1-cluster:0x5DDB-session-storage)] based on [AbstractEventChannelController.Dependencies{channelName=Session-Channel, externalName=Site1:cluster:0x5DDB:session-storage:Session-Channel, eventChannelBuilder=com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannelBuilder@1c904f75, transformerBuilder=null, startingMode=ENABLED, batchDistributionDelayMS=1000, batchSize=100, restartDelay=10000, totalConsecutiveFailuresBeforeSuspended=-1}]. Class:com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate Method:realize
+[Site1-CacheServer-0:err:38532]   85: 2013-03-21 18:55:07.177/21.747 Oracle Coherence GE n/a <Warning> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Application code running on "DistributedCacheWithPublishingCacheStore" service thread(s) should not call ensureCache as this may result in deadlock. The most common case is a CacheFactory call from a custom CacheStore implementation.
+[Site1-CacheServer-0:err:38532]   86: 2013-03-21 18:55:07.245/21.815 Oracle Coherence GE n/a <D5> (thread=DistributedCacheForSubscriptionsWorker:0, member=1): Establishing the EventChannelController for CoherenceEventChannelSubscription{Subscription{subscriptionIdentifier=SubscriptionIdentifier{destinationIdentifier=Identifier{Site1-cluster:0x5DDB-session-storage}, subscriberIdentifier=Identifier{Site1:cluster:0x5DDB:session-storage:Session-Channel}}, status=ENABLED}, distributorIdentifier=EventDistributor.Identifier{symbolicName=session-storage, externalName=Site1-cluster:0x5DDB-session-storage}, controllerIdentifier=EventChannelController.Identifier{symbolicName=Session-Channel, externalName=Site1:cluster:0x5DDB:session-storage:Session-Channel}, controllerDependencies=AbstractEventChannelController.Dependencies{channelName=Session-Channel, externalName=Site1:cluster:0x5DDB:session-storage:Session-Channel, eventChannelBuilder=com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannelBuilder@15d07c3f, transformerBuilder=null, startingMode=ENABLED, batchDistributionDelayMS=1000, batchSize=100, restartDelay=10000, totalConsecutiveFailuresBeforeSuspended=-1}, parameterProvider=ScopedParameterProvider{parameterProvider=SimpleParameterProvider{parameters={distributor-name=Parameter{name=distributor-name, type=java.lang.String, expression=Constant{value=Value{session-storage}}}, distributor-external-name=Parameter{name=distributor-external-name, type=java.lang.String, expression=Constant{value=Value{Site1-cluster:0x5DDB-session-storage}}}}}, innerParameterProvider=ScopedParameterProvider{parameterProvider=SimpleParameterProvider{parameters={cache-name=Parameter{name=cache-name, type=java.lang.String, expression=Constant{value=Value{session-storage}}}, site-name=Parameter{name=site-name, type=java.lang.String, expression=Constant{value=Value{Site1}}}, cluster-name=Parameter{name=cluster-name, type=java.lang.String, expression=Constant{value=Value{cluster:0x5DDB}}}}}, innerParameterProvider=com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider@2a8d1749}}, serializerBuilder=com.oracle.coherence.common.builders.NamedCacheSerializerBuilder@14f3cf72}. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventChannelSubscription Method:onCacheEntryLifecycleEvent
+[Site1-CacheServer-0:err:38532]   87: 2013-03-21 18:55:07.262/21.832 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Attempting to connect to Remote Invocation Service publisher-invocation in EventDistributor.Identifier{symbolicName=session-storage, externalName=Site1-cluster:0x5DDB-session-storage} for EventChannelController.Identifier{symbolicName=Session-Channel, externalName=Site1:cluster:0x5DDB:session-storage:Session-Channel} Class:com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel Method:connect
+[Site1-CacheServer-0:err:38532]   88: 2013-03-21 18:55:07.280/21.850 Oracle Coherence GE n/a <D5> (thread=publisher-invocation:TcpInitiator, member=1): Started: TcpInitiator{Name=publisher-invocation:TcpInitiator, State=(SERVICE_STARTED), ThreadCount=0, Codec=Codec(Format=POF), Serializer=com.tangosol.io.DefaultSerializer, PingInterval=0, PingTimeout=5000, RequestTimeout=5000, ConnectTimeout=2000, SocketProvider=SystemSocketProvider, RemoteAddresses=[new-host.home/192.168.1.5:10002], SocketOptions{LingerTimeout=0, KeepAliveEnabled=true, TcpDelayEnabled=false}}
+[Site1-CacheServer-0:err:38532]   89: 2013-03-21 18:55:07.282/21.852 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Connecting Socket to 192.168.1.5:10002
+[Site1-CacheServer-0:err:38532]   90: 2013-03-21 18:55:07.286/21.856 Oracle Coherence GE n/a <Info> (thread=EventChannelController:Thread-5, member=1): Connected Socket to 192.168.1.5:10002
+[Site1-CacheServer-0:err:38532]   91: 2013-03-21 18:55:07.335/21.905 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Connected to Remote Invocation Service publisher-invocation in EventDistributor.Identifier{symbolicName=session-storage, externalName=Site1-cluster:0x5DDB-session-storage} for EventChannelController.Identifier{symbolicName=Session-Channel, externalName=Site1:cluster:0x5DDB:session-storage:Session-Channel} Class:com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel Method:connect
+[Site1-CacheServer-0:err:38532]   92: 2013-03-21 18:55:07.335/21.905 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Attempting to detect Remote Cluster Name using Remote Invocation Service publisher-invocation Class:com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel Method:connect
+[Site1-CacheServer-0:err:38532]   93: 2013-03-21 18:55:07.368/21.938 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Connected to Remote Cluster Site2.cluster:0x65DB Class:com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel Method:connect
+[Site2-CacheServer-0:err:38533]   82: 2013-03-21 18:55:07.502/22.014 Oracle Coherence GE n/a <Info> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Establising Event Distributors for the Cache [session-storage]. Class:com.oracle.coherence.patterns.pushreplication.PublishingCacheStore$1 Method:ensureResource
+[Site2-CacheServer-0:err:38533]   83: 2013-03-21 18:55:07.507/22.019 Oracle Coherence GE n/a <Info> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Using Coherence-based Event Distributor [session-storage] (Site2-cluster:0x65DB-session-storage). Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventDistributor Method:<init>
+[Site2-CacheServer-0:err:38533]   84: 2013-03-21 18:55:07.585/22.097 Oracle Coherence GE n/a <Info> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Establishing Event Channel [Session-Channel] for Event Distributor [session-storage (Site2-cluster:0x65DB-session-storage)] based on [AbstractEventChannelController.Dependencies{channelName=Session-Channel, externalName=Site2:cluster:0x65DB:session-storage:Session-Channel, eventChannelBuilder=com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannelBuilder@2bb64b70, transformerBuilder=null, startingMode=ENABLED, batchDistributionDelayMS=1000, batchSize=100, restartDelay=10000, totalConsecutiveFailuresBeforeSuspended=-1}]. Class:com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate Method:realize
+[Site2-CacheServer-0:err:38533]   85: 2013-03-21 18:55:07.587/22.099 Oracle Coherence GE n/a <Warning> (thread=DistributedCache:DistributedCacheWithPublishingCacheStore, member=1): Application code running on "DistributedCacheWithPublishingCacheStore" service thread(s) should not call ensureCache as this may result in deadlock. The most common case is a CacheFactory call from a custom CacheStore implementation.
+[Site2-CacheServer-0:err:38533]   86: 2013-03-21 18:55:07.670/22.182 Oracle Coherence GE n/a <D5> (thread=DistributedCacheForSubscriptionsWorker:2, member=1): Establishing the EventChannelController for CoherenceEventChannelSubscription{Subscription{subscriptionIdentifier=SubscriptionIdentifier{destinationIdentifier=Identifier{Site2-cluster:0x65DB-session-storage}, subscriberIdentifier=Identifier{Site2:cluster:0x65DB:session-storage:Session-Channel}}, status=ENABLED}, distributorIdentifier=EventDistributor.Identifier{symbolicName=session-storage, externalName=Site2-cluster:0x65DB-session-storage}, controllerIdentifier=EventChannelController.Identifier{symbolicName=Session-Channel, externalName=Site2:cluster:0x65DB:session-storage:Session-Channel}, controllerDependencies=AbstractEventChannelController.Dependencies{channelName=Session-Channel, externalName=Site2:cluster:0x65DB:session-storage:Session-Channel, eventChannelBuilder=com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannelBuilder@5fc8ad52, transformerBuilder=null, startingMode=ENABLED, batchDistributionDelayMS=1000, batchSize=100, restartDelay=10000, totalConsecutiveFailuresBeforeSuspended=-1}, parameterProvider=ScopedParameterProvider{parameterProvider=SimpleParameterProvider{parameters={distributor-name=Parameter{name=distributor-name, type=java.lang.String, expression=Constant{value=Value{session-storage}}}, distributor-external-name=Parameter{name=distributor-external-name, type=java.lang.String, expression=Constant{value=Value{Site2-cluster:0x65DB-session-storage}}}}}, innerParameterProvider=ScopedParameterProvider{parameterProvider=SimpleParameterProvider{parameters={cache-name=Parameter{name=cache-name, type=java.lang.String, expression=Constant{value=Value{session-storage}}}, site-name=Parameter{name=site-name, type=java.lang.String, expression=Constant{value=Value{Site2}}}, cluster-name=Parameter{name=cluster-name, type=java.lang.String, expression=Constant{value=Value{cluster:0x65DB}}}}}, innerParameterProvider=com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider@6feb139e}}, serializerBuilder=com.oracle.coherence.common.builders.NamedCacheSerializerBuilder@32552379}. Class:com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventChannelSubscription Method:onCacheEntryLifecycleEvent
+[Site2-CacheServer-0:err:38533]   87: 2013-03-21 18:55:07.715/22.227 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Attempting to connect to Remote Invocation Service publisher-invocation in EventDistributor.Identifier{symbolicName=session-storage, externalName=Site2-cluster:0x65DB-session-storage} for EventChannelController.Identifier{symbolicName=Session-Channel, externalName=Site2:cluster:0x65DB:session-storage:Session-Channel} Class:com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel Method:connect
+[Site2-CacheServer-0:err:38533]   88: 2013-03-21 18:55:07.740/22.252 Oracle Coherence GE n/a <D5> (thread=publisher-invocation:TcpInitiator, member=1): Started: TcpInitiator{Name=publisher-invocation:TcpInitiator, State=(SERVICE_STARTED), ThreadCount=0, Codec=Codec(Format=POF), Serializer=com.tangosol.io.DefaultSerializer, PingInterval=0, PingTimeout=5000, RequestTimeout=5000, ConnectTimeout=2000, SocketProvider=SystemSocketProvider, RemoteAddresses=[new-host.home/192.168.1.5:9002], SocketOptions{LingerTimeout=0, KeepAliveEnabled=true, TcpDelayEnabled=false}}
+[Site2-CacheServer-0:err:38533]   89: 2013-03-21 18:55:07.755/22.267 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Connecting Socket to 192.168.1.5:9002
+[Site2-CacheServer-0:err:38533]   90: 2013-03-21 18:55:07.759/22.271 Oracle Coherence GE n/a <Info> (thread=EventChannelController:Thread-5, member=1): Connected Socket to 192.168.1.5:9002
+[Site2-CacheServer-0:err:38533]   91: 2013-03-21 18:55:07.803/22.315 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Connected to Remote Invocation Service publisher-invocation in EventDistributor.Identifier{symbolicName=session-storage, externalName=Site2-cluster:0x65DB-session-storage} for EventChannelController.Identifier{symbolicName=Session-Channel, externalName=Site2:cluster:0x65DB:session-storage:Session-Channel} Class:com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel Method:connect
+[Site2-CacheServer-0:err:38533]   92: 2013-03-21 18:55:07.803/22.315 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Attempting to detect Remote Cluster Name using Remote Invocation Service publisher-invocation Class:com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel Method:connect
+[Site2-CacheServer-0:err:38533]   93: 2013-03-21 18:55:07.825/22.337 Oracle Coherence GE n/a <D5> (thread=EventChannelController:Thread-5, member=1): Connected to Remote Cluster Site1.cluster:0x5DDB Class:com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel Method:connect
+[Site1-CacheServer-0:out:38532]    1: (terminated)
+[Site1-CacheServer-0:err:38532]   94: (terminated)
+[Site1-Web:err:38534]  158: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): TcpRing disconnected from Member(Id=1, Timestamp=2013-03-21 18:54:57.149, Address=192.168.1.5:8088, MachineId=23150, Location=site:Site1,machine:new-host,process:38532, Role=CacheServer) due to a peer departure; removing the member.
+[Site1-Web:err:38534]  159: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service Management with senior member 2
+[Site1-Web:err:38534]  160: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service PublisherProxyService with senior member n/a
+[Site1-Web:err:38534]  161: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForSequenceGenerators with senior member n/a
+[Site1-Web:err:38534]  162: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForLiveObjects with senior member n/a
+[Site1-Web:err:38534]  163: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service ReplicatedCacheForLiveObjects with senior member n/a
+[Site1-Web:err:38534]  164: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForSubscriptions with senior member n/a
+[Site1-Web:err:38534]  165: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForMessages with senior member n/a
+[Site1-Web:err:38534]  166: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForDestinations with senior member n/a
+[Site1-Web:err:38534]  167: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service ReplicatedSessionsMisc with senior member n/a
+[Site1-Web:err:38534]  168: 2013-03-21 18:55:09.728/24.265 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheWithPublishingCacheStore with senior member 2
+[Site1-Web:err:38534]  169: 2013-03-21 18:55:09.728/24.266 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member(Id=1, Timestamp=2013-03-21 18:55:09.728, Address=192.168.1.5:8088, MachineId=23150, Location=site:Site1,machine:new-host,process:38532, Role=CacheServer) left Cluster with senior member 2
+[Site2-CacheServer-0:out:38533]    1: (terminated)
+[Site2-CacheServer-0:err:38533]   94: (terminated)
+[Site2-Web:err:38535]  154: 2013-03-21 18:55:09.827/24.353 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): TcpRing disconnected from Member(Id=1, Timestamp=2013-03-21 18:54:57.366, Address=192.168.1.5:8090, MachineId=23151, Location=site:Site2,machine:new-host,process:38533, Role=CacheServer) due to a peer departure; removing the member.
+[Site2-Web:err:38535]  155: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service Management with senior member 2
+[Site2-Web:err:38535]  156: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service PublisherProxyService with senior member n/a
+[Site2-Web:err:38535]  157: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForSequenceGenerators with senior member n/a
+[Site2-Web:err:38535]  158: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForLiveObjects with senior member n/a
+[Site2-Web:err:38535]  159: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service ReplicatedCacheForLiveObjects with senior member n/a
+[Site2-Web:err:38535]  160: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForSubscriptions with senior member n/a
+[Site2-Web:err:38535]  161: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForMessages with senior member n/a
+[Site2-Web:err:38535]  162: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheForDestinations with senior member n/a
+[Site2-Web:err:38535]  163: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service ReplicatedSessionsMisc with senior member n/a
+[Site2-Web:err:38535]  164: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member 1 left service DistributedCacheWithPublishingCacheStore with senior member 2
+[Site2-Web:err:38535]  165: 2013-03-21 18:55:09.828/24.354 Oracle Coherence GE n/a <D5> (thread=Cluster, member=2): Member(Id=1, Timestamp=2013-03-21 18:55:09.828, Address=192.168.1.5:8090, MachineId=23151, Location=site:Site2,machine:new-host,process:38533, Role=CacheServer) left Cluster with senior member 2
+[Site1-Web:out:38534]    2: (terminated)
+[Site1-Web:err:38534]  170: (terminated)
+[Site2-Web:err:38535]  166: (terminated)
+[Site2-Web:out:38535]    2: (terminated)
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 25.65 sec <<< FAILURE!
+testSessionReplication(com.oracle.coherence.patterns.pushreplication.cohweb.CohWebFunctionalTest)  Time elapsed: 24.297 sec  <<< FAILURE!
+junit.framework.AssertionFailedError: RowCount for: WebTable:
+[0]:   [0]=Property  [1]=Value
+[1]:   [0]=A  [1]=B
+ expected:<3> but was:<2>
+	at junit.framework.Assert.fail(Assert.java:50)
+	at junit.framework.Assert.failNotEquals(Assert.java:287)
+	at junit.framework.Assert.assertEquals(Assert.java:67)
+	at junit.framework.Assert.assertEquals(Assert.java:199)
+	at com.oracle.coherence.patterns.pushreplication.cohweb.CohWebFunctionalTest.testSessionReplication(CohWebFunctionalTest.java:174)
+
+
+Results :
+
+Failed tests: 
+  CohWebFunctionalTest.testSessionReplication:174 RowCount for: WebTable:
+[0]:   [0]=Property  [1]=Value
+[1]:   [0]=A  [1]=B
+ expected:<3> but was:<2>
+
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 30.241s
+[INFO] Finished at: Thu Mar 21 18:55:10 EDT 2013
+[INFO] Final Memory: 8M/81M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.13:test (default-test) on project coherence-pushreplicationpattern-web-app-test: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app-test/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

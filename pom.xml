@@ -75,8 +75,7 @@
         <module>coherence-incubator-all</module>
         <module>coherence-incubator-site</module>
 
-        <module>coherence-pushreplicationpattern-cohweb-runner</module>
-        <module>coherence-pushreplicationpattern-cohweb-example</module>
+        <module>coherence-pushreplicationpattern-web-example</module>
   </modules>
 
     <properties>
@@ -124,10 +123,6 @@
         <oracle.coherence.version>3.7.1.8</oracle.coherence.version>
         <oracle.tools.version>0.0.8</oracle.tools.version>
         <powermock.version>1.4.12</powermock.version>
-        <jettyVersion>8.1.0.RC0</jettyVersion>
-        <glassfish.javax.version>2.2.3</glassfish.javax.version>
-        <glassfish.javax-impl.version>2.2</glassfish.javax-impl.version>
-        <glassfish.jstl.version>1.2</glassfish.jstl.version>
     </properties>
 
     <build>

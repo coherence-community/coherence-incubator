@@ -1,0 +1,1713 @@
+Apache Maven 3.0.4 (r1232337; 2012-01-17 03:44:56-0500)
+Maven home: /usr/share/apache-maven-3.0.4
+Java version: 1.6.0_37, vendor: Apple Inc.
+Java home: /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+Default locale: en_US, platform encoding: MacRoman
+OS name: "mac os x", version: "10.8.2", arch: "x86_64", family: "mac"
+[INFO] Error stacktraces are turned on.
+[DEBUG] Reading global settings from /usr/share/apache-maven-3.0.4/conf/settings.xml
+[DEBUG] Reading user settings from /Users/narliss/.m2/settings.xml
+[DEBUG] Using local repository at /Users/narliss/Workshop/maven
+[DEBUG] Using manager EnhancedLocalRepositoryManager with priority 10 for /Users/narliss/Workshop/maven
+[INFO] Scanning for projects...
+[DEBUG] Extension realms for project com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT: (none)
+[DEBUG] Looking up lifecyle mappings for packaging war from ClassRealm[plexus.core, parent: null]
+[DEBUG] === REACTOR BUILD PLAN ================================================
+[DEBUG] Project: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT
+[DEBUG] Tasks:   [clean, package]
+[DEBUG] Style:   Regular
+[DEBUG] =======================================================================
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building coherence-pushreplicationpattern-web-app 11.0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] === PROJECT BUILD PLAN ================================================
+[DEBUG] Project:       com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT
+[DEBUG] Dependencies (collect): []
+[DEBUG] Dependencies (resolve): [compile, runtime, test]
+[DEBUG] Repositories (dependencies): [virtual-release (http://tangosol-build.us.oracle.com:8081/artifactory/virtual-release, releases), internal-release (http://tangosol-build.us.oracle.com:8081/artifactory/internal-release, releases), internal-snapshot (http://tangosol-build.us.oracle.com:8081/artifactory/internal-snapshot, releases+snapshots), virtual-snapshot (http://tangosol-build.us.oracle.com:8081/artifactory/virtual-snapshot, releases+snapshots), atlassian-public (https://m2proxy.atlassian.com/repository/public, releases+snapshots), central (http://repo.maven.apache.org/maven2, releases)]
+[DEBUG] Repositories (plugins)     : [atlassian-public (https://m2proxy.atlassian.com/repository/public, releases+snapshots), central (http://repo.maven.apache.org/maven2, releases)]
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-clean-plugin:2.4.1:clean (default-clean)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <directory default-value="${project.build.directory}"/>
+  <excludeDefaultDirectories default-value="false">${clean.excludeDefaultDirectories}</excludeDefaultDirectories>
+  <failOnError default-value="true">${maven.clean.failOnError}</failOnError>
+  <followSymLinks default-value="false">${clean.followSymLinks}</followSymLinks>
+  <outputDirectory default-value="${project.build.outputDirectory}"/>
+  <reportDirectory default-value="${project.reporting.outputDirectory}"/>
+  <skip default-value="false">${clean.skip}</skip>
+  <testOutputDirectory default-value="${project.build.testOutputDirectory}"/>
+  <verbose>${clean.verbose}</verbose>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce (enforce-maven)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <fail default-value="true">${enforcer.fail}</fail>
+  <failFast default-value="false">${enforcer.failFast}</failFast>
+  <ignoreCache default-value="false">${enforcer.ignoreCache}</ignoreCache>
+  <project>${project}</project>
+  <rules>
+    <requireMavenVersion>
+      <version>(,2.1.0),(2.1.0,2.2.0),(2.2.0,)</version>
+      <message>Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures
+										and checksums respectively.</message>
+    </requireMavenVersion>
+  </rules>
+  <session>${session}</session>
+  <skip default-value="false">${enforcer.skip}</skip>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce (enforce-plugin-versions)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <fail default-value="true">${enforcer.fail}</fail>
+  <failFast default-value="false">${enforcer.failFast}</failFast>
+  <ignoreCache default-value="false">${enforcer.ignoreCache}</ignoreCache>
+  <project>${project}</project>
+  <rules>
+    <requireMavenVersion>
+      <version>3.0.4</version>
+    </requireMavenVersion>
+    <requireJavaVersion>
+      <version>1.6.0</version>
+    </requireJavaVersion>
+  </rules>
+  <session>${session}</session>
+  <skip default-value="false">${enforcer.skip}</skip>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-resources-plugin:2.5:resources (default-resources)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <buildFilters default-value="${project.build.filters}"/>
+  <encoding default-value="${project.build.sourceEncoding}">${encoding}</encoding>
+  <escapeString>${maven.resources.escapeString}</escapeString>
+  <escapeWindowsPaths default-value="true">${maven.resources.escapeWindowsPaths}</escapeWindowsPaths>
+  <includeEmptyDirs default-value="false">${maven.resources.includeEmptyDirs}</includeEmptyDirs>
+  <outputDirectory default-value="${project.build.outputDirectory}"/>
+  <overwrite default-value="false">${maven.resources.overwrite}</overwrite>
+  <project default-value="${project}"/>
+  <resources default-value="${project.resources}"/>
+  <session default-value="${session}"/>
+  <supportMultiLineFiltering default-value="false">${maven.resources.supportMultiLineFiltering}</supportMultiLineFiltering>
+  <useBuildFilters default-value="true"/>
+  <useDefaultDelimiters default-value="true"/>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-compiler-plugin:2.3.2:compile (default-compile)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <basedir default-value="${basedir}"/>
+  <buildDirectory default-value="${project.build.directory}"/>
+  <classpathElements default-value="${project.compileClasspathElements}"/>
+  <compileSourceRoots default-value="${project.compileSourceRoots}"/>
+  <compilerId default-value="javac">${maven.compiler.compilerId}</compilerId>
+  <compilerVersion>${maven.compiler.compilerVersion}</compilerVersion>
+  <debug default-value="true">${maven.compiler.debug}</debug>
+  <debuglevel>${maven.compiler.debuglevel}</debuglevel>
+  <encoding default-value="${project.build.sourceEncoding}">${encoding}</encoding>
+  <executable>${maven.compiler.executable}</executable>
+  <failOnError default-value="true">${maven.compiler.failOnError}</failOnError>
+  <fork default-value="false">${maven.compiler.fork}</fork>
+  <generatedSourcesDirectory default-value="${project.build.directory}/generated-sources/annotations"/>
+  <maxmem>${maven.compiler.maxmem}</maxmem>
+  <meminitial>${maven.compiler.meminitial}</meminitial>
+  <optimize default-value="false">${maven.compiler.optimize}</optimize>
+  <outputDirectory default-value="${project.build.outputDirectory}"/>
+  <outputFileName>${project.build.finalName}</outputFileName>
+  <projectArtifact default-value="${project.artifact}"/>
+  <session default-value="${session}"/>
+  <showDeprecation default-value="false">${maven.compiler.showDeprecation}</showDeprecation>
+  <showWarnings default-value="false">${maven.compiler.showWarnings}</showWarnings>
+  <source default-value="1.5">1.6</source>
+  <staleMillis default-value="0">${lastModGranularityMs}</staleMillis>
+  <target default-value="1.5">1.6</target>
+  <verbose default-value="false">${maven.compiler.verbose}</verbose>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-resources-plugin:2.5:testResources (default-testResources)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <buildFilters default-value="${project.build.filters}"/>
+  <encoding default-value="${project.build.sourceEncoding}">${encoding}</encoding>
+  <escapeString>${maven.resources.escapeString}</escapeString>
+  <escapeWindowsPaths default-value="true">${maven.resources.escapeWindowsPaths}</escapeWindowsPaths>
+  <includeEmptyDirs default-value="false">${maven.resources.includeEmptyDirs}</includeEmptyDirs>
+  <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+  <overwrite default-value="false">${maven.resources.overwrite}</overwrite>
+  <project default-value="${project}"/>
+  <resources>${project.testResources}</resources>
+  <session default-value="${session}"/>
+  <supportMultiLineFiltering default-value="false">${maven.resources.supportMultiLineFiltering}</supportMultiLineFiltering>
+  <useBuildFilters default-value="true"/>
+  <useDefaultDelimiters default-value="true"/>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-compiler-plugin:2.3.2:testCompile (default-testCompile)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <basedir default-value="${basedir}"/>
+  <buildDirectory default-value="${project.build.directory}"/>
+  <classpathElements default-value="${project.testClasspathElements}"/>
+  <compileSourceRoots default-value="${project.testCompileSourceRoots}"/>
+  <compilerId default-value="javac">${maven.compiler.compilerId}</compilerId>
+  <compilerVersion>${maven.compiler.compilerVersion}</compilerVersion>
+  <debug default-value="true">${maven.compiler.debug}</debug>
+  <debuglevel>${maven.compiler.debuglevel}</debuglevel>
+  <encoding default-value="${project.build.sourceEncoding}">${encoding}</encoding>
+  <executable>${maven.compiler.executable}</executable>
+  <failOnError default-value="true">${maven.compiler.failOnError}</failOnError>
+  <fork default-value="false">${maven.compiler.fork}</fork>
+  <generatedTestSourcesDirectory default-value="${project.build.directory}/generated-sources/test-annotations"/>
+  <maxmem>${maven.compiler.maxmem}</maxmem>
+  <meminitial>${maven.compiler.meminitial}</meminitial>
+  <optimize default-value="false">${maven.compiler.optimize}</optimize>
+  <outputDirectory default-value="${project.build.testOutputDirectory}"/>
+  <outputFileName>${project.build.finalName}</outputFileName>
+  <session default-value="${session}"/>
+  <showDeprecation default-value="false">${maven.compiler.showDeprecation}</showDeprecation>
+  <showWarnings default-value="false">${maven.compiler.showWarnings}</showWarnings>
+  <skip>${maven.test.skip}</skip>
+  <source default-value="1.5">1.6</source>
+  <staleMillis default-value="0">${lastModGranularityMs}</staleMillis>
+  <target default-value="1.5">1.6</target>
+  <testSource>${maven.compiler.testSource}</testSource>
+  <testTarget>${maven.compiler.testTarget}</testTarget>
+  <verbose default-value="false">${maven.compiler.verbose}</verbose>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-surefire-plugin:2.13:test (default-test)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <argLine>-Xms800m -Xmx800m -XX:MaxPermSize=500m</argLine>
+  <basedir default-value="${basedir}"/>
+  <childDelegation default-value="false">${childDelegation}</childDelegation>
+  <classesDirectory default-value="${project.build.outputDirectory}"/>
+  <debugForkedProcess>${maven.surefire.debug}</debugForkedProcess>
+  <disableXmlReport default-value="false">${disableXmlReport}</disableXmlReport>
+  <enableAssertions default-value="true">${enableAssertions}</enableAssertions>
+  <excludedGroups>${excludedGroups}</excludedGroups>
+  <failIfNoSpecifiedTests>${surefire.failIfNoSpecifiedTests}</failIfNoSpecifiedTests>
+  <failIfNoTests>${failIfNoTests}</failIfNoTests>
+  <forkMode default-value="once">${forkMode}</forkMode>
+  <forkedProcessTimeoutInSeconds>${surefire.timeout}</forkedProcessTimeoutInSeconds>
+  <groups>${groups}</groups>
+  <includes>
+    <include>**/*FunctionalTest.java</include>
+    <include>**/*Test.java</include>
+    <include>**/*Tests.java</include>
+  </includes>
+  <junitArtifactName default-value="junit:junit">${junitArtifactName}</junitArtifactName>
+  <jvm>${jvm}</jvm>
+  <localRepository default-value="${localRepository}"/>
+  <objectFactory>${objectFactory}</objectFactory>
+  <parallel>${parallel}</parallel>
+  <parallelMavenExecution default-value="${session.parallel}"/>
+  <perCoreThreadCount default-value="true">${perCoreThreadCount}</perCoreThreadCount>
+  <pluginArtifactMap>${plugin.artifactMap}</pluginArtifactMap>
+  <pluginDescriptor default-value="${plugin}"/>
+  <printSummary default-value="true">${surefire.printSummary}</printSummary>
+  <projectArtifactMap>${project.artifactMap}</projectArtifactMap>
+  <redirectTestOutputToFile default-value="false">${maven.test.redirectTestOutputToFile}</redirectTestOutputToFile>
+  <remoteRepositories default-value="${project.pluginArtifactRepositories}"/>
+  <reportFormat default-value="brief">${surefire.reportFormat}</reportFormat>
+  <reportNameSuffix default-value="">${surefire.reportNameSuffix}</reportNameSuffix>
+  <reportsDirectory default-value="${project.build.directory}/surefire-reports"/>
+  <reuseForks default-value="false">${reuseForks}</reuseForks>
+  <runOrder default-value="filesystem"/>
+  <skip default-value="false">true</skip>
+  <skipExec>${maven.test.skip.exec}</skipExec>
+  <skipTests default-value="false">${skipTests}</skipTests>
+  <test>${test}</test>
+  <testClassesDirectory default-value="${project.build.testOutputDirectory}"/>
+  <testFailureIgnore default-value="false">${maven.test.failure.ignore}</testFailureIgnore>
+  <testNGArtifactName default-value="org.testng:testng">${testNGArtifactName}</testNGArtifactName>
+  <testSourceDirectory default-value="${project.build.testSourceDirectory}"/>
+  <threadCount>${threadCount}</threadCount>
+  <trimStackTrace default-value="true">${trimStackTrace}</trimStackTrace>
+  <useFile default-value="true">${surefire.useFile}</useFile>
+  <useManifestOnlyJar default-value="true">false</useManifestOnlyJar>
+  <useSystemClassLoader default-value="true">true</useSystemClassLoader>
+  <useUnlimitedThreads default-value="false">${useUnlimitedThreads}</useUnlimitedThreads>
+  <workingDirectory>${basedir}</workingDirectory>
+  <project default-value="${project}"/>
+  <session default-value="${session}"/>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-war-plugin:2.3:war (default-war)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <archive>
+    <manifest>
+      <mainClass>com.oracle.coherence.patterns.pushreplication.cohweb.examples.WebServer</mainClass>
+    </manifest>
+    <manifestEntries>
+      <Version>11.0.1-SNAPSHOT</Version>
+    </manifestEntries>
+  </archive>
+  <archiveClasses default-value="false">${archiveClasses}</archiveClasses>
+  <attachClasses default-value="false"/>
+  <cacheFile default-value="${project.build.directory}/war/work/webapp-cache.xml"/>
+  <classesClassifier default-value="classes"/>
+  <classesDirectory default-value="${project.build.outputDirectory}"/>
+  <containerConfigXML>${maven.war.containerConfigXML}</containerConfigXML>
+  <escapeString>${maven.war.escapeString}</escapeString>
+  <escapedBackslashesInFilePath default-value="false">${maven.war.escapedBackslashesInFilePath}</escapedBackslashesInFilePath>
+  <failOnMissingWebXml default-value="true">${failOnMissingWebXml}</failOnMissingWebXml>
+  <filteringDeploymentDescriptors default-value="false">${maven.war.filteringDeploymentDescriptors}</filteringDeploymentDescriptors>
+  <outputDirectory default-value="${project.build.directory}"/>
+  <primaryArtifact default-value="true">${primaryArtifact}</primaryArtifact>
+  <recompressZippedFiles default-value="false"/>
+  <resourceEncoding default-value="${project.build.sourceEncoding}">${resourceEncoding}</resourceEncoding>
+  <useCache default-value="false">${useCache}</useCache>
+  <warName default-value="${project.build.finalName}"/>
+  <warSourceDirectory default-value="${basedir}/src/main/webapp"/>
+  <warSourceIncludes default-value="**"/>
+  <webResources>
+    <resource>
+      <directory>src/main/external-resources</directory>
+    </resource>
+  </webResources>
+  <webXml>${maven.war.webxml}</webXml>
+  <webappDirectory default-value="${project.build.directory}/${project.build.finalName}"/>
+  <workDirectory default-value="${project.build.directory}/war/work"/>
+  <project default-value="${project}"/>
+  <session default-value="${session}"/>
+</configuration>
+[DEBUG] --- init fork of com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT for org.apache.maven.plugins:maven-source-plugin:2.2.1:jar (attach-sources) ---
+[DEBUG] Dependencies (collect): []
+[DEBUG] Dependencies (resolve): [test]
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce (enforce-maven)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <fail default-value="true">${enforcer.fail}</fail>
+  <failFast default-value="false">${enforcer.failFast}</failFast>
+  <ignoreCache default-value="false">${enforcer.ignoreCache}</ignoreCache>
+  <project>${project}</project>
+  <rules>
+    <requireMavenVersion>
+      <version>(,2.1.0),(2.1.0,2.2.0),(2.2.0,)</version>
+      <message>Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures
+										and checksums respectively.</message>
+    </requireMavenVersion>
+  </rules>
+  <session>${session}</session>
+  <skip default-value="false">${enforcer.skip}</skip>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce (enforce-plugin-versions)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <fail default-value="true">${enforcer.fail}</fail>
+  <failFast default-value="false">${enforcer.failFast}</failFast>
+  <ignoreCache default-value="false">${enforcer.ignoreCache}</ignoreCache>
+  <project>${project}</project>
+  <rules>
+    <requireMavenVersion>
+      <version>3.0.4</version>
+    </requireMavenVersion>
+    <requireJavaVersion>
+      <version>1.6.0</version>
+    </requireJavaVersion>
+  </rules>
+  <session>${session}</session>
+  <skip default-value="false">${enforcer.skip}</skip>
+</configuration>
+[DEBUG] --- exit fork of com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT for org.apache.maven.plugins:maven-source-plugin:2.2.1:jar (attach-sources) ---
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-source-plugin:2.2.1:jar (attach-sources)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <attach default-value="true">${attach}</attach>
+  <classifier default-value="sources">${maven.source.classifier}</classifier>
+  <defaultManifestFile default-value="${project.build.outputDirectory}/META-INF/MANIFEST.MF"/>
+  <excludeResources default-value="false">${source.excludeResources}</excludeResources>
+  <finalName default-value="${project.build.finalName}"/>
+  <forceCreation default-value="false">${source.forceCreation}</forceCreation>
+  <includePom default-value="false">${source.includePom}</includePom>
+  <outputDirectory default-value="${project.build.directory}"/>
+  <project default-value="${project}"/>
+  <reactorProjects default-value="${reactorProjects}"/>
+  <skipSource default-value="false">${source.skip}</skipSource>
+  <useDefaultExcludes default-value="true"/>
+  <useDefaultManifestFile default-value="false"/>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-javadoc-plugin:2.9:jar (attach-javadocs)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <additionalJOption>${additionalJOption}</additionalJOption>
+  <additionalparam>${additionalparam}</additionalparam>
+  <aggregate default-value="false">${aggregate}</aggregate>
+  <attach default-value="true">${attach}</attach>
+  <author default-value="true">${author}</author>
+  <bootclasspath>${bootclasspath}</bootclasspath>
+  <bootclasspathArtifacts>${bootclasspathArtifacts}</bootclasspathArtifacts>
+  <bottom default-value="Copyright &amp;#169; {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved.">${bottom}</bottom>
+  <breakiterator default-value="false">${breakiterator}</breakiterator>
+  <charset>${charset}</charset>
+  <debug default-value="false">${debug}</debug>
+  <defaultManifestFile default-value="${project.build.outputDirectory}/META-INF/MANIFEST.MF"/>
+  <destDir>${destDir}</destDir>
+  <detectJavaApiLink default-value="true">${detectJavaApiLink}</detectJavaApiLink>
+  <detectLinks default-value="false">${detectLinks}</detectLinks>
+  <detectOfflineLinks default-value="true">${detectOfflineLinks}</detectOfflineLinks>
+  <docencoding default-value="${project.reporting.outputEncoding}">${docencoding}</docencoding>
+  <docfilessubdirs default-value="false">${docfilessubdirs}</docfilessubdirs>
+  <doclet>${doclet}</doclet>
+  <docletArtifact>${docletArtifact}</docletArtifact>
+  <docletArtifacts>${docletArtifacts}</docletArtifacts>
+  <docletPath>${docletPath}</docletPath>
+  <doctitle default-value="${project.name} ${project.version} API">${doctitle}</doctitle>
+  <encoding default-value="${project.build.sourceEncoding}">${encoding}</encoding>
+  <excludePackageNames>${excludePackageNames}</excludePackageNames>
+  <excludedocfilessubdir>${excludedocfilessubdir}</excludedocfilessubdir>
+  <extdirs>${extdirs}</extdirs>
+  <failOnError default-value="true">false</failOnError>
+  <finalName>${project.build.finalName}</finalName>
+  <footer>${footer}</footer>
+  <groups>${groups}</groups>
+  <header>${header}</header>
+  <helpfile>${helpfile}</helpfile>
+  <includeDependencySources default-value="false"/>
+  <includeTransitiveDependencySources default-value="false"/>
+  <isOffline default-value="${settings.offline}"/>
+  <jarOutputDirectory>${project.build.directory}</jarOutputDirectory>
+  <javaApiLinks>${javaApiLinks}</javaApiLinks>
+  <javadocDirectory default-value="${basedir}/src/main/javadoc"/>
+  <javadocExecutable>${javadocExecutable}</javadocExecutable>
+  <javadocOptionsDir default-value="${project.build.directory}/javadoc-bundle-options"/>
+  <javadocVersion>${javadocVersion}</javadocVersion>
+  <keywords default-value="false">${keywords}</keywords>
+  <links>${links}</links>
+  <linksource default-value="false">${linksource}</linksource>
+  <localRepository>${localRepository}</localRepository>
+  <locale>${locale}</locale>
+  <maxmemory>${maxmemory}</maxmemory>
+  <minmemory>${minmemory}</minmemory>
+  <nocomment default-value="false">${nocomment}</nocomment>
+  <nodeprecated default-value="false">${nodeprecated}</nodeprecated>
+  <nodeprecatedlist default-value="false">${nodeprecatedlist}</nodeprecatedlist>
+  <nohelp default-value="false">${nohelp}</nohelp>
+  <noindex default-value="false">${noindex}</noindex>
+  <nonavbar default-value="false">${nonavbar}</nonavbar>
+  <nooverview default-value="false">${nooverview}</nooverview>
+  <noqualifier>${noqualifier}</noqualifier>
+  <nosince default-value="false">${nosince}</nosince>
+  <notimestamp default-value="false">${notimestamp}</notimestamp>
+  <notree default-value="false">${notree}</notree>
+  <offlineLinks>${offlineLinks}</offlineLinks>
+  <old default-value="false">${old}</old>
+  <outputDirectory default-value="${project.build.directory}/apidocs">${destDir}</outputDirectory>
+  <overview default-value="${basedir}/src/main/javadoc/overview.html">${overview}</overview>
+  <packagesheader>${packagesheader}</packagesheader>
+  <proxyHost>${proxyHost}</proxyHost>
+  <proxyPort>${proxyPort}</proxyPort>
+  <quiet default-value="false">${quiet}</quiet>
+  <reactorProjects>${reactorProjects}</reactorProjects>
+  <remoteRepositories>${project.remoteArtifactRepositories}</remoteRepositories>
+  <resourcesArtifacts>${resourcesArtifacts}</resourcesArtifacts>
+  <serialwarn default-value="false">${serialwarn}</serialwarn>
+  <show default-value="protected">${show}</show>
+  <skip default-value="false">true</skip>
+  <source>${source}</source>
+  <sourceDependencyCacheDir default-value="${project.build.directory}/distro-javadoc-sources"/>
+  <sourcepath>${sourcepath}</sourcepath>
+  <sourcetab>${sourcetab}</sourcetab>
+  <splitindex default-value="false">${splitindex}</splitindex>
+  <stylesheet default-value="java">${stylesheet}</stylesheet>
+  <stylesheetfile>${stylesheetfile}</stylesheetfile>
+  <subpackages>${subpackages}</subpackages>
+  <taglet>${taglet}</taglet>
+  <tagletArtifact>${tagletArtifact}</tagletArtifact>
+  <tagletArtifacts>${tagletArtifacts}</tagletArtifacts>
+  <tagletpath>${tagletpath}</tagletpath>
+  <taglets>${taglets}</taglets>
+  <tags>${tags}</tags>
+  <top>${top}</top>
+  <use default-value="true">${use}</use>
+  <useDefaultManifestFile default-value="false"/>
+  <useStandardDocletOptions default-value="true">${useStandardDocletOptions}</useStandardDocletOptions>
+  <validateLinks default-value="false">${validateLinks}</validateLinks>
+  <verbose default-value="false">${verbose}</verbose>
+  <version default-value="true">${version}</version>
+  <windowtitle default-value="${project.name} ${project.version} API">${windowtitle}</windowtitle>
+  <project default-value="${project}"/>
+  <session default-value="${session}"/>
+  <settings default-value="${settings}"/>
+</configuration>
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-shade-plugin:1.7:shade (default)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <createDependencyReducedPom default-value="true">${createDependencyReducedPom}</createDependencyReducedPom>
+  <createSourcesJar default-value="false">${createSourcesJar}</createSourcesJar>
+  <dependencyReducedPomLocation>${dependencyReducedPomLocation}</dependencyReducedPomLocation>
+  <finalName>${finalName}</finalName>
+  <keepDependenciesWithProvidedScope default-value="false">${keepDependenciesWithProvidedScope}</keepDependenciesWithProvidedScope>
+  <localRepository default-value="${localRepository}"/>
+  <minimizeJar default-value="false"/>
+  <outputDirectory default-value="${project.build.directory}"/>
+  <project default-value="${project}"/>
+  <promoteTransitiveDependencies default-value="false">${promoteTransitiveDependencies}</promoteTransitiveDependencies>
+  <remoteArtifactRepositories default-value="${project.remoteArtifactRepositories}"/>
+  <shadedArtifactAttached default-value="false">${shadedArtifactAttached}</shadedArtifactAttached>
+  <shadedArtifactId default-value="${project.artifactId}">${shadedArtifactId}</shadedArtifactId>
+  <shadedClassifierName default-value="shaded">${shadedClassifierName}</shadedClassifierName>
+  <shadedGroupFilter>${shadedGroupFilter}</shadedGroupFilter>
+</configuration>
+[DEBUG] =======================================================================
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:11.0.1-SNAPSHOT/maven-metadata.xml, locally installed metadata up-to-date.
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:11.0.1-SNAPSHOT/maven-metadata.xml, locally installed metadata up-to-date.
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:11.0.1-SNAPSHOT/maven-metadata.xml, locally installed metadata up-to-date.
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:11.0.1-SNAPSHOT/maven-metadata.xml, locally installed metadata up-to-date.
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:11.0.1-SNAPSHOT/maven-metadata.xml, locally installed metadata up-to-date.
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:11.0.1-SNAPSHOT/maven-metadata.xml, locally installed metadata up-to-date.
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-example:11.0.1-SNAPSHOT/maven-metadata.xml, locally installed metadata up-to-date.
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-example:11.0.1-SNAPSHOT/maven-metadata.xml, locally installed metadata up-to-date.
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-example:11.0.1-SNAPSHOT/maven-metadata.xml, locally installed metadata up-to-date.
+[DEBUG] Skipped remote update check for com.oracle.coherence.incubator:coherence-incubator:11.0.1-SNAPSHOT/maven-metadata.xml, locally cached metadata up-to-date.
+[DEBUG] Failure to find com.oracle.coherence.incubator:coherence-incubator:11.0.1-SNAPSHOT/maven-metadata.xml in https://m2proxy.atlassian.com/repository/public was cached in the local repository, resolution will not be reattempted until the update interval of atlassian-public has elapsed or updates are forced
+[DEBUG] Using connector WagonRepositoryConnector with priority 0 for http://tangosol-build.us.oracle.com:8081/artifactory/internal-snapshot
+Downloading: http://tangosol-build.us.oracle.com:8081/artifactory/internal-snapshot/com/oracle/coherence/incubator/coherence-incubator/11.0.1-SNAPSHOT/maven-metadata.xml
+[DEBUG] Writing resolution tracking file /Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-incubator/11.0.1-SNAPSHOT/resolver-status.properties
+[WARNING] Could not transfer metadata com.oracle.coherence.incubator:coherence-incubator:11.0.1-SNAPSHOT/maven-metadata.xml from/to internal-snapshot (http://tangosol-build.us.oracle.com:8081/artifactory/internal-snapshot): tangosol-build.us.oracle.com
+org.sonatype.aether.transfer.MetadataTransferException: Could not transfer metadata com.oracle.coherence.incubator:coherence-incubator:11.0.1-SNAPSHOT/maven-metadata.xml from/to internal-snapshot (http://tangosol-build.us.oracle.com:8081/artifactory/internal-snapshot): tangosol-build.us.oracle.com
+	at org.sonatype.aether.connector.wagon.WagonRepositoryConnector$3.wrap(WagonRepositoryConnector.java:930)
+	at org.sonatype.aether.connector.wagon.WagonRepositoryConnector$3.wrap(WagonRepositoryConnector.java:920)
+	at org.sonatype.aether.connector.wagon.WagonRepositoryConnector$GetTask.run(WagonRepositoryConnector.java:669)
+	at org.sonatype.aether.util.concurrency.RunnableErrorForwarder$1.run(RunnableErrorForwarder.java:60)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: org.apache.maven.wagon.TransferFailedException: tangosol-build.us.oracle.com
+	at org.apache.maven.wagon.shared.http4.AbstractHttpClientWagon.fillInputData(AbstractHttpClientWagon.java:799)
+	at org.apache.maven.wagon.StreamWagon.getInputStream(StreamWagon.java:116)
+	at org.apache.maven.wagon.StreamWagon.getIfNewer(StreamWagon.java:88)
+	at org.apache.maven.wagon.StreamWagon.get(StreamWagon.java:61)
+	at org.sonatype.aether.connector.wagon.WagonRepositoryConnector$GetTask.run(WagonRepositoryConnector.java:601)
+	... 4 more
+Caused by: java.net.UnknownHostException: tangosol-build.us.oracle.com
+	at java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method)
+	at java.net.InetAddress$1.lookupAllHostAddr(InetAddress.java:849)
+	at java.net.InetAddress.getAddressFromNameService(InetAddress.java:1202)
+	at java.net.InetAddress.getAllByName0(InetAddress.java:1153)
+	at java.net.InetAddress.getAllByName(InetAddress.java:1083)
+	at java.net.InetAddress.getAllByName(InetAddress.java:1019)
+	at org.apache.maven.wagon.providers.http.httpclient.impl.conn.DefaultClientConnectionOperator.resolveHostname(DefaultClientConnectionOperator.java:242)
+	at org.apache.maven.wagon.providers.http.httpclient.impl.conn.DefaultClientConnectionOperator.openConnection(DefaultClientConnectionOperator.java:130)
+	at org.apache.maven.wagon.providers.http.httpclient.impl.conn.AbstractPoolEntry.open(AbstractPoolEntry.java:149)
+	at org.apache.maven.wagon.providers.http.httpclient.impl.conn.AbstractPooledConnAdapter.open(AbstractPooledConnAdapter.java:121)
+	at org.apache.maven.wagon.providers.http.httpclient.impl.client.DefaultRequestDirector.tryConnect(DefaultRequestDirector.java:573)
+	at org.apache.maven.wagon.providers.http.httpclient.impl.client.DefaultRequestDirector.execute(DefaultRequestDirector.java:425)
+	at org.apache.maven.wagon.providers.http.httpclient.impl.client.AbstractHttpClient.execute(AbstractHttpClient.java:820)
+	at org.apache.maven.wagon.providers.http.httpclient.impl.client.AbstractHttpClient.execute(AbstractHttpClient.java:754)
+	at org.apache.maven.wagon.shared.http4.AbstractHttpClientWagon.execute(AbstractHttpClientWagon.java:674)
+	at org.apache.maven.wagon.shared.http4.AbstractHttpClientWagon.fillInputData(AbstractHttpClientWagon.java:793)
+	... 8 more
+[DEBUG] com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT
+[DEBUG]    com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:jar:11.0.1-SNAPSHOT:compile
+[INFO] 
+[INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] Created new class realm maven.api
+[DEBUG] Importing foreign packages into class realm maven.api
+[DEBUG]   Imported: org.apache.maven.wagon.events < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.transfer < plexus.core
+[DEBUG]   Imported: org.apache.maven.exception < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.metadata < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.Xpp3Dom < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.collection < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.version < plexus.core
+[DEBUG]   Imported: org.apache.maven.monitor < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.repository < plexus.core
+[DEBUG]   Imported: org.apache.maven.repository < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.resource < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.logging < plexus.core
+[DEBUG]   Imported: org.apache.maven.profiles < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.repository < plexus.core
+[DEBUG]   Imported: org.apache.maven.classrealm < plexus.core
+[DEBUG]   Imported: org.apache.maven.execution < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.artifact < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.spi < plexus.core
+[DEBUG]   Imported: org.apache.maven.reporting < plexus.core
+[DEBUG]   Imported: org.apache.maven.usability < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.container < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.component < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.pull.XmlSerializer < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.authentication < plexus.core
+[DEBUG]   Imported: org.apache.maven.lifecycle < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.classworlds < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.graph < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.settings < plexus.core
+[DEBUG]   Imported: org.codehaus.classworlds < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.impl < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.toolchain < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.deployment < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.observers < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.pull.XmlPullParserException < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.pull.XmlPullParser < plexus.core
+[DEBUG]   Imported: org.apache.maven.configuration < plexus.core
+[DEBUG]   Imported: org.apache.maven.cli < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.installation < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.context < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.authorization < plexus.core
+[DEBUG]   Imported: org.apache.maven.project < plexus.core
+[DEBUG]   Imported: org.apache.maven.rtinfo < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.lifecycle < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.configuration < plexus.core
+[DEBUG]   Imported: org.apache.maven.artifact < plexus.core
+[DEBUG]   Imported: org.apache.maven.model < plexus.core
+[DEBUG]   Imported: org.apache.maven.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.proxy < plexus.core
+[DEBUG]   Imported: org.sonatype.aether.resolution < plexus.core
+[DEBUG]   Imported: org.apache.maven.plugin < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.* < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.personality < plexus.core
+[DEBUG] Populating class realm maven.api
+[DEBUG] org.apache.maven.plugins:maven-clean-plugin:jar:2.4.1:
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.0.6:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:2.0.5:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-clean-plugin:2.4.1
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-clean-plugin:2.4.1
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-clean-plugin:2.4.1
+[DEBUG]   Included: org.apache.maven.plugins:maven-clean-plugin:jar:2.4.1
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:2.0.5
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.0.6
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-clean-plugin:2.4.1:clean from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-clean-plugin:2.4.1, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-clean-plugin:2.4.1:clean' with basic configurator -->
+[DEBUG]   (f) directory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target
+[DEBUG]   (f) excludeDefaultDirectories = false
+[DEBUG]   (f) failOnError = true
+[DEBUG]   (f) followSymLinks = false
+[DEBUG]   (f) outputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes
+[DEBUG]   (f) reportDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/site
+[DEBUG]   (f) skip = false
+[DEBUG]   (f) testOutputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/test-classes
+[DEBUG] -- end configuration --
+[INFO] Deleting /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/original-coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.war
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/maven-archiver/pom.properties
+[INFO] Deleting directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/maven-archiver
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/dependency-reduced-pom.xml
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.war
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/WEB-INF/weblogic.xml
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/WEB-INF/web.xml
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/WEB-INF/web-spi.xml
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar
+[INFO] Deleting directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/WEB-INF/lib
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/WEB-INF/classes/session-cache-config.xml
+[INFO] Deleting directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/WEB-INF/classes
+[INFO] Deleting directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/WEB-INF
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/sessionAccessSpi.jsp
+[INFO] Deleting file /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/sessionAccess.jsp
+[INFO] Deleting directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT/META-INF
+[INFO] Deleting directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT
+[INFO] Deleting directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target
+[DEBUG] Skipping non-existing directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes
+[DEBUG] Skipping non-existing directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/test-classes
+[DEBUG] Skipping non-existing directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/site
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] org.apache.maven.plugins:maven-enforcer-plugin:jar:1.0.1:
+[DEBUG]    org.apache.maven:maven-artifact:jar:2.0.9:compile
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.0.9:compile
+[DEBUG]    org.apache.maven:maven-project:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-settings:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-profile:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-model:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-artifact-manager:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-plugin-registry:jar:2.0.9:compile
+[DEBUG]       org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+[DEBUG]          junit:junit:jar:3.8.2:test (scope managed from compile) (version managed from 3.8.1)
+[DEBUG]    org.apache.maven:maven-core:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.9:compile
+[DEBUG]       org.apache.maven.reporting:maven-reporting-api:jar:2.0.9:compile
+[DEBUG]          org.apache.maven.doxia:doxia-sink-api:jar:1.0-alpha-10:compile
+[DEBUG]       org.apache.maven:maven-repository-metadata:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-error-diagnostics:jar:2.0.9:compile
+[DEBUG]       commons-cli:commons-cli:jar:1.0:compile
+[DEBUG]       org.apache.maven:maven-plugin-descriptor:jar:2.0.9:compile
+[DEBUG]       org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4:compile
+[DEBUG]       org.apache.maven:maven-monitor:jar:2.0.9:compile
+[DEBUG]       classworlds:classworlds:jar:1.1:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:1.5.8:compile
+[DEBUG]    commons-lang:commons-lang:jar:2.3:compile
+[DEBUG]    org.apache.maven.enforcer:enforcer-api:jar:1.0.1:compile
+[DEBUG]    org.apache.maven.enforcer:enforcer-rules:jar:1.0.1:compile
+[DEBUG]       org.apache.maven.shared:maven-common-artifact-filters:jar:1.2:compile
+[DEBUG]          org.apache.maven.shared:maven-plugin-testing-harness:jar:1.1:test (scope managed from compile)
+[DEBUG]             org.codehaus.plexus:plexus-archiver:jar:1.0-alpha-7:test
+[DEBUG]       org.beanshell:bsh:jar:2.0b4:compile
+[DEBUG]       org.apache.maven.shared:maven-dependency-tree:jar:1.2:compile
+[DEBUG]       org.codehaus.plexus:plexus-i18n:jar:1.0-beta-6:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-enforcer-plugin:1.0.1
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-enforcer-plugin:1.0.1
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-enforcer-plugin:1.0.1
+[DEBUG]   Included: org.apache.maven.plugins:maven-enforcer-plugin:jar:1.0.1
+[DEBUG]   Included: org.apache.maven.reporting:maven-reporting-api:jar:2.0.9
+[DEBUG]   Included: org.apache.maven.doxia:doxia-sink-api:jar:1.0-alpha-10
+[DEBUG]   Included: commons-cli:commons-cli:jar:1.0
+[DEBUG]   Included: org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:1.5.8
+[DEBUG]   Included: commons-lang:commons-lang:jar:2.3
+[DEBUG]   Included: org.apache.maven.enforcer:enforcer-api:jar:1.0.1
+[DEBUG]   Included: org.apache.maven.enforcer:enforcer-rules:jar:1.0.1
+[DEBUG]   Included: org.apache.maven.shared:maven-common-artifact-filters:jar:1.2
+[DEBUG]   Included: org.beanshell:bsh:jar:2.0b4
+[DEBUG]   Included: org.apache.maven.shared:maven-dependency-tree:jar:1.2
+[DEBUG]   Included: org.codehaus.plexus:plexus-i18n:jar:1.0-beta-6
+[DEBUG]   Excluded: org.apache.maven:maven-artifact:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-project:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-settings:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-profile:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-model:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-artifact-manager:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-registry:jar:2.0.9
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1
+[DEBUG]   Excluded: junit:junit:jar:3.8.2
+[DEBUG]   Excluded: org.apache.maven:maven-core:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-repository-metadata:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-error-diagnostics:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-descriptor:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-monitor:jar:2.0.9
+[DEBUG]   Excluded: classworlds:classworlds:jar:1.1
+[DEBUG]   Excluded: org.apache.maven.shared:maven-plugin-testing-harness:jar:1.1
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-archiver:jar:1.0-alpha-7
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-enforcer-plugin:1.0.1, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce' with basic configurator -->
+[DEBUG]   (s) fail = true
+[DEBUG]   (s) failFast = false
+[DEBUG]   (f) ignoreCache = false
+[DEBUG]   (s) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (s) version = (,2.1.0),(2.1.0,2.2.0),(2.2.0,)
+[DEBUG]   (f) message = Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures
+										and checksums respectively.
+[DEBUG]   (s) rules = [org.apache.maven.plugins.enforcer.RequireMavenVersion@7c2479a4]
+[DEBUG]   (s) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG]   (s) skip = false
+[DEBUG] -- end configuration --
+[DEBUG] Executing rule: org.apache.maven.plugins.enforcer.RequireMavenVersion
+[DEBUG] Rule org.apache.maven.plugins.enforcer.RequireMavenVersion is cacheable.
+[DEBUG] Detected Maven Version: 3.0.4
+[DEBUG] Detected Maven Version: 3.0.4 is allowed in the range (,2.1.0),(2.1.0,2.2.0),(2.2.0,).
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-plugin-versions) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-enforcer-plugin:1.0.1, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce' with basic configurator -->
+[DEBUG]   (s) fail = true
+[DEBUG]   (s) failFast = false
+[DEBUG]   (f) ignoreCache = false
+[DEBUG]   (s) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (s) version = 3.0.4
+[DEBUG]   (s) version = 1.6.0
+[DEBUG]   (s) rules = [org.apache.maven.plugins.enforcer.RequireMavenVersion@5a56182f, org.apache.maven.plugins.enforcer.RequireJavaVersion@4a4de3fe]
+[DEBUG]   (s) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG]   (s) skip = false
+[DEBUG] -- end configuration --
+[DEBUG] Executing rule: org.apache.maven.plugins.enforcer.RequireMavenVersion
+[DEBUG] Rule org.apache.maven.plugins.enforcer.RequireMavenVersion is cacheable.
+[DEBUG] Detected Maven Version: 3.0.4
+[DEBUG] Detected Maven Version: 3.0.4 is allowed in the range 3.0.4.
+[DEBUG] Executing rule: org.apache.maven.plugins.enforcer.RequireJavaVersion
+[DEBUG] Rule org.apache.maven.plugins.enforcer.RequireJavaVersion is cacheable.
+[DEBUG] Detected Java String: 1.6.0_37
+[DEBUG] Normalized Java String: 1.6.0-37
+[DEBUG] Parsed Version: Major: 1 Minor: 6 Incremental: 0 Build: 37 Qualifier: null
+[DEBUG] Detected JDK Version: 1.6.0-37 is allowed in the range 1.6.0.
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:resources (default-resources) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] org.apache.maven.plugins:maven-resources-plugin:jar:2.5:
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-project:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-profile:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-artifact-manager:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-plugin-registry:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-core:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.6:compile
+[DEBUG]       org.apache.maven.reporting:maven-reporting-api:jar:2.0.6:compile
+[DEBUG]          org.apache.maven.doxia:doxia-sink-api:jar:1.0-alpha-7:compile
+[DEBUG]       org.apache.maven:maven-repository-metadata:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-error-diagnostics:jar:2.0.6:compile
+[DEBUG]       commons-cli:commons-cli:jar:1.0:compile
+[DEBUG]       org.apache.maven:maven-plugin-descriptor:jar:2.0.6:compile
+[DEBUG]       org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4:compile
+[DEBUG]       classworlds:classworlds:jar:1.1:compile
+[DEBUG]    org.apache.maven:maven-artifact:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-settings:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-model:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-monitor:jar:2.0.6:compile
+[DEBUG]    org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+[DEBUG]       junit:junit:jar:3.8.1:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:2.0.5:compile
+[DEBUG]    org.apache.maven.shared:maven-filtering:jar:1.0:compile
+[DEBUG]       org.sonatype.plexus:plexus-build-api:jar:0.0.4:compile
+[DEBUG]    org.codehaus.plexus:plexus-interpolation:jar:1.13:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-resources-plugin:2.5
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-resources-plugin:2.5
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-resources-plugin:2.5
+[DEBUG]   Included: org.apache.maven.plugins:maven-resources-plugin:jar:2.5
+[DEBUG]   Included: org.apache.maven.reporting:maven-reporting-api:jar:2.0.6
+[DEBUG]   Included: org.apache.maven.doxia:doxia-sink-api:jar:1.0-alpha-7
+[DEBUG]   Included: commons-cli:commons-cli:jar:1.0
+[DEBUG]   Included: org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4
+[DEBUG]   Included: junit:junit:jar:3.8.1
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:2.0.5
+[DEBUG]   Included: org.apache.maven.shared:maven-filtering:jar:1.0
+[DEBUG]   Included: org.sonatype.plexus:plexus-build-api:jar:0.0.4
+[DEBUG]   Included: org.codehaus.plexus:plexus-interpolation:jar:1.13
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-project:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-profile:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-artifact-manager:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-registry:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-core:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-repository-metadata:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-error-diagnostics:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-descriptor:jar:2.0.6
+[DEBUG]   Excluded: classworlds:classworlds:jar:1.1
+[DEBUG]   Excluded: org.apache.maven:maven-artifact:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-settings:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-model:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-monitor:jar:2.0.6
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-resources-plugin:2.5:resources from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-resources-plugin:2.5, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[debug] execute contextualize
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-resources-plugin:2.5:resources' with basic configurator -->
+[DEBUG]   (f) buildFilters = []
+[DEBUG]   (f) encoding = UTF-8
+[DEBUG]   (f) escapeWindowsPaths = true
+[DEBUG]   (s) includeEmptyDirs = false
+[DEBUG]   (s) outputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes
+[DEBUG]   (s) overwrite = false
+[DEBUG]   (f) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (s) resources = [Resource {targetPath: null, filtering: false, FileSet {directory: /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/resources, PatternSet [includes: {}, excludes: {}]}}]
+[DEBUG]   (f) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG]   (f) supportMultiLineFiltering = false
+[DEBUG]   (f) useBuildFilters = true
+[DEBUG]   (s) useDefaultDelimiters = true
+[DEBUG] -- end configuration --
+[DEBUG] properties used {java.vendor=Apple Inc., sun.java.launcher=SUN_STANDARD, source.repository=coherence-incubator, sun.management.compiler=HotSpot 64-Bit Tiered Compilers, env.SECURITYSESSIONID=186a5, maven.source.plugin.version=2.2.1, hamcrest.version=1.2, os.name=Mac OS X, sun.boot.class.path=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsfd.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Frameworks/JavaRuntimeSupport.framework/Resources/Java/JavaRuntimeSupport.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/laf.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/sunrsasign.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsse.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jce.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/charsets.jar, env.TMPDIR=/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/, env.Apple_Ubiquity_Message=/tmp/launch-tiCRiE/Apple_Ubiquity_Message, env.PWD=/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app, maven.enforcer.plugin.version=1.0.1, maven.install.plugin.version=2.4, env.LANG=en_US.UTF-8, maven.site.plugin.version=3.2, java.vm.specification.vendor=Sun Microsystems Inc., java.runtime.version=1.6.0_37-b06-434-11M3909, env.Apple_PubSub_Socket_Render=/tmp/launch-BpZ7IG/Render, project.build.sourceEncoding=UTF-8, user.name=narliss, maven.build.version=Apache Maven 3.0.4 (r1232337; 2012-01-17 03:44:56-0500), env.USER=narliss, javax.jms.version=1.1, env.SHELL=/bin/bash, env.__CF_USER_TEXT_ENCODING=0x1F5:0:0, awt.nativeDoubleBuffering=true, maven.javadoc.plugin.version=2.9, source.branch=develop-11, env.PATH=/opt/local/bin:/opt/local/sbin:/usr/share/apache-maven-3.0.4/bin:/opt/local/bin:/opt/local/sbin:/usr/share/atlassian-plugin-sdk-4.1.2/bin:/Applications/Araxis:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin, mockito.version=1.9.0, user.language=en, sun.boot.library.path=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Libraries, classworlds.conf=/usr/share/apache-maven-3.0.4/bin/m2.conf, env.ATLAS_HOME=/usr/share/atlassian-plugin-sdk-4.1.2, powermock.version=1.4.12, java.version=1.6.0_37, user.timezone=America/New_York, sun.arch.data.model=64, http.nonProxyHosts=local|*.local|169.254/16|*.169.254/16|oracle.com|*.oracle.com|oracleads.com|*.oracleads.com|us.oracle.com|*.us.oracle.com|uk.oracle.com|*.uk.oracle.com|ca.oracle.com|*.ca.oracle.com|oraclecorp.com|*.oraclecorp.com|oracleportal.com|*.oracleportal.com|oraclevpn.com|*.oraclevpn.com|adc-twvpn-2.oraclevpn.com|*.adc-twvpn-2.oraclevpn.com, java.endorsed.dirs=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/endorsed, sun.cpu.isalist=, sun.jnu.encoding=MacRoman, env.ITERM_SESSION_ID=w0t1p0, file.encoding.pkg=sun.io, env.SHLVL=1, glassfish.javax-impl.version=2.2, file.separator=/, java.specification.name=Java Platform API Specification, glassfish.javax.version=2.2.3, java.class.version=50.0, user.country=US, java.home=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home, java.vm.info=mixed mode, env.LOGNAME=narliss, os.version=10.8.2, env.JAVA_MAIN_CLASS_23278=org.codehaus.plexus.classworlds.launcher.Launcher, path.separator=:, java.vm.version=20.12-b01-434, jettyVersion=8.1.0.RC0, oracle.tools.version=0.0.8, java.awt.printerjob=apple.awt.CPrinterJob, env.TERM=xterm, cglib.version=2.2.2, sun.io.unicode.encoding=UnicodeLittle, rhino.version=1.6R5, oracle.coherence.version=3.7.1.8, awt.toolkit=apple.awt.CToolkit, socksNonProxyHosts=local|*.local|169.254/16|*.169.254/16|oracle.com|*.oracle.com|oracleads.com|*.oracleads.com|us.oracle.com|*.us.oracle.com|uk.oracle.com|*.uk.oracle.com|ca.oracle.com|*.ca.oracle.com|oraclecorp.com|*.oraclecorp.com|oracleportal.com|*.oracleportal.com|oraclevpn.com|*.oraclevpn.com|adc-twvpn-2.oraclevpn.com|*.adc-twvpn-2.oraclevpn.com, maven.shade.plugin.version=1.7, ftp.nonProxyHosts=local|*.local|169.254/16|*.169.254/16|oracle.com|*.oracle.com|oracleads.com|*.oracleads.com|us.oracle.com|*.us.oracle.com|uk.oracle.com|*.uk.oracle.com|ca.oracle.com|*.ca.oracle.com|oraclecorp.com|*.oraclecorp.com|oracleportal.com|*.oracleportal.com|oraclevpn.com|*.oraclevpn.com|adc-twvpn-2.oraclevpn.com|*.adc-twvpn-2.oraclevpn.com, user.home=/Users/narliss, env.OLDPWD=/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app, java.specification.vendor=Sun Microsystems Inc., skip-sign-artifacts=true, env.TERM_PROGRAM=iTerm.app, java.library.path=.:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java, java.vendor.url=http://www.apple.com/, easymock.version=3.1, java.vm.vendor=Apple Inc., gopherProxySet=false, maven.home=/usr/share/apache-maven-3.0.4, java.runtime.name=Java(TM) SE Runtime Environment, sun.java.command=org.codehaus.plexus.classworlds.launcher.Launcher -X clean package, java.class.path=/usr/share/apache-maven-3.0.4/boot/plexus-classworlds-2.4.jar, env.com.apple.java.jvmMode=client, maven.version=3.0.4, glassfish.jstl.version=1.2, maven.surefire.plugin.version=2.13, maven.gpg.plugin.version=1.4, java.vm.specification.name=Java Virtual Machine Specification, maven.dependency.plugin.version=2.6, maven.deploy.plugin.version=2.7, maven.war.plugin.version=2.3, java.vm.specification.version=1.0, source.owner=coherence-community, sun.cpu.endian=little, sun.os.patch.level=unknown, maven.jar.plugin.version=2.4, env.HOME=/Users/narliss, java.io.tmpdir=/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/, maven.compiler.plugin.version=2.3.2, java.vendor.url.bug=http://bugreport.apple.com/, env.SSH_AUTH_SOCK=/tmp/launch-MJrGMt/Listeners, env.COMMAND_MODE=unix2003, mrj.build=11M3909, os.arch=x86_64, java.awt.graphicsenv=apple.awt.CGraphicsEnvironment, java.ext.dirs=/Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/ext, amazonaws.version=1.3.14, maven.release.plugin.version=2.2.1, maven.resources.plugin.version=2.6, github.site.maven.plugin.version=0.7, mrj.version=1070.1.6.0_37-434, env.com.apple.java.jvmTask=CommandLine_Manual.java, user.dir=/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app, httpunit.version=1.7, line.separator=
+, java.vm.name=Java HotSpot(TM) 64-Bit Server VM, activemq.version=5.3.1, doxia.module.markdown.version=1.0, env.ITERM_PROFILE=Default, jvnetDistMgmtSnapshotsUrl=https://maven.java.net/content/repositories/snapshots/, file.encoding=MacRoman, miglayout.version=3.6, java.specification.version=1.6, junit.version=4.10}
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[DEBUG] resource with targetPath null
+directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/resources
+excludes []
+includes []
+[INFO] skip non existing resourceDirectory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/resources
+[DEBUG] no use filter components
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] org.apache.maven.plugins:maven-compiler-plugin:jar:2.3.2:
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-artifact:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-core:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-settings:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-profile:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-model:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-repository-metadata:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-error-diagnostics:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-project:jar:2.0.6:compile
+[DEBUG]          org.apache.maven:maven-plugin-registry:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-plugin-descriptor:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-artifact-manager:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-monitor:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-toolchain:jar:1.0:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:2.0.5:compile
+[DEBUG]    org.codehaus.plexus:plexus-compiler-api:jar:1.8.1:compile
+[DEBUG]    org.codehaus.plexus:plexus-compiler-manager:jar:1.8.1:compile
+[DEBUG]    org.codehaus.plexus:plexus-compiler-javac:jar:1.8.1:runtime
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-compiler-plugin:2.3.2
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-compiler-plugin:2.3.2
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-compiler-plugin:2.3.2
+[DEBUG]   Included: org.apache.maven.plugins:maven-compiler-plugin:jar:2.3.2
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:2.0.5
+[DEBUG]   Included: org.codehaus.plexus:plexus-compiler-api:jar:1.8.1
+[DEBUG]   Included: org.codehaus.plexus:plexus-compiler-manager:jar:1.8.1
+[DEBUG]   Included: org.codehaus.plexus:plexus-compiler-javac:jar:1.8.1
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-artifact:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-core:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-settings:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-profile:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-model:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-repository-metadata:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-error-diagnostics:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-project:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-registry:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-descriptor:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-artifact-manager:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-monitor:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-toolchain:jar:1.0
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-compiler-plugin:2.3.2:compile from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-compiler-plugin:2.3.2, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-compiler-plugin:2.3.2:compile' with basic configurator -->
+[DEBUG]   (f) basedir = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app
+[DEBUG]   (f) buildDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target
+[DEBUG]   (f) classpathElements = [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes, /Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar]
+[DEBUG]   (f) compileSourceRoots = [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/java]
+[DEBUG]   (f) compilerId = javac
+[DEBUG]   (f) debug = true
+[DEBUG]   (f) encoding = UTF-8
+[DEBUG]   (f) failOnError = true
+[DEBUG]   (f) fork = false
+[DEBUG]   (f) generatedSourcesDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/generated-sources/annotations
+[DEBUG]   (f) optimize = false
+[DEBUG]   (f) outputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes
+[DEBUG]   (f) outputFileName = coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT
+[DEBUG]   (f) projectArtifact = com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT
+[DEBUG]   (f) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG]   (f) showDeprecation = false
+[DEBUG]   (f) showWarnings = false
+[DEBUG]   (f) source = 1.6
+[DEBUG]   (f) staleMillis = 0
+[DEBUG]   (f) target = 1.6
+[DEBUG]   (f) verbose = false
+[DEBUG] -- end configuration --
+[DEBUG] Using compiler 'javac'.
+[DEBUG] Source directories: [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/java]
+[DEBUG] Classpath: [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes
+ /Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar]
+[DEBUG] Output directory: /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.5:testResources (default-testResources) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-resources-plugin:2.5:testResources from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-resources-plugin:2.5, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[debug] execute contextualize
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-resources-plugin:2.5:testResources' with basic configurator -->
+[DEBUG]   (f) buildFilters = []
+[DEBUG]   (f) encoding = UTF-8
+[DEBUG]   (f) escapeWindowsPaths = true
+[DEBUG]   (s) includeEmptyDirs = false
+[DEBUG]   (s) outputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/test-classes
+[DEBUG]   (s) overwrite = false
+[DEBUG]   (f) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (s) resources = [Resource {targetPath: null, filtering: false, FileSet {directory: /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/test/resources, PatternSet [includes: {}, excludes: {}]}}]
+[DEBUG]   (f) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG]   (f) supportMultiLineFiltering = false
+[DEBUG]   (f) useBuildFilters = true
+[DEBUG]   (s) useDefaultDelimiters = true
+[DEBUG] -- end configuration --
+[DEBUG] properties used {java.vendor=Apple Inc., sun.java.launcher=SUN_STANDARD, source.repository=coherence-incubator, sun.management.compiler=HotSpot 64-Bit Tiered Compilers, env.SECURITYSESSIONID=186a5, maven.source.plugin.version=2.2.1, hamcrest.version=1.2, os.name=Mac OS X, sun.boot.class.path=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsfd.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Frameworks/JavaRuntimeSupport.framework/Resources/Java/JavaRuntimeSupport.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/laf.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/sunrsasign.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsse.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jce.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/charsets.jar, env.TMPDIR=/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/, env.Apple_Ubiquity_Message=/tmp/launch-tiCRiE/Apple_Ubiquity_Message, env.PWD=/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app, maven.enforcer.plugin.version=1.0.1, maven.install.plugin.version=2.4, env.LANG=en_US.UTF-8, maven.site.plugin.version=3.2, java.vm.specification.vendor=Sun Microsystems Inc., java.runtime.version=1.6.0_37-b06-434-11M3909, env.Apple_PubSub_Socket_Render=/tmp/launch-BpZ7IG/Render, project.build.sourceEncoding=UTF-8, user.name=narliss, maven.build.version=Apache Maven 3.0.4 (r1232337; 2012-01-17 03:44:56-0500), env.USER=narliss, javax.jms.version=1.1, env.SHELL=/bin/bash, env.__CF_USER_TEXT_ENCODING=0x1F5:0:0, awt.nativeDoubleBuffering=true, maven.javadoc.plugin.version=2.9, source.branch=develop-11, env.PATH=/opt/local/bin:/opt/local/sbin:/usr/share/apache-maven-3.0.4/bin:/opt/local/bin:/opt/local/sbin:/usr/share/atlassian-plugin-sdk-4.1.2/bin:/Applications/Araxis:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin, mockito.version=1.9.0, user.language=en, sun.boot.library.path=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Libraries, classworlds.conf=/usr/share/apache-maven-3.0.4/bin/m2.conf, env.ATLAS_HOME=/usr/share/atlassian-plugin-sdk-4.1.2, powermock.version=1.4.12, java.version=1.6.0_37, user.timezone=America/New_York, sun.arch.data.model=64, http.nonProxyHosts=local|*.local|169.254/16|*.169.254/16|oracle.com|*.oracle.com|oracleads.com|*.oracleads.com|us.oracle.com|*.us.oracle.com|uk.oracle.com|*.uk.oracle.com|ca.oracle.com|*.ca.oracle.com|oraclecorp.com|*.oraclecorp.com|oracleportal.com|*.oracleportal.com|oraclevpn.com|*.oraclevpn.com|adc-twvpn-2.oraclevpn.com|*.adc-twvpn-2.oraclevpn.com, java.endorsed.dirs=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/endorsed, sun.cpu.isalist=, sun.jnu.encoding=MacRoman, env.ITERM_SESSION_ID=w0t1p0, file.encoding.pkg=sun.io, env.SHLVL=1, glassfish.javax-impl.version=2.2, file.separator=/, java.specification.name=Java Platform API Specification, glassfish.javax.version=2.2.3, java.class.version=50.0, user.country=US, java.home=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home, java.vm.info=mixed mode, env.LOGNAME=narliss, os.version=10.8.2, env.JAVA_MAIN_CLASS_23278=org.codehaus.plexus.classworlds.launcher.Launcher, path.separator=:, java.vm.version=20.12-b01-434, jettyVersion=8.1.0.RC0, oracle.tools.version=0.0.8, java.awt.printerjob=apple.awt.CPrinterJob, env.TERM=xterm, cglib.version=2.2.2, sun.io.unicode.encoding=UnicodeLittle, rhino.version=1.6R5, oracle.coherence.version=3.7.1.8, awt.toolkit=apple.awt.CToolkit, socksNonProxyHosts=local|*.local|169.254/16|*.169.254/16|oracle.com|*.oracle.com|oracleads.com|*.oracleads.com|us.oracle.com|*.us.oracle.com|uk.oracle.com|*.uk.oracle.com|ca.oracle.com|*.ca.oracle.com|oraclecorp.com|*.oraclecorp.com|oracleportal.com|*.oracleportal.com|oraclevpn.com|*.oraclevpn.com|adc-twvpn-2.oraclevpn.com|*.adc-twvpn-2.oraclevpn.com, maven.shade.plugin.version=1.7, ftp.nonProxyHosts=local|*.local|169.254/16|*.169.254/16|oracle.com|*.oracle.com|oracleads.com|*.oracleads.com|us.oracle.com|*.us.oracle.com|uk.oracle.com|*.uk.oracle.com|ca.oracle.com|*.ca.oracle.com|oraclecorp.com|*.oraclecorp.com|oracleportal.com|*.oracleportal.com|oraclevpn.com|*.oraclevpn.com|adc-twvpn-2.oraclevpn.com|*.adc-twvpn-2.oraclevpn.com, user.home=/Users/narliss, env.OLDPWD=/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app, java.specification.vendor=Sun Microsystems Inc., skip-sign-artifacts=true, env.TERM_PROGRAM=iTerm.app, java.library.path=.:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java, java.vendor.url=http://www.apple.com/, easymock.version=3.1, java.vm.vendor=Apple Inc., gopherProxySet=false, maven.home=/usr/share/apache-maven-3.0.4, java.runtime.name=Java(TM) SE Runtime Environment, sun.java.command=org.codehaus.plexus.classworlds.launcher.Launcher -X clean package, java.class.path=/usr/share/apache-maven-3.0.4/boot/plexus-classworlds-2.4.jar, env.com.apple.java.jvmMode=client, maven.version=3.0.4, glassfish.jstl.version=1.2, maven.surefire.plugin.version=2.13, maven.gpg.plugin.version=1.4, java.vm.specification.name=Java Virtual Machine Specification, maven.dependency.plugin.version=2.6, maven.deploy.plugin.version=2.7, maven.war.plugin.version=2.3, java.vm.specification.version=1.0, source.owner=coherence-community, sun.cpu.endian=little, sun.os.patch.level=unknown, maven.jar.plugin.version=2.4, env.HOME=/Users/narliss, java.io.tmpdir=/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/, maven.compiler.plugin.version=2.3.2, java.vendor.url.bug=http://bugreport.apple.com/, env.SSH_AUTH_SOCK=/tmp/launch-MJrGMt/Listeners, env.COMMAND_MODE=unix2003, mrj.build=11M3909, os.arch=x86_64, java.awt.graphicsenv=apple.awt.CGraphicsEnvironment, java.ext.dirs=/Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/ext, amazonaws.version=1.3.14, maven.release.plugin.version=2.2.1, maven.resources.plugin.version=2.6, github.site.maven.plugin.version=0.7, mrj.version=1070.1.6.0_37-434, env.com.apple.java.jvmTask=CommandLine_Manual.java, user.dir=/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app, httpunit.version=1.7, line.separator=
+, java.vm.name=Java HotSpot(TM) 64-Bit Server VM, activemq.version=5.3.1, doxia.module.markdown.version=1.0, env.ITERM_PROFILE=Default, jvnetDistMgmtSnapshotsUrl=https://maven.java.net/content/repositories/snapshots/, file.encoding=MacRoman, miglayout.version=3.6, java.specification.version=1.6, junit.version=4.10}
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[DEBUG] resource with targetPath null
+directory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/test/resources
+excludes []
+includes []
+[INFO] skip non existing resourceDirectory /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/test/resources
+[DEBUG] no use filter components
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-compiler-plugin:2.3.2:testCompile from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-compiler-plugin:2.3.2, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-compiler-plugin:2.3.2:testCompile' with basic configurator -->
+[DEBUG]   (f) basedir = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app
+[DEBUG]   (f) buildDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target
+[DEBUG]   (f) classpathElements = [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/test-classes, /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes, /Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar]
+[DEBUG]   (f) compileSourceRoots = [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/test/java]
+[DEBUG]   (f) compilerId = javac
+[DEBUG]   (f) debug = true
+[DEBUG]   (f) encoding = UTF-8
+[DEBUG]   (f) failOnError = true
+[DEBUG]   (f) fork = false
+[DEBUG]   (f) generatedTestSourcesDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/generated-sources/test-annotations
+[DEBUG]   (f) optimize = false
+[DEBUG]   (f) outputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/test-classes
+[DEBUG]   (f) outputFileName = coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT
+[DEBUG]   (f) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG]   (f) showDeprecation = false
+[DEBUG]   (f) showWarnings = false
+[DEBUG]   (f) source = 1.6
+[DEBUG]   (f) staleMillis = 0
+[DEBUG]   (f) target = 1.6
+[DEBUG]   (f) verbose = false
+[DEBUG] -- end configuration --
+[DEBUG] Using compiler 'javac'.
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.13:test (default-test) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] org.apache.maven.plugins:maven-surefire-plugin:jar:2.13:
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.0.9:compile
+[DEBUG]    org.apache.maven.surefire:maven-surefire-common:jar:2.13:compile
+[DEBUG]       org.apache.maven.surefire:surefire-booter:jar:2.13:compile
+[DEBUG]       org.apache.maven:maven-artifact:jar:2.0.9:compile
+[DEBUG]          org.codehaus.plexus:plexus-utils:jar:1.5.1:compile
+[DEBUG]       org.apache.maven:maven-plugin-descriptor:jar:2.0.9:compile
+[DEBUG]          org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+[DEBUG]             junit:junit:jar:3.8.1:test (scope managed from compile)
+[DEBUG]       org.apache.maven:maven-project:jar:2.0.9:compile
+[DEBUG]          org.apache.maven:maven-settings:jar:2.0.9:compile
+[DEBUG]          org.apache.maven:maven-profile:jar:2.0.9:compile
+[DEBUG]          org.apache.maven:maven-artifact-manager:jar:2.0.9:compile
+[DEBUG]          org.apache.maven:maven-plugin-registry:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-model:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-core:jar:2.0.9:compile
+[DEBUG]          org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.9:compile
+[DEBUG]          org.apache.maven.reporting:maven-reporting-api:jar:2.0.9:compile
+[DEBUG]          org.apache.maven:maven-repository-metadata:jar:2.0.9:compile
+[DEBUG]          org.apache.maven:maven-error-diagnostics:jar:2.0.9:compile
+[DEBUG]          org.apache.maven:maven-monitor:jar:2.0.9:compile
+[DEBUG]          classworlds:classworlds:jar:1.1:compile
+[DEBUG]       org.apache.commons:commons-lang3:jar:3.1:compile
+[DEBUG]    org.apache.maven.surefire:surefire-api:jar:2.13:compile
+[DEBUG]    org.apache.maven:maven-toolchain:jar:2.0.9:compile
+[DEBUG]    org.apache.maven.plugin-tools:maven-plugin-annotations:jar:3.2:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-surefire-plugin:2.13
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-surefire-plugin:2.13
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-surefire-plugin:2.13
+[DEBUG]   Included: org.apache.maven.plugins:maven-surefire-plugin:jar:2.13
+[DEBUG]   Included: org.apache.maven.surefire:maven-surefire-common:jar:2.13
+[DEBUG]   Included: org.apache.maven.surefire:surefire-booter:jar:2.13
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:1.5.1
+[DEBUG]   Included: org.apache.maven.reporting:maven-reporting-api:jar:2.0.9
+[DEBUG]   Included: org.apache.commons:commons-lang3:jar:3.1
+[DEBUG]   Included: org.apache.maven.surefire:surefire-api:jar:2.13
+[DEBUG]   Included: org.apache.maven.plugin-tools:maven-plugin-annotations:jar:3.2
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-artifact:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-descriptor:jar:2.0.9
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1
+[DEBUG]   Excluded: junit:junit:jar:3.8.1
+[DEBUG]   Excluded: org.apache.maven:maven-project:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-settings:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-profile:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-artifact-manager:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-registry:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-model:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-core:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-repository-metadata:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-error-diagnostics:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-monitor:jar:2.0.9
+[DEBUG]   Excluded: classworlds:classworlds:jar:1.1
+[DEBUG]   Excluded: org.apache.maven:maven-toolchain:jar:2.0.9
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-surefire-plugin:2.13:test from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-surefire-plugin:2.13, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-surefire-plugin:2.13:test' with basic configurator -->
+[DEBUG]   (s) argLine = -Xms800m -Xmx800m -XX:MaxPermSize=500m
+[DEBUG]   (s) basedir = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app
+[DEBUG]   (s) childDelegation = false
+[DEBUG]   (s) classesDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes
+[DEBUG]   (s) disableXmlReport = false
+[DEBUG]   (s) enableAssertions = true
+[DEBUG]   (s) forkMode = once
+[DEBUG]   (s) includes = [**/*FunctionalTest.java, **/*Test.java, **/*Tests.java]
+[DEBUG]   (s) junitArtifactName = junit:junit
+[DEBUG]   (s) localRepository =        id: local
+      url: file:///Users/narliss/Workshop/maven/
+   layout: none
+
+[DEBUG]   (f) parallelMavenExecution = false
+[DEBUG]   (s) perCoreThreadCount = true
+[DEBUG]   (s) pluginArtifactMap = {org.apache.maven.plugins:maven-surefire-plugin=org.apache.maven.plugins:maven-surefire-plugin:maven-plugin:2.13:, org.apache.maven.surefire:maven-surefire-common=org.apache.maven.surefire:maven-surefire-common:jar:2.13:compile, org.apache.maven.surefire:surefire-booter=org.apache.maven.surefire:surefire-booter:jar:2.13:compile, org.codehaus.plexus:plexus-utils=org.codehaus.plexus:plexus-utils:jar:1.5.1:compile, org.apache.maven.reporting:maven-reporting-api=org.apache.maven.reporting:maven-reporting-api:jar:2.0.9:compile, org.apache.commons:commons-lang3=org.apache.commons:commons-lang3:jar:3.1:compile, org.apache.maven.surefire:surefire-api=org.apache.maven.surefire:surefire-api:jar:2.13:compile, org.apache.maven.plugin-tools:maven-plugin-annotations=org.apache.maven.plugin-tools:maven-plugin-annotations:jar:3.2:compile}
+[DEBUG]   (f) pluginDescriptor = Component Descriptor: role: 'org.apache.maven.plugin.Mojo', implementation: 'org.apache.maven.plugin.surefire.SurefirePlugin', role hint: 'org.apache.maven.plugins:maven-surefire-plugin:2.13:test'
+role: 'org.apache.maven.plugin.Mojo', implementation: 'org.apache.maven.plugin.surefire.HelpMojo', role hint: 'org.apache.maven.plugins:maven-surefire-plugin:2.13:help'
+---
+[DEBUG]   (s) printSummary = true
+[DEBUG]   (s) projectArtifactMap = {com.oracle.coherence.incubator:coherence-pushreplicationpattern-web=com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:jar:11.0.1-SNAPSHOT:compile}
+[DEBUG]   (s) redirectTestOutputToFile = false
+[DEBUG]   (s) remoteRepositories = [       id: atlassian-public
+      url: https://m2proxy.atlassian.com/repository/public
+   layout: default
+snapshots: [enabled => true, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: central
+      url: http://repo.maven.apache.org/maven2
+   layout: default
+snapshots: [enabled => false, update => daily]
+ releases: [enabled => true, update => never]
+]
+[DEBUG]   (s) reportFormat = brief
+[DEBUG]   (s) reportsDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/surefire-reports
+[DEBUG]   (f) reuseForks = false
+[DEBUG]   (s) runOrder = filesystem
+[DEBUG]   (s) skip = true
+[DEBUG]   (s) skipTests = false
+[DEBUG]   (s) testClassesDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/test-classes
+[DEBUG]   (s) testFailureIgnore = false
+[DEBUG]   (s) testNGArtifactName = org.testng:testng
+[DEBUG]   (s) testSourceDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/test/java
+[DEBUG]   (s) trimStackTrace = true
+[DEBUG]   (s) useFile = true
+[DEBUG]   (s) useManifestOnlyJar = false
+[DEBUG]   (s) useSystemClassLoader = true
+[DEBUG]   (s) useUnlimitedThreads = false
+[DEBUG]   (s) workingDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app
+[DEBUG]   (s) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (s) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG] -- end configuration --
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-war-plugin:2.3:war (default-war) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] org.apache.maven.plugins:maven-war-plugin:jar:2.3:
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-artifact:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-model:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-project:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-profile:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-artifact-manager:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-plugin-registry:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-core:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.6:compile
+[DEBUG]       org.apache.maven.reporting:maven-reporting-api:jar:2.0.6:compile
+[DEBUG]          org.apache.maven.doxia:doxia-sink-api:jar:1.0-alpha-7:compile
+[DEBUG]       org.apache.maven:maven-repository-metadata:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-error-diagnostics:jar:2.0.6:compile
+[DEBUG]       commons-cli:commons-cli:jar:1.0:compile
+[DEBUG]       org.apache.maven:maven-plugin-descriptor:jar:2.0.6:compile
+[DEBUG]       org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4:compile
+[DEBUG]       classworlds:classworlds:jar:1.1:compile
+[DEBUG]    org.apache.maven:maven-settings:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-monitor:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-archiver:jar:2.5:compile
+[DEBUG]    org.codehaus.plexus:plexus-io:jar:2.0.5:compile
+[DEBUG]    org.codehaus.plexus:plexus-archiver:jar:2.2:compile
+[DEBUG]    org.codehaus.plexus:plexus-interpolation:jar:1.15:compile
+[DEBUG]    org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+[DEBUG]       junit:junit:jar:3.8.1:compile
+[DEBUG]    com.thoughtworks.xstream:xstream:jar:1.4.3:compile
+[DEBUG]       xmlpull:xmlpull:jar:1.1.3.1:compile
+[DEBUG]       xpp3:xpp3_min:jar:1.1.4c:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:3.0.8:compile
+[DEBUG]    org.apache.maven.shared:maven-filtering:jar:1.0-beta-2:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-war-plugin:2.3
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-war-plugin:2.3
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-war-plugin:2.3
+[DEBUG]   Included: org.apache.maven.plugins:maven-war-plugin:jar:2.3
+[DEBUG]   Included: org.apache.maven.reporting:maven-reporting-api:jar:2.0.6
+[DEBUG]   Included: org.apache.maven.doxia:doxia-sink-api:jar:1.0-alpha-7
+[DEBUG]   Included: commons-cli:commons-cli:jar:1.0
+[DEBUG]   Included: org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4
+[DEBUG]   Included: org.apache.maven:maven-archiver:jar:2.5
+[DEBUG]   Included: org.codehaus.plexus:plexus-io:jar:2.0.5
+[DEBUG]   Included: org.codehaus.plexus:plexus-archiver:jar:2.2
+[DEBUG]   Included: org.codehaus.plexus:plexus-interpolation:jar:1.15
+[DEBUG]   Included: junit:junit:jar:3.8.1
+[DEBUG]   Included: com.thoughtworks.xstream:xstream:jar:1.4.3
+[DEBUG]   Included: xmlpull:xmlpull:jar:1.1.3.1
+[DEBUG]   Included: xpp3:xpp3_min:jar:1.1.4c
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:3.0.8
+[DEBUG]   Included: org.apache.maven.shared:maven-filtering:jar:1.0-beta-2
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-artifact:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-model:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-project:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-profile:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-artifact-manager:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-registry:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-core:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-repository-metadata:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-error-diagnostics:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-descriptor:jar:2.0.6
+[DEBUG]   Excluded: classworlds:classworlds:jar:1.1
+[DEBUG]   Excluded: org.apache.maven:maven-settings:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-monitor:jar:2.0.6
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-war-plugin:2.3:war from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-war-plugin:2.3, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-war-plugin:2.3:war' with basic configurator -->
+[DEBUG]   (s) mainClass = com.oracle.coherence.patterns.pushreplication.cohweb.examples.WebServer
+[DEBUG]   (s) manifest = org.apache.maven.archiver.ManifestConfiguration@7ba6eeab
+[DEBUG]   (s) manifestEntries = {Version=11.0.1-SNAPSHOT}
+[DEBUG]   (f) archive = org.apache.maven.archiver.MavenArchiveConfiguration@c7f5bf9
+[DEBUG]   (s) archiveClasses = false
+[DEBUG]   (s) attachClasses = false
+[DEBUG]   (s) cacheFile = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/war/work/webapp-cache.xml
+[DEBUG]   (s) classesClassifier = classes
+[DEBUG]   (s) classesDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes
+[DEBUG]   (f) escapedBackslashesInFilePath = false
+[DEBUG]   (s) failOnMissingWebXml = true
+[DEBUG]   (f) filteringDeploymentDescriptors = false
+[DEBUG]   (s) outputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target
+[DEBUG]   (s) primaryArtifact = true
+[DEBUG]   (f) recompressZippedFiles = false
+[DEBUG]   (f) resourceEncoding = UTF-8
+[DEBUG]   (s) useCache = false
+[DEBUG]   (s) warName = coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT
+[DEBUG]   (s) warSourceDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/webapp
+[DEBUG]   (s) warSourceIncludes = **
+[DEBUG]   (s) directory = src/main/external-resources
+[DEBUG]   (s) webResources = [Resource {targetPath: null, filtering: false, FileSet {directory: src/main/external-resources, PatternSet [includes: {}, excludes: {}]}}]
+[DEBUG]   (s) webappDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT
+[DEBUG]   (s) workDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/war/work
+[DEBUG]   (s) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (f) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG] -- end configuration --
+[INFO] Packaging webapp
+[INFO] Assembling webapp [coherence-pushreplicationpattern-web-app] in [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT]
+[DEBUG] properties used {java.vendor=Apple Inc., sun.java.launcher=SUN_STANDARD, source.repository=coherence-incubator, sun.management.compiler=HotSpot 64-Bit Tiered Compilers, env.SECURITYSESSIONID=186a5, maven.source.plugin.version=2.2.1, hamcrest.version=1.2, os.name=Mac OS X, sun.boot.class.path=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsfd.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Frameworks/JavaRuntimeSupport.framework/Resources/Java/JavaRuntimeSupport.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/laf.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/sunrsasign.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsse.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jce.jar:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/charsets.jar, env.TMPDIR=/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/, env.Apple_Ubiquity_Message=/tmp/launch-tiCRiE/Apple_Ubiquity_Message, env.PWD=/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app, maven.enforcer.plugin.version=1.0.1, maven.install.plugin.version=2.4, env.LANG=en_US.UTF-8, maven.site.plugin.version=3.2, java.vm.specification.vendor=Sun Microsystems Inc., java.runtime.version=1.6.0_37-b06-434-11M3909, env.Apple_PubSub_Socket_Render=/tmp/launch-BpZ7IG/Render, project.build.sourceEncoding=UTF-8, user.name=narliss, maven.build.version=Apache Maven 3.0.4 (r1232337; 2012-01-17 03:44:56-0500), env.USER=narliss, javax.jms.version=1.1, env.SHELL=/bin/bash, env.__CF_USER_TEXT_ENCODING=0x1F5:0:0, awt.nativeDoubleBuffering=true, maven.javadoc.plugin.version=2.9, source.branch=develop-11, env.PATH=/opt/local/bin:/opt/local/sbin:/usr/share/apache-maven-3.0.4/bin:/opt/local/bin:/opt/local/sbin:/usr/share/atlassian-plugin-sdk-4.1.2/bin:/Applications/Araxis:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin, mockito.version=1.9.0, user.language=en, sun.boot.library.path=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Libraries, classworlds.conf=/usr/share/apache-maven-3.0.4/bin/m2.conf, env.ATLAS_HOME=/usr/share/atlassian-plugin-sdk-4.1.2, powermock.version=1.4.12, java.version=1.6.0_37, user.timezone=America/New_York, sun.arch.data.model=64, http.nonProxyHosts=local|*.local|169.254/16|*.169.254/16|oracle.com|*.oracle.com|oracleads.com|*.oracleads.com|us.oracle.com|*.us.oracle.com|uk.oracle.com|*.uk.oracle.com|ca.oracle.com|*.ca.oracle.com|oraclecorp.com|*.oraclecorp.com|oracleportal.com|*.oracleportal.com|oraclevpn.com|*.oraclevpn.com|adc-twvpn-2.oraclevpn.com|*.adc-twvpn-2.oraclevpn.com, java.endorsed.dirs=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/endorsed, file.encoding.pkg=sun.io, env.ITERM_SESSION_ID=w0t1p0, sun.jnu.encoding=MacRoman, sun.cpu.isalist=, env.SHLVL=1, glassfish.javax-impl.version=2.2, java.specification.name=Java Platform API Specification, file.separator=/, java.class.version=50.0, glassfish.javax.version=2.2.3, user.country=US, java.home=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home, java.vm.info=mixed mode, os.version=10.8.2, env.LOGNAME=narliss, env.JAVA_MAIN_CLASS_23278=org.codehaus.plexus.classworlds.launcher.Launcher, path.separator=:, java.vm.version=20.12-b01-434, jettyVersion=8.1.0.RC0, oracle.tools.version=0.0.8, env.TERM=xterm, java.awt.printerjob=apple.awt.CPrinterJob, cglib.version=2.2.2, sun.io.unicode.encoding=UnicodeLittle, rhino.version=1.6R5, oracle.coherence.version=3.7.1.8, awt.toolkit=apple.awt.CToolkit, socksNonProxyHosts=local|*.local|169.254/16|*.169.254/16|oracle.com|*.oracle.com|oracleads.com|*.oracleads.com|us.oracle.com|*.us.oracle.com|uk.oracle.com|*.uk.oracle.com|ca.oracle.com|*.ca.oracle.com|oraclecorp.com|*.oraclecorp.com|oracleportal.com|*.oracleportal.com|oraclevpn.com|*.oraclevpn.com|adc-twvpn-2.oraclevpn.com|*.adc-twvpn-2.oraclevpn.com, maven.shade.plugin.version=1.7, ftp.nonProxyHosts=local|*.local|169.254/16|*.169.254/16|oracle.com|*.oracle.com|oracleads.com|*.oracleads.com|us.oracle.com|*.us.oracle.com|uk.oracle.com|*.uk.oracle.com|ca.oracle.com|*.ca.oracle.com|oraclecorp.com|*.oraclecorp.com|oracleportal.com|*.oracleportal.com|oraclevpn.com|*.oraclevpn.com|adc-twvpn-2.oraclevpn.com|*.adc-twvpn-2.oraclevpn.com, user.home=/Users/narliss, env.OLDPWD=/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app, java.specification.vendor=Sun Microsystems Inc., skip-sign-artifacts=true, env.TERM_PROGRAM=iTerm.app, java.vendor.url=http://www.apple.com/, java.library.path=.:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java, gopherProxySet=false, java.vm.vendor=Apple Inc., easymock.version=3.1, java.runtime.name=Java(TM) SE Runtime Environment, maven.home=/usr/share/apache-maven-3.0.4, java.class.path=/usr/share/apache-maven-3.0.4/boot/plexus-classworlds-2.4.jar, sun.java.command=org.codehaus.plexus.classworlds.launcher.Launcher -X clean package, env.com.apple.java.jvmMode=client, maven.version=3.0.4, maven.surefire.plugin.version=2.13, glassfish.jstl.version=1.2, maven.gpg.plugin.version=1.4, java.vm.specification.name=Java Virtual Machine Specification, maven.dependency.plugin.version=2.6, java.vm.specification.version=1.0, maven.war.plugin.version=2.3, maven.deploy.plugin.version=2.7, source.owner=coherence-community, sun.os.patch.level=unknown, sun.cpu.endian=little, env.HOME=/Users/narliss, maven.jar.plugin.version=2.4, java.io.tmpdir=/var/folders/cm/6gsnhp9n65d7bktk4k7ljmh80000gn/T/, maven.compiler.plugin.version=2.3.2, java.vendor.url.bug=http://bugreport.apple.com/, env.SSH_AUTH_SOCK=/tmp/launch-MJrGMt/Listeners, env.COMMAND_MODE=unix2003, mrj.build=11M3909, java.awt.graphicsenv=apple.awt.CGraphicsEnvironment, os.arch=x86_64, java.ext.dirs=/Library/Java/Extensions:/System/Library/Java/Extensions:/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/ext, github.site.maven.plugin.version=0.7, maven.resources.plugin.version=2.6, maven.release.plugin.version=2.2.1, amazonaws.version=1.3.14, user.dir=/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app, env.com.apple.java.jvmTask=CommandLine_Manual.java, mrj.version=1070.1.6.0_37-434, httpunit.version=1.7, line.separator=
+, java.vm.name=Java HotSpot(TM) 64-Bit Server VM, activemq.version=5.3.1, doxia.module.markdown.version=1.0, env.ITERM_PROFILE=Default, jvnetDistMgmtSnapshotsUrl=https://maven.java.net/content/repositories/snapshots/, file.encoding=MacRoman, miglayout.version=3.6, java.specification.version=1.6, junit.version=4.10}
+[INFO] Processing war project
+[INFO] Copying webapp webResources [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/external-resources] to [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT]
+[INFO] Copying webapp resources [/Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/webapp]
+[DEBUG]  + sessionAccess.jsp has been copied.
+[DEBUG]  + sessionAccessSpi.jsp has been copied.
+[DEBUG]  + WEB-INF/classes/session-cache-config.xml has been copied.
+[DEBUG]  + WEB-INF/web-spi.xml has been copied.
+[DEBUG]  + WEB-INF/web.xml has been copied.
+[DEBUG]  + WEB-INF/weblogic.xml has been copied.
+[DEBUG] Dump of the current build pathSet content -->
+[DEBUG] sessionAccess.jsp
+[DEBUG] sessionAccessSpi.jsp
+[DEBUG] WEB-INF/classes/session-cache-config.xml
+[DEBUG] WEB-INF/web-spi.xml
+[DEBUG] WEB-INF/web.xml
+[DEBUG] WEB-INF/weblogic.xml
+[DEBUG] -- end of dump --
+[DEBUG] Processing: coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar
+[DEBUG]  + WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar has been copied.
+[INFO] Webapp assembled in [270 msecs]
+[DEBUG] Excluding [] from the generated webapp archive.
+[DEBUG] Including [**] in the generated webapp archive.
+[INFO] Building war: /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.war
+[DEBUG] adding directory META-INF/
+[DEBUG] adding entry META-INF/MANIFEST.MF
+[DEBUG] adding directory WEB-INF/
+[DEBUG] adding directory WEB-INF/classes/
+[DEBUG] adding directory WEB-INF/lib/
+[DEBUG] adding entry sessionAccess.jsp
+[DEBUG] adding entry sessionAccessSpi.jsp
+[DEBUG] adding entry WEB-INF/classes/session-cache-config.xml
+[DEBUG] adding entry WEB-INF/lib/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar
+[DEBUG] adding entry WEB-INF/web-spi.xml
+[DEBUG] adding entry WEB-INF/web.xml
+[DEBUG] adding entry WEB-INF/weblogic.xml
+[DEBUG] WEB-INF/web.xml already added, skipping
+[DEBUG] adding directory META-INF/maven/
+[DEBUG] adding directory META-INF/maven/com.oracle.coherence.incubator/
+[DEBUG] adding directory META-INF/maven/com.oracle.coherence.incubator/coherence-pushreplicationpattern-web-app/
+[DEBUG] adding entry META-INF/maven/com.oracle.coherence.incubator/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG] adding entry META-INF/maven/com.oracle.coherence.incubator/coherence-pushreplicationpattern-web-app/pom.properties
+[INFO] 
+[INFO] >>> maven-source-plugin:2.2.1:jar (attach-sources) @ coherence-pushreplicationpattern-web-app >>>
+[DEBUG] com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT
+[DEBUG]    com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:jar:11.0.1-SNAPSHOT:compile
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-enforcer-plugin:1.0.1, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce' with basic configurator -->
+[DEBUG]   (s) fail = true
+[DEBUG]   (s) failFast = false
+[DEBUG]   (f) ignoreCache = false
+[DEBUG]   (s) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (s) version = (,2.1.0),(2.1.0,2.2.0),(2.2.0,)
+[DEBUG]   (f) message = Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures
+										and checksums respectively.
+[DEBUG]   (s) rules = [org.apache.maven.plugins.enforcer.RequireMavenVersion@1e731e90]
+[DEBUG]   (s) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG]   (s) skip = false
+[DEBUG] -- end configuration --
+[DEBUG] Executing rule: org.apache.maven.plugins.enforcer.RequireMavenVersion
+[DEBUG] Rule org.apache.maven.plugins.enforcer.RequireMavenVersion is cacheable.
+[DEBUG] Key org.apache.maven.plugins.enforcer.RequireMavenVersion 491827297 was found in the cache
+[DEBUG] The cached results are still valid. Skipping the rule: org.apache.maven.plugins.enforcer.RequireMavenVersion
+[INFO] 
+[INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-plugin-versions) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-enforcer-plugin:1.0.1, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-enforcer-plugin:1.0.1:enforce' with basic configurator -->
+[DEBUG]   (s) fail = true
+[DEBUG]   (s) failFast = false
+[DEBUG]   (f) ignoreCache = false
+[DEBUG]   (s) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (s) version = 3.0.4
+[DEBUG]   (s) version = 1.6.0
+[DEBUG]   (s) rules = [org.apache.maven.plugins.enforcer.RequireMavenVersion@17db8f8e, org.apache.maven.plugins.enforcer.RequireJavaVersion@4fadbfde]
+[DEBUG]   (s) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG]   (s) skip = false
+[DEBUG] -- end configuration --
+[DEBUG] Executing rule: org.apache.maven.plugins.enforcer.RequireMavenVersion
+[DEBUG] Rule org.apache.maven.plugins.enforcer.RequireMavenVersion is cacheable.
+[DEBUG] Key org.apache.maven.plugins.enforcer.RequireMavenVersion 48517563 was found in the cache
+[DEBUG] The cached results are still valid. Skipping the rule: org.apache.maven.plugins.enforcer.RequireMavenVersion
+[DEBUG] Executing rule: org.apache.maven.plugins.enforcer.RequireJavaVersion
+[DEBUG] Rule org.apache.maven.plugins.enforcer.RequireJavaVersion is cacheable.
+[DEBUG] Key org.apache.maven.plugins.enforcer.RequireJavaVersion 46676283 was found in the cache
+[DEBUG] The cached results are still valid. Skipping the rule: org.apache.maven.plugins.enforcer.RequireJavaVersion
+[INFO] 
+[INFO] <<< maven-source-plugin:2.2.1:jar (attach-sources) @ coherence-pushreplicationpattern-web-app <<<
+[INFO] 
+[INFO] --- maven-source-plugin:2.2.1:jar (attach-sources) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] org.apache.maven.plugins:maven-source-plugin:jar:2.2.1:
+[DEBUG]    org.apache.maven:maven-model:jar:2.0.9:compile
+[DEBUG]    org.apache.maven:maven-artifact:jar:2.0.9:compile
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.0.9:compile
+[DEBUG]    org.apache.maven:maven-project:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-settings:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-profile:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-artifact-manager:jar:2.0.9:compile
+[DEBUG]          org.apache.maven:maven-repository-metadata:jar:2.0.9:compile
+[DEBUG]       org.apache.maven:maven-plugin-registry:jar:2.0.9:compile
+[DEBUG]       org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+[DEBUG]          junit:junit:jar:3.8.1:compile
+[DEBUG]          classworlds:classworlds:jar:1.1-alpha-2:compile
+[DEBUG]    org.apache.maven:maven-archiver:jar:2.5:compile
+[DEBUG]       org.apache.maven:maven-core:jar:2.0.6:compile
+[DEBUG]          org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.6:compile
+[DEBUG]          org.apache.maven.reporting:maven-reporting-api:jar:2.0.6:compile
+[DEBUG]             org.apache.maven.doxia:doxia-sink-api:jar:1.0-alpha-7:compile
+[DEBUG]          org.apache.maven:maven-error-diagnostics:jar:2.0.6:compile
+[DEBUG]          commons-cli:commons-cli:jar:1.0:compile
+[DEBUG]          org.apache.maven:maven-plugin-descriptor:jar:2.0.6:compile
+[DEBUG]          org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4:compile
+[DEBUG]          org.apache.maven:maven-monitor:jar:2.0.6:compile
+[DEBUG]       org.codehaus.plexus:plexus-interpolation:jar:1.15:compile
+[DEBUG]    org.codehaus.plexus:plexus-archiver:jar:2.2:compile
+[DEBUG]       org.codehaus.plexus:plexus-io:jar:2.0.4:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:3.0.8:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-source-plugin:2.2.1
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-source-plugin:2.2.1
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-source-plugin:2.2.1
+[DEBUG]   Included: org.apache.maven.plugins:maven-source-plugin:jar:2.2.1
+[DEBUG]   Included: junit:junit:jar:3.8.1
+[DEBUG]   Included: org.apache.maven:maven-archiver:jar:2.5
+[DEBUG]   Included: org.apache.maven.reporting:maven-reporting-api:jar:2.0.6
+[DEBUG]   Included: org.apache.maven.doxia:doxia-sink-api:jar:1.0-alpha-7
+[DEBUG]   Included: commons-cli:commons-cli:jar:1.0
+[DEBUG]   Included: org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4
+[DEBUG]   Included: org.codehaus.plexus:plexus-interpolation:jar:1.15
+[DEBUG]   Included: org.codehaus.plexus:plexus-archiver:jar:2.2
+[DEBUG]   Included: org.codehaus.plexus:plexus-io:jar:2.0.4
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:3.0.8
+[DEBUG]   Excluded: org.apache.maven:maven-model:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-artifact:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-project:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-settings:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-profile:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-artifact-manager:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-repository-metadata:jar:2.0.9
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-registry:jar:2.0.9
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1
+[DEBUG]   Excluded: classworlds:classworlds:jar:1.1-alpha-2
+[DEBUG]   Excluded: org.apache.maven:maven-core:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-parameter-documenter:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-error-diagnostics:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-descriptor:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-monitor:jar:2.0.6
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-source-plugin:2.2.1:jar from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-source-plugin:2.2.1, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-source-plugin:2.2.1:jar' with basic configurator -->
+[DEBUG]   (f) attach = true
+[DEBUG]   (f) classifier = sources
+[DEBUG]   (f) defaultManifestFile = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes/META-INF/MANIFEST.MF
+[DEBUG]   (f) excludeResources = false
+[DEBUG]   (f) finalName = coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT
+[DEBUG]   (f) forceCreation = false
+[DEBUG]   (f) includePom = false
+[DEBUG]   (f) outputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target
+[DEBUG]   (f) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (f) reactorProjects = [MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml]
+[DEBUG]   (f) skipSource = false
+[DEBUG]   (f) useDefaultExcludes = true
+[DEBUG]   (f) useDefaultManifestFile = false
+[DEBUG] -- end configuration --
+[INFO] No sources in project. Archive not created.
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.9:jar (attach-javadocs) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] org.apache.maven.plugins:maven-javadoc-plugin:jar:2.9:
+[DEBUG]    org.apache.maven:maven-core:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-plugin-parameter-documenter:jar:2.2.1:compile
+[DEBUG]       org.slf4j:slf4j-jdk14:jar:1.5.6:runtime
+[DEBUG]          org.slf4j:slf4j-api:jar:1.5.6:runtime
+[DEBUG]       org.slf4j:jcl-over-slf4j:jar:1.5.6:runtime
+[DEBUG]       org.apache.maven:maven-profile:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-repository-metadata:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-error-diagnostics:jar:2.2.1:compile
+[DEBUG]       commons-cli:commons-cli:jar:1.2:compile
+[DEBUG]       org.apache.maven:maven-plugin-descriptor:jar:2.2.1:compile
+[DEBUG]       org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4:compile
+[DEBUG]       org.apache.maven:maven-monitor:jar:2.2.1:compile
+[DEBUG]       classworlds:classworlds:jar:1.1:compile
+[DEBUG]       org.sonatype.plexus:plexus-sec-dispatcher:jar:1.3:compile
+[DEBUG]          org.sonatype.plexus:plexus-cipher:jar:1.4:compile
+[DEBUG]    org.apache.maven:maven-project:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-plugin-registry:jar:2.2.1:compile
+[DEBUG]       org.codehaus.plexus:plexus-interpolation:jar:1.11:compile
+[DEBUG]    org.apache.maven:maven-model:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-settings:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-artifact:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-artifact-manager:jar:2.2.1:compile
+[DEBUG]       backport-util-concurrent:backport-util-concurrent:jar:3.1:compile
+[DEBUG]    org.apache.maven:maven-toolchain:jar:2.2.1:compile
+[DEBUG]    org.apache.maven.reporting:maven-reporting-api:jar:3.0:compile
+[DEBUG]    org.apache.maven:maven-archiver:jar:2.5:compile
+[DEBUG]    org.apache.maven.shared:maven-invoker:jar:2.0.9:compile
+[DEBUG]    org.apache.maven.shared:maven-common-artifact-filters:jar:1.3:compile
+[DEBUG]    org.apache.maven.doxia:doxia-sink-api:jar:1.0:compile
+[DEBUG]    org.apache.maven.doxia:doxia-site-renderer:jar:1.0:compile
+[DEBUG]       org.apache.maven.doxia:doxia-core:jar:1.0:compile
+[DEBUG]       org.codehaus.plexus:plexus-i18n:jar:1.0-beta-7:compile
+[DEBUG]       org.codehaus.plexus:plexus-velocity:jar:1.1.7:compile
+[DEBUG]       org.apache.velocity:velocity:jar:1.5:compile
+[DEBUG]          oro:oro:jar:2.0.8:compile
+[DEBUG]       org.apache.maven.doxia:doxia-decoration-model:jar:1.0:compile
+[DEBUG]       commons-collections:commons-collections:jar:3.2:compile
+[DEBUG]       org.apache.maven.doxia:doxia-module-apt:jar:1.0:compile
+[DEBUG]       org.apache.maven.doxia:doxia-module-fml:jar:1.0:compile
+[DEBUG]       org.apache.maven.doxia:doxia-module-xdoc:jar:1.0:compile
+[DEBUG]       org.apache.maven.doxia:doxia-module-xhtml:jar:1.0:compile
+[DEBUG]    org.apache.maven.wagon:wagon-provider-api:jar:1.0-beta-6:compile
+[DEBUG]    commons-lang:commons-lang:jar:2.4:compile
+[DEBUG]    commons-io:commons-io:jar:2.2:compile
+[DEBUG]    commons-httpclient:commons-httpclient:jar:3.1:compile
+[DEBUG]       commons-codec:commons-codec:jar:1.2:compile
+[DEBUG]    commons-logging:commons-logging:jar:1.1.1:compile
+[DEBUG]    log4j:log4j:jar:1.2.14:compile
+[DEBUG]    com.thoughtworks.qdox:qdox:jar:1.12:compile
+[DEBUG]    org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9:compile
+[DEBUG]       junit:junit:jar:3.8.1:compile
+[DEBUG]    org.codehaus.plexus:plexus-archiver:jar:2.1.2:compile
+[DEBUG]       org.codehaus.plexus:plexus-io:jar:2.0.4:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:3.0.5:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-javadoc-plugin:2.9
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-javadoc-plugin:2.9
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-javadoc-plugin:2.9
+[DEBUG]   Included: org.apache.maven.plugins:maven-javadoc-plugin:jar:2.9
+[DEBUG]   Included: org.slf4j:slf4j-jdk14:jar:1.5.6
+[DEBUG]   Included: org.slf4j:slf4j-api:jar:1.5.6
+[DEBUG]   Included: org.slf4j:jcl-over-slf4j:jar:1.5.6
+[DEBUG]   Included: commons-cli:commons-cli:jar:1.2
+[DEBUG]   Included: org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4
+[DEBUG]   Included: org.sonatype.plexus:plexus-sec-dispatcher:jar:1.3
+[DEBUG]   Included: org.sonatype.plexus:plexus-cipher:jar:1.4
+[DEBUG]   Included: org.codehaus.plexus:plexus-interpolation:jar:1.11
+[DEBUG]   Included: backport-util-concurrent:backport-util-concurrent:jar:3.1
+[DEBUG]   Included: org.apache.maven.reporting:maven-reporting-api:jar:3.0
+[DEBUG]   Included: org.apache.maven:maven-archiver:jar:2.5
+[DEBUG]   Included: org.apache.maven.shared:maven-invoker:jar:2.0.9
+[DEBUG]   Included: org.apache.maven.shared:maven-common-artifact-filters:jar:1.3
+[DEBUG]   Included: org.apache.maven.doxia:doxia-sink-api:jar:1.0
+[DEBUG]   Included: org.apache.maven.doxia:doxia-site-renderer:jar:1.0
+[DEBUG]   Included: org.apache.maven.doxia:doxia-core:jar:1.0
+[DEBUG]   Included: org.codehaus.plexus:plexus-i18n:jar:1.0-beta-7
+[DEBUG]   Included: org.codehaus.plexus:plexus-velocity:jar:1.1.7
+[DEBUG]   Included: org.apache.velocity:velocity:jar:1.5
+[DEBUG]   Included: oro:oro:jar:2.0.8
+[DEBUG]   Included: org.apache.maven.doxia:doxia-decoration-model:jar:1.0
+[DEBUG]   Included: commons-collections:commons-collections:jar:3.2
+[DEBUG]   Included: org.apache.maven.doxia:doxia-module-apt:jar:1.0
+[DEBUG]   Included: org.apache.maven.doxia:doxia-module-fml:jar:1.0
+[DEBUG]   Included: org.apache.maven.doxia:doxia-module-xdoc:jar:1.0
+[DEBUG]   Included: org.apache.maven.doxia:doxia-module-xhtml:jar:1.0
+[DEBUG]   Included: commons-lang:commons-lang:jar:2.4
+[DEBUG]   Included: commons-io:commons-io:jar:2.2
+[DEBUG]   Included: commons-httpclient:commons-httpclient:jar:3.1
+[DEBUG]   Included: commons-codec:commons-codec:jar:1.2
+[DEBUG]   Included: commons-logging:commons-logging:jar:1.1.1
+[DEBUG]   Included: log4j:log4j:jar:1.2.14
+[DEBUG]   Included: com.thoughtworks.qdox:qdox:jar:1.12
+[DEBUG]   Included: junit:junit:jar:3.8.1
+[DEBUG]   Included: org.codehaus.plexus:plexus-archiver:jar:2.1.2
+[DEBUG]   Included: org.codehaus.plexus:plexus-io:jar:2.0.4
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:3.0.5
+[DEBUG]   Excluded: org.apache.maven:maven-core:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-parameter-documenter:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-profile:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-repository-metadata:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-error-diagnostics:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-descriptor:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-monitor:jar:2.2.1
+[DEBUG]   Excluded: classworlds:classworlds:jar:1.1
+[DEBUG]   Excluded: org.apache.maven:maven-project:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-registry:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-model:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-settings:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-artifact:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-artifact-manager:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-toolchain:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven.wagon:wagon-provider-api:jar:1.0-beta-6
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-javadoc-plugin:2.9:jar from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-javadoc-plugin:2.9, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-javadoc-plugin:2.9:jar' with basic configurator -->
+[DEBUG]   (f) aggregate = false
+[DEBUG]   (f) attach = true
+[DEBUG]   (f) author = true
+[DEBUG]   (f) bootclasspathArtifacts = []
+[DEBUG]   (f) bottom = Copyright &#169; {inceptionYear}-{currentYear} {organizationName}. All Rights Reserved.
+[DEBUG]   (f) breakiterator = false
+[DEBUG]   (f) debug = false
+[DEBUG]   (f) defaultManifestFile = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/classes/META-INF/MANIFEST.MF
+[DEBUG]   (f) detectJavaApiLink = true
+[DEBUG]   (f) detectLinks = false
+[DEBUG]   (f) detectOfflineLinks = true
+[DEBUG]   (f) docfilessubdirs = false
+[DEBUG]   (f) docletArtifact = groupId = 'null'
+artifactId = 'null'
+version = 'null'
+[DEBUG]   (f) docletArtifacts = []
+[DEBUG]   (f) doctitle = coherence-pushreplicationpattern-web-app 11.0.1-SNAPSHOT API
+[DEBUG]   (f) encoding = UTF-8
+[DEBUG]   (f) failOnError = false
+[DEBUG]   (f) finalName = coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT
+[DEBUG]   (f) groups = []
+[DEBUG]   (f) includeDependencySources = false
+[DEBUG]   (f) includeTransitiveDependencySources = false
+[DEBUG]   (f) isOffline = false
+[DEBUG]   (f) jarOutputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target
+[DEBUG]   (f) javaApiLinks = {}
+[DEBUG]   (f) javadocDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/javadoc
+[DEBUG]   (f) javadocOptionsDir = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/javadoc-bundle-options
+[DEBUG]   (f) keywords = false
+[DEBUG]   (f) links = []
+[DEBUG]   (f) linksource = false
+[DEBUG]   (f) localRepository =        id: local
+      url: file:///Users/narliss/Workshop/maven/
+   layout: none
+
+[DEBUG]   (f) nocomment = false
+[DEBUG]   (f) nodeprecated = false
+[DEBUG]   (f) nodeprecatedlist = false
+[DEBUG]   (f) nohelp = false
+[DEBUG]   (f) noindex = false
+[DEBUG]   (f) nonavbar = false
+[DEBUG]   (f) nooverview = false
+[DEBUG]   (f) nosince = false
+[DEBUG]   (f) notimestamp = false
+[DEBUG]   (f) notree = false
+[DEBUG]   (f) offlineLinks = []
+[DEBUG]   (f) old = false
+[DEBUG]   (f) outputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/apidocs
+[DEBUG]   (f) overview = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/src/main/javadoc/overview.html
+[DEBUG]   (f) quiet = false
+[DEBUG]   (f) reactorProjects = [MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml]
+[DEBUG]   (f) remoteRepositories = [       id: virtual-release
+      url: http://tangosol-build.us.oracle.com:8081/artifactory/virtual-release
+   layout: default
+snapshots: [enabled => false, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: internal-release
+      url: http://tangosol-build.us.oracle.com:8081/artifactory/internal-release
+   layout: default
+snapshots: [enabled => false, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: internal-snapshot
+      url: http://tangosol-build.us.oracle.com:8081/artifactory/internal-snapshot
+   layout: default
+snapshots: [enabled => true, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: virtual-snapshot
+      url: http://tangosol-build.us.oracle.com:8081/artifactory/virtual-snapshot
+   layout: default
+snapshots: [enabled => true, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: atlassian-public
+      url: https://m2proxy.atlassian.com/repository/public
+   layout: default
+snapshots: [enabled => true, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: central
+      url: http://repo.maven.apache.org/maven2
+   layout: default
+snapshots: [enabled => false, update => daily]
+ releases: [enabled => true, update => daily]
+]
+[DEBUG]   (f) resourcesArtifacts = []
+[DEBUG]   (f) serialwarn = false
+[DEBUG]   (f) show = protected
+[DEBUG]   (f) skip = true
+[DEBUG]   (f) sourceDependencyCacheDir = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/distro-javadoc-sources
+[DEBUG]   (f) splitindex = false
+[DEBUG]   (f) stylesheet = java
+[DEBUG]   (f) tagletArtifact = groupId = 'null'
+artifactId = 'null'
+version = 'null'
+[DEBUG]   (f) tagletArtifacts = []
+[DEBUG]   (f) taglets = []
+[DEBUG]   (f) tags = []
+[DEBUG]   (f) use = true
+[DEBUG]   (f) useDefaultManifestFile = false
+[DEBUG]   (f) useStandardDocletOptions = true
+[DEBUG]   (f) validateLinks = false
+[DEBUG]   (f) verbose = false
+[DEBUG]   (f) version = true
+[DEBUG]   (f) windowtitle = coherence-pushreplicationpattern-web-app 11.0.1-SNAPSHOT API
+[DEBUG]   (f) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (f) session = org.apache.maven.execution.MavenSession@215200be
+[DEBUG]   (f) settings = org.apache.maven.execution.SettingsAdapter@5cfab5b1
+[DEBUG] -- end configuration --
+[INFO] Skipping javadoc generation
+[INFO] 
+[INFO] --- maven-shade-plugin:1.7:shade (default) @ coherence-pushreplicationpattern-web-app ---
+[DEBUG] org.apache.maven.plugins:maven-shade-plugin:jar:1.7:
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-model:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-project:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-settings:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-profile:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-artifact-manager:jar:2.0.6:compile
+[DEBUG]          org.apache.maven:maven-repository-metadata:jar:2.0.6:compile
+[DEBUG]       org.apache.maven:maven-plugin-registry:jar:2.0.6:compile
+[DEBUG]    org.apache.maven:maven-artifact:jar:2.0.6:compile
+[DEBUG]    org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+[DEBUG]       junit:junit:jar:3.8.1:compile
+[DEBUG]       classworlds:classworlds:jar:1.1-alpha-2:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:1.5.5:compile
+[DEBUG]    asm:asm:jar:3.3.1:compile
+[DEBUG]    asm:asm-commons:jar:3.3.1:compile
+[DEBUG]       asm:asm-tree:jar:3.3.1:compile
+[DEBUG]    org.jdom:jdom:jar:1.1:compile
+[DEBUG]    org.apache.maven.shared:maven-dependency-tree:jar:1.1:compile
+[DEBUG]    org.vafer:jdependency:jar:0.7:compile
+[DEBUG]       commons-io:commons-io:jar:1.3.2:compile
+[DEBUG]       asm:asm-analysis:jar:3.2:compile
+[DEBUG]       asm:asm-util:jar:3.2:compile
+[DEBUG]    org.codehaus.plexus:plexus-component-annotations:jar:1.5.5:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-shade-plugin:1.7
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-shade-plugin:1.7
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-shade-plugin:1.7
+[DEBUG]   Included: org.apache.maven.plugins:maven-shade-plugin:jar:1.7
+[DEBUG]   Included: junit:junit:jar:3.8.1
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:1.5.5
+[DEBUG]   Included: asm:asm:jar:3.3.1
+[DEBUG]   Included: asm:asm-commons:jar:3.3.1
+[DEBUG]   Included: asm:asm-tree:jar:3.3.1
+[DEBUG]   Included: org.jdom:jdom:jar:1.1
+[DEBUG]   Included: org.apache.maven.shared:maven-dependency-tree:jar:1.1
+[DEBUG]   Included: org.vafer:jdependency:jar:0.7
+[DEBUG]   Included: commons-io:commons-io:jar:1.3.2
+[DEBUG]   Included: asm:asm-analysis:jar:3.2
+[DEBUG]   Included: asm:asm-util:jar:3.2
+[DEBUG]   Included: org.codehaus.plexus:plexus-component-annotations:jar:1.5.5
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-model:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-project:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-settings:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-profile:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-artifact-manager:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-repository-metadata:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-registry:jar:2.0.6
+[DEBUG]   Excluded: org.apache.maven:maven-artifact:jar:2.0.6
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1
+[DEBUG]   Excluded: classworlds:classworlds:jar:1.1-alpha-2
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-shade-plugin:1.7:shade from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-shade-plugin:1.7, parent: sun.misc.Launcher$AppClassLoader@1f3e8d89]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-shade-plugin:1.7:shade' with basic configurator -->
+[DEBUG]   (f) createDependencyReducedPom = true
+[DEBUG]   (f) createSourcesJar = false
+[DEBUG]   (f) keepDependenciesWithProvidedScope = false
+[DEBUG]   (f) localRepository =        id: local
+      url: file:///Users/narliss/Workshop/maven/
+   layout: none
+
+[DEBUG]   (f) minimizeJar = false
+[DEBUG]   (f) outputDirectory = /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target
+[DEBUG]   (f) project = MavenProject: com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:11.0.1-SNAPSHOT @ /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/pom.xml
+[DEBUG]   (f) promoteTransitiveDependencies = false
+[DEBUG]   (f) remoteArtifactRepositories = [       id: virtual-release
+      url: http://tangosol-build.us.oracle.com:8081/artifactory/virtual-release
+   layout: default
+snapshots: [enabled => false, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: internal-release
+      url: http://tangosol-build.us.oracle.com:8081/artifactory/internal-release
+   layout: default
+snapshots: [enabled => false, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: internal-snapshot
+      url: http://tangosol-build.us.oracle.com:8081/artifactory/internal-snapshot
+   layout: default
+snapshots: [enabled => true, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: virtual-snapshot
+      url: http://tangosol-build.us.oracle.com:8081/artifactory/virtual-snapshot
+   layout: default
+snapshots: [enabled => true, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: atlassian-public
+      url: https://m2proxy.atlassian.com/repository/public
+   layout: default
+snapshots: [enabled => true, update => daily]
+ releases: [enabled => true, update => daily]
+,        id: central
+      url: http://repo.maven.apache.org/maven2
+   layout: default
+snapshots: [enabled => false, update => daily]
+ releases: [enabled => true, update => daily]
+]
+[DEBUG]   (f) shadedArtifactAttached = false
+[DEBUG]   (f) shadedArtifactId = coherence-pushreplicationpattern-web-app
+[DEBUG]   (f) shadedClassifierName = shaded
+[DEBUG] -- end configuration --
+[INFO] Including com.oracle.coherence.incubator:coherence-pushreplicationpattern-web:jar:11.0.1-SNAPSHOT in the shaded jar.
+[DEBUG] Processing JAR /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.war
+[DEBUG] Processing JAR /Users/narliss/Workshop/maven/com/oracle/coherence/incubator/coherence-pushreplicationpattern-web/11.0.1-SNAPSHOT/coherence-pushreplicationpattern-web-11.0.1-SNAPSHOT.jar
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] Replacing /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.war with /Users/narliss/dev/git/narliss-coherence-incubator/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target/coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT-shaded.war
+[DEBUG] Extension realms for project com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT: (none)
+[DEBUG] Looking up lifecyle mappings for packaging war from ClassRealm[plexus.core, parent: null]
+[DEBUG] Dependency tree resolution listener events:
+[DEBUG] testArtifact: artifact=com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT
+[DEBUG] includeArtifact: artifact=com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT
+[DEBUG] startProcessChildren: artifact=com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT
+[DEBUG] endProcessChildren: artifact=com.oracle.coherence.incubator:coherence-pushreplicationpattern-web-app:war:11.0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 13.677s
+[INFO] Finished at: Tue Mar 19 23:12:37 EDT 2013
+[INFO] Final Memory: 12M/81M
+[INFO] ------------------------------------------------------------------------
