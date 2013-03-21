@@ -10,7 +10,7 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
-*   Brian Oliver
+*   Jonathan Knight, Brian Oliver
 
 <h4>Global and Cross-Module Changes</h4>
 
@@ -34,6 +34,9 @@ reverse chronological order.
     in the `Runner` class that may prevent examples running on some platforms
     (like Windows).
 
+*   [COHINC-38](http://java.net/jira/browse/COHINC-38): Enhanced ConfigurableCacheFactory
+    Tests.
+
 <h4>coherence-commandpattern</h4>
 
 *   [COHINC-34](http://java.net/jira/browse/COHINC-34): Added missing pof-type
@@ -44,6 +47,9 @@ reverse chronological order.
 *   [COHINC-28](http://java.net/jira/browse/COHINC-28): Migrated Functional Test
     from internal Oracle Testing Framework.  These are contained in the new
     coherence-messagingpattern-tests module.
+
+*   [COHINC-37](http://java.net/jira/browse/COHINC-37): Changed JMS Dependency
+    to one that includes a jar artifact.
 
 <h4>coherence-pushreplicationpattern</h4>
 

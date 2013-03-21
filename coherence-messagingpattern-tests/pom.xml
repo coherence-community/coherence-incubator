@@ -10,7 +10,7 @@
 
     <artifactId>coherence-messagingpattern-tests</artifactId>
 
-    <name>Coherence Incubator Messaging Pattern Functional Tests</name>
+    <name>Coherence Incubator Messaging Pattern (functional tests)</name>
 
     <description>
        	Functional Tests for the Coherence Incubator Messaging Pattern.
