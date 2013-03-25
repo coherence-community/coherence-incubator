@@ -32,7 +32,7 @@ import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.DefaultConfigurationContext;
 import com.oracle.tools.junit.AbstractTest;
-import com.sun.jndi.fscontext.RefFSContext;
+import com.sun.jndi.dns.DnsContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -56,20 +56,18 @@ import static org.mockito.Mockito.when;
 public class JndiNamespaceContentHandlerTest extends AbstractTest
 {
     /**
-     * A simple test to ensure JNDI context lookups are possible.
+     * A simple test to ensure JNDI dns lookups are possible.
      *
      * @throws NamingException
      */
     @Test
     public void testSimpleJNDILookup() throws NamingException
     {
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.fscontext.RefFSContextFactory");
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
 
         Context ctx = new InitialContext();
 
-        String javaHomePath = System.getProperty("java.home");
-
-        Assert.assertNotNull(ctx.lookup(javaHomePath));
+        Assert.assertNotNull(ctx.lookup("dns:///www.oracle.com"));
     }
 
 
@@ -83,7 +81,7 @@ public class JndiNamespaceContentHandlerTest extends AbstractTest
     @Test
     public void testJNDINamespaceResource() throws NamingException, ConfigurationException, URISyntaxException
     {
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.fscontext.RefFSContextFactory");
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
 
         Environment     env            = mock(Environment.class);
 
@@ -100,8 +98,7 @@ public class JndiNamespaceContentHandlerTest extends AbstractTest
                                               new URI(String.format("class:%s",
                                                                     JndiNamespaceContentHandler.class.getName())));
 
-        String javaHomePath = System.getProperty("java.home");
-        String xml = "<jndi:resource><jndi:resource-name>" + javaHomePath + "</jndi:resource-name></jndi:resource>";
+        String xml = "<jndi:resource><jndi:resource-name>dns:///www.oracle.com</jndi:resource-name></jndi:resource>";
 
         Object processedElement = context.processElement(xml);
 
@@ -110,6 +107,6 @@ public class JndiNamespaceContentHandlerTest extends AbstractTest
 
         ParameterizedBuilder<?> classScheme = (ParameterizedBuilder<?>) processedElement;
 
-        Assert.assertTrue(classScheme.realizesClassOf(RefFSContext.class, null));
+        Assert.assertTrue(classScheme.realizesClassOf(DnsContext.class, null));
     }
 }

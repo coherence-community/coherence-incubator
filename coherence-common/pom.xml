@@ -85,12 +85,5 @@
             <version>${oracle.tools.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.sun.messaging.mq</groupId>
-            <artifactId>fscontext</artifactId>
-            <version>${com.sun.messaging.mq.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>
