@@ -30,13 +30,17 @@ import com.oracle.coherence.common.finitestatemachines.Instruction.TransitionTo;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import java.util.EnumMap;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -510,17 +514,17 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             // we keep processing events on this thread until we run out of events
             while (event != null && m_canPerformTransitions.get())
             {
+                // determine the desired state from the event
+                S stateCurrent = getState();
+                S stateDesired = event.getDesiredState(stateCurrent, this);
+
                 // notify the a lifecycle aware event of the commencement of processing
                 if (event instanceof LifecycleAwareEvent)
                 {
                     LifecycleAwareEvent<S> lifecycleAwareEvent = (LifecycleAwareEvent<S>) event;
 
-                    lifecycleAwareEvent.onProcessing(this);
+                    lifecycleAwareEvent.onProcessing(stateCurrent, this);
                 }
-
-                // determine the desired state from the event
-                S       stateCurrent    = getState();
-                S       stateDesired    = event.getDesiredState(stateCurrent, this);
 
                 boolean fIsInitialState = stateCurrent == null;
 
@@ -539,6 +543,14 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                     {
                         LOGGER.finer(String.format("[%s]: Ignoring event %s as it produced a null desired state.",
                                                    m_name, event));
+                    }
+
+                    // notify the a lifecycle aware event of the failure
+                    if (event instanceof LifecycleAwareEvent)
+                    {
+                        LifecycleAwareEvent<S> lifecycleAwareEvent = (LifecycleAwareEvent<S>) event;
+
+                        lifecycleAwareEvent.onFailure(stateCurrent, this, null);
                     }
 
                     // no more events to process
@@ -568,6 +580,14 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                             m_name, stateCurrent, stateDesired, event));
                             }
 
+                            // notify the a lifecycle aware event of the failure
+                            if (event instanceof LifecycleAwareEvent)
+                            {
+                                LifecycleAwareEvent<S> lifecycleAwareEvent = (LifecycleAwareEvent<S>) event;
+
+                                lifecycleAwareEvent.onFailure(stateCurrent, this, null);
+                            }
+
                             event = null;
                         }
                         else
@@ -595,6 +615,14 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                         LOGGER.finer(String
                                             .format("[%s]: Transition for event %s from %s to %s has been rolledback due to:\n%s",
                                                     m_name, event, stateCurrent, stateDesired, e));
+                                    }
+
+                                    // notify the a lifecycle aware event of the failure
+                                    if (event instanceof LifecycleAwareEvent)
+                                    {
+                                        LifecycleAwareEvent<S> lifecycleAwareEvent = (LifecycleAwareEvent<S>) event;
+
+                                        lifecycleAwareEvent.onFailure(stateCurrent, this, e);
                                     }
 
                                     event = null;
@@ -630,6 +658,14 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                                         writerString.toString()));
                                         }
 
+                                        // notify the a lifecycle aware event of the failure
+                                        if (event instanceof LifecycleAwareEvent)
+                                        {
+                                            LifecycleAwareEvent<S> lifecycleAwareEvent = (LifecycleAwareEvent<S>) event;
+
+                                            lifecycleAwareEvent.onFailure(stateCurrent, this, e);
+                                        }
+
                                         event = null;
                                         break;
                                     }
@@ -641,14 +677,6 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                     // now perform exit and entry actions
                     if (event != null)
                     {
-                        // notify the a lifecycle aware event of the completion of transition is caused
-                        if (event instanceof LifecycleAwareEvent)
-                        {
-                            LifecycleAwareEvent<S> lifecycleAwareEvent = (LifecycleAwareEvent<S>) event;
-
-                            lifecycleAwareEvent.onProcessed(this);
-                        }
-
                         // perform the exit action
                         if (!fIsInitialState)
                         {
@@ -688,6 +716,14 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                                 .format("[%s]: Stopping the machine as the State Exit Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
                                                         m_name, actionExit, event, stateCurrent, stateDesired, e,
                                                         writerString.toString()));
+                                        }
+
+                                        // notify the a lifecycle aware event of the failure
+                                        if (event instanceof LifecycleAwareEvent)
+                                        {
+                                            LifecycleAwareEvent<S> lifecycleAwareEvent = (LifecycleAwareEvent<S>) event;
+
+                                            lifecycleAwareEvent.onFailure(stateCurrent, this, e);
                                         }
 
                                         event = null;
@@ -757,6 +793,14 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                                     writerString.toString()));
                                     }
 
+                                    // notify the a lifecycle aware event of the failure
+                                    if (event instanceof LifecycleAwareEvent)
+                                    {
+                                        LifecycleAwareEvent<S> lifecycleAwareEvent = (LifecycleAwareEvent<S>) event;
+
+                                        lifecycleAwareEvent.onFailure(stateCurrent, this, e);
+                                    }
+
                                     event = null;
                                     break;
                                 }
@@ -777,6 +821,14 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                             LOGGER.finer(String
                                 .format("[%s]: State changed to %s. There are %d remaining events to process", m_name,
                                         stateDesired, m_pendingEventCount.get()));
+                        }
+
+                        // notify the a lifecycle aware event of the completion of the transition
+                        if (event instanceof LifecycleAwareEvent)
+                        {
+                            LifecycleAwareEvent<S> lifecycleAwareEvent = (LifecycleAwareEvent<S>) event;
+
+                            lifecycleAwareEvent.onProcessed(stateDesired, this);
                         }
 
                         // now perform the appropriate instruction based on the entry action
@@ -1067,11 +1119,12 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          * {@inheritDoc}
          */
         @Override
-        public void onProcessed(ExecutionContext context)
+        public void onProcessed(S                enteredState,
+                                ExecutionContext context)
         {
             if (m_eventChosen instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_eventChosen).onProcessed(context);
+                ((LifecycleAwareEvent<S>) m_eventChosen).onProcessed(enteredState, context);
             }
         }
 
@@ -1080,11 +1133,27 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          * {@inheritDoc}
          */
         @Override
-        public void onProcessing(ExecutionContext context)
+        public void onProcessing(S                exitingState,
+                                 ExecutionContext context)
         {
             if (m_eventChosen instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_eventChosen).onProcessing(context);
+                ((LifecycleAwareEvent<S>) m_eventChosen).onProcessing(exitingState, context);
+            }
+        }
+
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void onFailure(S                currentState,
+                              ExecutionContext context,
+                              Exception        exception)
+        {
+            if (m_eventChosen instanceof LifecycleAwareEvent)
+            {
+                ((LifecycleAwareEvent<S>) m_eventChosen).onFailure(currentState, context, exception);
             }
         }
 
@@ -1452,11 +1521,12 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          * {@inheritDoc}
          */
         @Override
-        public void onProcessed(ExecutionContext context)
+        public void onProcessed(S                enteredState,
+                                ExecutionContext context)
         {
             if (m_event instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_event).onProcessed(context);
+                ((LifecycleAwareEvent<S>) m_event).onProcessed(enteredState, context);
             }
         }
 
@@ -1465,11 +1535,27 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          * {@inheritDoc}
          */
         @Override
-        public void onProcessing(ExecutionContext context)
+        public void onProcessing(S                exitingState,
+                                 ExecutionContext context)
         {
             if (m_event instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_event).onProcessing(context);
+                ((LifecycleAwareEvent<S>) m_event).onProcessing(exitingState, context);
+            }
+        }
+
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void onFailure(S                currentState,
+                              ExecutionContext context,
+                              Exception        exception)
+        {
+            if (m_event instanceof LifecycleAwareEvent)
+            {
+                ((LifecycleAwareEvent<S>) m_event).onFailure(currentState, context, exception);
             }
         }
 

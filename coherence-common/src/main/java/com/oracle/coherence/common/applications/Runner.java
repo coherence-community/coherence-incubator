@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,7 +28,9 @@ package com.oracle.coherence.common.applications;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
 import java.lang.reflect.Method;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
@@ -168,19 +171,19 @@ public class Runner
                         // output the application details
                         if (applicationName != null)
                         {
-                            System.out.printf("Application Name        : " + applicationName + "\n");
+                            System.out.printf("Application Name        : %s\n", applicationName);
                         }
 
                         if (applicationDescription != null)
                         {
-                            System.out.printf("Application Description : " + applicationDescription + "\n");
+                            System.out.printf("Application Description : %s\n", applicationDescription);
                         }
 
-                        System.out.printf("Application Class       : " + applicationClass + "\n");
-                        System.out.printf("With Arguments          : "
-                                          + (applicationArguments == null || applicationArguments.size() == 0
-                                             ? "(no arguments)" : applicationArguments) + "\n");
-                        System.out.printf("Using System Properties : " + System.getProperties() + "\n");
+                        System.out.printf("Application Class       : %s\n", applicationClass);
+                        System.out.printf("With Arguments          : %s\n",
+                                          (applicationArguments == null || applicationArguments.size() == 0
+                                           ? "(no arguments)" : applicationArguments));
+                        System.out.printf("Using System Properties : %s\n", System.getProperties());
                         System.out.println();
 
                         // copy over the arguments into mainArguments

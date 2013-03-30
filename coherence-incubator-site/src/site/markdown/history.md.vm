@@ -4,15 +4,65 @@ History
 The following sections outline Oracle Coherence Incubator changes in
 reverse chronological order.
 
+--------------------------------------------------------------------------------
+
 <h3>Version ${project.version} @ ${timestamp} </h3>
 
 <h4>Source and Documentation Contributors</h4>
 
-*   Brian Oliver, Noah Arliss
+*   Jonathan Knight, Brian Oliver, Noah Arliss
 
-<h4> Global and Cross Module Changes</h4>
+<h4>Global and Cross-Module Changes</h4>
 
-* Added Coherence*Web back to the examples
+*   [COHINC-33](http://java.net/jira/browse/COHINC-33): Upgraded to use JUnit 4.10
+    and Hamcrest 1.3
+
+<h4>coherence-common</h4>
+
+*   [COHINC-18](http://java.net/jira/browse/COHINC-18): Resolved incorrect
+    PortableObject.writeExternal(...) implementation for the
+    `StaticFactoryClassSchemeBasedParameterizedBuilder` class.
+
+*   [COHINC-29](http://java.net/jira/browse/COHINC-29): Improved `LifecycleAwareEvent`
+    information when using a `NonBlockingFiniteStateMachine`.
+
+    This is a **breaking** change for the `LifecycleAwareEvent` interface.  However
+    as we are only using this interface **only** with in an inner class of
+    `NonBlockingFiniteStateMachine`, it **does not** break any public interfaces.
+
+*   [COHINC-35](http://java.net/jira/browse/COHINC-35): Corrected use of printf
+    in the `Runner` class that may prevent examples running on some platforms
+    (like Windows).
+
+*   [COHINC-38](http://java.net/jira/browse/COHINC-38): Enhanced ConfigurableCacheFactory
+    Tests.
+
+*   [COHINC-40](http://java.net/jira/browse/COHINC-40): Re-add the coherence*web examples back into inc-11
+
+<h4>coherence-commandpattern</h4>
+
+*   [COHINC-34](http://java.net/jira/browse/COHINC-34): Added missing pof-type
+    declaration for the `CommandBatch` class.
+
+<h4>coherence-messagingpattern</h4>
+
+*   [COHINC-28](http://java.net/jira/browse/COHINC-28): Migrated Functional Test
+    from internal Oracle Testing Framework.  These are contained in the new
+    coherence-messagingpattern-tests module.
+
+*   [COHINC-37](http://java.net/jira/browse/COHINC-37): Changed JMS Dependency
+    to one that includes a jar artifact.
+
+<h4>coherence-pushreplicationpattern</h4>
+
+*   [COHINC-19](http://java.net/jira/browse/COHINC-19): Fixed Active-Active
+    Push Replication Example - now correctly terminates.
+
+*   [COHINC-30](http://java.net/jira/browse/COHINC-30): Removed hardcoded logging
+    path from Push Replication tests.
+
+
+--------------------------------------------------------------------------------
 
 <h3>Version 11.0.0 @ 2013-02-26 15:05</h3>
 

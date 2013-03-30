@@ -398,6 +398,6 @@ public class StaticFactoryClassSchemeBasedParameterizedBuilder
     {
         writer.writeObject(1, factoryClassName);
         writer.writeObject(2, factoryMethodName);
-        writer.writeObject(2, parameters);
+        writer.writeObject(3, parameters);
     }
 }
