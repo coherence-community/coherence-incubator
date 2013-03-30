@@ -30,7 +30,7 @@ import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebTable;
-import com.oracle.coherence.patterns.pushreplication.cohweb.examples.WebServer;
+import com.oracle.coherence.patterns.pushreplication.cohweb.examples.utilities.WebServer;
 import com.oracle.tools.deferred.Deferred;
 import com.oracle.tools.deferred.DeferredAssert;
 import com.oracle.tools.deferred.DeferredHelper;
@@ -69,24 +69,24 @@ public class CohWebFunctionalTest
     {
         AvailablePortIterator iterator    = new AvailablePortIterator();
 
-        Map<String, String>   site1Config = WebServer.parseConfig("webserver1.properties", false);
+        Map<String, String>   site1Config = WebServer.parseConfig("site1.properties", false);
 
         cluster1 = WebServer.startCacheServer(site1Config, iterator);
 
-        Map<String, String> site2Config = WebServer.parseConfig("webserver2.properties", false);
+        Map<String, String> site2Config = WebServer.parseConfig("site2.properties", false);
 
         cluster2 = WebServer.startCacheServer(site2Config, iterator);
 
         SimpleJavaApplicationSchema site1schema =
-            new SimpleJavaApplicationSchema("com.oracle.coherence.patterns.pushreplication.cohweb.examples.WebServer");
+            new SimpleJavaApplicationSchema("com.oracle.coherence.patterns.pushreplication.cohweb.examples.utilities.WebServer");
 
-        site1schema.addArgument("webserver1.properties");
+        site1schema.addArgument("site1.properties");
         site1schema.addArgument("web");
 
         SimpleJavaApplicationSchema site2schema =
-            new SimpleJavaApplicationSchema("com.oracle.coherence.patterns.pushreplication.cohweb.examples.WebServer");
+            new SimpleJavaApplicationSchema("com.oracle.coherence.patterns.pushreplication.cohweb.examples.utilities.WebServer");
 
-        site2schema.addArgument("webserver2.properties");
+        site2schema.addArgument("site2.properties");
         site2schema.addArgument("web");
 
         ExternalJavaApplicationBuilder<SimpleJavaApplication, SimpleJavaApplicationSchema> appBuilder =

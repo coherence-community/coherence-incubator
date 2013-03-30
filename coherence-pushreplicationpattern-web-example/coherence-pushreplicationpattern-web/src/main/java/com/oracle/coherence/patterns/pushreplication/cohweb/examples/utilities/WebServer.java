@@ -24,7 +24,7 @@
  * "Portions Copyright [year] [name of copyright owner]"
  */
 
-package com.oracle.coherence.patterns.pushreplication.cohweb.examples;
+package com.oracle.coherence.patterns.pushreplication.cohweb.examples.utilities;
 
 import com.oracle.tools.runtime.PropertiesBuilder;
 import com.oracle.tools.runtime.coherence.Cluster;

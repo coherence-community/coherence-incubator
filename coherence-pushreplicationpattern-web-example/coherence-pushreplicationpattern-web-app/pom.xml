@@ -109,7 +109,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.oracle.coherence.patterns.pushreplication.cohweb.examples.WebServer</mainClass>
+                            <mainClass>com.oracle.coherence.patterns.pushreplication.cohweb.examples.utilities.WebServer</mainClass>
                         </manifest>
                         <manifestEntries>
                             <Version>${project.parent.version}</Version>
