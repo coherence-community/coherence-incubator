@@ -36,6 +36,7 @@ import com.oracle.coherence.common.events.processing.annotations.LiveObject;
 import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.environment.extensible.ExtensibleEnvironment;
 import com.oracle.tools.junit.AbstractTest;
+import com.oracle.tools.runtime.network.Constants;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
@@ -78,7 +79,7 @@ public class LiveObjectTest extends AbstractTest
     public void setup()
     {
         // we only want to run locally
-        System.setProperty("tangosol.coherence.localhost", "127.0.0.1");
+        System.setProperty("tangosol.coherence.localhost", Constants.getLocalHost());
         System.setProperty("tangosol.coherence.ttl", "0");
 
         // establish the CCF for the test
