@@ -293,11 +293,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      */
     public boolean isFullySubscribed()
     {
-        if (maxSubscribers!=-1)
-        {
-            return getSubscriptionIdentifiers().size() == maxSubscribers;
-        }
-        return false;
+        return maxSubscribers == -1 ? false : getSubscriptionIdentifiers().size() == maxSubscribers;
     }
 
     /**
