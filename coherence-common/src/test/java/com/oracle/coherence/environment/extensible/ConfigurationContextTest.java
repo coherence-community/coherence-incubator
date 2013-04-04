@@ -26,29 +26,40 @@
 package com.oracle.coherence.environment.extensible;
 
 import com.oracle.coherence.common.builders.BuilderRegistry;
+
 import com.oracle.coherence.configuration.Mandatory;
 import com.oracle.coherence.configuration.Property;
+
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
+
 import com.oracle.coherence.environment.Environment;
+
 import com.oracle.coherence.environment.extensible.ConfigurationContextTest.TestScheme.Switch;
 import com.oracle.coherence.environment.extensible.namespaces.CoherenceNamespaceContentHandler;
 import com.oracle.coherence.environment.extensible.namespaces.ValueNamespaceContentHandler;
+
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
+
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlHelper;
-import org.junit.Test;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UnknownFormatConversionException;
+import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UnknownFormatConversionException;
 
 /**
  * The unit tests for the {@link ConfigurationContext}.
@@ -58,7 +69,7 @@ import static org.mockito.Mockito.when;
  *
  * @author Brian Oliver
  */
-public class ConfigurationContextTest extends AbstractTest
+public class ConfigurationContextTest extends AbstractCoherenceTest
 {
     /**
      * Ensure that namespaces can be registered and retrieved from a {@link ConfigurationContext}.

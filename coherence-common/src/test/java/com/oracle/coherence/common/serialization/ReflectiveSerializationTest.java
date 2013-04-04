@@ -25,14 +25,20 @@
 
 package com.oracle.coherence.common.serialization;
 
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
+
 import com.tangosol.io.ByteArrayWriteBuffer;
+
 import com.tangosol.io.pof.ConfigurablePofContext;
+
 import junit.framework.Assert;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+
 import java.util.Arrays;
 
 /**
@@ -41,7 +47,7 @@ import java.util.Arrays;
  * @author Charlie Helin
  * @author Brian Oliver
  */
-public class ReflectiveSerializationTest extends AbstractTest
+public class ReflectiveSerializationTest extends AbstractCoherenceTest
 {
     /**
      * Field description

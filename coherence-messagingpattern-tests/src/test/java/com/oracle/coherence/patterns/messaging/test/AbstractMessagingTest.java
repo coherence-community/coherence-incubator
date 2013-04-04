@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,6 +28,7 @@ package com.oracle.coherence.patterns.messaging.test;
 import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.MessagingSession;
 
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
 
 import com.oracle.tools.runtime.java.virtualization.Virtualization;
@@ -48,7 +48,7 @@ import java.io.IOException;
  *
  * @author Brian Oliver
  */
-public abstract class AbstractMessagingTest extends AbstractTest
+public abstract class AbstractMessagingTest extends AbstractCoherenceTest
 {
     /**
      * The MessagingSession to be used by all tests.
@@ -68,20 +68,16 @@ public abstract class AbstractMessagingTest extends AbstractTest
 
 
     /**
-     * Setup the Test
+     * {@inheritDoc}
      */
     @Before
-    public void setup() throws IOException
+    @Override
+    public void setup()
     {
+        super.setup();
+
         System.setProperty("tangosol.coherence.cacheconfig", "coherence-messagingpattern-test-cache-config.xml");
         System.setProperty("tangosol.pof.config", "coherence-messagingpattern-test-pof-config.xml");
-        System.setProperty("tangosol.coherence.clusterport", "" + Virtualization.getAvailablePorts().next());
-        System.setProperty("tangosol.coherence.localhost", "" + Constants.getLocalHost());
-
-//      // touch all of the messaging caches to get them started
-//      CacheFactory.getCache("coherence.messagingpattern.subscriptions");
-//      CacheFactory.getCache("coherence.messagingpattern.messages");
-//      CacheFactory.getCache("coherence.messagingpattern.destinations");
 
         // create a shared MessagingSession for the tests
         m_messagingSession = DefaultMessagingSession.getInstance();
@@ -89,14 +85,13 @@ public abstract class AbstractMessagingTest extends AbstractTest
 
 
     /**
-     * Teardown the Test
+     * {@inheritDoc}
      */
     @After
-    public void shutdown()
+    @Override
+    public void cleanup()
     {
-//      // shutdown our CacheFactory
-//      CacheFactory.shutdown();
-//
-//      Virtualization.stop();
+        // NOTE: We deliberately avoid cleaning up as these test depend on
+        // Coherence to stay running!
     }
 }

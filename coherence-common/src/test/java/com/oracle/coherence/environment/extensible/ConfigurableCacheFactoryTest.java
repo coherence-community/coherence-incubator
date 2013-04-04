@@ -26,8 +26,11 @@
 
 package com.oracle.coherence.environment.extensible;
 
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
 
+import com.oracle.tools.runtime.java.virtualization.Virtualization;
+import com.oracle.tools.runtime.network.Constants;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.CacheFactoryBuilder;
 import com.tangosol.net.ConfigurableCacheFactory;
@@ -65,7 +68,7 @@ import java.util.Properties;
  *
  * @author Jonathan Knight
  */
-public class ConfigurableCacheFactoryTest extends AbstractTest
+public class ConfigurableCacheFactoryTest extends AbstractCoherenceTest
 {
     /**
      * The ClassLoader to be used to isolate the ConfigurableCacheFactory(s).
@@ -84,6 +87,8 @@ public class ConfigurableCacheFactoryTest extends AbstractTest
     @Before
     public void setup()
     {
+        super.setup();
+
         m_loader  = Base.getContextClassLoader();
         m_builder = CacheFactory.getCacheFactoryBuilder();
     }
@@ -96,7 +101,8 @@ public class ConfigurableCacheFactoryTest extends AbstractTest
     public void cleanup()
     {
         m_builder.releaseAll(m_loader);
-        CacheFactory.shutdown();
+
+        super.cleanup();
     }
 
 

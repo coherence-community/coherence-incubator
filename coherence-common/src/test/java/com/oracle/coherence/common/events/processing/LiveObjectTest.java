@@ -33,22 +33,33 @@ import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.processing.annotations.EventProcessorFor;
 import com.oracle.coherence.common.events.processing.annotations.LiveObject;
+
 import com.oracle.coherence.environment.Environment;
+
 import com.oracle.coherence.environment.extensible.ExtensibleEnvironment;
+
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
+
+import com.oracle.tools.runtime.java.virtualization.Virtualization;
+
 import com.oracle.tools.runtime.network.Constants;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.Serializable;
-import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicLong;
-
 import static org.junit.Assert.assertEquals;
+
+import java.io.Serializable;
+
+import java.util.Map.Entry;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Functional Test for {@link LiveObject}s.
@@ -58,7 +69,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Brian Oliver
  */
-public class LiveObjectTest extends AbstractTest
+public class LiveObjectTest extends AbstractCoherenceTest
 {
     private static final String INSERTS = "INSERTS";
     private static final String UPDATES = "UPDATES";
@@ -78,9 +89,7 @@ public class LiveObjectTest extends AbstractTest
     @Before
     public void setup()
     {
-        // we only want to run locally
-        System.setProperty("tangosol.coherence.localhost", Constants.getLocalHost());
-        System.setProperty("tangosol.coherence.ttl", "0");
+        super.setup();
 
         // establish the CCF for the test
         ccf = (ConfigurableCacheFactory) new ExtensibleEnvironment("coherence-common-cache-config.xml");
@@ -94,16 +103,6 @@ public class LiveObjectTest extends AbstractTest
         m_environment.registerResource(AtomicLong.class, INSERTS, new AtomicLong());
         m_environment.registerResource(AtomicLong.class, REMOVES, new AtomicLong());
         m_environment.registerResource(AtomicLong.class, UPDATES, new AtomicLong());
-    }
-
-
-    /**
-     * Cleanup after each test.
-     */
-    @After
-    public void cleanup()
-    {
-        CacheFactory.shutdown();
     }
 
 

@@ -32,8 +32,13 @@ import com.amazonaws.services.ec2.model.DescribeAddressesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
+import com.oracle.tools.runtime.java.virtualization.Virtualization;
 import com.oracle.tools.runtime.network.Constants;
+import com.tangosol.net.CacheFactory;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -54,7 +59,7 @@ import static org.mockito.Mockito.stub;
  *
  * @author Christer Fahlgren
  */
-public class EC2AddressProviderTest extends AbstractTest
+public class EC2AddressProviderTest extends AbstractCoherenceTest
 {
     /**
      * Tests generation of WKA list where there is one Elastic IP matching an instance.
@@ -97,7 +102,7 @@ public class EC2AddressProviderTest extends AbstractTest
         List<InetSocketAddress> wkaList         = addressProvider.generateWKAList(ec2);
 
         assertTrue(wkaList.size() > 0);
-        assertEquals("127.0.0.1", wkaList.get(0).getAddress().getHostAddress());
+        assertEquals(Constants.getLocalHost(), wkaList.get(0).getAddress().getHostAddress());
         assertTrue(wkaList.get(0).getPort() == 8088);
     }
 

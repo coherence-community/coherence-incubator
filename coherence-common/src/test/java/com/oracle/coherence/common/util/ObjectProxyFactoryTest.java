@@ -27,6 +27,7 @@ package com.oracle.coherence.common.util;
 
 import com.oracle.coherence.common.processors.CreateRemoteObjectProcessor;
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
@@ -52,7 +53,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Christer Fahlgren
  */
-public class ObjectProxyFactoryTest extends AbstractTest
+public class ObjectProxyFactoryTest extends AbstractCoherenceTest
 {
     /**
      * Setup for each test.
