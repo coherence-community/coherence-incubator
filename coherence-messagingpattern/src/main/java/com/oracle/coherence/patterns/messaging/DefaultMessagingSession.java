@@ -106,6 +106,16 @@ public class DefaultMessagingSession implements MessagingSession
 
 
     /**
+     * {@inheritDoc}
+     */
+    public Identifier createQueue(String queueName,int maxSubscribers)
+    {
+        Queue queue = new Queue(queueName,maxSubscribers);
+        return createDestination(queueName, queue);
+    }
+
+
+    /**
      * Create either a {@link Topic} or {@link Queue}.
      *
      * @param destinationName name of destination
@@ -222,8 +232,6 @@ public class DefaultMessagingSession implements MessagingSession
                                                                                        UUIDBasedIdentifier
                                                                                            .newInstance());
 
-            subscriber = new QueueSubscriber(this, subscriptionIdentifier);
-
             // Invoke against the destination cache.
             //
             NamedCache destinationCache = CacheFactory.getCache(Destination.CACHENAME);
@@ -232,8 +240,11 @@ public class DefaultMessagingSession implements MessagingSession
                                                                        (SubscriptionConfiguration) subscriptionConfiguration,
                                                                        null);
 
-            destinationCache.invoke(destinationIdentifier, processor);
-
+            boolean success = (Boolean) destinationCache.invoke(destinationIdentifier, processor);
+            if (success)
+            {
+                subscriber = new QueueSubscriber(this, subscriptionIdentifier);
+            }
         }
         else
         {
