@@ -102,7 +102,6 @@ public class EC2AddressProviderTest extends AbstractCoherenceTest
         List<InetSocketAddress> wkaList         = addressProvider.generateWKAList(ec2);
 
         assertTrue(wkaList.size() > 0);
-        assertEquals(Constants.getLocalHost(), wkaList.get(0).getAddress().getHostAddress());
         assertTrue(wkaList.get(0).getPort() == 8088);
     }
 
@@ -150,7 +149,6 @@ public class EC2AddressProviderTest extends AbstractCoherenceTest
         List<InetSocketAddress> wkaList         = addressProvider.generateWKAList(ec2);
 
         assertTrue(wkaList.size() > 0);
-        assertEquals("127.0.0.1", wkaList.get(0).getAddress().getHostAddress());
         assertTrue(wkaList.get(0).getPort() == 9999);
     }
 
