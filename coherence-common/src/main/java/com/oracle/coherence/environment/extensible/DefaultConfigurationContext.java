@@ -605,7 +605,7 @@ public class DefaultConfigurationContext implements ConfigurationContext, Enrich
         for (Method method : object.getClass().getMethods())
         {
             // can the method be called to configure a value?
-            if (method.isAnnotationPresent(Property.class))
+            if (method.getAnnotation(Property.class) != null)
             {
                 // ensure the method has a single parameter
                 if (method.getParameterTypes().length == 1)

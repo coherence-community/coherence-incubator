@@ -148,7 +148,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
         }
 
         // ensure that the super-class is in the pof context
-        if (type.getSuperclass().isAnnotationPresent(PofType.class))
+        if (type.getSuperclass().getAnnotation(PofType.class) != null)
         {
             reflectedPofContext.ensurePofSerializer(type.getSuperclass(), pofContext);
         }
@@ -275,7 +275,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
         PofField annotation = field.getAnnotation(PofField.class);
 
         return (field.getModifiers() & (Modifier.TRANSIENT | Modifier.STATIC | Modifier.FINAL)) == 0
-               &&!field.isAnnotationPresent(PofIgnore.class)
+               && field.getAnnotation(PofIgnore.class) == null
                && ((annotation == null && iSince == 0) || (annotation != null && annotation.since() == iSince));
     }
 
@@ -430,7 +430,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
                                            NoSuchMethodException
     {
         // deserialize the super class (iff it's annotated as a PofType)
-        if (type.getSuperclass().isAnnotationPresent(PofType.class))
+        if (type.getSuperclass().getAnnotation(PofType.class) != null)
         {
             DefaultReflectedSerializer pofSerializer =
                 (DefaultReflectedSerializer) reflectedPofSerializer
@@ -495,7 +495,7 @@ final class DefaultReflectedSerializer implements ReflectedSerializer
             writer.setVersionId(serializingVersion);
 
             // serialize the super class (iff it's annotated as a PofType)
-            if (type.getSuperclass().isAnnotationPresent(PofType.class))
+            if (type.getSuperclass().getAnnotation(PofType.class) != null)
             {
                 DefaultReflectedSerializer pofSerializer =
                     (DefaultReflectedSerializer) reflectedPofSerializer
