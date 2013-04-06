@@ -213,7 +213,13 @@ public class ReflectiveSerializationTest extends AbstractCoherenceTest
         pofContext.serialize(buffer.getBufferOutput(), type);
 
         Assert.assertEquals(collectionTypePofStream.length, buffer.length());
-        Assert.assertTrue(Arrays.equals(collectionTypePofStream, buffer.toByteArray()));
+
+        byte[] bytes = buffer.toByteArray();
+
+        for (int i = 0; i < bytes.length && i < collectionTypePofStream.length; i++)
+        {
+            Assert.assertEquals("Different At Index: " + i, collectionTypePofStream[i], bytes[i]);
+        }
     }
 
 

@@ -84,12 +84,13 @@ public class LiveObjectTest extends AbstractCoherenceTest
 
 
     /**
-     * Setup for each test.
+     * {@inheritDoc}
      */
     @Before
-    public void setup()
+    @Override
+    public void onBeforeEachTest()
     {
-        super.setup();
+        super.onBeforeEachTest();
 
         // establish the CCF for the test
         ccf = (ConfigurableCacheFactory) new ExtensibleEnvironment("coherence-common-cache-config.xml");

@@ -72,9 +72,9 @@ public abstract class AbstractMessagingTest extends AbstractCoherenceTest
      */
     @Before
     @Override
-    public void setup()
+    public void onBeforeEachTest()
     {
-        super.setup();
+        super.onBeforeEachTest();
 
         System.setProperty("tangosol.coherence.cacheconfig", "coherence-messagingpattern-test-cache-config.xml");
         System.setProperty("tangosol.pof.config", "coherence-messagingpattern-test-pof-config.xml");
@@ -89,7 +89,7 @@ public abstract class AbstractMessagingTest extends AbstractCoherenceTest
      */
     @After
     @Override
-    public void cleanup()
+    public void onAfterEachTest()
     {
         // NOTE: We deliberately avoid cleaning up as these test depend on
         // Coherence to stay running!
