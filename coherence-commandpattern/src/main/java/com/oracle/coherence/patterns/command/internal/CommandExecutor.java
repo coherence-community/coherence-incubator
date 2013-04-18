@@ -701,7 +701,7 @@ public class CommandExecutor implements CommandExecutorMBean
                 }
 
                 // register MBean here (if required)
-                Registry registry = CacheFactory.ensureCluster().getManagement();
+                Registry registry = CacheFactory.getCluster() == null ? null : CacheFactory.getCluster().getManagement();
 
                 if (registry != null)
                 {
@@ -787,7 +787,7 @@ public class CommandExecutor implements CommandExecutorMBean
         CommandExecutorManager.removeCommandExecutor(this.getContextIdentifier());
 
         // unregister JMX mbean for the CommandExecutor
-        Registry registry = CacheFactory.ensureCluster().getManagement();
+        Registry registry = CacheFactory.getCluster() == null ? null : CacheFactory.getCluster().getManagement();
 
         if (registry != null)
         {
