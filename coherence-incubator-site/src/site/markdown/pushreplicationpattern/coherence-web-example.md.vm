@@ -14,9 +14,24 @@ module of the Oracle Coherence Incubator.
 
 <h4>Components</h4>
 
-There are two classes added to use Coherence*Web with Push Replication:
+<h5>coherence-pushreplicationpattern-web</h5>
+
+This module contains the custom classes to support Coherence*Web with push replication. There are two classes added to
+use Coherence*Web with Push Replication:
+
 - SiteExtractor: EntryExtractor that extracts the site information from a cache entry
-- SiteSessionExpiryFilterFactory: Coherence*Web filter factory that creates a filter  to only include sessions managed by the current site when performing session cleanup.
+- SiteSessionExpiryFilterFactory: Coherence*Web filter factory that creates a filter  to only include sessions managed
+by the current site when performing session cleanup.
+
+<h5>coherence-pushreplicationpattern-web-app</h5>
+
+This module contains the simple webapp that modifies a user session and creates an self executing war that will start
+Jetty and Coherence for the example. It contains two JSPs:
+
+- sessionAccess.jsp: Standard JSP (with the [coherence-web-installer](http://docs.oracle.com/cd/E24290_01/coh.371/e22620/cohweb.htm#CIAHGHII)
+already run against it) that will work with any non WebLogic container. This is what we use since we're using JETTY
+- sessionAccessSpi: Standard JSP without having the need to be parsed by the coherence-web-installer because of the
+WebLogic SPI integration in case you want to deploy the web-app to WebLogic.
 
 <h4>Overview</h4>
 
@@ -35,6 +50,7 @@ This examples uses two clusters, "Site 1" displayed and "Site 2". In the interes
 have embedded everything that you need to run the example all within the self executing war file. Both sites contain
 the same web application and use the same cache configuration. The only differences between them are the settings used
 to configure the cluster's identity and ports including:
+
 - webserver port
 - cluster port
 - site name
@@ -42,18 +58,18 @@ to configure the cluster's identity and ports including:
 - Extend listen port for the proxy service
 
 Site 1 consists of:
-- Webserver running on port 8080
--- Connects to the cluster as a storage disabled TCMP client
+
+- Webserver running on port 8080 (Connects to the cluster as a storage disabled TCMP client)
 - Cache server running with a cluster port of 9001
--- Proxy service listening on port 9002
--- Client port configured to connect to Site2 at port 10002
+- Proxy service listening on port 9002
+- Client port configured to connect to Site2 at port 10002
 
 Site 2 consists of:
-- Webserver running on port 9080
--- Connects to the cluster as a storage disabled TCMP client
+
+- Webserver running on port 9080 (Connects to the cluster as a storage disabled TCMP client)
 - Cache server running with a cluster port of 10001
--- Proxy service listening on port 10002
--- Client port configured to connect to Site1 at port 9002
+- Proxy service listening on port 10002
+- Client port configured to connect to Site1 at port 9002
 
 <h4>Running the Coherence*Web Example</h4>
 
