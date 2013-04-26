@@ -74,7 +74,7 @@ public class CohWebFunctionalTest
 
 
     /**
-     * Method description
+     * Setup the test including cache and web servers
      */
     @BeforeClass
     public static void setup() throws Exception
@@ -114,7 +114,7 @@ public class CohWebFunctionalTest
 
 
     /**
-     * Method description
+     * Shutdown the cache and web servers
      */
     @AfterClass
     public static void tearDown()
@@ -127,7 +127,8 @@ public class CohWebFunctionalTest
 
 
     /**
-     * Method description
+     * Test Session Replication by connecting to each of the web servers and validating that session data stored in
+     * one cluster is visible to the other cluster.
      *
      * @throws Exception
      */
@@ -221,11 +222,11 @@ public class CohWebFunctionalTest
 
 
         /**
-         * Constructs ...
+         * Constructs a Deferred RowCount
          *
          *
-         * @param wc
-         * @param request
+         * @param wc      Handle to the web conversation
+         * @param request request to make over the conversation
          */
         public DeferredRowCount(WebConversation wc,
                                 String          request)
@@ -236,9 +237,9 @@ public class CohWebFunctionalTest
 
 
         /**
-         * Method description
+         * Return the deferred row count value.
          *
-         * @return
+         * @return the deferred row count value
          *
          * @throws ObjectNotAvailableException
          */
@@ -265,9 +266,7 @@ public class CohWebFunctionalTest
 
 
         /**
-         * Method description
-         *
-         * @return
+         * {@inheritDoc}
          */
         @Override
         public Class<Integer> getDeferredClass()
@@ -288,11 +287,11 @@ public class CohWebFunctionalTest
 
 
         /**
-         * Constructs ...
+         * Construct a DeferredWebResponse
          *
          *
-         * @param wc
-         * @param request
+         * @param wc      Handle to the web conversation
+         * @param request Request to make over the web conversation
          */
         public DeferredWebResponse(WebConversation wc,
                                    String          request)
@@ -303,7 +302,7 @@ public class CohWebFunctionalTest
 
 
         /**
-         * Return the WebResponse from the Deffered.
+         * Return the WebResponse from the Deferred.
          *
          * @return WebResponse from the Deferred.
          */
@@ -331,7 +330,7 @@ public class CohWebFunctionalTest
         @Override
         public Class<WebResponse> getDeferredClass()
         {
-            return WebResponse.class;    // To change body of implemented methods use File | Settings | File Templates.
+            return WebResponse.class;
         }
     }
 }
