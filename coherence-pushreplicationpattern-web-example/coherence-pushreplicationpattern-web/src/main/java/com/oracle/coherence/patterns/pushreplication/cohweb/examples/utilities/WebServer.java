@@ -118,20 +118,6 @@ public class WebServer
     }
 
 
-    protected void finalize() throws Throwable
-    {
-        System.out.printf("Finalizer Called.\n");
-
-        if (cluster != null)
-        {
-            cluster.destroy();
-            cluster = null;
-
-            System.out.printf("Called destroy on our cluster from the finalizer.\n");
-        }
-    }
-
-
     /**
      * Method description
      *

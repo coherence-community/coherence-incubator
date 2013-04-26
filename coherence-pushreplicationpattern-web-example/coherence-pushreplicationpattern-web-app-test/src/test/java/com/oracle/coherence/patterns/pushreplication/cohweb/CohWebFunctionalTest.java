@@ -30,25 +30,35 @@ import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebTable;
+
 import com.oracle.coherence.patterns.pushreplication.cohweb.examples.utilities.WebServer;
+
 import com.oracle.tools.deferred.Deferred;
 import com.oracle.tools.deferred.DeferredAssert;
 import com.oracle.tools.deferred.DeferredHelper;
 import com.oracle.tools.deferred.ObjectNotAvailableException;
+
 import com.oracle.tools.runtime.coherence.Cluster;
+
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
+
 import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.SimpleJavaApplication;
 import com.oracle.tools.runtime.java.SimpleJavaApplicationSchema;
+
 import com.oracle.tools.runtime.network.AvailablePortIterator;
+
 import org.hamcrest.Matchers;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
+
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Test that the CoherenceWeb Examples Work
@@ -58,7 +68,9 @@ public class CohWebFunctionalTest
     private static Cluster               cluster1;
     private static Cluster               cluster2;
     private static SimpleJavaApplication site1;
+    private static int                   site1Port;
     private static SimpleJavaApplication site2;
+    private static int                   site2Port;
 
 
     /**
@@ -71,11 +83,13 @@ public class CohWebFunctionalTest
 
         Map<String, String>   site1Config = WebServer.parseConfig("site1.properties", false);
 
-        cluster1 = WebServer.startCacheServer(site1Config, iterator);
+        site1Port = Integer.parseInt(site1Config.get("WebServer-Port"));
+        cluster1  = WebServer.startCacheServer(site1Config, iterator);
 
         Map<String, String> site2Config = WebServer.parseConfig("site2.properties", false);
 
-        cluster2 = WebServer.startCacheServer(site2Config, iterator);
+        site2Port = Integer.parseInt(site2Config.get("WebServer-Port"));
+        cluster2  = WebServer.startCacheServer(site2Config, iterator);
 
         SimpleJavaApplicationSchema site1schema =
             new SimpleJavaApplicationSchema("com.oracle.coherence.patterns.pushreplication.cohweb.examples.utilities.WebServer");
@@ -126,7 +140,9 @@ public class CohWebFunctionalTest
 
             // Make initial request to siteA and add a value to the session
             WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc,
-                                                                                 "http://localhost:8080/sessionAccess.jsp"));
+                                                                                 "http://localhost:8080/sessionAccess.jsp"),
+                                                         60,
+                                                         TimeUnit.SECONDS);
 
             WebForm form = response.getFormWithID("HttpSessionAttributesForm");
 
@@ -144,7 +160,9 @@ public class CohWebFunctionalTest
             DeferredAssert.assertThat("First set of session variables",
                                       new DeferredRowCount(wc,
                                                            "http://localhost:9080/sessionAccess.jsp"),
-                                      Matchers.equalTo(2));
+                                      Matchers.equalTo(2),
+                                      60,
+                                      TimeUnit.SECONDS);
 
             response = wc.getResponse("http://localhost:9080/sessionAccess.jsp");
             table    = response.getTableWithID("HttpSessionAttributes");
@@ -170,7 +188,9 @@ public class CohWebFunctionalTest
             DeferredAssert.assertThat("First set of session variables",
                                       new DeferredRowCount(wc,
                                                            "http://localhost:8080/sessionAccess.jsp"),
-                                      Matchers.equalTo(3));
+                                      Matchers.equalTo(3),
+                                      60,
+                                      TimeUnit.SECONDS);
 
             response = wc.getResponse("http://localhost:8080/sessionAccess.jsp");
             table    = response.getTableWithID("HttpSessionAttributes");
@@ -283,11 +303,9 @@ public class CohWebFunctionalTest
 
 
         /**
-         * Method description
+         * Return the WebResponse from the Deffered.
          *
-         * @return
-         *
-         * @throws ObjectNotAvailableException
+         * @return WebResponse from the Deferred.
          */
         @Override
         public WebResponse get() throws ObjectNotAvailableException

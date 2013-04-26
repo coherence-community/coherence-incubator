@@ -29,7 +29,7 @@ This module contains the simple webapp that modifies a user session and creates 
 Jetty and Coherence for the example. It contains two JSPs:
 
 - sessionAccess.jsp: Standard JSP (with the [coherence-web-installer](http://docs.oracle.com/cd/E24290_01/coh.371/e22620/cohweb.htm#CIAHGHII)
-already run against it) that will work with any non WebLogic container. This is what we use since we're using JETTY
+already run against it) that will work with any non WebLogic container. This JSP is used with the example since it runs on Jetty.
 - sessionAccessSpi: Standard JSP without having the need to be parsed by the coherence-web-installer because of the
 WebLogic SPI integration in case you want to deploy the web-app to WebLogic.
 
