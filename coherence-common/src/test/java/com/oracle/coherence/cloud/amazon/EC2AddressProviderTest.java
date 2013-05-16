@@ -26,30 +26,32 @@
 package com.oracle.coherence.cloud.amazon;
 
 import com.amazonaws.auth.AWSCredentials;
+
 import com.amazonaws.services.ec2.AmazonEC2;
+
 import com.amazonaws.services.ec2.model.Address;
 import com.amazonaws.services.ec2.model.DescribeAddressesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
+
 import com.oracle.tools.junit.AbstractCoherenceTest;
-import com.oracle.tools.junit.AbstractTest;
-import com.oracle.tools.runtime.java.virtualization.Virtualization;
+
 import com.oracle.tools.runtime.network.Constants;
-import com.tangosol.net.CacheFactory;
-import org.junit.After;
-import org.junit.Before;
+
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
+
+import java.io.IOException;
+
+import java.net.InetSocketAddress;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A {@link EC2AddressProviderTest} class testing the combinations of Elastic IP to instance mappings that the EC2 API can yield.

@@ -29,16 +29,9 @@ import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.MessagingSession;
 
 import com.oracle.tools.junit.AbstractCoherenceTest;
-import com.oracle.tools.junit.AbstractTest;
-
-import com.oracle.tools.runtime.java.virtualization.Virtualization;
-
-import com.oracle.tools.runtime.network.Constants;
 
 import org.junit.After;
 import org.junit.Before;
-
-import java.io.IOException;
 
 /**
  * The base class for all Messaging Pattern Functional Tests.

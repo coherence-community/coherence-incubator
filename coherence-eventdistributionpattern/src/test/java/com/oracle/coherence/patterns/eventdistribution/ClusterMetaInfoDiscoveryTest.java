@@ -26,32 +26,42 @@
 package com.oracle.coherence.patterns.eventdistribution;
 
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
+
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel.GetClusterMetaInfoAgent;
 import com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannel;
+
 import com.oracle.tools.junit.AbstractTest;
+
 import com.oracle.tools.runtime.PropertiesBuilder;
+
 import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
+
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
+
 import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
+
 import com.oracle.tools.runtime.network.AvailablePortIterator;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.InvocationService;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.net.UnknownHostException;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * The {@link ClusterMetaInfoDiscoveryTest} is designed to exercise the implementations that {@link EventDistributor}

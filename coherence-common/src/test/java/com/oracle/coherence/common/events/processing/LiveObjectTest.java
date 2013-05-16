@@ -39,17 +39,11 @@ import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.environment.extensible.ExtensibleEnvironment;
 
 import com.oracle.tools.junit.AbstractCoherenceTest;
-import com.oracle.tools.junit.AbstractTest;
-
-import com.oracle.tools.runtime.java.virtualization.Virtualization;
-
-import com.oracle.tools.runtime.network.Constants;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 

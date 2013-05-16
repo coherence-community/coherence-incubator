@@ -32,16 +32,9 @@ import com.oracle.coherence.environment.extensible.namespaces.InstanceNamespaceC
 import com.oracle.coherence.environment.extensible.namespaces.ValueNamespaceContentHandler;
 
 import com.oracle.tools.junit.AbstractCoherenceTest;
-import com.oracle.tools.junit.AbstractTest;
-
-import com.oracle.tools.runtime.java.virtualization.Virtualization;
-
-import com.tangosol.net.CacheFactory;
 
 import com.tangosol.run.xml.XmlHelper;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
