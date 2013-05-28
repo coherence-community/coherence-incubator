@@ -25,14 +25,20 @@
 
 package com.oracle.coherence.common.serialization;
 
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
+
 import com.tangosol.io.ByteArrayWriteBuffer;
+
 import com.tangosol.io.pof.ConfigurablePofContext;
+
 import junit.framework.Assert;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+
 import java.util.Arrays;
 
 /**
@@ -41,7 +47,7 @@ import java.util.Arrays;
  * @author Charlie Helin
  * @author Brian Oliver
  */
-public class ReflectiveSerializationTest extends AbstractTest
+public class ReflectiveSerializationTest extends AbstractCoherenceTest
 {
     /**
      * Field description
@@ -207,7 +213,13 @@ public class ReflectiveSerializationTest extends AbstractTest
         pofContext.serialize(buffer.getBufferOutput(), type);
 
         Assert.assertEquals(collectionTypePofStream.length, buffer.length());
-        Assert.assertTrue(Arrays.equals(collectionTypePofStream, buffer.toByteArray()));
+
+        byte[] bytes = buffer.toByteArray();
+
+        for (int i = 0; i < bytes.length && i < collectionTypePofStream.length; i++)
+        {
+            Assert.assertEquals("Different At Index: " + i, collectionTypePofStream[i], bytes[i]);
+        }
     }
 
 

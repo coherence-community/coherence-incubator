@@ -26,20 +26,20 @@
 package com.oracle.coherence.environment.extensible;
 
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
+
 import com.oracle.coherence.environment.extensible.namespaces.EnvironmentNamespaceContentHandler;
 import com.oracle.coherence.environment.extensible.namespaces.InstanceNamespaceContentHandler;
 import com.oracle.coherence.environment.extensible.namespaces.ValueNamespaceContentHandler;
-import com.oracle.tools.junit.AbstractTest;
-import com.oracle.tools.runtime.java.virtualization.Virtualization;
-import com.tangosol.net.CacheFactory;
+
+import com.oracle.tools.junit.AbstractCoherenceTest;
+
 import com.tangosol.run.xml.XmlHelper;
-import org.junit.After;
-import org.junit.Before;
+
 import org.junit.Test;
 
-import java.awt.*;
-
 import static org.junit.Assert.assertTrue;
+
+import java.awt.*;
 
 /**
  * The unit tests for the {@link ExtensibleEnvironment}.
@@ -49,32 +49,8 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Brian Oliver
  */
-public class ExtensibleEnvironmentTest extends AbstractTest
+public class ExtensibleEnvironmentTest extends AbstractCoherenceTest
 {
-    /**
-     * Setup for each test.
-     */
-    @Before
-    public void setup()
-    {
-        System.setProperty("tangosol.coherence.mode", "dev");
-        System.setProperty("tangosol.coherence.ttl", "0");
-        System.setProperty("tangosol.coherence.localhost", "127.0.0.1");
-        System.setProperty("tangosol.coherence.clusterport",
-                           Integer.toString(Virtualization.getAvailablePorts().next()));
-    }
-
-
-    /**
-     * Cleanup after each test.
-     */
-    @After
-    public void cleanup()
-    {
-        CacheFactory.shutdown();
-    }
-
-
     /**
      * Test that an empty configuration file produces an {@link ExtensibleEnvironment}
      * with a {@link EventDispatcher}.

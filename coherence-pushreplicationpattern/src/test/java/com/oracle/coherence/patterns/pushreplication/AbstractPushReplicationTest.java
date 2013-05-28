@@ -37,6 +37,7 @@ import com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStore
 import com.oracle.coherence.patterns.eventdistribution.channels.CacheStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.filters.ExampleEventFilter;
 
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
 
 import com.oracle.tools.runtime.Application;
@@ -91,7 +92,7 @@ import javax.management.ObjectName;
  *
  * @author Brian Oliver
  */
-public abstract class AbstractPushReplicationTest extends AbstractTest
+public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 {
     /**
      * The maximum amount of time we should ever what for a test/assertion to complete.
@@ -138,7 +139,7 @@ public abstract class AbstractPushReplicationTest extends AbstractTest
      * @throws UnknownHostException When we fail to locate the localhost on which the tests will be running.
      */
     @BeforeClass
-    public static void setup() throws UnknownHostException
+    public static void setupClass() throws UnknownHostException
     {
         availablePortIterator = new AvailablePortIterator(30000);
     }

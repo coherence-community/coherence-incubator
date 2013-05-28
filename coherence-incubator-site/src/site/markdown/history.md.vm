@@ -17,6 +17,8 @@ reverse chronological order.
 *   [COHINC-33](http://java.net/jira/browse/COHINC-33): Upgraded to use JUnit 4.10
     and Hamcrest 1.3
 
+*   [COHINC-42](http://java.net/jira/browse/COHINC-42): Upgraded to use Oracle Tools 0.0.9
+
 <h4>coherence-common</h4>
 
 *   [COHINC-18](http://java.net/jira/browse/COHINC-18): Resolved incorrect
@@ -41,6 +43,9 @@ reverse chronological order.
 
 *   [COHINC-34](http://java.net/jira/browse/COHINC-34): Added missing pof-type
     declaration for the `CommandBatch` class.
+
+*   [COHINC-48](http://java.net/jira/browse/COHINC-48): Refactored calls to
+    CacheFactory.ensureCluster() that prevent redeployment in a Container.
 
 <h4>coherence-messagingpattern</h4>
 

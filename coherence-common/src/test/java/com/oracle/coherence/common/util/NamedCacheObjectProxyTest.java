@@ -26,6 +26,7 @@
 package com.oracle.coherence.common.util;
 
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
 import com.tangosol.net.NamedCache;
 import com.tangosol.util.MapEvent;
@@ -47,7 +48,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Christer Fahlgren
  */
-public class NamedCacheObjectProxyTest extends AbstractTest
+public class NamedCacheObjectProxyTest extends AbstractCoherenceTest
 {
     /**
      * Tests invocation using the proxy.

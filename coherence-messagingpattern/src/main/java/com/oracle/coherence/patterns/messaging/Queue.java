@@ -135,6 +135,12 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      */
     private long numMessagesReceived;
 
+    /**
+     * The maximum amount of subscribers a queue may have. The default
+     * value is -1, meaning an unbounded queue (in terms of subscribers)
+     */
+    private int maxSubscribers = -1;
+
 
     /**
      * For {@link ExternalizableLite} and {@link PortableObject}.
@@ -162,6 +168,26 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
 
         this.numMessagesDelivered          = 0;
         this.numMessagesReceived           = 0;
+    }
+
+
+    /**
+     * <p>Optional constructor, binds the queue to a number of maxSubscribers</p>
+     *
+     * @param queueName queue name
+     * @param maxSubscribers the maximum number of subscribers this queue may have
+     */
+    public Queue(String queueName,int maxSubscribers)
+    {
+        this(queueName);
+        if (maxSubscribers <= 0 )
+        {
+            Logger.log(Logger.WARN,"maxSubscribers value of %d is invalid, defaulting to unbounded (-1)",maxSubscribers);
+        }
+        else
+        {
+            this.maxSubscribers = maxSubscribers;
+        }
     }
 
 
@@ -252,6 +278,23 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
         return waitingSubscriptions.size() > 0;
     }
 
+    /**
+     * <p>Returns the maximum number of subscribers allowed in this {@link Queue}.</p>
+     * @return the maximum subscribers allowed.
+     */
+    public int getMaxSubscribers()
+    {
+        return maxSubscribers;
+    }
+
+    /**
+     * <p>Returns if the {@link Queue} is fully subscribed. On non-bounded {@link Queue}s this is always false.</p>
+     * @return true if the {@link Queue} is fully subscribed, false otherwise.
+     */
+    public boolean isFullySubscribed()
+    {
+        return maxSubscribers == -1 ? false : getSubscriptionIdentifiers().size() == maxSubscribers;
+    }
 
     /**
      * Return true if there are messages to deliver or re-deliver.
@@ -657,6 +700,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
 
         numMessagesReceived  = ExternalizableHelper.readLong(in);
         numMessagesDelivered = ExternalizableHelper.readLong(in);
+        maxSubscribers = ExternalizableHelper.readInt(in);
 
     }
 
@@ -674,6 +718,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
         ExternalizableHelper.writeMap(out, lastMessageSequenceNumberMap);
         ExternalizableHelper.writeLong(out, numMessagesReceived);
         ExternalizableHelper.writeLong(out, numMessagesDelivered);
+        ExternalizableHelper.writeInt(out, maxSubscribers);
     }
 
 
@@ -700,6 +745,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
 
         numMessagesReceived  = reader.readLong(105);
         numMessagesDelivered = reader.readLong(106);
+        maxSubscribers = reader.readInt(107);
     }
 
 
@@ -716,6 +762,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
         writer.writeMap(104, lastMessageSequenceNumberMap);
         writer.writeLong(105, numMessagesReceived);
         writer.writeLong(106, numMessagesDelivered);
+        writer.writeInt(107, maxSubscribers);
     }
 
 
@@ -724,9 +771,10 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      */
     public String toString()
     {
-        return String.format("Queue{%s, messagesToDeliver=%s, messagesToRedeliver=%s,  waitingSubscriptions=%s}",
+        return String.format("Queue{%s, messagesToDeliver=%s, maxSubscribers=%d, messagesToRedeliver=%s,  waitingSubscriptions=%s}",
                              super.toString(),
                              messagesToDeliver,
+                             maxSubscribers,
                              messagesToRedeliver,
                              waitingSubscriptions);
     }

@@ -26,25 +26,32 @@
 package com.oracle.coherence.cloud.amazon;
 
 import com.amazonaws.auth.AWSCredentials;
+
 import com.amazonaws.services.ec2.AmazonEC2;
+
 import com.amazonaws.services.ec2.model.Address;
 import com.amazonaws.services.ec2.model.DescribeAddressesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
-import com.oracle.tools.junit.AbstractTest;
+
+import com.oracle.tools.junit.AbstractCoherenceTest;
+
 import com.oracle.tools.runtime.network.Constants;
+
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
+
+import java.io.IOException;
+
+import java.net.InetSocketAddress;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A {@link EC2AddressProviderTest} class testing the combinations of Elastic IP to instance mappings that the EC2 API can yield.
@@ -54,7 +61,7 @@ import static org.mockito.Mockito.stub;
  *
  * @author Christer Fahlgren
  */
-public class EC2AddressProviderTest extends AbstractTest
+public class EC2AddressProviderTest extends AbstractCoherenceTest
 {
     /**
      * Tests generation of WKA list where there is one Elastic IP matching an instance.
@@ -97,7 +104,6 @@ public class EC2AddressProviderTest extends AbstractTest
         List<InetSocketAddress> wkaList         = addressProvider.generateWKAList(ec2);
 
         assertTrue(wkaList.size() > 0);
-        assertEquals("127.0.0.1", wkaList.get(0).getAddress().getHostAddress());
         assertTrue(wkaList.get(0).getPort() == 8088);
     }
 
@@ -145,7 +151,6 @@ public class EC2AddressProviderTest extends AbstractTest
         List<InetSocketAddress> wkaList         = addressProvider.generateWKAList(ec2);
 
         assertTrue(wkaList.size() > 0);
-        assertEquals("127.0.0.1", wkaList.get(0).getAddress().getHostAddress());
         assertTrue(wkaList.get(0).getPort() == 9999);
     }
 
