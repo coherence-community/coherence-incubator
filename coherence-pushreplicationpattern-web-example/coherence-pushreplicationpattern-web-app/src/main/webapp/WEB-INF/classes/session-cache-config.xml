@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!--                                                                       -->
+<!--      Cache configuration descriptor for Coherence*Web                 -->
+<!--                                                                       -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<cache-config
+    xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+    element:introduce-cache-config="extend-cache-config.xml">
+
+    <caching-scheme-mapping>
+        <!--
+            The clustered cache used to store Session management data.
+        -->
+        <cache-mapping>
+            <cache-name>session-management</cache-name>
+            <scheme-name>replicated</scheme-name>
+        </cache-mapping>
+
+        <!--
+            The clustered cache used to store ServletContext attributes.
+        -->
+        <cache-mapping>
+            <cache-name>servletcontext-storage</cache-name>
+            <scheme-name>replicated</scheme-name>
+        </cache-mapping>
+
+        <!--
+        The clustered cache used to store Session attributes.
+        -->
+        <cache-mapping>
+            <cache-name>session-storage</cache-name>
+            <scheme-name>session-near</scheme-name>
+
+            <event:distributor>
+                <event:distributor-name>{cache-name}</event:distributor-name>
+                <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
+
+                <event:distributor-scheme>
+                    <event:coherence-based-distributor-scheme/>
+                </event:distributor-scheme>
+
+                <event:distribution-channels>
+                    <event:distribution-channel>
+                        <event:channel-name>Session-Channel</event:channel-name>
+                        <event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
+                        <event:channel-scheme>
+                            <event:remote-cluster-channel-scheme>
+                                <event:remote-invocation-service-name>publisher-invocation</event:remote-invocation-service-name>
+                                <event:remote-channel-scheme>
+                                    <event:local-cache-channel-scheme>
+                                        <event:target-cache-name>session-storage</event:target-cache-name>
+                                    </event:local-cache-channel-scheme>
+                                </event:remote-channel-scheme>
+                            </event:remote-cluster-channel-scheme>
+                        </event:channel-scheme>
+                    </event:distribution-channel>
+                </event:distribution-channels>
+            </event:distributor>
+        </cache-mapping>
+
+        <!--
+            The clustered cache used to store the "overflowing"
+            (split-out due to size) Session attributes. Only used for
+            the "Split" model.
+        -->
+        <cache-mapping>
+            <cache-name>session-overflow</cache-name>
+            <scheme-name>session-distributed</scheme-name>
+
+            <event:distributor>
+                <event:distributor-name>{cache-name}</event:distributor-name>
+                <event:distributor-external-name>{site-name}-{cluster-name}-{cache-name}</event:distributor-external-name>
+
+                <event:distributor-scheme>
+                    <event:coherence-based-distributor-scheme/>
+                </event:distributor-scheme>
+
+                <event:distribution-channels>
+                    <event:distribution-channel>
+                        <event:channel-name>SessionOverflowChannel</event:channel-name>
+                        <event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
+                        <event:channel-scheme>
+                            <event:remote-cluster-channel-scheme>
+                                <event:remote-invocation-service-name>session-overflow</event:remote-invocation-service-name>
+                                <event:remote-channel-scheme>
+                                    <event:local-cache-channel-scheme>
+                                        <event:target-cache-name>session-overflow</event:target-cache-name>
+                                    </event:local-cache-channel-scheme>
+                                </event:remote-channel-scheme>
+                            </event:remote-cluster-channel-scheme>
+                        </event:channel-scheme>
+                    </event:distribution-channel>
+                </event:distribution-channels>
+            </event:distributor>
+        </cache-mapping>
+
+        <!--
+            The clustered cache used to store IDs of "recently departed"
+            Sessions.
+        -->
+        <cache-mapping>
+            <cache-name>session-death-certificates</cache-name>
+            <scheme-name>session-certificate</scheme-name>
+        </cache-mapping>
+
+        <!--
+            The local cache used to store Sessions that are not yet
+            distributed (if there is a distribution controller).
+        -->
+        <cache-mapping>
+            <cache-name>local-session-storage</cache-name>
+            <scheme-name>unlimited-local</scheme-name>
+        </cache-mapping>
+
+        <!--
+            The local cache used to store Session attributes that are
+            not distributed (if there is a distribution controller or
+            attributes are allowed to become local when serialization
+            fails).
+        -->
+        <cache-mapping>
+            <cache-name>local-attribute-storage</cache-name>
+            <scheme-name>unlimited-local</scheme-name>
+        </cache-mapping>
+    </caching-scheme-mapping>
+
+    <caching-schemes>
+        <!--
+            Replicated caching scheme used by the Session management and
+            ServletContext attribute caches.
+        -->
+        <replicated-scheme>
+            <scheme-name>replicated</scheme-name>
+            <service-name>ReplicatedSessionsMisc</service-name>
+            <serializer>
+                <class-name>com.tangosol.io.DefaultSerializer</class-name>
+            </serializer>
+            <backing-map-scheme>
+                <local-scheme>
+                    <scheme-ref>unlimited-local</scheme-ref>
+                </local-scheme>
+            </backing-map-scheme>
+            <autostart>true</autostart>
+        </replicated-scheme>
+
+        <!--
+            Near caching scheme used by the Session attribute cache. The
+            front cache uses a Local caching scheme and the back cache
+            uses a Distributed caching scheme.
+        -->
+        <near-scheme>
+            <scheme-name>session-near</scheme-name>
+            <front-scheme>
+                <local-scheme>
+                    <scheme-ref>session-front</scheme-ref>
+                </local-scheme>
+            </front-scheme>
+            <back-scheme>
+                <distributed-scheme>
+                    <scheme-ref>session-distributed</scheme-ref>
+                </distributed-scheme>
+            </back-scheme>
+            <invalidation-strategy>present</invalidation-strategy>
+        </near-scheme>
+
+        <local-scheme>
+            <scheme-name>session-front</scheme-name>
+            <eviction-policy>HYBRID</eviction-policy>
+            <high-units>1000</high-units>
+            <low-units>750</low-units>
+        </local-scheme>
+
+        <distributed-scheme>
+            <scheme-name>session-distributed</scheme-name>
+            <scheme-ref>session-base</scheme-ref>
+            <!--
+                Removed the backing-map-scheme, as we wil inherit the
+                one from push replication
+            -->
+        </distributed-scheme>
+
+        <!--
+            Distributed caching scheme used by the "recently departed"
+            Session cache.
+        -->
+        <distributed-scheme>
+            <scheme-name>session-certificate</scheme-name>
+            <scheme-ref>session-base</scheme-ref>
+            <backing-map-scheme>
+                <local-scheme>
+                    <eviction-policy>HYBRID</eviction-policy>
+                    <high-units>4000</high-units>
+                    <low-units>3000</low-units>
+                    <expiry-delay>86400</expiry-delay>
+                </local-scheme>
+            </backing-map-scheme>
+        </distributed-scheme>
+
+        <!--
+            "Base" Distributed caching scheme that defines common
+            configuration.
+        -->
+        <distributed-scheme>
+            <scheme-name>session-base</scheme-name>
+            <!--
+                When running in a storage member, this scheme will need
+                to refer to the scheme defined in
+                coherence-pushreplicationpattern-cache-config.xml in
+                order to pick up the WAN replication configuration.
+
+                <scheme-ref>distributed-scheme-with-publishing-cachestore</scheme-ref>
+
+                When running in a non storage member (a web container)
+                this scheme-ref should not be present, as the push
+                replication scheme will not be required.
+
+                <service-name>DistributedCacheWithPublishingCacheStore</service-name>
+            -->
+
+            <!--
+                Since this cache configuration for the server side,
+                specify the scheme-ref.
+            -->
+            <scheme-ref>distributed-scheme-with-publishing-cachestore</scheme-ref>
+
+            <!--
+                The rest of the configuration below is specific to
+                Coherence*Web HTTP session storage.
+            -->
+            <serializer>
+                <class-name>com.tangosol.io.DefaultSerializer</class-name>
+            </serializer>
+            <thread-count>0</thread-count>
+            <lease-granularity>member</lease-granularity>
+            <local-storage system-property="tangosol.coherence.session.localstorage">false</local-storage>
+            <partition-count>257</partition-count>
+            <backup-count>1</backup-count>
+            <backup-storage>
+                <type>on-heap</type>
+            </backup-storage>
+
+            <!--
+                Note the absence of a backing-map-scheme! Storage
+                disabled members don't need it since they are not
+                storing anything, Storage enabled members will inherit
+                the backing-maps-scheme.
+            -->
+
+            <autostart>true</autostart>
+        </distributed-scheme>
+
+        <!--
+    Disk-based Session attribute overflow caching scheme.
+    -->
+        <overflow-scheme>
+            <scheme-name>session-paging</scheme-name>
+            <front-scheme>
+                <local-scheme>
+                    <scheme-ref>session-front</scheme-ref>
+                </local-scheme>
+            </front-scheme>
+            <back-scheme>
+                <external-scheme>
+                    <bdb-store-manager />
+                </external-scheme>
+            </back-scheme>
+        </overflow-scheme>
+
+        <!--
+            Local caching scheme definition used by all caches that do
+            not require an eviction policy.
+        -->
+        <local-scheme>
+            <scheme-name>unlimited-local</scheme-name>
+            <service-name>LocalSessionCache</service-name>
+        </local-scheme>
+
+        <!--
+            Clustered invocation service that manages sticky session
+            ownership.
+        -->
+        <invocation-scheme>
+            <service-name>SessionOwnership</service-name>
+            <serializer>
+                <class-name>com.tangosol.io.DefaultSerializer</class-name>
+            </serializer>
+        </invocation-scheme>
+
+        <distributed-scheme>
+            <scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
+            <service-name>DistributedCacheWithPublishingCacheStore</service-name>
+
+            <backing-map-scheme>
+                <read-write-backing-map-scheme>
+                    <internal-cache-scheme>
+                        <local-scheme>
+                        </local-scheme>
+                    </internal-cache-scheme>
+                    <cachestore-scheme>
+                        <class-scheme>
+                            <class-name>com.oracle.coherence.patterns.pushreplication.PublishingCacheStore</class-name>
+                            <init-params>
+                                <init-param>
+                                    <param-type>java.lang.String</param-type>
+                                    <param-value>{cache-name}</param-value>
+                                </init-param>
+                            </init-params>
+                        </class-scheme>
+                    </cachestore-scheme>
+                </read-write-backing-map-scheme>
+            </backing-map-scheme>
+
+            <autostart>false</autostart>
+        </distributed-scheme>
+    </caching-schemes>
+</cache-config>
+

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/weblogic-web-app"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.bea.com/ns/weblogic/weblogic-web-app http://www.bea.com/ns/weblogic/weblogic-web-app/1.0/weblogic-web-app.xsd">
+
+  <session-descriptor>
+    <!-- from cordell on -->
+    <!-- <persistent-store-type>coherence-web</persistent-store-type> -->
+    <cookie-path>/</cookie-path>
+  </session-descriptor>
+
+  <library-ref>
+    <library-name>coherence-web-spi</library-name>
+    <specification-version>1.0.0.0</specification-version>
+    <implementation-version>1.0.0.0</implementation-version>
+    <exact-match>false</exact-match>
+  </library-ref>
+</weblogic-web-app>
+
