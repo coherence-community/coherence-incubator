@@ -75,8 +75,7 @@
 
         <module>coherence-incubator-all</module>
         <module>coherence-incubator-site</module>
-        <module>coherence-pushreplicationpattern-web-example</module>
-  </modules>
+    </modules>
 
     <properties>
         <!-- project options -->
@@ -102,7 +101,6 @@
         <maven.gpg.plugin.version>1.4</maven.gpg.plugin.version>
         <maven.install.plugin.version>2.4</maven.install.plugin.version>
         <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
-        <maven.war.plugin.version>2.3</maven.war.plugin.version>
         <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
         <maven.release.plugin.version>2.2.1</maven.release.plugin.version>
         <maven.shade.plugin.version>1.7</maven.shade.plugin.version>
@@ -121,7 +119,7 @@
         <junit.version>4.10</junit.version>
         <miglayout.version>3.6</miglayout.version>
         <mockito.version>1.9.0</mockito.version>
-        <oracle.coherence.version>3.7.1.8</oracle.coherence.version>
+        <oracle.coherence.version>3.7.1.7</oracle.coherence.version>
         <oracle.tools.version>0.0.9-SNAPSHOT</oracle.tools.version>
         <powermock.version>1.4.12</powermock.version>
     </properties>
