@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>coherence-incubator</artifactId>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <version>11.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <name>Coherence Incubator Push Replication Pattern *Web (examples)</name>
+
+    <description>
+       Coherence*Web Examples for the Push Replication Pattern.
+    </description>
+
+    <artifactId>coherence-pushreplicationpattern-web-example</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>webapp</module>
+        <module>webserver</module>
+        <module>webapp-tests</module>
+    </modules>
+
+    <properties>
+        <jettyVersion>8.1.0.RC0</jettyVersion>
+        <httpunit.version>1.7</httpunit.version>
+        <glassfish.javax.version>2.2.3</glassfish.javax.version>
+        <glassfish.javax-impl.version>2.2</glassfish.javax-impl.version>
+        <glassfish.jstl.version>1.2</glassfish.jstl.version>
+        <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
+        <rhino.version>1.6R5</rhino.version>
+    </properties>
+
+</project>

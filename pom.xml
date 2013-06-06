@@ -75,7 +75,7 @@
 
         <module>coherence-incubator-all</module>
         <module>coherence-incubator-site</module>
-        <module>coherence-pushreplicationpattern-web-example</module>
+        <module>coherence-pushreplicationpattern-web-examples</module>
   </modules>
 
     <properties>

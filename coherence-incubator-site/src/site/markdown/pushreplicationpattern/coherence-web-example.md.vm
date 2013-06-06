@@ -14,24 +14,28 @@ module of the Oracle Coherence Incubator.
 
 <h4>Components</h4>
 
-<h5>coherence-pushreplicationpattern-web</h5>
+<h5>Coherence*Web specific classes</h5>
 
-This module contains the custom classes to support Coherence*Web with push replication. There are two classes added to
-use Coherence*Web with Push Replication:
+There are two classes added to support Coherence*Web with Push Replication:
 
 - SiteExtractor: EntryExtractor that extracts the site information from a cache entry
 - SiteSessionExpiryFilterFactory: Coherence*Web filter factory that creates a filter  to only include sessions managed
 by the current site when performing session cleanup.
 
-<h5>coherence-pushreplicationpattern-web-app</h5>
+<h5>Webapp</h5>
 
-This module contains the simple webapp that modifies a user session and creates an self executing war that will start
+This module contains the simple webapp that modifies a user session and creates a self executing war that will start
 Jetty and Coherence for the example. It contains two JSPs:
 
 - sessionAccess.jsp: Standard JSP (with the [coherence-web-installer](http://docs.oracle.com/cd/E24290_01/coh.371/e22620/cohweb.htm#CIAHGHII)
 already run against it) that will work with any non WebLogic container. This JSP is used with the example since it runs on Jetty.
 - sessionAccessSpi: Standard JSP without having the need to be parsed by the coherence-web-installer because of the
 WebLogic SPI integration in case you want to deploy the web-app to WebLogic.
+
+<h5>Webserver</h5>
+
+This module contains Jetty and custom code that will start Coherence and Jetty from the command line. This module is
+shaded into the webapp so that we can have a single sef-executing war file for the example.
 
 <h4>Overview</h4>
 
@@ -44,7 +48,7 @@ clusters over TCP via Coherence*Extend. Combining these two technologies results
 for customers that require minimum downtime and user disruption upon the loss of a data center hosting
 mission critical web applications.
 
-![Overview](../images/pushreplicationpattern/coherence*web-overview.png)
+![Overview](../images/pushreplicationpattern/web-overview.png)
 
 This examples uses two clusters, "Site 1" displayed and "Site 2". In the interest of simplicity of execution, we
 have embedded everything that you need to run the example all within the self executing war file. Both sites contain
@@ -78,7 +82,7 @@ Site 2 consists of:
 >   unpacked and built according to the prerequisites outlined above.
 
 
-![Running](../images/pushreplicationpattern/coherence*web-example.png)
+![Running](../images/pushreplicationpattern/web-example.png)
 
 <h4>Step 1. Running Site 1</h4>
 
@@ -119,7 +123,7 @@ In a new Terminal / Shell Console for the "Site 2"
 
 The application interface should something like the following:
 
-![Auction Applcation for Site 1](../images/pushreplicationpattern/coherence*web-site1.png)
+![Auction Applcation for Site 1](../images/pushreplicationpattern/web-site1.png)
 
 <h4>Step 4. Validate that your session data is visible to Site 2</h4>
 
@@ -128,5 +132,5 @@ The application interface should something like the following:
 
 The application interface should something like the following:
 
-![Auction Applcation for Site 1](../images/pushreplicationpattern/coherence*web-site2.png)
+![Auction Applcation for Site 1](../images/pushreplicationpattern/web-site2.png)
 
