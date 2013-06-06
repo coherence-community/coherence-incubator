@@ -116,11 +116,6 @@
                             <Version>${project.parent.version}</Version>
                         </manifestEntries>
                     </archive>
-                    <webResources>
-                        <resource>
-                            <directory>src/main/external-resources</directory>
-                        </resource>
-                    </webResources>
                 </configuration>
             </plugin>
 
