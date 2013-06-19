@@ -141,7 +141,7 @@ public class FunctionalTest
 
             // Make initial request to siteA and add a value to the session
             WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc,
-                                                                                 "http://localhost:8080/sessionAccess.jsp"),
+                                                                                 "http://localhost:9080/sessionAccess.jsp"),
                                                          60,
                                                          TimeUnit.SECONDS);
 
@@ -160,7 +160,7 @@ public class FunctionalTest
             // Now make a request to the siteB, validate our session data is there and add another value
             DeferredAssert.assertThat("First set of session variables",
                                       new DeferredRowCount(wc,
-                                                           "http://localhost:9080/sessionAccess.jsp"),
+                                                           "http://localhost:10080/sessionAccess.jsp"),
                                       Matchers.equalTo(2),
                                       60,
                                       TimeUnit.SECONDS);
@@ -188,12 +188,12 @@ public class FunctionalTest
             // Now go back to the original site and make sure everything replicated properly
             DeferredAssert.assertThat("First set of session variables",
                                       new DeferredRowCount(wc,
-                                                           "http://localhost:8080/sessionAccess.jsp"),
+                                                           "http://localhost:9080/sessionAccess.jsp"),
                                       Matchers.equalTo(3),
                                       60,
                                       TimeUnit.SECONDS);
 
-            response = wc.getResponse("http://localhost:8080/sessionAccess.jsp");
+            response = wc.getResponse("http://localhost:9080/sessionAccess.jsp");
             table    = response.getTableWithID("HttpSessionAttributes");
 
             assertEquals("key", "A", table.getCellAsText(1, 0));

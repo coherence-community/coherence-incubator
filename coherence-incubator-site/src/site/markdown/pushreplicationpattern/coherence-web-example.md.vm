@@ -16,7 +16,7 @@ module of the Oracle Coherence Incubator.
 
 <h5>Coherence*Web specific classes</h5>
 
-There are two classes added to support Coherence*Web with Push Replication:
+There are two classes added to support Coherence*Web within the Push Replication Pattern:
 
 - SiteExtractor: EntryExtractor that extracts the site information from a cache entry
 - SiteSessionExpiryFilterFactory: Coherence*Web filter factory that creates a filter  to only include sessions managed
@@ -63,14 +63,14 @@ to configure the cluster's identity and ports including:
 
 Site 1 consists of:
 
-- Webserver running on port 8080 (Connects to the cluster as a storage disabled TCMP client)
+- Webserver running on port 9080 (Connects to the cluster as a storage disabled TCMP client)
 - Cache server running with a cluster port of 9001
 - Proxy service listening on port 9002
 - Client port configured to connect to Site2 at port 10002
 
 Site 2 consists of:
 
-- Webserver running on port 9080 (Connects to the cluster as a storage disabled TCMP client)
+- Webserver running on port 10080 (Connects to the cluster as a storage disabled TCMP client)
 - Cache server running with a cluster port of 10001
 - Proxy service listening on port 10002
 - Client port configured to connect to Site1 at port 9002
@@ -97,7 +97,7 @@ In a new Terminal / Shell Console for "Site 1"
 
 2.  Run the "Site 1"
 
-    `java -jar coherence-pushreplicationpattern-web-app-${project.version}.war site1.properties`
+    `java -jar webapp-${project.version}.war site1.properties`
 
 
 <h4>Step 2. Running Site 2</h4>
@@ -118,19 +118,19 @@ In a new Terminal / Shell Console for the "Site 2"
 
 <h4>Step 3. Access Site 1 with the browser and insert some data into the session</h4>
 
-1. Open a browser to the following url: http://localhost:8080/sessionAccess.jsp
+1. Open a browser to the following url: http://localhost:9080/sessionAccess.jsp
 2. Add a session variable to the http session.
 
 The application interface should something like the following:
 
-![Auction Applcation for Site 1](../images/pushreplicationpattern/web-site1.png)
+![Site 1](../images/pushreplicationpattern/web-site1.png)
 
 <h4>Step 4. Validate that your session data is visible to Site 2</h4>
 
-1. Navigate the same browser to the following url: http://localhost:9080/sessionAccess.jsp
+1. Navigate the same browser to the following url: http://localhost:10080/sessionAccess.jsp
 2. You should see your same session variables in the web abbplication.
 
 The application interface should something like the following:
 
-![Auction Applcation for Site 1](../images/pushreplicationpattern/web-site2.png)
+![Site 2](../images/pushreplicationpattern/web-site2.png)
 

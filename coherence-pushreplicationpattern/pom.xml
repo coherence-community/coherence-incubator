@@ -27,6 +27,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.oracle.coherence</groupId>
+            <artifactId>coherence-web</artifactId>
+            <version>${oracle.coherence.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.oracle.coherence.incubator</groupId>
             <artifactId>coherence-common</artifactId>
             <version>${project.parent.version}</version>
