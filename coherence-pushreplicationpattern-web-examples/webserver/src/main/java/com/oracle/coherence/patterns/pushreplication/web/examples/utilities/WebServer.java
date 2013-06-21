@@ -144,7 +144,7 @@ public class WebServer
 
         ClusterMemberSchema serverSchema =
             new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-                .setSystemProperties(cacheProperties).setRoleName("CacheServer");
+                .setSystemProperties(cacheProperties).setRoleName("CacheServer").setEnvironmentInherited(false);
 
         ClusterBuilder builder = new ClusterBuilder();
 
