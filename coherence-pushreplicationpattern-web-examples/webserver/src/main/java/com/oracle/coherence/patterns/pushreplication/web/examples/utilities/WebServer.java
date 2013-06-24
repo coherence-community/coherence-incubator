@@ -142,9 +142,12 @@ public class WebServer
             }
         }
 
+//        ClusterMemberSchema serverSchema =
+//            new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
+//                .setSystemProperties(cacheProperties).setRoleName("CacheServer").setEnvironmentInherited(false);
+
         ClusterMemberSchema serverSchema =
-            new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-                .setSystemProperties(cacheProperties).setRoleName("CacheServer").setEnvironmentInherited(false);
+            new ClusterMemberSchema().setSystemProperties(cacheProperties).setRoleName("CacheServer").setEnvironmentInherited(false);
 
         ClusterBuilder builder = new ClusterBuilder();
 
