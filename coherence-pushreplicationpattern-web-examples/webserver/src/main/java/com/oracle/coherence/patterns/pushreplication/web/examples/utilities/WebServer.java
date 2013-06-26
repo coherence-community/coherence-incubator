@@ -114,8 +114,7 @@ public class WebServer
                 PropertiesBuilder     webserverProps     = new PropertiesBuilder(globalProps);
 
                 webserverProps.addProperties(jettyProps);
-                int serverPort = Integer.parseInt(arguments[1]);
-                webserverProps.setProperty("WebServer-Port", serverPort);
+                webserverProps.setProperty("WebServer-Port", arguments[1]);
 
                 startJettyServer(webserverProps);
             }
@@ -175,7 +174,7 @@ public class WebServer
      */
     public static void startJettyServer(PropertiesBuilder propertiesBuilder)
     {
-        int webPort = (Integer)propertiesBuilder.getProperty("WebServer-Port");
+        int webPort = Integer.parseInt((String)propertiesBuilder.getProperty("WebServer-Port"));
 
         Properties props = propertiesBuilder.realize();
 
