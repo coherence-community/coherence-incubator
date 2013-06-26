@@ -82,29 +82,42 @@ public class WebServer
      */
     public static void main(String[] arguments) throws Exception
     {
-        String                propertiesFileName = arguments[0];
-        Map<String, String>   config             = parseConfig(propertiesFileName, true);
-        AvailablePortIterator iterator           = new AvailablePortIterator();
-
         try
         {
             if (arguments.length == 1)
             {
-                cluster = startCacheServer(config, iterator);
-                startJettyServer(config);
-            }
-            else if (arguments.length == 2)
-            {
-                System.out.println("For Testing Purposes Only");
+                String                propertiesFileName = arguments[0];
+                PropertiesBuilder     globalProps        = parseConfig("System-Property",    propertiesFileName);
+                PropertiesBuilder     jettyProps         = parseConfig("WebSystem-Property", propertiesFileName);
+                PropertiesBuilder     cohProps           = parseConfig("COHSystem-Property", propertiesFileName);
 
-                if (arguments[1].equals("cache"))
+                PropertiesBuilder cacheProps = new PropertiesBuilder(globalProps);
+                PropertiesBuilder webserverProps = new PropertiesBuilder(globalProps);
+                cacheProps.addProperties(cohProps);
+                webserverProps.addProperties(jettyProps);
+
+                cluster = startCacheServer(cacheProps);
+                startJettyServer(webserverProps);
+            }
+            else
+            {
+                System.out.println("For testing purposes only.");
+                if (arguments.length != 2)
                 {
-                    cluster = startCacheServer(config, iterator);
+                    System.out.println("Tests should pass in 2 parameters (properties file and webserver port." +
+                            " We only received: " + arguments.length + " parameters");
                 }
-                else if (arguments[1].equals("web"))
-                {
-                    startJettyServer(config);
-                }
+
+                String                propertiesFileName = arguments[0];
+                PropertiesBuilder     globalProps        = parseConfig("System-Property",    propertiesFileName);
+                PropertiesBuilder     jettyProps         = parseConfig("WebSystem-Property", propertiesFileName);
+                PropertiesBuilder     webserverProps     = new PropertiesBuilder(globalProps);
+
+                webserverProps.addProperties(jettyProps);
+                int serverPort = Integer.parseInt(arguments[1]);
+                webserverProps.setProperty("WebServer-Port", serverPort);
+
+                startJettyServer(webserverProps);
             }
         }
         finally
@@ -121,39 +134,23 @@ public class WebServer
     /**
      * Method description
      *
-     * @param config
+     * @param propertiesBuilder  The properties to use to start this server.
      *
      * @return
      *
      * @throws IOException
      */
-    public static Cluster startCacheServer(Map<String, String>   config,
-                                           AvailablePortIterator portIterator) throws IOException
+    public static Cluster startCacheServer(PropertiesBuilder propertiesBuilder) throws IOException
     {
-        PropertiesBuilder cacheProperties = new PropertiesBuilder(PropertiesBuilder.fromCurrentSystemProperties());
-
-        for (Map.Entry<String, String> entry : config.entrySet())
-        {
-            String key = entry.getKey();
-
-            if (key.startsWith("COHSystem-Property") || key.startsWith("System-Property"))
-            {
-                setProperty(key, entry.getValue(), cacheProperties);
-            }
-        }
-
-//        ClusterMemberSchema serverSchema =
-//            new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-//                .setSystemProperties(cacheProperties).setRoleName("CacheServer").setEnvironmentInherited(false);
-
         ClusterMemberSchema serverSchema =
-            new ClusterMemberSchema().setSystemProperties(cacheProperties).setRoleName("CacheServer").setEnvironmentInherited(false);
+            new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
+                .setSystemProperties(propertiesBuilder).setRoleName("CacheServer");
 
         ClusterBuilder builder = new ClusterBuilder();
 
         builder.addBuilder(new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>(),
                            serverSchema,
-                           cacheProperties.getProperty("tangosol.coherence.site") + "-CacheServer",
+                           propertiesBuilder.getProperty("tangosol.coherence.site") + "-CacheServer",
                            1);
 
         try
@@ -174,24 +171,17 @@ public class WebServer
      * Start the webserver that will run the Coherence*Web test application for getting and setting http session
      * variables.
      *
-     * @param config  The map of configuration parameters to use
+     * @param propertiesBuilder  The propertiesBuilder containing the configuration for this server
      */
-    public static void startJettyServer(Map<String, String> config)
+    public static void startJettyServer(PropertiesBuilder propertiesBuilder)
     {
-        int webPort = -1;
+        int webPort = (Integer)propertiesBuilder.getProperty("WebServer-Port");
 
-        for (Map.Entry<String, String> entry : config.entrySet())
+        Properties props = propertiesBuilder.realize();
+
+        for (String prop : props.stringPropertyNames())
         {
-            String key = entry.getKey();
-
-            if (key.startsWith("WebSystem-Property"))
-            {
-                setProperty(key, entry.getValue(), null);
-            }
-            else if (key.equals("WebServer-Port"))
-            {
-                webPort = Integer.parseInt(entry.getValue());
-            }
+            System.setProperty(prop, props.getProperty(prop));
         }
 
         Server           server   = new Server(webPort);
@@ -203,8 +193,10 @@ public class WebServer
         webapp.setDescriptor(location.toExternalForm() + "/WEB-INF/web.xml");
         webapp.setServer(server);
         webapp.setWar(location.toExternalForm());
-        webapp.setTempDirectory(new File(System.getProperty("java.io.tmpdir") + "/"
-                                         + System.getProperty("tangosol.coherence.site")));
+        String sTemp = System.getProperty("java.io.tmpdir");
+        sTemp += "/";
+        sTemp += System.getProperty("tangosol.coherence.site");
+        webapp.setTempDirectory(new File(sTemp));
 
         server.setHandler(webapp);
 
@@ -231,10 +223,9 @@ public class WebServer
      *
      * @throws Exception
      */
-    public static Map<String, String> parseConfig(String  propertiesFileName,
-                                                  boolean setSystemProperties) throws Exception
+    public static PropertiesBuilder parseConfig(String propPrefix, String  propertiesFileName) throws Exception
     {
-        Map<String, String> result = new TreeMap();
+        PropertiesBuilder builder = new PropertiesBuilder();
 
         // warn if the file name doesn't end in properties
         if (!propertiesFileName.endsWith(".properties"))
@@ -256,13 +247,12 @@ public class WebServer
 
             for (String propertyName : applicationProps.stringPropertyNames())
             {
-                if (propertyName.startsWith("System-Property") && setSystemProperties)
+                if (propertyName.startsWith(propPrefix))
                 {
-                    setProperty(propertyName, applicationProps.getProperty(propertyName), null);
-                }
-                else
-                {
-                    result.put(propertyName, applicationProps.getProperty(propertyName));
+                    String propertyDefinition = applicationProps.getProperty(propertyName);
+                    String[] propertyParts = propertyDefinition.split("=");
+
+                    builder.setProperty(propertyParts[0], propertyParts[1]);
                 }
             }
 
@@ -275,39 +265,6 @@ public class WebServer
             throw e;
         }
 
-        return result;
-    }
-
-
-    /**
-     * Parse a property definition formatted as Name=Value and set it on the supplied properties. If the supplied properties
-     * is null we'll set use System.setProperty.
-     *
-     * @param propertyName       The name of the property to set from the configuration file
-     * @param propertyDefinition The property to be parsed.
-     */
-    public static void setProperty(String            propertyName,
-                                   String            propertyDefinition,
-                                   PropertiesBuilder properties)
-    {
-        String[] propertyParts = propertyDefinition.split("=");
-
-        if (propertyParts.length == 2)
-        {
-            if (properties == null)
-            {
-                System.setProperty(propertyParts[0], propertyParts[1]);
-            }
-            else
-            {
-                properties.setProperty(propertyParts[0], propertyParts[1]);
-            }
-        }
-        else
-        {
-            throw new IllegalArgumentException(String
-                .format("ERROR: Invalid Property Value for [%s=%s].  Should be of the form: System-PropertyN=-Dproperty.name=property.value\n",
-                        propertyName, propertyDefinition));
-        }
+        return builder;
     }
 }
