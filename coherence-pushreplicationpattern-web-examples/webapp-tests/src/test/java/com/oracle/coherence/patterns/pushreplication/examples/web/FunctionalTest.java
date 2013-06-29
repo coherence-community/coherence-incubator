@@ -1,5 +1,5 @@
 /*
- * File: CohWebFunctionalTest.java
+ * File: FunctionalTest.java
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -39,11 +39,13 @@ import com.oracle.tools.deferred.DeferredHelper;
 import com.oracle.tools.deferred.ObjectNotAvailableException;
 
 import com.oracle.tools.runtime.PropertiesBuilder;
+
 import com.oracle.tools.runtime.coherence.Cluster;
 
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
 
 import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
+import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.SimpleJavaApplication;
 import com.oracle.tools.runtime.java.SimpleJavaApplicationSchema;
 
@@ -80,61 +82,44 @@ public class FunctionalTest
     @BeforeClass
     public static void setup() throws Exception
     {
-
-//        SimpleJavaApplicationSchema site1schema =
-//            new SimpleJavaApplicationSchema("com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer");
-//
-//        site1schema.addArgument("site1.properties");
-//
-//        SimpleJavaApplicationSchema site2schema =
-//            new SimpleJavaApplicationSchema("com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer");
-//
-//        site2schema.addArgument("site2.properties");
-//
-//        ExternalJavaApplicationBuilder<SimpleJavaApplication, SimpleJavaApplicationSchema> appBuilder =
-//            new ExternalJavaApplicationBuilder<SimpleJavaApplication, SimpleJavaApplicationSchema>();
-//
-//        SystemApplicationConsole console = new SystemApplicationConsole();
-//
-//        site1 = appBuilder.realize(site1schema, "Site1-Web", console);
-//        site2 = appBuilder.realize(site2schema, "Site2-Web", console);
-
         // Staring a process with oracle tools from within an oracle tools process appears to be problematic
         // we'll parse the config and start the processes here.
-        AvailablePortIterator portIter = new AvailablePortIterator();
+        AvailablePortIterator portIter      = new AvailablePortIterator();
 
-        int acceptor1Port = portIter.next();
-        int acceptor2Port = portIter.next();
+        int                   acceptor1Port = portIter.next();
+        int                   acceptor2Port = portIter.next();
 
-        //Setup site 1
-        PropertiesBuilder globalProps1 = WebServer.parseConfig("System-Property",    "site1.properties");
+        // Setup site 1
+        PropertiesBuilder globalProps1 = WebServer.parseConfig("System-Property", "site1.properties");
         PropertiesBuilder cohProps1    = WebServer.parseConfig("COHSystem-Property", "site1.properties");
 
-        PropertiesBuilder cache1Props = new PropertiesBuilder(globalProps1);
+        PropertiesBuilder cache1Props  = new PropertiesBuilder(globalProps1);
+
         cache1Props.addProperties(cohProps1);
 
-        //Override the system properties for ports for the test environment
+        // Override the system properties for ports for the test environment
         cache1Props.setProperty("client.port", acceptor2Port);
         cache1Props.setProperty("bind.port", acceptor1Port);
 
-        //Setup site 2
-        PropertiesBuilder globalProps2 = WebServer.parseConfig("System-Property",    "site2.properties");
-        PropertiesBuilder cohProps2    = WebServer.parseConfig("COHSystem-Property", "site2.properties");
+        // Setup site 2
+        PropertiesBuilder globalProps2    = WebServer.parseConfig("System-Property", "site2.properties");
+        PropertiesBuilder cohProps2       = WebServer.parseConfig("COHSystem-Property", "site2.properties");
 
-        PropertiesBuilder cache2Props = new PropertiesBuilder(globalProps2);
+        PropertiesBuilder cache2Props     = new PropertiesBuilder(globalProps2);
         PropertiesBuilder webserver2Props = new PropertiesBuilder(globalProps2);
+
         cache2Props.addProperties(cohProps2);
 
-        //Override the system properties for ports for the test environment
+        // Override the system properties for ports for the test environment
         cache2Props.setProperty("client.port", acceptor1Port);
         cache2Props.setProperty("bind.port", acceptor2Port);
 
-        ExternalJavaApplicationBuilder<SimpleJavaApplication, SimpleJavaApplicationSchema> appBuilder =
-                new ExternalJavaApplicationBuilder<SimpleJavaApplication, SimpleJavaApplicationSchema>();
+        NativeJavaApplicationBuilder<SimpleJavaApplication, SimpleJavaApplicationSchema> appBuilder =
+            new NativeJavaApplicationBuilder<SimpleJavaApplication, SimpleJavaApplicationSchema>();
 
         SystemApplicationConsole console = new SystemApplicationConsole();
 
-        //Startup Site1
+        // Startup Site1
         site1Port = portIter.next();
 
         SimpleJavaApplicationSchema site1schema =
@@ -146,7 +131,7 @@ public class FunctionalTest
         cluster1 = WebServer.startCacheServer(cache1Props);
         site1    = appBuilder.realize(site1schema, "Site1-Web", console);
 
-        //Startup Site2
+        // Startup Site2
         site2Port = portIter.next();
 
         SimpleJavaApplicationSchema site2schema =
@@ -184,18 +169,15 @@ public class FunctionalTest
     {
         try
         {
-            final WebConversation wc = new WebConversation();
+            final WebConversation wc       = new WebConversation();
 
-            final String site1url = "http://localhost:" + site1Port + "/sessionAccess.jsp";
-            final String site2url = "http://localhost:" + site2Port + "/sessionAccess.jsp";
+            final String          site1url = "http://localhost:" + site1Port + "/sessionAccess.jsp";
+            final String          site2url = "http://localhost:" + site2Port + "/sessionAccess.jsp";
 
             // Make initial request to siteA and add a value to the session
-            WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc,
-                                                                                 site1url),
-                                                         60,
-                                                         TimeUnit.SECONDS);
+            WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc, site1url), 60, TimeUnit.SECONDS);
 
-            WebForm form = response.getFormWithID("HttpSessionAttributesForm");
+            WebForm     form     = response.getFormWithID("HttpSessionAttributesForm");
 
             form.setParameter("key", "A");
             form.setParameter("value", "B");
@@ -209,8 +191,7 @@ public class FunctionalTest
 
             // Now make a request to the siteB, validate our session data is there and add another value
             DeferredAssert.assertThat("First set of session variables",
-                                      new DeferredRowCount(wc,
-                                                           site2url),
+                                      new DeferredRowCount(wc, site2url),
                                       Matchers.equalTo(2),
                                       60,
                                       TimeUnit.SECONDS);
@@ -237,8 +218,7 @@ public class FunctionalTest
 
             // Now go back to the original site and make sure everything replicated properly
             DeferredAssert.assertThat("First set of session variables",
-                                      new DeferredRowCount(wc,
-                                                           site1url),
+                                      new DeferredRowCount(wc, site1url),
                                       Matchers.equalTo(3),
                                       60,
                                       TimeUnit.SECONDS);
