@@ -10,7 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-  <artifactId>coherence-pushreplicationpattern-web-app-test</artifactId>
+  <artifactId>webapp-test</artifactId>
 
   <name>Coherence Incubator Web Application Test</name>
 

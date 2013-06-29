@@ -72,10 +72,10 @@
 
         <module>coherence-pushreplicationpattern</module>
         <module>coherence-pushreplicationpattern-examples</module>
+        <module>coherence-pushreplicationpattern-web-example</module>
 
         <module>coherence-incubator-all</module>
         <module>coherence-incubator-site</module>
-        <module>coherence-pushreplicationpattern-web-examples</module>
   </modules>
 
     <properties>

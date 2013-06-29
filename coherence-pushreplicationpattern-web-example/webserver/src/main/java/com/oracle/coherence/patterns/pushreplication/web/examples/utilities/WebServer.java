@@ -3,7 +3,7 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
@@ -27,22 +27,31 @@
 package com.oracle.coherence.patterns.pushreplication.web.examples.utilities;
 
 import com.oracle.tools.runtime.PropertiesBuilder;
+
 import com.oracle.tools.runtime.coherence.Cluster;
 import com.oracle.tools.runtime.coherence.ClusterBuilder;
 import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
+
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
+
 import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
+
 import com.oracle.tools.runtime.network.AvailablePortIterator;
+
 import org.eclipse.jetty.server.Server;
+
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import java.net.URL;
+
 import java.security.ProtectionDomain;
+
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -82,41 +91,54 @@ public class WebServer
      */
     public static void main(String[] arguments) throws Exception
     {
+        System.out.println("-----------------------------------------------------------");
+        System.out.println("Oracle Java Coherence*Web Example");
+        System.out.println("Copyright (c) 2013. Oracle Corporation");
+        System.out.println("-----------------------------------------------------------");
+        System.out.println();
+
         try
         {
             if (arguments.length == 1)
             {
-                String                propertiesFileName = arguments[0];
-                PropertiesBuilder     globalProps        = parseConfig("System-Property",    propertiesFileName);
-                PropertiesBuilder     jettyProps         = parseConfig("WebSystem-Property", propertiesFileName);
-                PropertiesBuilder     cohProps           = parseConfig("COHSystem-Property", propertiesFileName);
+                String            propertiesFileName = arguments[0];
+                PropertiesBuilder globalProps        = parseConfig("System-Property", propertiesFileName);
+                PropertiesBuilder jettyProps         = parseConfig("WebSystem-Property", propertiesFileName);
+                PropertiesBuilder cohProps           = parseConfig("COHSystem-Property", propertiesFileName);
 
-                PropertiesBuilder cacheProps = new PropertiesBuilder(globalProps);
-                PropertiesBuilder webserverProps = new PropertiesBuilder(globalProps);
+                PropertiesBuilder cacheProps         = new PropertiesBuilder(globalProps);
+                PropertiesBuilder webserverProps     = new PropertiesBuilder(globalProps);
+
                 cacheProps.addProperties(cohProps);
                 webserverProps.addProperties(jettyProps);
 
                 cluster = startCacheServer(cacheProps);
                 startJettyServer(webserverProps);
             }
-            else
+            else if (arguments.length == 2)
             {
-                System.out.println("For testing purposes only.");
+                System.out.println("For functional testing purposes only.");
+
                 if (arguments.length != 2)
                 {
-                    System.out.println("Tests should pass in 2 parameters (properties file and webserver port." +
-                            " We only received: " + arguments.length + " parameters");
+                    System.out.println("Tests should pass in 2 parameters (properties file and webserver port."
+                                       + " We only received: " + arguments.length + " parameters");
                 }
 
-                String                propertiesFileName = arguments[0];
-                PropertiesBuilder     globalProps        = parseConfig("System-Property",    propertiesFileName);
-                PropertiesBuilder     jettyProps         = parseConfig("WebSystem-Property", propertiesFileName);
-                PropertiesBuilder     webserverProps     = new PropertiesBuilder(globalProps);
+                String            propertiesFileName = arguments[0];
+                PropertiesBuilder globalProps        = parseConfig("System-Property", propertiesFileName);
+                PropertiesBuilder jettyProps         = parseConfig("WebSystem-Property", propertiesFileName);
+                PropertiesBuilder webserverProps     = new PropertiesBuilder(globalProps);
 
                 webserverProps.addProperties(jettyProps);
                 webserverProps.setProperty("WebServer-Port", arguments[1]);
 
                 startJettyServer(webserverProps);
+            }
+            else
+            {
+                System.out.println("Oracle Java Coherence*Web Example requires a single parameter, specifying a "
+                                   + ".properties file on the classpath");
             }
         }
         finally
@@ -135,7 +157,7 @@ public class WebServer
      *
      * @param propertiesBuilder  The properties to use to start this server.
      *
-     * @return
+     * @return The Cluster that was realized.
      *
      * @throws IOException
      */
@@ -174,9 +196,8 @@ public class WebServer
      */
     public static void startJettyServer(PropertiesBuilder propertiesBuilder)
     {
-        int webPort = Integer.parseInt((String)propertiesBuilder.getProperty("WebServer-Port"));
-
-        Properties props = propertiesBuilder.realize();
+        int        webPort = Integer.parseInt((String) propertiesBuilder.getProperty("WebServer-Port"));
+        Properties props   = propertiesBuilder.realize();
 
         for (String prop : props.stringPropertyNames())
         {
@@ -192,7 +213,9 @@ public class WebServer
         webapp.setDescriptor(location.toExternalForm() + "/WEB-INF/web.xml");
         webapp.setServer(server);
         webapp.setWar(location.toExternalForm());
+
         String sTemp = System.getProperty("java.io.tmpdir");
+
         sTemp += "/";
         sTemp += System.getProperty("tangosol.coherence.site");
         webapp.setTempDirectory(new File(sTemp));
@@ -222,7 +245,8 @@ public class WebServer
      *
      * @throws Exception
      */
-    public static PropertiesBuilder parseConfig(String propPrefix, String  propertiesFileName) throws Exception
+    public static PropertiesBuilder parseConfig(String propPrefix,
+                                                String propertiesFileName) throws Exception
     {
         PropertiesBuilder builder = new PropertiesBuilder();
 
@@ -248,8 +272,8 @@ public class WebServer
             {
                 if (propertyName.startsWith(propPrefix))
                 {
-                    String propertyDefinition = applicationProps.getProperty(propertyName);
-                    String[] propertyParts = propertyDefinition.split("=");
+                    String   propertyDefinition = applicationProps.getProperty(propertyName);
+                    String[] propertyParts      = propertyDefinition.split("=");
 
                     builder.setProperty(propertyParts[0], propertyParts[1]);
                 }

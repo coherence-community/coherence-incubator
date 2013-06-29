@@ -23,7 +23,7 @@
     <modules>
         <module>webapp</module>
         <module>webserver</module>
-        <module>webapp-tests</module>
+        <module>webapp-test</module>
     </modules>
 
     <properties>
