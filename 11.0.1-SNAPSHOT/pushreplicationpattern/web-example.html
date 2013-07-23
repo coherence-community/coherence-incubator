@@ -270,7 +270,7 @@
             </li>
               </ul>
         </li>
-                                                                                                                                                                  
+                                                                                                                                                        
       <li>
     
                           <a href="../processingpattern/index.html" title="The Processing Pattern">
@@ -313,10 +313,12 @@
         Pi Calculation Example</a>
             </li>
                       
-      <li class="active">
+      <li>
     
-            <a href="#"><i class="none"></i>Task Execution Example</a>
-          </li>
+                          <a href="../processingpattern/task-execution-example.html" title="Task Execution Example">
+          <i class="none"></i>
+        Task Execution Example</a>
+            </li>
               </ul>
         </li>
                   
@@ -342,7 +344,7 @@
             </li>
               </ul>
         </li>
-                                                                                                                                                        
+                                                                                                                                                                  
       <li>
     
                           <a href="../pushreplicationpattern/index.html" title="The Push Replication Pattern">
@@ -385,12 +387,10 @@
         Auction Example</a>
             </li>
                       
-      <li>
+      <li class="active">
     
-                          <a href="../pushreplicationpattern/web-example.html" title="Web Example">
-          <i class="none"></i>
-        Web Example</a>
-            </li>
+            <a href="#"><i class="none"></i>Web Example</a>
+          </li>
               </ul>
         </li>
                               <li class="nav-header">Development</li>
@@ -428,7 +428,7 @@
                 
         <div id="bodyColumn"  class="span9" >
                                   
-            <h2>The Processing Pattern Task Execution Example</h2>
+            <h2>The Coherence*Web Example</h2>
 
 <h4>Prerequisites</h4>
 
@@ -438,16 +438,83 @@ installed locally.  Instructions on how to achieve this are located here:
 
 <h4>Source Code</h4>
 
-<p>The source code for this example is located in the <code>coherence-processingpattern-examples</code>
+<p>The source code for this example is located in the <code>coherence-pushreplicationpattern-web-example</code>
 module of the Oracle Coherence Incubator.</p>
+
+<h4>Components</h4>
+
+<h5>Coherence*Web specific classes</h5>
+
+<p>There are two classes added to support Coherence*Web within the Push Replication Pattern:</p>
+
+<ul>
+<li>SiteExtractor: EntryExtractor that extracts the site information from a cache entry</li>
+<li>SiteSessionExpiryFilterFactory: Coherence*Web filter factory that creates a filter  to only include sessions managed
+by the current site when performing session cleanup.</li>
+</ul>
+
+<h5>The Web Application</h5>
+
+<p>This module contains the simple webapp that modifies a user session and creates a self executing war that will start
+Jetty and Coherence for the example. It contains two JSPs:</p>
+
+<ul>
+<li>sessionAccess.jsp: Standard JSP (with the <a href="http://docs.oracle.com/cd/E24290_01/coh.371/e22620/cohweb.htm#CIAHGHII">coherence-web-installer</a>
+already run against it) that will work with any non WebLogic container. This JSP is used with the example since it runs on Jetty.</li>
+<li>sessionAccessSpi: Standard JSP without having the need to be parsed by the coherence-web-installer because of the
+WebLogic SPI integration in case you want to deploy the web-app to WebLogic.</li>
+</ul>
+
+<h5>The Web Server</h5>
+
+<p>This module contains Jetty and custom code that will start Coherence and Jetty from the command line. This module is
+shaded into the webapp so that we can have a single sef-executing war file for the example.</p>
 
 <h4>Overview</h4>
 
-<p>This example demonstrates calculating different types of <code>Tasks</code> using the
-Processing Pattern, namely <code>Single</code> and <code>Grid</code>-based tasks.</p>
+<p>This example demonstrates how to combine Coherence*Web with Push Replication to publish HTTP
+sessions between data centers.</p>
 
-<p>There are two applications to run as part of this example.  The following details
-the intent, instructions and the order in which to run these applictions.</p>
+<p>Coherence*Web uses Coherence partitioned caches to store HTTP session data. The Push Replication
+Incubator pattern is an example use of Coherence that provides cache replication between distinct
+clusters over TCP via Coherence*Extend. Combining these two technologies results in a compelling topology
+for customers that require minimum downtime and user disruption upon the loss of a data center hosting
+mission critical web applications.</p>
+
+<p><img src="../images/pushreplicationpattern/web-overview.png" alt="Overview" /></p>
+
+<p>This examples uses two clusters, "Site 1" displayed and "Site 2". In the interest of simplicity of execution, we
+have embedded everything that you need to run the example all within the self executing war file. Both sites contain
+the same web application and use the same cache configuration. The only differences between them are the settings used
+to configure the cluster's identity and ports including:</p>
+
+<ul>
+<li>webserver port</li>
+<li>cluster port</li>
+<li>site name</li>
+<li>Extend client port for connecting to the remote site</li>
+<li>Extend listen port for the proxy service</li>
+</ul>
+
+<p>Site 1 consists of:</p>
+
+<ul>
+<li>Webserver running on port 9080 (Connects to the cluster as a storage disabled TCMP client)</li>
+<li>Cache server running with a cluster port of 9001</li>
+<li>Proxy service listening on port 9002</li>
+<li>Client port configured to connect to Site2 at port 10002</li>
+</ul>
+
+<p>Site 2 consists of:</p>
+
+<ul>
+<li>Webserver running on port 10080 (Connects to the cluster as a storage disabled TCMP client)</li>
+<li>Cache server running with a cluster port of 10001</li>
+<li>Proxy service listening on port 10002</li>
+<li>Client port configured to connect to Site1 at port 9002</li>
+</ul>
+
+<h4>Running the Coherence*Web Example</h4>
 
 <blockquote>
   <p>  The following instructions assume that <code>$COHERENCE_INCUBATOR</code> is the directory
@@ -455,38 +522,59 @@ the intent, instructions and the order in which to run these applictions.</p>
     unpacked and built according to the prerequisites outlined above.</p>
 </blockquote>
 
-<h4>Step 1. Running the Grid Calculation Server</h4>
+<p><img src="../images/pushreplicationpattern/web-example.png" alt="Running" /></p>
 
-<p>Execute the following shell commands to start the "Grid Calculation Server", that
-of which will execute submitted <code>Callables</code> and <code>Tasks</code>.</p>
+<h4>Step 1. Running Site 1</h4>
 
-<p>In a new Terminal / Shell Console for the "Grid Calculation Server"</p>
+<p>Execute the following shell commands to start the "Active Server for Site 1".</p>
 
-<ol>
-<li><p>Change to the Processing Pattern Examples directory.</p>
-
-<p><code>cd $COHERENCE_INCUBATOR/coherence-processingpattern-examples/target</code></p></li>
-<li><p>Run the "Grid Calculation Server"</p>
-
-<p><code>java -jar coherence-processingpattern-examples-11.0.1-SNAPSHOT.jar grid-server.properties</code></p></li>
-</ol>
-
-<h4>Step 2. Running the Task Execution Application</h4>
-
-<p>Execute the following shell commands to start the "Task Execution Application".
-This application will submit tasks to the "Grid Calculation Server", that
-of which will appropriately execute the submitted tasks and return the results.</p>
-
-<p>In a new Terminal / Shell Console for the "Task Execution Application"</p>
+<p>In a new Terminal / Shell Console for "Site 1"</p>
 
 <ol>
-<li><p>Change to the Processing Pattern Examples directory.</p>
+<li><p>Change to the Push Replication Pattern Examples directory.</p>
 
-<p><code>cd $COHERENCE_INCUBATOR/coherence-processingpattern-examples/target</code></p></li>
-<li><p>Run the "Task Execution Application"</p>
+<p><code>cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target</code></p></li>
+<li><p>Run the "Site 1"</p>
 
-<p><code>java -jar coherence-processingpattern-examples-11.0.1-SNAPSHOT.jar taskexecution.properties</code></p></li>
+<p><code>java -jar webapp-11.0.1-SNAPSHOT.war site1.properties</code></p></li>
 </ol>
+
+<h4>Step 2. Running Site 2</h4>
+
+<p>Execute the following shell commands to start "Site 2".</p>
+
+<p>In a new Terminal / Shell Console for the "Site 2"</p>
+
+<ol>
+<li><p>Change to the Push Replication Pattern Coherence*Web Examples directory.</p>
+
+<p><code>cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target</code></p></li>
+<li><p>Run the "Site 2"</p>
+
+<p><code>java -jar coherence-pushreplicationpattern-web-app-11.0.1-SNAPSHOT.war site2.properties</code></p></li>
+</ol>
+
+<h4>Step 3. Access Site 1 with the browser and insert some data into the session</h4>
+
+<ol>
+<li>Open a browser to the following url: http://localhost:9080/sessionAccess.jsp</li>
+<li>Add a session variable to the http session.</li>
+</ol>
+
+<p>The application interface should something like the following:</p>
+
+<p><img src="../images/pushreplicationpattern/web-site1.png" alt="Site 1" /></p>
+
+<h4>Step 4. Validate that your session data is visible to Site 2</h4>
+
+<ol>
+<li>Navigate the same browser to the following url: http://localhost:10080/sessionAccess.jsp</li>
+<li>You should see your same session variables in the web abbplication.</li>
+</ol>
+
+<p>The application interface should something like the following:</p>
+
+<p><img src="../images/pushreplicationpattern/web-site2.png" alt="Site 2" /></p>
 
                   </div>
             </div>
