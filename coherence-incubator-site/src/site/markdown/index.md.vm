@@ -89,6 +89,7 @@ The following examples are provided for the Push Replication Pattern:
 
 4.  The [Auction Example](pushreplicationpattern/auction-example.html) (using an Active Active and Active Passive Topologies)
 
+5.  The [Coherence*Web Example](pushreplicationpattern/web-example.html)
 
 Contributions
 -------------

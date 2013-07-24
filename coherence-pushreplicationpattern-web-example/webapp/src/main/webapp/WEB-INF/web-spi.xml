@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+
+<web-app xmlns='http://java.sun.com/xml/ns/javaee'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd'
+  version='2.5'>
+
+  <display-name>web</display-name>
+  <description>web</description>
+  <context-param>
+    <description>The fully qualified class name of the HttpSessionCollection
+      implementation to use. Possible values include
+      "com.tangosol.coherence.servlet.MonolithicHttpSessionCollection",
+      "com.tangosol.coherence.servlet.SplitHttpSessionCollection", or
+      "com.tangosol.coherence.servlet.TraditionalHttpSessionCollection".</description>
+    <param-name>coherence-sessioncollection-class</param-name>
+    <param-value>com.tangosol.coherence.servlet.MonolithicHttpSessionCollection</param-value>
+  </context-param>
+  <context-param>
+    <description>Session expiry filter that excludes sessions not managed
+      by this site; required by Coherence*Web push replication</description>
+    <param-name>coherence-session-expiry-filter-factory-class</param-name>
+    <param-value>com.oracle.coherence.patterns.pushreplication.web.SiteSessionExpiryFilterFactory</param-value>
+  </context-param>
+  <welcome-file-list>
+    <welcome-file>session-access.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>

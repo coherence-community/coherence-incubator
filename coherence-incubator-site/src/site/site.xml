@@ -119,6 +119,7 @@
                 <item name="Active Active Example" href="pushreplicationpattern/active-active-example.html"/>
                 <item name="Hub And Spoke Example" href="pushreplicationpattern/hub-and-spoke-example.html"/>
                 <item name="Auction Example" href="pushreplicationpattern/auction-example.html"/>
+                <item name="Web Example" href="pushreplicationpattern/web-example.html"/>
             </item>
         </menu>
     

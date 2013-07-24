@@ -1,0 +1,136 @@
+The Coherence*Web Example
+------------------------------------
+
+<h4>Prerequisites</h4>
+
+To run this example the Oracle Coherence Incubator must be built and
+installed locally.  Instructions on how to achieve this are located here:
+[Building the Oracle Coherence Incubator](building.html).
+
+<h4>Source Code</h4>
+
+The source code for this example is located in the `coherence-pushreplicationpattern-web-example`
+module of the Oracle Coherence Incubator.
+
+<h4>Components</h4>
+
+<h5>Coherence*Web specific classes</h5>
+
+There are two classes added to support Coherence*Web within the Push Replication Pattern:
+
+- SiteExtractor: EntryExtractor that extracts the site information from a cache entry
+- SiteSessionExpiryFilterFactory: Coherence*Web filter factory that creates a filter  to only include sessions managed
+by the current site when performing session cleanup.
+
+<h5>Webapp</h5>
+
+This module contains the simple webapp that modifies a user session and creates a self executing war that will start
+Jetty and Coherence for the example. It contains two JSPs:
+
+- sessionAccess.jsp: Standard JSP (with the [coherence-web-installer](http://docs.oracle.com/cd/E24290_01/coh.371/e22620/cohweb.htm#CIAHGHII)
+already run against it) that will work with any non WebLogic container. This JSP is used with the example since it runs on Jetty.
+- sessionAccessSpi: Standard JSP without having the need to be parsed by the coherence-web-installer because of the
+WebLogic SPI integration in case you want to deploy the web-app to WebLogic.
+
+<h5>Webserver</h5>
+
+This module contains Jetty and custom code that will start Coherence and Jetty from the command line. This module is
+shaded into the webapp so that we can have a single sef-executing war file for the example.
+
+<h4>Overview</h4>
+
+This example demonstrates how to combine Coherence*Web with Push Replication to publish HTTP
+sessions between data centers.
+
+Coherence*Web uses Coherence partitioned caches to store HTTP session data. The Push Replication
+Incubator pattern is an example use of Coherence that provides cache replication between distinct
+clusters over TCP via Coherence*Extend. Combining these two technologies results in a compelling topology
+for customers that require minimum downtime and user disruption upon the loss of a data center hosting
+mission critical web applications.
+
+![Overview](../images/pushreplicationpattern/web-overview.png)
+
+This examples uses two clusters, "Site 1" displayed and "Site 2". In the interest of simplicity of execution, we
+have embedded everything that you need to run the example all within the self executing war file. Both sites contain
+the same web application and use the same cache configuration. The only differences between them are the settings used
+to configure the cluster's identity and ports including:
+
+- webserver port
+- cluster port
+- site name
+- Extend client port for connecting to the remote site
+- Extend listen port for the proxy service
+
+Site 1 consists of:
+
+- Webserver running on port 9080 (Connects to the cluster as a storage disabled TCMP client)
+- Cache server running with a cluster port of 9001
+- Proxy service listening on port 9002
+- Client port configured to connect to Site2 at port 10002
+
+Site 2 consists of:
+
+- Webserver running on port 10080 (Connects to the cluster as a storage disabled TCMP client)
+- Cache server running with a cluster port of 10001
+- Proxy service listening on port 10002
+- Client port configured to connect to Site1 at port 9002
+
+<h4>Running the Coherence*Web Example</h4>
+
+>   The following instructions assume that `$COHERENCE_INCUBATOR` is the directory
+>   in which the Oracle Coherence Incubator source code has been downloaded,
+>   unpacked and built according to the prerequisites outlined above.
+
+
+![Running](../images/pushreplicationpattern/web-example.png)
+
+<h4>Step 1. Running Site 1</h4>
+
+Execute the following shell commands to start the "Active Server for Site 1".
+
+In a new Terminal / Shell Console for "Site 1"
+
+1.  Change to the Push Replication Pattern Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target`
+
+
+2.  Run the "Site 1"
+
+    `java -jar webapp-${project.version}.war site1.properties`
+
+
+<h4>Step 2. Running Site 2</h4>
+
+Execute the following shell commands to start "Site 2".
+
+In a new Terminal / Shell Console for the "Site 2"
+
+1.  Change to the Push Replication Pattern Coherence*Web Examples directory.
+
+    `cd $COHERENCE_INCUBATOR/coherence-pushreplicationpattern-web-example/coherence-pushreplicationpattern-web-app/target`
+
+
+2.  Run the "Site 2"
+
+    `java -jar coherence-pushreplicationpattern-web-app-${project.version}.war site2.properties`
+
+
+<h4>Step 3. Access Site 1 with the browser and insert some data into the session</h4>
+
+1. Open a browser to the following url: http://localhost:9080/sessionAccess.jsp
+2. Add a session variable to the http session.
+
+The application interface should something like the following:
+
+![Site 1](../images/pushreplicationpattern/web-site1.png)
+
+<h4>Step 4. Validate that your session data is visible to Site 2</h4>
+
+1. Navigate the same browser to the following url: http://localhost:10080/sessionAccess.jsp
+2. You should see your same session variables in the web abbplication.
+
+The application interface should something like the following:
+
+![Site 2](../images/pushreplicationpattern/web-site2.png)
+

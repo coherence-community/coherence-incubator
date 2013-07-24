@@ -64,6 +64,9 @@ reverse chronological order.
 *   [COHINC-30](http://java.net/jira/browse/COHINC-30): Removed hardcoded logging
     path from Push Replication tests.
 
+*   [COHINC-40](http://java.net/jira/browse/COHINC-40): Introduced new Coherence*Web
+    examples.
+
 
 --------------------------------------------------------------------------------
 

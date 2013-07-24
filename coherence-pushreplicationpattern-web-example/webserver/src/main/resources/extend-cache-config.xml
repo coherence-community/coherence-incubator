@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!--                                                                       -->
+<!--      Cache configuration descriptor for Coherence*Web                 -->
+<!--                                                                       -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<cache-config
+    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+    element:introduce-cache-config="coherence-pushreplicationpattern-web-cache-config.xml">
+
+
+  <caching-schemes>
+    <remote-invocation-scheme>
+      <service-name>publisher-invocation</service-name>
+      <initiator-config>
+        <tcp-initiator>
+          <remote-addresses>
+            <socket-address>
+              <address>localhost</address>
+              <port system-property="client.port">-1</port>
+            </socket-address>
+          </remote-addresses>
+          <connect-timeout>2s</connect-timeout>
+        </tcp-initiator>
+        <outgoing-message-handler>
+          <request-timeout>5s</request-timeout>
+        </outgoing-message-handler>
+      </initiator-config>
+    </remote-invocation-scheme>
+
+    <proxy-scheme>
+      <service-name>PublisherProxyService</service-name>
+      <acceptor-config>
+        <tcp-acceptor>
+          <reuse-address>true</reuse-address>
+          <local-address>
+            <address>localhost</address>
+            <port system-property="bind.port">-1</port>
+          </local-address>
+        </tcp-acceptor>
+      </acceptor-config>
+      <autostart system-property="proxy.enabled">true</autostart>
+    </proxy-scheme>
+  </caching-schemes>
+</cache-config>
