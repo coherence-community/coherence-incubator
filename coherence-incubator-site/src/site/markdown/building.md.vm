@@ -14,12 +14,21 @@ installed:
 
 3.  The [source code](source-code.html).
 
-Once you have these installed building the entire source tree is as simple as
-executing the following shell command (from the root of the source directory):
+Additionally you should set your Maven Options as follows:
+
+    MAVEN_OPTS="-Djava.net.preferIPv4Stack=true
+                -XX:MaxPermSize=512M
+                -XX:+UseConcMarkSweepGC
+                -XX:+CMSClassUnloadingEnabled
+                -XX:+CMSClassUnloadingEnabled"
+
+Once you have this software and correctly configured the Maven options,
+building the entire source tree is as simple as executing the following shell
+command (from the root of the source directory):
 
     $ mvn clean install
 
-However the fact that the Oracle Coherence Incubator depends on a commercial product, 
+**Important:** The fact that the Oracle Coherence Incubator depends on a commercial product,
 namely [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html) 
 that of which is not available in a public Maven Repository, probably means that your
 first build is likely to fail because of a missing dependency on `coherence.jar`.
@@ -34,7 +43,7 @@ simply change to `$COHERENCE_HOME/lib` directory and run the following command:
     $ mvn install:install-file  \
           -DgroupId=com.oracle.coherence  \
           -DartifactId=coherence  \
-          -Dversion=3.7.1.7  \
+          -Dversion=3.7.1.9  \
           -Dfile=coherence.jar  \
           -Dpackaging=jar \
           -DgeneratePom=true

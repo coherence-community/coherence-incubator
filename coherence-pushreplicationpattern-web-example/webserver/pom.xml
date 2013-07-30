@@ -93,7 +93,6 @@
             <artifactId>jstl-impl</artifactId>
             <version>${glassfish.jstl.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>
