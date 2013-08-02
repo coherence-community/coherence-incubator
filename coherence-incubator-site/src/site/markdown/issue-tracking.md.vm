@@ -1,15 +1,21 @@
 Issue Tracking
 --------------
 
-The [Issue Tracking](http://java.net/jira/browse/COHINC) system for the Oracle 
-Coherence Incubator is hosted by [java.net](http://java.net).  It can be found here:
-[http://java.net/jira/browse/COHINC](http://java.net/jira/browse/COHINC).
+The [Issue Tracking][ISSUES] system for Coherence Incubator is hosted by [java.net][JAVANET].
 
-Public read-only access to the system is available for project Observers.  To
-become an observer, simply **join** the [cohinc.java.net](http://cohinc.java.net/)
-project.  All you need is a **free** [java.net](http://java.net) account.  All
-Observers automatically receive project and issue updates.
+It can be found here: [http://java.net/jira/browse/COHINC][ISSUES]
 
-To raise, update and close issues with the [Issue Tracking](http://java.net/jira/browse/COHINC)
-system you will need to be a [Contributor](contributions.html) with a [java.net](http://java.net)
-account.
+<h4>Raising Issues:</h4>
+
+To raise an issue representing a defect or feature request in the issue tracking
+system you need to have a [java.net][JAVANET] account.  These are free.  They
+don't require any personal information beyond that of an email address to confirm
+registration.
+
+<h4>Modifying and Closing Issues:</h4>
+
+To resolve and close issues with the issue tracking system you will
+need to be a [contributor](contributions.html).
+
+[ISSUES]:       http://java.net/jira/browse/COHINC "Issue Tracking"
+[JAVANET]:      http://java.net "java.net"

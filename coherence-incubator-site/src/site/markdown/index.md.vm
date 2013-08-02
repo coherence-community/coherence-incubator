@@ -1,8 +1,8 @@
-Oracle Coherence Incubator 11
-=============================
-![Incubator](images/incubator-logo-290x163.png)
+<h1><img src="images/incubator-logo-134x134.png" alt="Coherence Incubator" height="42" width="42" align="top"/> Coherence Incubator 11</h1>
 
 **Version: ${project.version} built on ${timestamp}**
+
+<h4>Overview</h4>
 
 The Oracle Coherence Incubator project consists of a collection of examples, organized
 as [Apache Maven](http://maven.apache.org/) modules, demonstrating advanced uses 
@@ -16,8 +16,7 @@ learning, extension or for direct inclusion into Coherence-based applications.
 Complete source code together with documentation is provided to aid in adoption,
 use and understanding.
 
-Project Modules
----------------
+<h4>Modules:</h4>
 
 The following [Apache Maven](http://maven.apache.org/) modules are defined
 by the Oracle Coherence Incubator.
@@ -91,8 +90,7 @@ The following examples are provided for the Push Replication Pattern:
 
 5.  The [Coherence*Web Example](pushreplicationpattern/web-example.html)
 
-Contributions
--------------
+<h4>Contributions</h4>
 
 If you are interested in making contributions to the Oracle Coherence Incubator, 
 including defect fixes, documentation, new classes/interfaces/methods/packages 

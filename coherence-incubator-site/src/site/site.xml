@@ -52,6 +52,7 @@
 
     <body>
         <head>
+            <link rel="shortcut icon" href="images/incubator-logo.ico"/>
             <script type="text/javascript" src="js/site.js"></script>
             <script type="text/javascript">
 
@@ -70,18 +71,22 @@
     
         <menu name="Oracle Coherence Incubator">
             <item name="Welcome" href="index.html"/>
-            <item name="What's New" href="whats-new.html"/>
-            <item name="History" href="history.html"/>
+            <item name="Change History" href="history.html"/>
             <item name="Upgrading" href="upgrading.html"/>
-            <item name="Source Code" href="source-code.html"/>
-            <item name="Building" href="building.html"/>
             <item name="Examples" href="examples.html"/>
-            <item name="Getting Help" href="forums.html"/>
-            <item name="Issue Tracking" href="issue-tracking.html"/>
-            <item name="License" href="license.html"/>
-            <item name="Contributions" href="contributions.html"/>
+            <item name="Getting Help" href="support.html"/>
         </menu>
-    
+
+        <menu name="Development">
+            <item name="License" href="license.html"/>
+            <item name="Release Numbers" href="release-numbers.html"/>
+            <item name="Source Code" href="source-code.html"/>
+            <item name="Build Instructions" href="building.html"/>
+            <item name="Issue Tracking" href="issue-tracking.html"/>
+            <item name="Contributions" href="contributions.html"/>
+            <item name="Logging" href="logging.html"/>
+        </menu>
+
         <menu name="Modules">
             <item name="The Common Package" href="common/index.html">
                 <item name="Extensible Environments" href="common/extensible-environments-overview.html"/>
@@ -122,12 +127,7 @@
                 <item name="Web Example" href="pushreplicationpattern/web-example.html"/>
             </item>
         </menu>
-    
-        <menu name="Development">
-            <item name="Release Numbers" href="release-numbers.html"/>
-            <item name="Logging" href="logging.html"/>
-        </menu>
-    
+
         <footer>
             <div class="copyright">Copyright &#169; 2008-2013 Oracle Corporation. All rights reserved.</div>
             <div class="version">Version ${project.version}: ${timestamp}</div>

@@ -15,7 +15,7 @@
 
     <packaging>jar</packaging>
 
-    <name>Coherence Incubator WebServer</name>
+    <name>Coherence Incubator Web Server</name>
 
     <dependencies>
 

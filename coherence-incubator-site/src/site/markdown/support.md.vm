@@ -1,0 +1,47 @@
+Getting Help
+------------
+
+There are many avenues to recieve help when using the Coherence Incubator.  Here are
+a few options.
+
+<h4>Community Forums</h4>
+
+The Discussion Forums for the Coherence Incubator are the best place to start
+asking questions - should you need to.   These forums are hosted by Oracle and
+are typically monitored by the community.
+
+They can be found here: [https://forums.oracle.com/forums/forum.jspa?forumID=558][FORUMS]
+
+>   To participate in the discussion forums you will need an oracle.com account.
+
+<h4>Source Code, Tests and Examples</h4>
+
+As all of the source code, including tests and examples are now published, these
+are often a great place to start for implementation tips.
+
+The source code is located here:
+[https://github.com/coherence-community/coherence-incubator][SOURCE]
+
+<h4>Issue Tracking System</h4>
+
+If you find an issue with the Coherence Incubator or have an idea for a new feature
+the best place to start is with the Issue Tracking System.  All issues, both current and
+past are publicly viewable.
+
+The Issue Tracking System can be found here: [http://java.net/jira/browse/COHINC][ISSUES]
+
+>   To raise new issues you will need a [java.net][JAVANET] account (these are free).
+
+<h4>Oracle Support</h4>
+
+Alternatively Oracle Coherence customers can file Support Requests (SR) against the
+Coherence Product, clearly specifying that the request is for a Coherence Community
+project.
+
+[FORUMS]:       https://forums.oracle.com/forums/forum.jspa?forumID=558 "Forums"
+[ISSUES]:       http://java.net/jira/browse/COHINC "Issue Tracking"
+[JAVANET]:      http://java.net "java.net"
+[SOURCE]:       https://github.com/coherence-community/coherence-incubator "Source Code"
+
+
+

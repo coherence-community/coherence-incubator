@@ -1,16 +1,14 @@
-History
--------
+Change History
+--------------
 
 The following sections outline Oracle Coherence Incubator changes in 
 reverse chronological order.
-
---------------------------------------------------------------------------------
 
 <h3>Version ${project.version} @ ${timestamp} </h3>
 
 <h4>Source and Documentation Contributors</h4>
 
-*   Jonathan Knight, Brian Oliver
+*   Noah Arliss, Jonathan Knight, Brian Oliver
 
 <h4>Global and Cross-Module Changes</h4>
 
@@ -18,6 +16,10 @@ reverse chronological order.
     and Hamcrest 1.3
 
 *   [COHINC-42](http://java.net/jira/browse/COHINC-42): Upgraded to use Oracle Tools 0.0.9
+
+<h4>coherence-incubator-all</h4>
+
+*   Removed this module as it wasn't being used (and wasn't published publically)
 
 <h4>coherence-common</h4>
 
@@ -64,9 +66,10 @@ reverse chronological order.
 *   [COHINC-30](http://java.net/jira/browse/COHINC-30): Removed hardcoded logging
     path from Push Replication tests.
 
+<h4>coherence-pushreplicationpattern-web-example</h4>
+
 *   [COHINC-40](http://java.net/jira/browse/COHINC-40): Introduced new Coherence*Web
     examples.
-
 
 --------------------------------------------------------------------------------
 

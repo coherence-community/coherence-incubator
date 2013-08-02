@@ -1,35 +1,40 @@
 Upgrading from Previous Releases
 --------------------------------
 
-Upgrading from Oracle Coherence Incubator 10 to this release is typically as
-simple as replacing previous `jars` with the new `jars`, those of which are
-available for download (if you're not using Maven) from [maven.java.net](http://maven.java.net).
+<h4>Upgrading from Coherence Incubator 11.0.0</h4>
 
-If you're using all of the Oracle Coherence Incubator projects (or most of them),
-you can now use the new "uber" distribution, simply by adding the following
-following dependency declaration to your Maven-based application.
+Upgrading to Coherence Incubator 11.1.0 is as simple as replacing previous `jars`.
+
+For the most part this release should be considered a "patch", but as we changed one
+of the internal, yet public APIs, we've increased the version number.
+
+The detailed change history can be found [here](history.html).
+
+<h4>Upgrading from Coherence Incubator 10</h4>
+
+Upgrading from Oracle Coherence Incubator 10 is typically as simple as replacing
+previous `jars` with the new `jars`, those of which are available for download
+(if you're not using Maven) from [maven.java.net](http://maven.java.net).
+
+If you're using Maven, all you need to do is include the appropriate
+artifacts from the maven.java.net repository.
 
     <dependency>
-        <groupId>com.oracle.coherence.incubator<groupId>
-        <artifactId>coherence-incubator-all</artifactId>
-        <version>${project.version}</version>
+        <groupId>com.oracle.oracle.incubator<groupId>
+        <artifactId>${project.name}<artifactId>
+        <version>11.0.0</version>
     </dependency>
 
-However should you require individual project artifacts, these are identified as
-follows:  (just as they were in Oracle Coherence Incubator 10).
-
-    coherence-common, coherence-commandpattern, coherence-functorpattern,
-    coherence-processingpattern, coherence-messagingpattern,
-    coherence-eventdistributionpattern, coherence-pushreplicationpattern
-
-
->   The Apache Maven `groupId` for all Coherence Incubator 11 modules is
->   `com.oracle.oracle.incubator`
+Where the ${project.name} is one of: `coherence-common`, `coherence-commandpattern`,
+`coherence-functorpattern`, `coherence-messagingpattern`, `coherence-eventdistributionpattern`,
+or `coherence-pushreplicationpattern`.
 
 While the source code is readily available on [github](http://github.com/coherence-community),
-the source code and java documentation for each released version additionally
-published to [maven.java.net](http://maven.java.net).  This enables simple and
-clean integration with all development environments supporting Maven.
+the source code and java documentation for each released artifact is also published to
+[maven.java.net](http://maven.java.net).  This enables simple and clean integration with
+all development environments supporting Maven.
+
+<h4>Upgrading from pre-Coherence Incubator 10 Releases</h4>
 
 Migrating from releases prior to Oracle Coherence Incubator 10 requires more effort.
 In most cases the changes will require refactoring previous configurations to use

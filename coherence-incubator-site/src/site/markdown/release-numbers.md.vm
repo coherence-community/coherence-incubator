@@ -5,31 +5,35 @@ Release numbers for the Oracle Coherence Incubator are represented as three
 separate numbers, each separated by a full-stop in the form `x.y.z` where by
 the meaning of the individual numbers in the release number is as follows:
 
-**x**:  Represents a specific Oracle Coherence version or set of Coherence
-versions that a release of the Oracle Coherence Incubator is designed to run
-against.
+**x**:  Changes in this number represents a major or new generation that
+of which introduces new functionality or removing existing functionality.
+
+In most cases, especially those where functionality is removed, this means
+maintaining complete backwards compatibility between releases is unlikely or
+impossible.
+
+Typically changes in this number mean a change in a dependency on a major
+Oracle Coherence release.
 
 For example:
 
-     8 = Oracle Coherence versions 3.5.?
-     9 = Oracle Coherence versions 3.6.?
-    10 = Oracle Coherence versions 3.7.0.? and 3.7.1.?.
-    11 = Oracle Coherence versions 3.7.1.?  (first CDDL release)
-    12 = Next generation Oracle Coherence
+     8 = Oracle Coherence versions 3.5.x
+     9 = Oracle Coherence versions 3.6.x
+    10 = Oracle Coherence versions 3.7.0.x and 3.7.1.x
+    11 = Oracle Coherence versions 3.7.1.x  (first CDDL release)
+    12 = Oracle Coherence versions 12.1.x
     
-Increments in this number typically represent a major or new generation of 
-the Oracle Coherence Incubator that of which introduces new functionality that 
-depend on a new version of Oracle Coherence.  In most cases this means maintaining 
-complete backwards compatibility between releases is impossible.
-
-This number is also used to identify the "edition" of the Oracle Coherence 
+This number is also used to identify the "edition" of the Oracle Coherence
 Incubator.  For example:  Oracle Coherence Incubator 11.    
     
-**y**:  Represents a minor upgrade of the Oracle Coherence Incubator.
-Such releases typically introduce some new functionality or refactoring. 
+**y**:  Changes in this number represents a minor upgrade.
+
+Such releases typically introduce some new functionality, perform some refactoring
+and/or deprecate (but not remove) existing functionality.
 
 Sometimes these changes may break some backwards compatibility. 
 
-**z**:  Represents a patch or fix release of the Oracle Coherence Incubator.
-Such releases rarely break backwards compatibility.  Typically these are used
-for documentation and non-breaking dependency upgrades.    
+**z**:  Changes in this number represents a patch or fix release.
+
+Such releases should never break backwards compatibility.  Typically these are used
+for documentation and non-breaking dependency upgrades.
