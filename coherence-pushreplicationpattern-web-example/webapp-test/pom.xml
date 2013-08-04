@@ -21,6 +21,7 @@
             <groupId>com.oracle.coherence.incubator</groupId>
             <artifactId>webapp</artifactId>
             <version>${project.parent.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
