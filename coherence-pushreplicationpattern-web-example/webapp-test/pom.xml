@@ -19,9 +19,9 @@
     <dependencies>
         <dependency>
             <groupId>com.oracle.coherence.incubator</groupId>
-            <artifactId>webapp</artifactId>
+            <artifactId>webserver</artifactId>
             <version>${project.parent.version}</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -59,24 +59,23 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>${maven.install.plugin.version}</version>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
                 <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>${maven.deploy.plugin.version}</version>
-                <configuration>
-                    <skip>true</skip>
+                    <argLine>-Dorg.eclipse.jetty.LEVEL=DEBUG -Xms1500m -Xmx1500m -XX:MaxPermSize=500m</argLine>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.parent.basedir}/webapp/target/webapp-${project.version}.jar</additionalClasspathElement>
+                    </additionalClasspathElements>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExcludes>com.oracle.coherence.incubator:webserver</classpathDependencyExcludes>
+                        <classpathDependencyExcludes>javax.servlet:servlet-api</classpathDependencyExcludes>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
         </plugins>
