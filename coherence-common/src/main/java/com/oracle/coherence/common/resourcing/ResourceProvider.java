@@ -25,7 +25,8 @@
 
 package com.oracle.coherence.common.resourcing;
 
-import com.oracle.coherence.common.builders.Builder;
+import com.tangosol.util.Builder;
+
 
 /**
  * A {@link ResourceProvider} manages the provision and access to a runtime resource.

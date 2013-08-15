@@ -25,10 +25,11 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.coherence;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.io.Serializer;
 
 import java.util.logging.Level;
@@ -54,7 +55,6 @@ public class CoherenceEventDistributorBuilder implements EventDistributorBuilder
      */
     private static final Logger logger = Logger.getLogger(CoherenceEventDistributorBuilder.class.getName());
 
-
     /**
      * Standard Constructor.
      */
@@ -66,14 +66,14 @@ public class CoherenceEventDistributorBuilder implements EventDistributorBuilder
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
     public EventDistributor realize(String                           symbolicName,
                                     String                           suggestedExternalName,
-                                    ParameterizedBuilder<Serializer> serializerBuilder)
+                                    ParameterizedBuilder<Serializer> serializerBuilder,
+                                    ClassLoader                      loader)
     {
         return new CoherenceEventDistributor(symbolicName, suggestedExternalName, serializerBuilder);
     }

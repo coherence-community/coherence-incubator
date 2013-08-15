@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,18 +27,25 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.common.leasing.Lease;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.patterns.messaging.entryprocessors.UnsubscribeProcessor;
 import com.oracle.coherence.patterns.messaging.exceptions.SubscriberInterruptedException;
 import com.oracle.coherence.patterns.messaging.exceptions.SubscriptionLostException;
+
 import com.tangosol.net.CacheFactory;
+
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
+
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The base implementation of a {@link Subscriber} for
@@ -87,6 +95,11 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
         Shutdown
     }
 
+
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(AbstractSubscriber.class.getName());
 
     /**
      * The {@link MessagingSession} that owns this {@link Subscriber}.
@@ -156,16 +169,16 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
         this.subscriptionOffered    = false;
         this.state                  = State.Starting;
 
-        // register a MapListener for keeps our local copy of the subscription
+        // register a MapListener that keeps our local copy of the subscription
         // up-to-date
         this.mapListener = new MapListener()
         {
             @SuppressWarnings("unchecked")
             public void entryInserted(MapEvent mapEvent)
             {
-                if (Logger.isEnabled(Logger.QUIET))
+                if (logger.isLoggable(Level.FINER))
                 {
-                    Logger.log(Logger.QUIET, "%s received insert event %s", this, mapEvent);
+                    logger.log(Level.FINER, "{0} received insert event {1}", new Object[] {this, mapEvent});
                 }
 
                 // added the newly arrived subscription state to the queue for
@@ -177,9 +190,9 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
             @SuppressWarnings("unchecked")
             public void entryUpdated(MapEvent mapEvent)
             {
-                if (Logger.isEnabled(Logger.QUIET))
+                if (logger.isLoggable(Level.FINER))
                 {
-                    Logger.log(Logger.QUIET, "%s received update event %s", this, mapEvent);
+                    logger.log(Level.FINER, "{0} received update event {1}", new Object[] {this, mapEvent});
                 }
 
                 S oldSubscription = (S) mapEvent.getOldValue();
@@ -212,9 +225,9 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
             @SuppressWarnings("unchecked")
             public void entryDeleted(MapEvent mapEvent)
             {
-                if (Logger.isEnabled(Logger.QUIET))
+                if (logger.isLoggable(Level.FINER))
                 {
-                    Logger.log(Logger.QUIET, "%s received delete event %s", this, mapEvent);
+                    logger.log(Level.FINER, "{0} received delete event {1}", new Object[] {this, mapEvent});
                 }
 
                 // shutdown the subscriber
@@ -256,10 +269,12 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
             if (prevSequenceNumber.longValue() > newSequenceNumber)
             {
                 // An out-of-order message can happend in the case of a rollback.
-                Logger.log(Logger.WARN,
-                           "Message sequence number out of order probably due to a rollback.  Prev = "
-                           + prevSequenceNumber + " New = " + newSequenceNumber);
-                ;
+                if (logger.isLoggable(Level.WARNING))
+                {
+                    logger.log(Level.WARNING,
+                               "Message sequence number out of order probably due to a rollback.  Prev = {0} New = {1}",
+                               new Object[] {prevSequenceNumber, newSequenceNumber});
+                }
             }
         }
         else
@@ -338,10 +353,10 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
         }
         catch (InterruptedException interruptedException)
         {
-            if (Logger.isEnabled(Logger.WARN))
+            if (logger.isLoggable(Level.WARNING))
             {
-                Logger.log(Logger.WARN,
-                           "Subscriber was interrupted while waiting for its subscription state to arrive.\n%s",
+                logger.log(Level.WARNING,
+                           "Subscriber was interrupted while waiting for its subscription state to arrive {0}.\n",
                            interruptedException);
             }
 
@@ -555,10 +570,10 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
          */
         public void run()
         {
-            if (Logger.isEnabled(Logger.QUIET))
+            if (logger.isLoggable(Level.FINER))
             {
-                Logger.log(Logger.QUIET,
-                           "LeaseMaintainerThread for %s commenced",
+                logger.log(Level.FINER,
+                           "LeaseMaintainerThread for {0} commenced",
                            subscriber.getSubscriptionIdentifier());
             }
 
@@ -566,12 +581,11 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
             {
                 try
                 {
-                    if (Logger.isEnabled(Logger.QUIET))
+                    if (logger.isLoggable(Level.FINER))
                     {
-                        Logger.log(Logger.QUIET,
-                                   "LeaseMaintainerThread for %s sleeping for %d ms",
-                                   subscriber.getSubscriptionIdentifier(),
-                                   LEASE_REFRESH_TIME_MS);
+                        logger.log(Level.FINER,
+                                   "LeaseMaintainerThread for {0} sleeping for {1} ms",
+                                   new Object[] {subscriber.getSubscriptionIdentifier(), LEASE_REFRESH_TIME_MS});
                     }
 
                     Thread.sleep(LEASE_REFRESH_TIME_MS);
@@ -586,35 +600,32 @@ abstract class AbstractSubscriber<S extends LeasedSubscription> implements Subsc
                                                                          new UpdaterProcessor("extendLease", (long) 0));
 
                     // update the lease (using an entry processor)
-                    if (Logger.isEnabled(Logger.QUIET))
+                    if (logger.isLoggable(Level.FINER))
                     {
-                        Logger.log(Logger.QUIET,
-                                   "LeaseMaintainerThread for %s extending current lease",
+                        logger.log(Level.FINER,
+                                   "LeaseMaintainerThread for {0} extending current lease",
                                    subscriber.getSubscriptionIdentifier());
-                    }
 
-                    if (Logger.isEnabled(Logger.QUIET))
-                    {
-                        Logger.log(Logger.QUIET,
-                                   "LeaseMaintainerThread for %s has extended the lease",
+                        logger.log(Level.FINER,
+                                   "LeaseMaintainerThread for {0} has extended the lease",
                                    subscriber.getSubscriptionIdentifier());
                     }
                 }
                 catch (InterruptedException interruptedException)
                 {
-                    if (Logger.isEnabled(Logger.QUIET))
+                    if (logger.isLoggable(Level.FINER))
                     {
-                        Logger.log(Logger.QUIET,
-                                   "LeaseMaintainerThread for %s interrupted",
+                        logger.log(Level.FINER,
+                                   "LeaseMaintainerThread for {0} interrupted",
                                    subscriber.getSubscriptionIdentifier());
                     }
                 }
             }
 
-            if (Logger.isEnabled(Logger.QUIET))
+            if (logger.isLoggable(Level.FINER))
             {
-                Logger.log(Logger.QUIET,
-                           "LeaseMaintainerThread for %s completed",
+                logger.log(Level.FINER,
+                           "LeaseMaintainerThread for {0} completed",
                            subscriber.getSubscriptionIdentifier());
             }
         }

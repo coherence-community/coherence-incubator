@@ -30,8 +30,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
 
-        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler"
+        xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
 
         element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
 
@@ -67,14 +67,14 @@
 								<event:remote-invocation-service-name>remote-site</event:remote-invocation-service-name>
 								<event:remote-channel-scheme>
 									<event:parallel-local-cache-channel-scheme>
-                                        <event:target-cache-name>{cache-name}</event:target-cache-name>
-                                        <event:conflict-resolver-scheme>
-                                            <class-scheme>
-                                                <class-name system-property="conflict.resolver.classname">
-                                                    com.oracle.coherence.patterns.eventdistribution.channels.cache.BruteForceConflictResolver
-                                                </class-name>
-                                            </class-scheme>
-                                        </event:conflict-resolver-scheme>
+                  <event:target-cache-name>{cache-name}</event:target-cache-name>
+                  <event:conflict-resolver-scheme>
+                      <instance>
+                          <class-name system-property="conflict.resolver.classname">
+                              com.oracle.coherence.patterns.eventdistribution.channels.cache.BruteForceConflictResolver
+                          </class-name>
+                      </instance>
+                  </event:conflict-resolver-scheme>
 									</event:parallel-local-cache-channel-scheme>>
 								</event:remote-channel-scheme>
 							</event:remote-cluster-channel-scheme>

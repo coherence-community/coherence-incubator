@@ -25,8 +25,10 @@
     
     Copyright (c) 2009. All Rights Reserved. Oracle Corporation.
   -->
-<cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
-    <processing:cluster-config>
+<cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler"
+              xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
+              element:introduce-cache-config="coherence-processingpattern-cache-config.xml">>
+  <processing:cluster-config>
         <processing:dispatchers>
             <processing:logging-dispatcher displayname="Logging Dispatcher" />
             <processing:task-dispatcher displayname="Task Dispatcher">

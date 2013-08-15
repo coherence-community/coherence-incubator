@@ -97,6 +97,6 @@
             <type-id>11201</type-id>
             <class-name>com.oracle.coherence.patterns.command.commands.CommandBatch</class-name>
         </user-type>
- 	</user-type-list>
+    </user-type-list>
 </pof-config>
  

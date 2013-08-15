@@ -27,9 +27,10 @@ package com.oracle.coherence.common.events;
 
 import java.util.Map.Entry;
 
+
 /**
  * An {@link EntryInsertedEvent} is an {@link EntryEvent} that
- * represents when an {@link java.util.Map.Entry} has been inserted into a {@link com.tangosol.net.NamedCache}.
+ * represents when an {@link Entry} has been inserted into a {@link com.tangosol.net.NamedCache}.
  * <p>
  * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.

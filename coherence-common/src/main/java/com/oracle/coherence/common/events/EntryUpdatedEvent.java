@@ -27,6 +27,7 @@ package com.oracle.coherence.common.events;
 
 import java.util.Map.Entry;
 
+
 /**
  * An {@link EntryUpdatedEvent} is an {@link EntryEvent} that
  * represents when an {@link Entry} has been updated in a {@link com.tangosol.net.NamedCache}.

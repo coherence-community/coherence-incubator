@@ -30,12 +30,12 @@ import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
 import com.oracle.coherence.common.util.ObjectChangeCallback;
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.processing.SubmissionState;
 import com.oracle.coherence.patterns.processing.dispatchers.AbstractDispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchOutcome;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
+import com.oracle.coherence.patterns.processing.internal.Environment;
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionContent;
 import com.oracle.coherence.patterns.processing.internal.SubmissionKeyPair;
@@ -200,7 +200,10 @@ public class LocalExecutorDispatcher extends AbstractDispatcher implements Exter
     @Override
     public void onStartup(final DispatchController dispatchController)
     {
-        this.environment = (Environment) dispatchController.getConfigurableCacheFactory();
+        this.environment = dispatchController.getConfigurableCacheFactory()
+                .getResourceRegistry().getResource(Environment.class);
+
+
         submissionResultProxyFactory =
             (ObjectProxyFactory<SubmissionResult>) environment.getResource(SubmissionResult.class);
         submissionProxyFactory = (ObjectProxyFactory<Submission>) environment.getResource(Submission.class);

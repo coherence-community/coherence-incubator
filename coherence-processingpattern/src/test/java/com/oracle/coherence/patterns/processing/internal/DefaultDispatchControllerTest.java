@@ -28,7 +28,6 @@ package com.oracle.coherence.patterns.processing.internal;
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.processing.DispatcherFilter;
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchOutcome;

@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,23 +29,29 @@ package com.oracle.coherence.cloud.amazon;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.PropertiesCredentials;
+
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+
 import com.amazonaws.services.ec2.model.Address;
 import com.amazonaws.services.ec2.model.DescribeAddressesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.Reservation;
+
 import com.tangosol.net.AddressProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.net.InetSocketAddress;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,25 +60,26 @@ import java.util.logging.Logger;
  * EC2 characteristics to provide addresses to a Coherence cluster.
  * <p>
  * The {@link EC2AddressProvider} queries EC2 to determine what instances are
- * up and running and finds all instances that have an "Elastic IP" assigned to it.
+ * up and running and finds all
+ * instances that have an "Elastic IP" assigned to it.
  * The instances with an Elastic IP assigned to it will be selected as the WKA
  * nodes in the Coherence cluster.
- * <p>
  * <strong>Note:</strong> It is not the "Elastic IP" address itself that becomes
- * the WKA IP, instead the private IP-address of those instances are used. </p>
- * <p>
+ * the WKA IP, instead the private IP-address of those instances are used.
  * The default port used is 8088, however that can be overridden by using the
- * system property: <code>tangosol.coherence.ec2addressprovider.port</code>
- *
- * <h2>Authentication of EC2 calls</h2>
- * In order to make the necessary calls in to the EC2 API, we need the access
- * key and the secret key for the AWS account we are using. There are two ways
- * of specifying the keys. One is to provide the access key and the secret key
- * as Java system properties like this:
+ * system property:
+ * <code>
+ * tangosol.coherence.ec2addressprovider.port
+ * </code>
  * <p>
+ * <h2>Authentication of EC2 calls</h2>
+ *  In order to make the necessary calls in to the EC2 API, we need the access
+ *  key and the secret key for the AWS account we are using.
+ * There are two ways of specifying the keys. One is to provide the access key
+ * and the secret key as Java system properties like this:
  * <ul>
- *    <li>tangosol.coherence.ec2addressprovider.accesskey=YourAccessKey</li>
- *    <li>tangosol.coherence.ec2addressprovider.secretkey=YourSecretKey</li>
+ * <li>tangosol.coherence.ec2addressprovider.accesskey=YourAccessKey</li>
+ * <li>tangosol.coherence.ec2addressprovider.secretkey=YourSecretKey</li>
  * </ul>
  * <p>
  * An alternative way is to provide an embedded properties file with the name
@@ -79,35 +87,38 @@ import java.util.logging.Logger;
  * (the name of the properties file can be overridden with the property
  * tangosol.coherence.ec2addressprovider.propertyfile).
  * <p>
- * The properties file need to contain the secret key and the access key for your Amazon Web Services account.
- * <ul>
- *    <li>secretKey=YourSecretKey</li>
- *    <li>accessKey=YourAccessKey</li>
- * </ul>
+ * The properties file need to contain the secret key and the access key for
+ * your Amazon Web Services account.
+ *   <ul>
+ *     <li>secretKey=YourSecretKey</li>
+ *     <li>accessKey=YourAccessKey</li>
+ *   </ul>
  * <p>
  * <strong>Please note the camel casing of the key in the properties file!</strong>
- *
- * <h2>Configuring Coherence to use the EC2AddressProvider</h2>
- * In order to configure Coherence to use the EC2AddressProvider,
- * an override needs to be specified as a system property.
  * <p>
- * <code>tangosol.coherence.override=ec2addressprovider-override.xml</code>
+ * <h2>Configuring Coherence to use the EC2AddressProvider</h2>
+ * In order to configure Coherence to use the EC2AddressProvider, an override
+ * needs to be specified as a system property.
+ * <p>
+ *   <code>tangosol.coherence.override=ec2addressprovider-override.xml</code>
  * <p>
  * If your application needs further overrides, you will have to refer to the
  * ec2addressprovider-override.xml file like this:
- * <pre>
- *     {@code <coherence xml-override="/tangosol-coherence-override.xml">}
- * </pre>
+ *     <pre>
+ *     {@code
+ *         <coherence xml-override="/tangosol-coherence-override.xml">
+ *     }
+ *     </pre>
  * <p>
  * <h2>Starting an EC2 Coherence cluster with the EC2AddressProvider</h2>
- *
+ * <p>
  * To start an EC2 Coherence cluster you will have to follow these steps:
- * <ul>
- *    <li>Start an instance</li>
- *    <li>Associate an Elastic IP to that instance</li>
- *    <li>Start Coherence with the EC2AddressProvider</li>
- *    <li>Start other instances where Coherence auto-starts with the EC2AddressProvider.</li>
- * </ul>
+ *   <ul>
+ *     <li>Start an instance</li>
+ *     <li>Associate an Elastic IP to that instance</li>
+ *     <li>Start Coherence with the EC2AddressProvider</li>
+ *     <li>Start other instances where Coherence auto-starts with the EC2AddressProvider.</li>
+ *   </ul>
  * <p>
  * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.

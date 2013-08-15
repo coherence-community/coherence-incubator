@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,6 +27,7 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.common.ranges.Range;
 
 import java.util.HashMap;
@@ -37,7 +39,7 @@ import java.util.HashMap;
  * <p>
  * All access to the delivery tracker is synchronized.  There are 3 threads that access this class:
  * <ol>
- *  <li>Backing map listener thread that runs when a {@link Message} is written to the cache.  The {@link MessageEventManager}
+ *  <li>MessageCacheInterceptor that runs when a {@link Message} is written to the cache.  The {@link MessageCacheInterceptor}
  *      will add a message to the tracker.</li>
  *
  *  <li>Partition transfer complete thread.  This thread calls createRangeForPartition and only runs when a
@@ -77,9 +79,9 @@ class MessagesToExpose
 
 
     /**
-     * Get the singleton instance of the MessageEventManager.
+     * Get the singleton instance of the {@link MessageToExpose}.
      *
-     * @return MessageEventManager
+     * @return MessageToExpose
      */
     public static MessagesToExpose getInstance()
     {

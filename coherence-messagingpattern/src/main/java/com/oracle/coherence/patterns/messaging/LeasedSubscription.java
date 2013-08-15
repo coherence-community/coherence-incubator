@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,26 +26,31 @@
 
 package com.oracle.coherence.patterns.messaging;
 
-import com.oracle.coherence.common.backingmaplisteners.Cause;
 import com.oracle.coherence.common.leasing.Lease;
 import com.oracle.coherence.common.leasing.LeaseExpiryCoordinator;
 import com.oracle.coherence.common.leasing.LeaseListener;
 import com.oracle.coherence.common.leasing.Leased;
 import com.oracle.coherence.common.leasing.Leasing;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.patterns.messaging.entryprocessors.UnsubscribeProcessor;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.ExternalizableHelper;
-import com.tangosol.util.MapEvent;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A {@link LeasedSubscription} is a {@link Subscription} that has a
@@ -60,6 +66,11 @@ public abstract class LeasedSubscription extends ConfigurableSubscription<Leased
     implements Leased,
                LeaseListener
 {
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(LeasedSubscription.class.getName());
+
     /**
      * The {@link Lease} that defines the life-time of the {@link Subscription}.
      * When the {@link Lease} expires, the {@link Subscription} is no longer valid.
@@ -107,9 +118,9 @@ public abstract class LeasedSubscription extends ConfigurableSubscription<Leased
     public void onLeaseCanceled(Object leaseOwner,
                                 Lease  lease)
     {
-        if (Logger.isEnabled(Logger.QUIET))
+        if (logger.isLoggable(Level.FINE))
         {
-            Logger.log(Logger.DEBUG, "The lease for %s has been canceled. Requesting to unsubscribe", this);
+            logger.log(Level.FINE, "The lease for {0} has been canceled. Requesting to unsubscribe", this);
         }
 
         unsubscribe();
@@ -122,9 +133,9 @@ public abstract class LeasedSubscription extends ConfigurableSubscription<Leased
     public void onLeaseExpiry(Object leaseOwner,
                               Lease  lease)
     {
-        if (Logger.isEnabled(Logger.QUIET))
+        if (logger.isLoggable(Level.FINE))
         {
-            Logger.log(Logger.DEBUG, "The lease for %s has expired. Requesting to unsubscribe", this);
+            logger.log(Level.FINE, "The lease for {0} has expired. Requesting to unsubscribe", this);
         }
 
         unsubscribe();
@@ -161,25 +172,23 @@ public abstract class LeasedSubscription extends ConfigurableSubscription<Leased
 
 
     /**
-     * Register or deregister the lease.
-     *
-     * @param mapEvent map event
-     * @param cause cause of event
+     * Register the lease.
      */
-    public void onCacheEntryEvent(MapEvent mapEvent,
-                                  Cause    cause)
+    public void registerLease()
     {
-        if (mapEvent.getId() == MapEvent.ENTRY_INSERTED || mapEvent.getId() == MapEvent.ENTRY_UPDATED)
-        {
-            // update the lease coordinator with the lease for this subscription
-            LeaseExpiryCoordinator.INSTANCE.registerLease(getIdentifier(), getLease(), this);
-        }
-        else
-        {
-            // notify the lease coordinator that this subscription has been
-            // removed
-            LeaseExpiryCoordinator.INSTANCE.deregisterLease(getIdentifier());
-        }
+        // update the lease coordinator with the lease for this subscription
+        LeaseExpiryCoordinator.INSTANCE.registerLease(getIdentifier(), getLease(), this);
+    }
+
+
+    /**
+     * Unregister the lease.
+     */
+    public void unregisterLease()
+    {
+        // notify the lease coordinator that this subscription has been
+        // removed
+        LeaseExpiryCoordinator.INSTANCE.deregisterLease(getIdentifier());
     }
 
 

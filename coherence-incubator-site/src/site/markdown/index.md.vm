@@ -1,6 +1,11 @@
-<h1><img src="images/incubator-logo-134x134.png" alt="Coherence Incubator" height="42" width="42" align="top"/> Coherence Incubator 11</h1>
+<h1><img src="images/incubator-logo-134x134.png" alt="Coherence Incubator" height="42" width="42" align="top"/> Coherence Incubator 12</h1>
 
 **Version: ${project.version} built on ${timestamp}**
+
+>   This **Preview Release** of the Coherence Incubator is designed specifically for use
+>   with **Oracle Coherence 12.1.2 and above**.   If you require a release of the
+>   Coherence Incubator for previous releases of Oracle Coherence you should
+>   look for these on the project site: [https://java.net/projects/cohinc/](https://java.net/projects/cohinc/)
 
 <h4>Overview</h4>
 

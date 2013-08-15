@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,26 +27,35 @@
 package com.oracle.coherence.patterns.functor.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.ExecutionEnvironment;
+
 import com.oracle.coherence.patterns.functor.Functor;
 import com.oracle.coherence.patterns.functor.FunctorSubmitter;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.filter.NotFilter;
 import com.tangosol.util.filter.PresentFilter;
+
 import com.tangosol.util.processor.ConditionalPut;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import java.util.logging.Logger;
 
 /**
  * A {@link SingleFunctorCommand} is a {@link Command} that asynchronously
@@ -63,21 +73,26 @@ import java.io.IOException;
 public class SingleFunctorCommand<C extends Context, T> implements Command<C>, ExternalizableLite, PortableObject
 {
     /**
+     * The logger for this class.
+     */
+    private static final Logger logger = Logger.getLogger(SingleFunctorCommand.class.getName());
+
+    /**
      * The {@link Identifier} of the {@link FunctorSubmitter} that submitted
      * the {@link Functor} for execution.
      */
-    private Identifier functorSubmitterIdentifier;
+    private Identifier m_functorSubmitterIdentifier;
 
     /**
      * The {@link Identifier} that will be used to locate the result
      * of the {@link Functor} execution in the functor-results cache.
      */
-    private Identifier functorResultIdentifier;
+    private Identifier m_functorResultIdentifier;
 
     /**
      * The {@link Functor} that will be executed when this {@link Command} is executed.
      */
-    private Functor<C, T> functor;
+    private Functor<C, T> m_functor;
 
 
     /**
@@ -95,13 +110,13 @@ public class SingleFunctorCommand<C extends Context, T> implements Command<C>, E
      * @param functorResultIdentifier
      * @param functor
      */
-    public SingleFunctorCommand(Identifier    functorSubmitterIdentifier,
-                                Identifier    functorResultIdentifier,
+    public SingleFunctorCommand(Identifier functorSubmitterIdentifier,
+                                Identifier functorResultIdentifier,
                                 Functor<C, T> functor)
     {
-        this.functorSubmitterIdentifier = functorSubmitterIdentifier;
-        this.functorResultIdentifier    = functorResultIdentifier;
-        this.functor                    = functor;
+        m_functorSubmitterIdentifier = functorSubmitterIdentifier;
+        m_functorResultIdentifier    = functorResultIdentifier;
+        m_functor                    = functor;
     }
 
 
@@ -114,27 +129,27 @@ public class SingleFunctorCommand<C extends Context, T> implements Command<C>, E
 
         try
         {
-            T value = functor.execute(executionEnvironment);
+            T value = m_functor.execute(executionEnvironment);
 
-            result = new SingleFunctorResult<T>(functorSubmitterIdentifier, functorResultIdentifier, value, null);
+            result = new SingleFunctorResult<T>(m_functorSubmitterIdentifier, m_functorResultIdentifier, value, null);
 
         }
         catch (Exception exception)
         {
-            Logger.log(Logger.WARN,
-                       "Failed to execute Functor %s with Ticket %s in Context %s as it raised the following exception\n%s\n",
-                       functor,
-                       executionEnvironment.getTicket(),
-                       executionEnvironment.getContext(),
-                       exception);
+            logger.warning(String
+                .format("Failed to execute Functor %s with Ticket %s in Context %s as it raised the following exception\n%s\n",
+                        m_functor, executionEnvironment.getTicket(), executionEnvironment.getContext(), exception));
 
-            result = new SingleFunctorResult<T>(functorSubmitterIdentifier, functorResultIdentifier, null, exception);
+            result = new SingleFunctorResult<T>(m_functorSubmitterIdentifier,
+                                                m_functorResultIdentifier,
+                                                null,
+                                                exception);
         }
 
         // place the result in the results cache (if it's not present)
         NamedCache functorResultsCache = CacheFactory.getCache(FunctorResult.CACHENAME);
 
-        functorResultsCache.invoke(functorResultIdentifier,
+        functorResultsCache.invoke(m_functorResultIdentifier,
                                    new ConditionalPut(new NotFilter(PresentFilter.INSTANCE), result));
     }
 
@@ -145,9 +160,9 @@ public class SingleFunctorCommand<C extends Context, T> implements Command<C>, E
     @SuppressWarnings("unchecked")
     public void readExternal(DataInput input) throws IOException
     {
-        this.functorSubmitterIdentifier = (Identifier) ExternalizableHelper.readObject(input);
-        this.functorResultIdentifier    = (Identifier) ExternalizableHelper.readObject(input);
-        this.functor                    = (Functor<C, T>) ExternalizableHelper.readObject(input);
+        m_functorSubmitterIdentifier = (Identifier) ExternalizableHelper.readObject(input);
+        m_functorResultIdentifier    = (Identifier) ExternalizableHelper.readObject(input);
+        m_functor                    = (Functor<C, T>) ExternalizableHelper.readObject(input);
     }
 
 
@@ -156,9 +171,9 @@ public class SingleFunctorCommand<C extends Context, T> implements Command<C>, E
      */
     public void writeExternal(DataOutput output) throws IOException
     {
-        ExternalizableHelper.writeObject(output, functorSubmitterIdentifier);
-        ExternalizableHelper.writeObject(output, functorResultIdentifier);
-        ExternalizableHelper.writeObject(output, functor);
+        ExternalizableHelper.writeObject(output, m_functorSubmitterIdentifier);
+        ExternalizableHelper.writeObject(output, m_functorResultIdentifier);
+        ExternalizableHelper.writeObject(output, m_functor);
     }
 
 
@@ -168,9 +183,9 @@ public class SingleFunctorCommand<C extends Context, T> implements Command<C>, E
     @SuppressWarnings("unchecked")
     public void readExternal(PofReader reader) throws IOException
     {
-        this.functorSubmitterIdentifier = (Identifier) reader.readObject(0);
-        this.functorResultIdentifier    = (Identifier) reader.readObject(1);
-        this.functor                    = (Functor<C, T>) reader.readObject(2);
+        m_functorSubmitterIdentifier = (Identifier) reader.readObject(0);
+        m_functorResultIdentifier    = (Identifier) reader.readObject(1);
+        m_functor                    = (Functor<C, T>) reader.readObject(2);
     }
 
 
@@ -179,8 +194,8 @@ public class SingleFunctorCommand<C extends Context, T> implements Command<C>, E
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeObject(0, functorSubmitterIdentifier);
-        writer.writeObject(1, functorResultIdentifier);
-        writer.writeObject(2, functor);
+        writer.writeObject(0, m_functorSubmitterIdentifier);
+        writer.writeObject(1, m_functorResultIdentifier);
+        writer.writeObject(2, m_functor);
     }
 }

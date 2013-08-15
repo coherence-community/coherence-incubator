@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,17 +27,23 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.Context;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-import com.tangosol.net.BackingMapManagerContext;
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.DistributedCacheService;
+
+import com.tangosol.net.PartitionedService;
+
+import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.InvocableMap.Entry;
+
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
@@ -60,14 +67,14 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
     /**
      * The {@link CommandExecutionRequest} to submit for execution.
      */
-    private CommandExecutionRequest commandExecutionRequest;
+    private CommandExecutionRequest m_commandExecutionRequest;
 
     /**
      * Signifies that a {@link CommandExecutionRequest} may be accepted (ie: submitted)
      * when the associated {@link Context} has yet to be registered.  This permits
      * {@link Command}s to be submitted before their {@link Context}s are created.
      */
-    private boolean acceptCommandIfContextDoesNotExist;
+    private boolean m_acceptCommandIfContextDoesNotExist;
 
 
     /**
@@ -85,10 +92,10 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
      * @param acceptIfContextDoesNotExist
      */
     public SubmitCommandExecutionRequestProcessor(CommandExecutionRequest commandExecutionRequest,
-                                                  boolean                 acceptIfContextDoesNotExist)
+                                                  boolean acceptIfContextDoesNotExist)
     {
-        this.commandExecutionRequest            = commandExecutionRequest;
-        this.acceptCommandIfContextDoesNotExist = acceptIfContextDoesNotExist;
+        m_commandExecutionRequest            = commandExecutionRequest;
+        m_acceptCommandIfContextDoesNotExist = acceptIfContextDoesNotExist;
     }
 
 
@@ -99,24 +106,23 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
     {
         // we need the CommandExecutor so that we can submit the CommandExecutionRequest for execution
         CommandExecutor commandExecutor;
-        Identifier      contextIdentifier = commandExecutionRequest.getContextIdentifier();
+        Identifier      contextIdentifier = m_commandExecutionRequest.getContextIdentifier();
+        BinaryEntry     binEntry          = (BinaryEntry) entry;
 
-        if (acceptCommandIfContextDoesNotExist)
+        if (m_acceptCommandIfContextDoesNotExist)
         {
-            // TODO: The following line needs to be changed when we adopt Coherence 3.5.2 to use the BinaryEntry.getContext()
-            BackingMapManagerContext backingMapManagerContext =
-                ((DistributedCacheService) CacheFactory.getService("DistributedCacheForCommandPattern"))
-                    .getBackingMapManager().getContext();
-
-            commandExecutor = CommandExecutorManager.ensureCommandExecutor(contextIdentifier, backingMapManagerContext);
+            commandExecutor =
+                CommandExecutorManager.ensure()
+                    .ensureCommandExecutor(contextIdentifier,
+                                           (PartitionedService) binEntry.getContext().getCacheService());
         }
         else
         {
-            commandExecutor = CommandExecutorManager.getCommandExecutor(contextIdentifier);
+            commandExecutor = CommandExecutorManager.ensure().getCommandExecutor(contextIdentifier);
         }
 
         // only accept the command execution request if there is a command executor
-        if (commandExecutor == null &&!acceptCommandIfContextDoesNotExist)
+        if (commandExecutor == null &&!m_acceptCommandIfContextDoesNotExist)
         {
             return new SubmissionOutcome.UnknownContext();
 
@@ -124,7 +130,7 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
         else
         {
             // accept the command execution request for execution
-            return commandExecutor.acceptCommandExecutionRequest(commandExecutionRequest);
+            return commandExecutor.acceptCommandExecutionRequest(m_commandExecutionRequest, binEntry.getContext());
         }
     }
 
@@ -134,8 +140,8 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
      */
     public void readExternal(DataInput in) throws IOException
     {
-        this.commandExecutionRequest = (CommandExecutionRequest) ExternalizableHelper.readExternalizableLite(in);
-        this.acceptCommandIfContextDoesNotExist = in.readBoolean();
+        m_commandExecutionRequest            = (CommandExecutionRequest) ExternalizableHelper.readExternalizableLite(in);
+        m_acceptCommandIfContextDoesNotExist = in.readBoolean();
     }
 
 
@@ -144,8 +150,8 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        ExternalizableHelper.writeExternalizableLite(out, commandExecutionRequest);
-        out.writeBoolean(acceptCommandIfContextDoesNotExist);
+        ExternalizableHelper.writeExternalizableLite(out, m_commandExecutionRequest);
+        out.writeBoolean(m_acceptCommandIfContextDoesNotExist);
     }
 
 
@@ -154,8 +160,8 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
      */
     public void readExternal(PofReader reader) throws IOException
     {
-        this.commandExecutionRequest            = (CommandExecutionRequest) reader.readObject(0);
-        this.acceptCommandIfContextDoesNotExist = reader.readBoolean(1);
+        m_commandExecutionRequest            = (CommandExecutionRequest) reader.readObject(0);
+        m_acceptCommandIfContextDoesNotExist = reader.readBoolean(1);
     }
 
 
@@ -164,7 +170,7 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeObject(0, commandExecutionRequest);
-        writer.writeBoolean(1, acceptCommandIfContextDoesNotExist);
+        writer.writeObject(0, m_commandExecutionRequest);
+        writer.writeBoolean(1, m_acceptCommandIfContextDoesNotExist);
     }
 }

@@ -25,11 +25,14 @@
 
 package com.oracle.coherence.patterns.eventdistribution.transformers;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
+
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PortableObject;
+
 
 /**
  * A {@link CoalescingEventIteratorTransformerBuilder} is {@link ParameterizedBuilder} for
@@ -55,7 +58,10 @@ public class CoalescingEventIteratorTransformerBuilder extends AbstractEventIter
     /**
      * {@inheritDoc}
      */
-    public EventIteratorTransformer realize(ParameterProvider parameterProvider)
+    @Override
+    public EventIteratorTransformer realize(
+            ParameterResolver parameterResolver, ClassLoader classLoader,
+            ParameterList parameters)
     {
         return new CoalescingEventIteratorTransformer();
     }

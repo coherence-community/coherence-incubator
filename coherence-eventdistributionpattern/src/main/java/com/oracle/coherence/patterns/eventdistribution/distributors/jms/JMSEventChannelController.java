@@ -25,18 +25,18 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.tuples.Pair;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.Serializer;
 import com.tangosol.util.Binary;
+import com.tangosol.util.ResourceRegistry;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -90,6 +90,7 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
      */
     private TopicSubscriber subscriber;
 
+    private ResourceRegistry registry;
 
     /**
      * Standard Constructor.
@@ -97,15 +98,15 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
     public JMSEventChannelController(EventDistributor.Identifier             distributorIdentifier,
                                      EventChannelController.Identifier       controllerIdentifier,
                                      EventChannelController.Dependencies     dependencies,
-                                     Environment                             environment,
-                                     ParameterProvider                       parameterProvider,
+                                     ClassLoader                             loader,
+                                     ParameterResolver                       parameterProvider,
                                      ParameterizedBuilder<Serializer>        serializerBuilder,
                                      ParameterizedBuilder<ConnectionFactory> connectionFactoryBuilder)
     {
         super(distributorIdentifier,
               controllerIdentifier,
               dependencies,
-              environment,
+              loader,
               parameterProvider,
               serializerBuilder);
 
@@ -115,7 +116,7 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
         this.subscriber = null;
 
         // create a connection factory from which we can establish connections (later)
-        this.connectionFactory = connectionFactoryBuilder.realize(parameterProvider);
+        this.connectionFactory = connectionFactoryBuilder.realize(parameterProvider, loader, null);
     }
 
 

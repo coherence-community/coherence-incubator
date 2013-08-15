@@ -25,11 +25,10 @@
 
 package com.oracle.coherence.patterns.eventdistribution;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.configuration.expressions.Expression;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PortableObject;
+
 
 /**
  * An {@link EventChannelBuilder} is a {@link ParameterizedBuilder} for {@link EventChannel}s.
@@ -41,12 +40,4 @@ import com.tangosol.io.pof.PortableObject;
  */
 public interface EventChannelBuilder extends ParameterizedBuilder<EventChannel>, PortableObject, ExternalizableLite
 {
-    /**
-     * Realizes an instance of an {@link EventChannel}.
-     *
-     * @param parameterProvider The {@link ParameterProvider} to use when evaluating any {@link Expression}s.
-     *
-     * @return An {@link EventChannel}.
-     */
-    public EventChannel realize(ParameterProvider parameterProvider);
 }

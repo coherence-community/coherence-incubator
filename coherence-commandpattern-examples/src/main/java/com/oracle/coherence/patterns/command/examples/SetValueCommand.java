@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,10 +28,13 @@ package com.oracle.coherence.patterns.command.examples;
 
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.ExecutionEnvironment;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -40,16 +44,13 @@ import java.io.IOException;
 /**
  * The {@link SetValueCommand} will set the value of a {@link GenericContext} used by the
  * {@link CommandPatternExample}.
- * <p>
- * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
- * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @param <T> the type of value to set on the {@link GenericContext}
  */
 @SuppressWarnings("serial")
 public class SetValueCommand<T> implements Command<GenericContext<T>>, ExternalizableLite, PortableObject
 {
-    private T value;
+    private T m_value;
 
 
     /**
@@ -63,12 +64,11 @@ public class SetValueCommand<T> implements Command<GenericContext<T>>, Externali
     /**
      * Constructs a {@link SetValueCommand}.
      *
-     *
      * @param value  the value to set
      */
     public SetValueCommand(T value)
     {
-        this.value = value;
+        this.m_value = value;
     }
 
 
@@ -79,7 +79,7 @@ public class SetValueCommand<T> implements Command<GenericContext<T>>, Externali
     {
         GenericContext<T> context = executionEnvironment.getContext();
 
-        context.setValue(value);
+        context.setValue(m_value);
 
         executionEnvironment.setContext(context);
     }
@@ -91,7 +91,7 @@ public class SetValueCommand<T> implements Command<GenericContext<T>>, Externali
     @SuppressWarnings("unchecked")
     public void readExternal(DataInput in) throws IOException
     {
-        this.value = (T) ExternalizableHelper.readObject(in);
+        m_value = (T) ExternalizableHelper.readObject(in);
     }
 
 
@@ -100,7 +100,7 @@ public class SetValueCommand<T> implements Command<GenericContext<T>>, Externali
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        ExternalizableHelper.writeObject(out, value);
+        ExternalizableHelper.writeObject(out, m_value);
     }
 
 
@@ -110,7 +110,7 @@ public class SetValueCommand<T> implements Command<GenericContext<T>>, Externali
     @SuppressWarnings("unchecked")
     public void readExternal(PofReader reader) throws IOException
     {
-        this.value = (T) reader.readObject(0);
+        m_value = (T) reader.readObject(0);
     }
 
 
@@ -119,7 +119,7 @@ public class SetValueCommand<T> implements Command<GenericContext<T>>, Externali
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeObject(0, value);
+        writer.writeObject(0, m_value);
     }
 
 
@@ -128,6 +128,6 @@ public class SetValueCommand<T> implements Command<GenericContext<T>>, Externali
      */
     public String toString()
     {
-        return String.format("SetValueCommand{value=%s}", value);
+        return String.format("SetValueCommand{value=%s}", m_value);
     }
 }

@@ -82,16 +82,15 @@ public class PiCalculationExample
                 .newInstance("PICalculationSample "
                              + DateFormat.getDateTimeInstance().format(System.currentTimeMillis())));
 
-        // Then we create three tasks that calculate Pi
         SubmissionOutcome pioutcome = session.submit(new CalculatePITask(2000,
-                                                                         "2K-PI"),
-                                                     new DefaultSubmissionConfiguration());
+                "2K-PI"),
+                new DefaultSubmissionConfiguration());
         SubmissionOutcome pioutcome2 = session.submit(new CalculatePITask(1000,
-                                                                          "1K-PI"),
-                                                      new DefaultSubmissionConfiguration());
+                "1K-PI"),
+                new DefaultSubmissionConfiguration());
         SubmissionOutcome pioutcome3 = session.submit(new CalculatePITask(100,
-                                                                          "100-PI"),
-                                                      new DefaultSubmissionConfiguration());
+                "100-PI"),
+                new DefaultSubmissionConfiguration());
 
         // Now get (and wait for) the result of the calculation.
         System.out.println("Pi calculated in 2000 iterations is: " + pioutcome.get().toString());

@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,25 +28,36 @@ package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.patterns.messaging.entryprocessors.CreateSubscriptionProcessor;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.extractor.ChainedExtractor;
+
 import com.tangosol.util.filter.PresentFilter;
+
 import com.tangosol.util.processor.ConditionalProcessor;
 import com.tangosol.util.processor.ExtractorProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.HashSet;
 import java.util.Set;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A {@link Destination} represents and manages the state of a uniquely named
@@ -89,6 +101,11 @@ public abstract class Destination implements ExternalizableLite, PortableObject
     public static final String CACHENAME = "coherence.messagingpattern.destinations";
 
     /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(Destination.class.getName());
+
+    /**
      * The {@link Identifier} of the {@link Destination}.
      */
     private Identifier identifier;
@@ -112,8 +129,7 @@ public abstract class Destination implements ExternalizableLite, PortableObject
 
 
     /**
-     * Required for {@link ExternalizableLite} and {@link PortableObject}
-     * .
+     * Required for {@link ExternalizableLite} and {@link PortableObject}.
      */
     public Destination()
     {
@@ -261,10 +277,9 @@ public abstract class Destination implements ExternalizableLite, PortableObject
         // attempt to register the subscription
         if (subscription == null)
         {
-            Logger.log(Logger.ERROR,
-                       "Can't subscribe to %s with %s as no subscription was provided. Ignoring request to subscribe",
-                       getIdentifier(),
-                       subscriptionIdentifier);
+            logger.log(Level.SEVERE,
+                       "Can't subscribe to {0} with {1} as no subscription was provided. Ignoring request to subscribe",
+                       new Object[] {getIdentifier(), subscriptionIdentifier});
         }
         else
         {
@@ -276,24 +291,22 @@ public abstract class Destination implements ExternalizableLite, PortableObject
 
             if (existingSubscription != null)
             {
-                if (Logger.isEnabled(Logger.WARN))
+                if (logger.isLoggable(Level.WARNING))
                 {
-                    Logger.log(Logger.WARN,
-                               "Subscription %s already exists in subscriptions cache. Ignoring request to create a subscription",
-                               subscription.getIdentifier(),
-                               getIdentifier());
+                    logger.log(Level.WARNING,
+                               "Subscription {0} already exists in subscriptions cache. Ignoring request to create a subscription",
+                               subscription.getIdentifier());
                 }
             }
 
             // then add the subscription to the destination
             if (!addSubscriptionWithIdentifer(subscription.getIdentifier()))
             {
-                if (Logger.isEnabled(Logger.WARN))
+                if (logger.isLoggable(Level.WARNING))
                 {
-                    Logger.log(Logger.WARN,
-                               "Subscription %s already registered with the Destination %s. Ignoring request to register the subscription",
-                               subscription.getIdentifier(),
-                               getIdentifier());
+                    logger.log(Level.WARNING,
+                               "Subscription {0} already registered with the Destination {1}. Ignoring request to register the subscription",
+                               new Object[] {subscription.getIdentifier(), getIdentifier()});
                 }
             }
         }

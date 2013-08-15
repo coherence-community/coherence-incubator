@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,13 +27,17 @@
 package com.oracle.coherence.patterns.functor.examples;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.patterns.command.ContextsManager;
 import com.oracle.coherence.patterns.command.DefaultContextsManager;
+
 import com.oracle.coherence.patterns.functor.DefaultFunctorSubmitter;
 import com.oracle.coherence.patterns.functor.FunctorSubmitter;
+
 import com.tangosol.net.CacheFactory;
 
 import java.io.IOException;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -64,7 +69,7 @@ public class FunctorPatternExample
 
         FunctorSubmitter functorSubmitter  = DefaultFunctorSubmitter.getInstance();
 
-        functorSubmitter.submitCommand(contextIdentifier, new LoggingCommand("Commenced", 0));
+        functorSubmitter.submitCommand(contextIdentifier, new TraceCommand("Commenced"));
 
         for (int i = 0; i < 50; i++)
         {
@@ -73,7 +78,7 @@ public class FunctorPatternExample
             System.out.println(future.get());
         }
 
-        functorSubmitter.submitCommand(contextIdentifier, new LoggingCommand("Completed", 0));
+        functorSubmitter.submitCommand(contextIdentifier, new TraceCommand("Completed"));
 
         Thread.sleep(2000);
 

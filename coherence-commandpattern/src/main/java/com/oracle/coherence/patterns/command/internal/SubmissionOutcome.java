@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,14 +27,18 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStrategy;
 import com.oracle.coherence.patterns.command.internal.CommandExecutionRequest.Key;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -108,13 +113,13 @@ public abstract class SubmissionOutcome implements ExternalizableLite, PortableO
          * that was submitted.  This may be used (by clients) to
          * cancel execution of a pending {@link Command}.
          */
-        private CommandExecutionRequest.Key commandExecutionRequestKey;
+        private CommandExecutionRequest.Key m_commandExecutionRequestKey;
 
         /**
          * The {@link ManagementStrategy} that was used to store
          * the accepted {@link Command}.
          */
-        private ManagementStrategy managementStrategy;
+        private ManagementStrategy m_managementStrategy;
 
 
         /**
@@ -131,10 +136,10 @@ public abstract class SubmissionOutcome implements ExternalizableLite, PortableO
          * @param commandExecutionRequestKey
          */
         public Accepted(CommandExecutionRequest.Key commandExecutionRequestKey,
-                        ManagementStrategy          managementStrategy)
+                        ManagementStrategy managementStrategy)
         {
-            this.commandExecutionRequestKey = commandExecutionRequestKey;
-            this.managementStrategy         = managementStrategy;
+            m_commandExecutionRequestKey = commandExecutionRequestKey;
+            m_managementStrategy         = managementStrategy;
         }
 
 
@@ -144,7 +149,7 @@ public abstract class SubmissionOutcome implements ExternalizableLite, PortableO
          */
         public CommandExecutionRequest.Key getCommandExecutionRequestKey()
         {
-            return commandExecutionRequestKey;
+            return m_commandExecutionRequestKey;
         }
 
 
@@ -154,7 +159,7 @@ public abstract class SubmissionOutcome implements ExternalizableLite, PortableO
          */
         public ManagementStrategy getManagementStrategy()
         {
-            return managementStrategy;
+            return m_managementStrategy;
         }
 
 
@@ -164,8 +169,8 @@ public abstract class SubmissionOutcome implements ExternalizableLite, PortableO
         public void readExternal(DataInput in) throws IOException
         {
             super.readExternal(in);
-            this.commandExecutionRequestKey = (CommandExecutionRequest.Key) ExternalizableHelper.readObject(in);
-            this.managementStrategy         = ManagementStrategy.valueOf(ExternalizableHelper.readSafeUTF(in));
+            m_commandExecutionRequestKey = (CommandExecutionRequest.Key) ExternalizableHelper.readObject(in);
+            m_managementStrategy         = ManagementStrategy.valueOf(ExternalizableHelper.readSafeUTF(in));
         }
 
 
@@ -175,8 +180,8 @@ public abstract class SubmissionOutcome implements ExternalizableLite, PortableO
         public void writeExternal(DataOutput out) throws IOException
         {
             super.writeExternal(out);
-            ExternalizableHelper.writeObject(out, commandExecutionRequestKey);
-            ExternalizableHelper.writeSafeUTF(out, this.managementStrategy.toString());
+            ExternalizableHelper.writeObject(out, m_commandExecutionRequestKey);
+            ExternalizableHelper.writeSafeUTF(out, m_managementStrategy.toString());
         }
 
 
@@ -186,8 +191,8 @@ public abstract class SubmissionOutcome implements ExternalizableLite, PortableO
         public void readExternal(PofReader reader) throws IOException
         {
             super.readExternal(reader);
-            this.commandExecutionRequestKey = (CommandExecutionRequest.Key) reader.readObject(100);
-            this.managementStrategy         = ManagementStrategy.valueOf(reader.readString(101));
+            m_commandExecutionRequestKey = (CommandExecutionRequest.Key) reader.readObject(100);
+            m_managementStrategy         = ManagementStrategy.valueOf(reader.readString(101));
         }
 
 
@@ -197,8 +202,8 @@ public abstract class SubmissionOutcome implements ExternalizableLite, PortableO
         public void writeExternal(PofWriter writer) throws IOException
         {
             super.writeExternal(writer);
-            writer.writeObject(100, commandExecutionRequestKey);
-            writer.writeString(101, managementStrategy.toString());
+            writer.writeObject(100, m_commandExecutionRequestKey);
+            writer.writeString(101, m_managementStrategy.toString());
         }
     }
 

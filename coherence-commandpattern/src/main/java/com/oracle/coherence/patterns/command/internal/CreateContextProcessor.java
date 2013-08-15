@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,15 +27,21 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.ContextConfiguration;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.InvocableMap.Entry;
 import com.tangosol.util.InvocableMap.EntryProcessor;
+
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
@@ -57,12 +64,12 @@ public class CreateContextProcessor extends AbstractProcessor implements Externa
     /**
      * The {@link Context} to be created.
      */
-    private Context context;
+    private Context m_context;
 
     /**
      * The {@link ContextConfiguration} for the {@link Context}.
      */
-    private ContextConfiguration contextConfiguration;
+    private ContextConfiguration m_ctxConfiguration;
 
 
     /**
@@ -78,11 +85,11 @@ public class CreateContextProcessor extends AbstractProcessor implements Externa
      *
      * @param context
      */
-    public CreateContextProcessor(Context              context,
-                                  ContextConfiguration contextConfiguration)
+    public CreateContextProcessor(Context context,
+                                  ContextConfiguration ctxConfiguration)
     {
-        this.context              = context;
-        this.contextConfiguration = contextConfiguration;
+        m_context          = context;
+        m_ctxConfiguration = ctxConfiguration;
     }
 
 
@@ -94,7 +101,7 @@ public class CreateContextProcessor extends AbstractProcessor implements Externa
         if (!entry.isPresent())
         {
             Identifier     contextIdentifier = (Identifier) entry.getKey();
-            ContextWrapper contextWrapper    = new ContextWrapper(contextIdentifier, context, contextConfiguration);
+            ContextWrapper contextWrapper    = new ContextWrapper(contextIdentifier, m_context, m_ctxConfiguration);
 
             entry.setValue(contextWrapper);
         }
@@ -108,8 +115,8 @@ public class CreateContextProcessor extends AbstractProcessor implements Externa
      */
     public void readExternal(DataInput in) throws IOException
     {
-        this.context              = (Context) ExternalizableHelper.readObject(in);
-        this.contextConfiguration = (ContextConfiguration) ExternalizableHelper.readObject(in);
+        m_context          = (Context) ExternalizableHelper.readObject(in);
+        m_ctxConfiguration = (ContextConfiguration) ExternalizableHelper.readObject(in);
     }
 
 
@@ -118,8 +125,8 @@ public class CreateContextProcessor extends AbstractProcessor implements Externa
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        ExternalizableHelper.writeObject(out, context);
-        ExternalizableHelper.writeObject(out, contextConfiguration);
+        ExternalizableHelper.writeObject(out, m_context);
+        ExternalizableHelper.writeObject(out, m_ctxConfiguration);
     }
 
 
@@ -128,8 +135,8 @@ public class CreateContextProcessor extends AbstractProcessor implements Externa
      */
     public void readExternal(PofReader reader) throws IOException
     {
-        this.context              = (Context) reader.readObject(0);
-        this.contextConfiguration = (ContextConfiguration) reader.readObject(1);
+        m_context          = (Context) reader.readObject(0);
+        m_ctxConfiguration = (ContextConfiguration) reader.readObject(1);
     }
 
 
@@ -138,7 +145,7 @@ public class CreateContextProcessor extends AbstractProcessor implements Externa
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeObject(0, context);
-        writer.writeObject(1, contextConfiguration);
+        writer.writeObject(0, m_context);
+        writer.writeObject(1, m_ctxConfiguration);
     }
 }

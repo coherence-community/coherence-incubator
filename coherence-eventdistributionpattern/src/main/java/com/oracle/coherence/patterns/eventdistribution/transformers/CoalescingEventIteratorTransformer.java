@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+
 /**
  * A {@link CoalescingEventIteratorTransformer} attempts to coalesce multiple {@link EntryEvent}s into a
  * reduced set of {@link EntryEvent}s in order to reduce the size of batches to distribute.

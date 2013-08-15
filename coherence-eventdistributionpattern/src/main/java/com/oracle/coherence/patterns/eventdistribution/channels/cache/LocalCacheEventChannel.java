@@ -25,7 +25,6 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
@@ -33,6 +32,7 @@ import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.util.NullImplementation;

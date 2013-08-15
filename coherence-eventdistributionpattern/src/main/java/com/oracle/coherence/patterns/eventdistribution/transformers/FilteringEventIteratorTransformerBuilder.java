@@ -25,11 +25,11 @@
 
 package com.oracle.coherence.patterns.eventdistribution.transformers;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.configuration.Mandatory;
-import com.oracle.coherence.configuration.Property;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.annotation.Injectable;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
@@ -40,6 +40,7 @@ import com.tangosol.util.Filter;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 
 /**
  * A {@link FilteringEventIteratorTransformerBuilder} is a {@link ParameterizedBuilder} for {@link FilteringEventIteratorTransformer}s.
@@ -52,6 +53,7 @@ import java.io.IOException;
 @SuppressWarnings("serial")
 public class FilteringEventIteratorTransformerBuilder extends AbstractEventIteratorTransformerBuilder
 {
+
     /**
      * The {@link Filter} to use with the {@link FilteringEventIteratorTransformer}.
      */
@@ -83,8 +85,7 @@ public class FilteringEventIteratorTransformerBuilder extends AbstractEventItera
      *
      * @param filter The {@link Filter}
      */
-    @Property("filter")
-    @Mandatory
+    @Injectable
     public void setFilter(Filter filter)
     {
         this.filter = filter;
@@ -94,7 +95,9 @@ public class FilteringEventIteratorTransformerBuilder extends AbstractEventItera
     /**
      * {@inheritDoc}
      */
-    public EventIteratorTransformer realize(ParameterProvider parameterProvider)
+    @Override
+    public EventIteratorTransformer realize(ParameterResolver parameterResolver, ClassLoader classLoader,
+            ParameterList parameters)
     {
         return new FilteringEventIteratorTransformer(filter);
     }

@@ -26,9 +26,8 @@
     
     Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
  -->
-<cache-config xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler" 
-    xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-    xmlns:cr="class:com.oracle.coherence.environment.extensible.namespaces.InstanceNamespaceContentHandler">
+<cache-config
+    xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler">
 
     <defaults>
         <serializer>pof</serializer>
@@ -58,9 +57,13 @@
                                 <event:remote-channel-scheme>
                                     <event:local-cache-channel-scheme>
                                         <event:target-cache-name>publishing-cache</event:target-cache-name>
-                                        <event:conflict-resolver-scheme>
-                                            <cr:class classname="com.oracle.coherence.patterns.pushreplication.examples.activeactive.ActiveActiveSumConflictResolver"/>
-                                        </event:conflict-resolver-scheme>
+                                          <event:conflict-resolver-scheme>
+                                            <instance>
+                                              <class-name system-property="conflict.resolver.classname">
+                                                com.oracle.coherence.patterns.pushreplication.examples.activeactive.ActiveActiveSumConflictResolver
+                                              </class-name>
+                                            </instance>
+                                          </event:conflict-resolver-scheme>
                                     </event:local-cache-channel-scheme>
                                 </event:remote-channel-scheme>
                             </event:remote-cluster-channel-scheme>

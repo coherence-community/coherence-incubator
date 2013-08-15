@@ -25,34 +25,32 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
-import com.oracle.coherence.common.builders.NamedCacheSerializerBuilder;
-import com.oracle.coherence.common.builders.NoArgsBuilder;
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
+import com.oracle.coherence.common.builders.SerializableNamedCacheSerializerBuilder;
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
 import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
 import com.oracle.coherence.common.events.CacheEvent;
 import com.oracle.coherence.common.events.EntryRemovedEvent;
 import com.oracle.coherence.common.events.Event;
+import com.oracle.coherence.common.expression.SerializableParameter;
+import com.oracle.coherence.common.expression.SerializableResolvableParameterList;
+import com.oracle.coherence.common.expression.SerializableScopedParameterResolver;
 import com.oracle.coherence.common.resourcing.AbstractDeferredSingletonResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProvider;
-import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
-import com.oracle.coherence.configuration.caching.CacheMapping;
-import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
-import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
-import com.oracle.coherence.configuration.parameters.Parameter;
-import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
-import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
 import com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryInsertedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryRemovedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryUpdatedEvent;
+import com.tangosol.coherence.config.CacheMapping;
+import com.tangosol.coherence.config.ResolvableParameterList;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.io.Serializer;
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
+import com.tangosol.net.ExtensibleConfigurableCacheFactory;
 import com.tangosol.net.GuardSupport;
 import com.tangosol.net.cache.BackingMapBinaryEntry;
 import com.tangosol.net.cache.BinaryEntryStore;
@@ -61,6 +59,7 @@ import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
+import com.tangosol.util.ResourceRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +78,7 @@ import java.util.logging.Logger;
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @see EventDistributor
- * @see EventDistributorBuilder
+ * @see com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder
  *
  * @author Brian Oliver
  */
@@ -122,66 +121,70 @@ public class PublishingCacheStore implements BinaryEntryStore
         this.eventDistributors =
             new AbstractDeferredSingletonResourceProvider<ArrayList<EventDistributor>>("Event Distributors")
         {
-            protected ArrayList<EventDistributor> ensureResource() throws ResourceUnavailableException
+            protected ArrayList<EventDistributor> ensureResource()
             {
                 if (logger.isLoggable(Level.INFO))
                 {
                     logger.info(String.format("Establising Event Distributors for the Cache [%s].", cacheName));
                 }
 
-                // determine the environment in which we are operating
-                Environment environment = (Environment) CacheFactory.getConfigurableCacheFactory();
+                if (!(CacheFactory.getConfigurableCacheFactory() instanceof ExtensibleConfigurableCacheFactory))
+                {
+                    throw new IllegalArgumentException("The ConfigurableCacheFactory must be an isntance of ExtensibleConfigurableCacheFactory");
+                }
+
+                ExtensibleConfigurableCacheFactory eccf =
+                        (ExtensibleConfigurableCacheFactory) CacheFactory.getConfigurableCacheFactory();
+
 
                 // grab the CacheMapping for this cache - it has enrichments for the dependency templates
-                CacheMapping cacheMapping =
-                    environment.getResource(CacheMappingRegistry.class).findCacheMapping(cacheName);
+                CacheMapping cacheMapping =  eccf.getCacheConfig().getCacheMappingRegistry().findCacheMapping(cacheName);
+
+                // NOTE: This temporary code until the core Coherence resolver/builder classes are serializable
+                ResolvableParameterList resolvableParams = (ResolvableParameterList) cacheMapping.getParameterResolver();
+                SerializableResolvableParameterList serializableParams = new SerializableResolvableParameterList(resolvableParams);
 
                 // construct the new parameter provider for the cache
-                final MutableParameterProvider parameterProvider =
-                    new ScopedParameterProvider(cacheMapping.getParameterProvider());
+                final SerializableScopedParameterResolver
+                        resolver = new SerializableScopedParameterResolver(serializableParams);
 
                 // add the standard coherence parameters to the parameter provider
-                parameterProvider.addParameter(new Parameter("cache-name", cacheName));
-                parameterProvider.addParameter(new Parameter("class-loader", environment.getClassLoader()));
-                parameterProvider.addParameter(new Parameter("site-name", localClusterMetaInfo.getSiteName()));
-                parameterProvider.addParameter(new Parameter("cluster-name", localClusterMetaInfo.getClusterName()));
+                resolver.add(new SerializableParameter("cache-name", cacheName));
+                resolver.add(new SerializableParameter("site-name",  localClusterMetaInfo.getSiteName()));
+                resolver.add(new SerializableParameter("cluster-name",  localClusterMetaInfo.getClusterName()));
 
                 // create a serializer builder for the cache that we can use when distributing events
-                final ParameterizedBuilder<Serializer> serializerBuilder = new NamedCacheSerializerBuilder(cacheName);
+                final ParameterizedBuilder<Serializer> serializerBuilder =
+                        new SerializableNamedCacheSerializerBuilder(cacheName);
 
                 // create the EventDistributors for the Cache
                 ArrayList<EventDistributor> distributors = new ArrayList<EventDistributor>();
 
-                for (final EventDistributorTemplate template :
-                    cacheMapping.getEnrichments(EventDistributorTemplate.class))
+                EventDistributorTemplate templateEvent = cacheMapping.getResourceRegistry().getResource(EventDistributorTemplate.class);
+                if (templateEvent == null)
                 {
-                    // set the serializer if one has not be specified
-                    if (template.getSerializerBuilder() == null)
-                    {
-                        template.setSerializerBuilder(serializerBuilder);
-                    }
-
-                    EventDistributor distributor = environment.registerResource(EventDistributor.class,
-                                                                                template
-                                                                                    .getDistributorName(parameterProvider),
-                                                                                new NoArgsBuilder<EventDistributor>()
-                    {
-                        @Override
-                        public EventDistributor realize()
-                        {
-                            return template.realize(parameterProvider);
-                        }
-                    });
-
-                    distributors.add(distributor);
+                    templateEvent = eccf.getResourceRegistry().getResource(EventDistributorTemplate.class);
                 }
+
+                if (templateEvent == null)
+                {
+                    throw new IllegalArgumentException("EventDistribution template cannot be found in the ResourceRegistry");
+                }
+
+                // set the serializer if one has not be specified
+                if (templateEvent.getSerializerBuilder() == null)
+                {
+                    templateEvent.setSerializerBuilder(serializerBuilder);
+                }
+
+                distributors.add(templateEvent.realize(resolver, null,
+                        new SerializableResolvableParameterList()));
 
                 return distributors;
             }
         };
 
     }
-
 
     /**
      * Requests an {@link Event} to be distributed via the established {@link EventDistributor}s.
@@ -335,15 +338,17 @@ public class PublishingCacheStore implements BinaryEntryStore
 
     /**
      * The store method requests than an entry be distributed using the configured
-     * {@link EventDistributorBuilder}. The method checks to see that the entry wasn't
+     * {@link com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder}. The method checks to see that the entry wasn't
      * marked for removal (removes are not distributed here, they're distributed on erase). It will then
      * decorates the BinaryEntry with the affilitate associated and requests that
-     * the {@link EventDistributorBuilder} distribute the event.
+     * the {@link com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder} distribute the event.
      *
      * @param entry The BinaryEntry that was stored
      */
     public synchronized void store(BinaryEntry entry)
     {
+        ResourceRegistry registry = entry.getContext().getManager().getCacheFactory().getResourceRegistry();
+
         if (isMarkedForErase(entry.getContext(), entry.getBinaryValue()))
         {
             // SKIP

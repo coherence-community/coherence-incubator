@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,22 +26,29 @@
 
 package com.oracle.coherence.patterns.messaging.entryprocessors;
 
-import com.oracle.coherence.common.logging.Logger;
 import com.oracle.coherence.patterns.messaging.Queue;
 import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionConfiguration;
 import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.InvocableMap.Entry;
+
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The {@link QueueSubscribeProcessor} is used to create a {@link Subscription} to a
@@ -59,6 +67,11 @@ public class QueueSubscribeProcessor<C extends SubscriptionConfiguration> extend
     implements ExternalizableLite,
                PortableObject
 {
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(QueueSubscribeProcessor.class.getName());
+
     /**
      * The proposed {@link SubscriptionIdentifier} of the {@link Subscription} to the
      * {@link Queue}.
@@ -123,8 +136,8 @@ public class QueueSubscribeProcessor<C extends SubscriptionConfiguration> extend
 
         if (queue == null)
         {
-            Logger.log(Logger.ERROR,
-                       "Subscription cannot be created because the destination is not found for key %s",
+            logger.log(Level.SEVERE,
+                       "Subscription cannot be created because the destination is not found for key {0}",
                        entry.getKey());
 
             return false;
@@ -132,8 +145,13 @@ public class QueueSubscribeProcessor<C extends SubscriptionConfiguration> extend
 
         if (queue.isFullySubscribed())
         {
-            Logger.log(Logger.INFO,
-                    "Subscription cannot be created because destination %s is fully subscribed",entry.getKey());
+            if (logger.isLoggable(Level.INFO))
+            {
+                logger.log(Level.INFO,
+                           "Subscription cannot be created because destination {0} is fully subscribed",
+                           entry.getKey());
+            }
+
             return false;
         }
 

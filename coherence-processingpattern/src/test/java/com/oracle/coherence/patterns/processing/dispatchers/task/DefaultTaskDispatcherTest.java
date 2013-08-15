@@ -27,9 +27,9 @@ package com.oracle.coherence.patterns.processing.dispatchers.task;
 
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
+import com.oracle.coherence.patterns.processing.internal.Environment;
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionKey;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;

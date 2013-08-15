@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,7 +27,7 @@
 package com.oracle.coherence.patterns.command.examples;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.patterns.command.CommandSubmitter;
 import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStrategy;
 import com.oracle.coherence.patterns.command.ContextsManager;
@@ -34,6 +35,7 @@ import com.oracle.coherence.patterns.command.DefaultCommandSubmitter;
 import com.oracle.coherence.patterns.command.DefaultContextConfiguration;
 import com.oracle.coherence.patterns.command.DefaultContextsManager;
 import com.oracle.coherence.patterns.command.commands.PriorityCommandAdapter;
+
 import com.tangosol.net.CacheFactory;
 
 import java.io.IOException;
@@ -44,9 +46,6 @@ import java.io.IOException;
  * <p>
  * It will also demonstrate the use of priority commands with the logging
  * commands submitted to the system.
- * <p>
- * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
- * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
  */
@@ -70,18 +69,18 @@ public class CommandPatternExample
                 DefaultContextConfiguration contextConfiguration =
                     new DefaultContextConfiguration(ManagementStrategy.DISTRIBUTED);
 
-                String          contextName     = "Context for " + Thread.currentThread().getName();
+                String          contextName       = "Context for " + Thread.currentThread().getName();
 
-                ContextsManager contextsManager = DefaultContextsManager.getInstance();
-                Identifier contextIdentifier = contextsManager.registerContext(contextName,
-                                                                               new GenericContext<Long>(0L),
-                                                                               contextConfiguration);
+                ContextsManager contextsManager   = DefaultContextsManager.getInstance();
+
+                Identifier      contextIdentifier = contextsManager.registerContext(contextName,
+                                                                                    new GenericContext<Long>(0L),
+                                                                                    contextConfiguration);
 
                 CommandSubmitter commandSubmitter = DefaultCommandSubmitter.getInstance();
 
                 commandSubmitter.submitCommand(contextIdentifier,
-                                               new LoggingCommand(Thread.currentThread().getName() + " Commenced",
-                                                                  Logger.DEBUG));
+                                               new TraceCommand(Thread.currentThread().getName() + " Commenced"));
 
                 for (long i = 1; i <= 10000; i++)
                 {
@@ -91,24 +90,20 @@ public class CommandPatternExample
                     if (i % 1000 == 0)
                     {
                         commandSubmitter.submitCommand(contextIdentifier,
-                                                       new PriorityCommandAdapter<GenericContext<Long>>(new LoggingCommand(Thread
-                                                           .currentThread().getName() + " Priority Logger @ " + i,
-                                                                                                                           Logger
-                                                                                                                           .DEBUG)));
+                                                       new PriorityCommandAdapter<GenericContext<Long>>(new TraceCommand(Thread
+                                                           .currentThread().getName() + " Priority Logger @ " + i)));
                     }
                 }
 
                 commandSubmitter.submitCommand(contextIdentifier,
-                                               new LoggingCommand(Thread.currentThread().getName() + " Completed",
-                                                                  Logger.DEBUG));
+                                               new TraceCommand(Thread.currentThread().getName() + " Completed"));
 
                 System.out.printf("DONE: %s\n", Thread.currentThread().getName());
             }
         };
 
-        int      THREAD_COUNT = 10;
-        Thread[] threads      = new Thread[THREAD_COUNT];
-
+        int THREAD_COUNT = 10;
+        Thread[] threads = new Thread[THREAD_COUNT];
         for (int i = 0; i < THREAD_COUNT; i++)
         {
             threads[i] = new Thread(runnable);
@@ -120,7 +115,7 @@ public class CommandPatternExample
         {
             threads[i].join();
         }
-
+        
         CacheFactory.shutdown();
     }
 }

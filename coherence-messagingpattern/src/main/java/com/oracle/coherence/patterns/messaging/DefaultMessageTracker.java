@@ -54,8 +54,6 @@ import java.util.Iterator;
  * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
- * @param <C> subscription configuration
- *
  * @author Paul Mackin
  */
 @SuppressWarnings("serial")

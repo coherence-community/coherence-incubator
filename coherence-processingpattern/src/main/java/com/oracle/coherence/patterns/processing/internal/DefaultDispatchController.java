@@ -25,14 +25,8 @@
 
 package com.oracle.coherence.patterns.processing.internal;
 
-import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
-import com.oracle.coherence.common.events.lifecycle.LifecycleStoppedEvent;
+
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-import com.oracle.coherence.environment.Environment;
-import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResourceReference;
 import com.oracle.coherence.patterns.processing.DispatcherFilter;
 import com.oracle.coherence.patterns.processing.SubmissionState;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
@@ -40,19 +34,15 @@ import com.oracle.coherence.patterns.processing.dispatchers.DispatchOutcome;
 import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
 import com.oracle.coherence.patterns.processing.exceptions.NoDispatcherForSubmissionException;
-import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorDefinitionManager;
-import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediator;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
 import com.tangosol.util.MultiplexingMapListener;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.DelayQueue;
 import java.util.logging.Level;
@@ -78,12 +68,12 @@ public class DefaultDispatchController implements DispatchController
      * The list of {@link Dispatcher}s this controller will use to dispatch
      * {@link PendingSubmission}s for processing.
      */
-    private final TreeMap<Integer, Dispatcher> dispatcherList;
+    private final TreeMap<Integer, Dispatcher> mapDispatcherList;
 
     /**
      * The queue of {@link PendingSubmission} that need to be dispatched.
      */
-    private DelayQueue<PendingSubmission> pendingSubmissions;
+    private DelayQueue<PendingSubmission> queuePendingSubmissions;
 
     /**
      * The thread running the dispatching to dispatchers.
@@ -125,14 +115,15 @@ public class DefaultDispatchController implements DispatchController
 
         this.submissionResultProxyFactory = submissionResultProxyFactory;
 
-        this.dispatcherList               = new TreeMap<Integer, Dispatcher>();
-        this.pendingSubmissions           = new DelayQueue<PendingSubmission>();
+        this.mapDispatcherList            = new TreeMap<Integer, Dispatcher>();
+        this.queuePendingSubmissions      = new DelayQueue<PendingSubmission>();
     }
 
 
     /**
      * {@inheritDoc}
      */
+
     public void onDependenciesSatisfied(Environment environment)
     {
         dispatcherCache  = ccFactory.ensureCache(DefaultDispatcherManager.CACHENAME, null);
@@ -144,29 +135,35 @@ public class DefaultDispatchController implements DispatchController
             logger.log(Level.INFO, "Starting Default Dispatch Controller");
         }
 
+        /*
         environment.getResource(EventDispatcher.class)
             .dispatchEvent(new LifecycleStartedEvent<DependentResource>(this));
+            */
     }
 
 
     /**
      * {@inheritDoc}
      */
+    /*
+
+    pfm
+
     public void onDependenciesViolated(Environment environment)
     {
-        synchronized (dispatcherList)
+        synchronized (mapDispatcherList)
         {
             if (logger.isLoggable(Level.INFO))
             {
                 logger.log(Level.INFO,
                            "Shutting down Default Dispatch Controller - {0} dispatchers active",
-                           dispatcherList.size());
+                           mapDispatcherList.size());
             }
 
             dispatcherThread.interrupt();
             dispatcherCache.removeMapListener(dispatcherCacheListener);
 
-            Iterator<Dispatcher> iter = dispatcherList.values().iterator();
+            Iterator<Dispatcher> iter = mapDispatcherList.values().iterator();
 
             while (iter.hasNext())
             {
@@ -183,7 +180,7 @@ public class DefaultDispatchController implements DispatchController
         environment.getResource(EventDispatcher.class)
             .dispatchEvent(new LifecycleStoppedEvent<DependentResource>(this));
     }
-
+              */
 
     /**
      * {@inheritDoc}
@@ -197,7 +194,7 @@ public class DefaultDispatchController implements DispatchController
                        new Object[] {oPendingSubmission.getSubmissionKey(), oPendingSubmission.getResultIdentifier()});
         }
 
-        boolean result = pendingSubmissions.offer(oPendingSubmission);
+        boolean result = queuePendingSubmissions.offer(oPendingSubmission);
 
         if (!result)
         {
@@ -225,7 +222,7 @@ public class DefaultDispatchController implements DispatchController
                                      defaultPendingSubmission.getResultIdentifier()});
         }
 
-        boolean result = pendingSubmissions.offer(defaultPendingSubmission);
+        boolean result = queuePendingSubmissions.offer(defaultPendingSubmission);
 
         if (!result)
         {
@@ -249,7 +246,7 @@ public class DefaultDispatchController implements DispatchController
             logger.log(Level.FINER, "Discarding pending Submission {0}", oProcess);
         }
 
-        pendingSubmissions.remove(oProcess);
+        queuePendingSubmissions.remove(oProcess);
     }
 
 
@@ -278,7 +275,7 @@ public class DefaultDispatchController implements DispatchController
         // First we need to get a hold of the registered Dispatchers.
         // This code must run here as it's not safe to run on a service thread
 
-        synchronized (dispatcherList)
+        synchronized (mapDispatcherList)
         {
             final Iterator iter = dispatcherCache.entrySet().iterator();
 
@@ -287,7 +284,7 @@ public class DefaultDispatchController implements DispatchController
                 Entry            entry      = (Entry) iter.next();
                 final Dispatcher dispatcher = (Dispatcher) entry.getValue();
 
-                dispatcherList.put((Integer) entry.getKey(), dispatcher);
+                mapDispatcherList.put((Integer) entry.getKey(), dispatcher);
                 dispatcher.onStartup(this);
             }
         }
@@ -301,7 +298,7 @@ public class DefaultDispatchController implements DispatchController
             try
             {
                 final DefaultPendingSubmission oPendingSubmission =
-                    (DefaultPendingSubmission) pendingSubmissions.take();
+                    (DefaultPendingSubmission) queuePendingSubmissions.take();
 
                 dispatchSubmission(oPendingSubmission);
             }
@@ -349,9 +346,9 @@ public class DefaultDispatchController implements DispatchController
                         logger.log(Level.INFO, "Starting dispatcher:", dispatcher.getName());
                     }
 
-                    synchronized (dispatcherList)
+                    synchronized (mapDispatcherList)
                     {
-                        dispatcherList.put((Integer) mapEvent.getKey(), dispatcher);
+                        mapDispatcherList.put((Integer) mapEvent.getKey(), dispatcher);
                     }
 
                     dispatcher.onStartup(DefaultDispatchController.this);
@@ -373,7 +370,7 @@ public class DefaultDispatchController implements DispatchController
                     {
                         if (mapEvent.getId() == MapEvent.ENTRY_DELETED)
                         {
-                            synchronized (dispatcherList)
+                            synchronized (mapDispatcherList)
                             {
                                 final Dispatcher dispatcher = (Dispatcher) mapEvent.getOldValue();
 
@@ -385,7 +382,7 @@ public class DefaultDispatchController implements DispatchController
                                     }
 
                                     dispatcher.onShutdown(DefaultDispatchController.this);
-                                    dispatcherList.remove(mapEvent.getKey());
+                                    mapDispatcherList.remove(mapEvent.getKey());
                                 }
                             }
                         }
@@ -432,9 +429,9 @@ public class DefaultDispatchController implements DispatchController
                 DispatchOutcome oResult = DispatchOutcome.REJECTED;
                 final boolean   fFirst  = true;
 
-                synchronized (dispatcherList)
+                synchronized (mapDispatcherList)
                 {
-                    for (final Dispatcher dispatcher : dispatcherList.values())
+                    for (final Dispatcher dispatcher : mapDispatcherList.values())
                     {
                         oResult = tryDispatchSubmissionToDispatcher(oPendingSubmission, dispatcher);
 
@@ -476,7 +473,7 @@ public class DefaultDispatchController implements DispatchController
                 {
                     if (oResult != DispatchOutcome.CONTINUE)
                     {
-                        pendingSubmissions.add(oPendingSubmission);
+                        queuePendingSubmissions.add(oPendingSubmission);
 
                         if (logger.isLoggable(Level.FINER))
                         {
@@ -591,6 +588,10 @@ public class DefaultDispatchController implements DispatchController
     /**
      * {@inheritDoc}
      */
+    /*
+
+    todo PFM
+
     public Set<DependencyReference> getDependencyReferences()
     {
         Set<DependencyReference> dependencies = new HashSet<DependencyReference>();
@@ -610,4 +611,5 @@ public class DefaultDispatchController implements DispatchController
 
         return dependencies;
     }
+    */
 }

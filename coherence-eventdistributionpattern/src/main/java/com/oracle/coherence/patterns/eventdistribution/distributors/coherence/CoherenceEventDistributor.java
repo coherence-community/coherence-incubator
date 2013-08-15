@@ -25,10 +25,8 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.coherence;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
@@ -40,6 +38,10 @@ import com.oracle.coherence.patterns.messaging.MessagingSession;
 import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionConfiguration;
 import com.oracle.coherence.patterns.messaging.entryprocessors.TopicSubscribeProcessor;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.Parameter;
+import com.tangosol.config.expression.ParameterResolver;
+import com.tangosol.config.expression.Value;
 import com.tangosol.io.Serializer;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
@@ -138,12 +140,13 @@ public class CoherenceEventDistributor implements EventDistributor
      */
     @Override
     public EventChannelController.Identifier establishEventChannelController(Dependencies      dependencies,
-                                                                             ParameterProvider parameterProvider)
+                                                                             ParameterResolver resolver,
+                                                                             ClassLoader       loader)
     {
         // establish the serializer (if we haven't done so already)
         if (serializer == null)
         {
-            serializer = serializerBuilder.realize(parameterProvider);
+            serializer = serializerBuilder.realize(resolver, loader, null);
         }
 
         // determine an EventChannelController.Identifier based on the channel and external name
@@ -151,14 +154,18 @@ public class CoherenceEventDistributor implements EventDistributor
             new EventChannelController.Identifier(dependencies.getChannelName(),
                                                   dependencies.getExternalName());
 
+        Parameter testName = resolver.resolve("cache-name");
+        Value val  = (Value) testName.evaluate(resolver);
+        String cacheName = (String) val.get();
+
         // create a customized subscription that we'll use to trigger distribution when the subscription changes
         // ie: when a message arrives for the subscription, changes to the subscription will appropriately trigger
         // distribution of the message (Event) with an associated EventChannel.
         Subscription subscription = new CoherenceEventChannelSubscription(getIdentifier(),
                                                                           controllerIdentifier,
                                                                           dependencies,
-                                                                          parameterProvider,
-                                                                          serializerBuilder);
+                                                                          cacheName,
+                                                                          resolver);
 
         // NOTE: The following code takes advantage of the fact that we can replace the subscription implementation
         NamedCache destinationCache = CacheFactory.getCache(Destination.CACHENAME);

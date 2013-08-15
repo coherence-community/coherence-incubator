@@ -25,18 +25,19 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.configuration.parameters.EmptyParameterProvider;
 import com.oracle.coherence.patterns.eventdistribution.channels.cache.ConflictResolution.Operation;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.NullParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
 import com.tangosol.net.BackingMapManagerContext;
+import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.Converter;
@@ -99,9 +100,9 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
     /**
      * Standard Constructor.
      *
-     * @param entryEvent
-     * @param conflictResolverBuilder
-     * @param targetCacheName
+     * @param entryEvent               the EntryEvent
+     * @param conflictResolverBuilder  the ConflictResolverBuilder
+     * @param targetCacheName          the target cache name
      */
     public EntryEventProcessor(DistributableEntryEvent                entryEvent,
                                ParameterizedBuilder<ConflictResolver> conflictResolverBuilder,
@@ -142,7 +143,8 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
         // realize the conflict resolver to resolve any conflicts
         ConflictResolver conflictResolver = conflictResolverBuilder == null
                                             ? new BruteForceConflictResolver()
-                                            : conflictResolverBuilder.realize(EmptyParameterProvider.INSTANCE);
+                                            : conflictResolverBuilder.realize(new NullParameterResolver(),
+                Base.getContextClassLoader(), null);
         ConflictResolution result = conflictResolver.resolve(entryEvent, targetEntry);
 
         if (logger.isLoggable(Level.FINEST))

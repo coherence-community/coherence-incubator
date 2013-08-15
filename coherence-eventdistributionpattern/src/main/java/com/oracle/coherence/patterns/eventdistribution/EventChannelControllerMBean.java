@@ -27,6 +27,7 @@ package com.oracle.coherence.patterns.eventdistribution;
 
 import com.oracle.coherence.common.events.Event;
 
+
 /**
  * The {@link EventChannelControllerMBean} specifies the JMX interface for {@link EventChannelController}s.
  * <p>

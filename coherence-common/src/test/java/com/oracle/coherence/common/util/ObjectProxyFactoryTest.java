@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,23 +28,28 @@ package com.oracle.coherence.common.util;
 
 import com.oracle.coherence.common.processors.CreateRemoteObjectProcessor;
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
-import com.oracle.tools.junit.AbstractCoherenceTest;
+
 import com.oracle.tools.junit.AbstractTest;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.net.cache.CacheEvent;
+
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import java.lang.reflect.Proxy;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Proxy;
 
 /**
  * A {@link ObjectProxyFactoryTest} tests the {@link ObjectProxyFactory} class.
@@ -53,7 +59,7 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Christer Fahlgren
  */
-public class ObjectProxyFactoryTest extends AbstractCoherenceTest
+public class ObjectProxyFactoryTest extends AbstractTest
 {
     /**
      * Setup for each test.
@@ -129,9 +135,9 @@ public class ObjectProxyFactoryTest extends AbstractCoherenceTest
                                       Matchers.isA(InvokeMethodProcessor.class))).toReturn("testmessage");
 
         ObjectProxyFactory<MockInterface> proxyFactory = new ObjectProxyFactory("testcache", MockInterface.class);
-        MockInterface proxy = proxyFactory.createRemoteObjectIfNotExists("key",
-                                                                         DefaultMockInterfaceImplementation.class,
-                                                                         null);
+        MockInterface                     proxy        = proxyFactory.createRemoteObjectIfNotExists("key",
+                                                                                                    DefaultMockInterfaceImplementation.class,
+                                                                                                    null);
         String msg = proxy.getMessage();
 
         assertTrue(msg.equals("testmessage"));
@@ -152,7 +158,7 @@ public class ObjectProxyFactoryTest extends AbstractCoherenceTest
         Mockito.stub(mockCache.invoke(Matchers.anyString(), Matchers.isA(CreateRemoteObjectProcessor.class)))
             .toReturn(new IllegalStateException("Object already exists"));
 
-        ObjectProxyFactory<MockInterface> proxyFactory = new ObjectProxyFactory("testcache", MockInterface.class);
+        ObjectProxyFactory<MockInterface> proxyFactory  = new ObjectProxyFactory("testcache", MockInterface.class);
         @SuppressWarnings("unused") MockInterface proxy = proxyFactory.createRemoteObjectIfNotExists("key",
                                                                                                      DefaultMockInterfaceImplementation.class,
                                                                                                      null);
@@ -195,9 +201,9 @@ public class ObjectProxyFactoryTest extends AbstractCoherenceTest
                                       Matchers.isA(InvokeMethodProcessor.class))).toReturn("testmessage");
 
         ObjectProxyFactory<MockInterface> proxyFactory = new ObjectProxyFactory("testcache", MockInterface.class);
-        MockInterface proxy = proxyFactory.createRemoteObjectIfNotExists("key",
-                                                                         DefaultMockInterfaceImplementation.class,
-                                                                         null);
+        MockInterface                     proxy        = proxyFactory.createRemoteObjectIfNotExists("key",
+                                                                                                    DefaultMockInterfaceImplementation.class,
+                                                                                                    null);
         MockInterface localcopy = proxyFactory.getLocalCopyOfRemoteObject("key");
 
         assertFalse(proxyFactory.isProxy(localcopy));
@@ -222,9 +228,9 @@ public class ObjectProxyFactoryTest extends AbstractCoherenceTest
         mockCache.addMapListener(Matchers.isA(MapListener.class));
 
         ObjectProxyFactory<MockInterface> proxyFactory = new ObjectProxyFactory("testcache", MockInterface.class);
-        MockInterface proxy = proxyFactory.createRemoteObjectIfNotExists("key",
-                                                                         DefaultMockInterfaceImplementation.class,
-                                                                         null);
+        MockInterface                     proxy        = proxyFactory.createRemoteObjectIfNotExists("key",
+                                                                                                    DefaultMockInterfaceImplementation.class,
+                                                                                                    null);
 
         ObjectCallback cb = new ObjectCallback();
 

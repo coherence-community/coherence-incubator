@@ -25,7 +25,6 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
 import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
 import com.oracle.coherence.common.events.EntryEvent;
@@ -36,6 +35,7 @@ import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.AbstractInterClusterEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.InterClusterEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;

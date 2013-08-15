@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,8 +28,10 @@ package com.oracle.coherence.common.util;
 
 import com.tangosol.io.DefaultSerializer;
 import com.tangosol.io.Serializer;
+
 import com.tangosol.net.BackingMapContext;
 import com.tangosol.net.BackingMapManagerContext;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
@@ -37,6 +40,7 @@ import com.tangosol.util.InvocableMapHelper;
 import com.tangosol.util.ObservableMap;
 import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.ValueUpdater;
+
 import com.tangosol.util.extractor.AbstractUpdater;
 
 import java.io.IOException;
@@ -416,6 +420,17 @@ public class SimpleBinaryEntry implements BinaryEntry
         {
             valueUpdater.update(getValue(), value);
         }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateBinaryValue(Binary  binaryValue,
+                                  boolean fSynthetic)
+    {
+        this.binaryValue = binaryValue;
     }
 
 

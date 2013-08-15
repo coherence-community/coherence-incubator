@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,12 +29,15 @@ package com.oracle.coherence.patterns.messaging;
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
 import com.oracle.coherence.common.identifiers.UUIDBasedIdentifier;
+
 import com.oracle.coherence.patterns.messaging.entryprocessors.CreateDestinationProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.PublishMessageProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.QueueSubscribeProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.TopicSubscribeProcessor;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.filter.LikeFilter;
 
 import java.util.Set;
@@ -108,9 +112,11 @@ public class DefaultMessagingSession implements MessagingSession
     /**
      * {@inheritDoc}
      */
-    public Identifier createQueue(String queueName,int maxSubscribers)
+    public Identifier createQueue(String queueName,
+                                  int    maxSubscribers)
     {
-        Queue queue = new Queue(queueName,maxSubscribers);
+        Queue queue = new Queue(queueName, maxSubscribers);
+
         return createDestination(queueName, queue);
     }
 
@@ -202,7 +208,7 @@ public class DefaultMessagingSession implements MessagingSession
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings("rawtypes")
     public Subscriber subscribe(Identifier                destinationIdentifier,
                                 SubscriptionConfiguration subscriptionConfiguration,
                                 Subscription              subscription)
@@ -241,6 +247,7 @@ public class DefaultMessagingSession implements MessagingSession
                                                                        null);
 
             boolean success = (Boolean) destinationCache.invoke(destinationIdentifier, processor);
+
             if (success)
             {
                 subscriber = new QueueSubscriber(this, subscriptionIdentifier);

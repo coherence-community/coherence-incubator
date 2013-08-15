@@ -8,7 +8,7 @@ replace other Cache Configuration XML elements with in Cache Configurations.
 
 1.  This namespace replaces the previously available `<introduce:config.. />` 
     namespace, which is no longer available as part of Oracle Coherence 
-    Incubator 11.  The `<introduce:config.. />` and `<introduce-cache-config.. />` 
+    Incubator 12.  The `<introduce:config.. />` and `<introduce-cache-config.. />` 
     elements will no longer work, but may be replaced with the XML processing 
     attribute `element:introduce-cache-config="..."`.
 
@@ -17,7 +17,7 @@ replace other Cache Configuration XML elements with in Cache Configurations.
 
 <h4>Namespace Content Handler</h4>
 
-The implementation is provided by the `com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler` 
+The implementation is provided by the `com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler`
 class.
 
 <h4>Declaration</h4>
@@ -29,7 +29,7 @@ when declaring the namespace.
 To use the namespace you should declare it as follows:
 
     <cache-config 
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler">
+        xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler">
     
        ...
     
@@ -66,7 +66,7 @@ This attribute may only be specified in `<cache-config>` XML elements.
 Introduce an additional cache configuration into a cache configuration:
 
     <cache-config 
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
         element:introduce-cache-config="other-cache-config.xml">
     
         ...
@@ -77,7 +77,7 @@ Introduce multiple (comma separated) cache configurations into a cache
 configuration:
 
     <cache-config 
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
         element:introduce-cache-config="cache-config-one.xml, cache-config-two.xml, cache-config-three.xml">
         
         ...
@@ -101,7 +101,7 @@ of the specified file must be the same as the said XML element.
 Replace the contents of an XML element with the contents of a specified file:
 
     <cache-config 
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler">
+        xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler">
     
         <cache-scheme-mappings element:replace-with-file="cache-scheme-mappings.xml"/>
         

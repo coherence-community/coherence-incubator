@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,13 +26,25 @@
 
 package com.oracle.coherence.patterns.command.internal;
 
+import com.oracle.coherence.common.finitestatemachines.AnnotationDrivenModel;
+import com.oracle.coherence.common.finitestatemachines.Event;
+import com.oracle.coherence.common.finitestatemachines.ExecutionContext;
+import com.oracle.coherence.common.finitestatemachines.FiniteStateMachine;
+import com.oracle.coherence.common.finitestatemachines.Instruction;
+import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMachine;
+import com.oracle.coherence.common.finitestatemachines.annotations.OnEnterState;
+import com.oracle.coherence.common.finitestatemachines.annotations.Transition;
+import com.oracle.coherence.common.finitestatemachines.annotations.Transitions;
+
 import com.oracle.coherence.common.identifiers.Identifier;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.common.sequencegenerators.ClusteredSequenceGenerator;
 import com.oracle.coherence.common.sequencegenerators.SequenceGenerator;
+
 import com.oracle.coherence.common.ticketing.Ticket;
 import com.oracle.coherence.common.ticketing.TicketAggregator;
 import com.oracle.coherence.common.ticketing.TicketBook;
+
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.CommandSubmitter;
 import com.oracle.coherence.patterns.command.Context;
@@ -40,49 +53,56 @@ import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStra
 import com.oracle.coherence.patterns.command.ContextsManager;
 import com.oracle.coherence.patterns.command.ExecutionEnvironment;
 import com.oracle.coherence.patterns.command.PriorityCommand;
+
+import com.tangosol.net.BackingMapContext;
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.DefaultConfigurableCacheFactory;
-import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.Member;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.PartitionedService;
+
 import com.tangosol.net.management.Registry;
-import com.tangosol.run.component.ExecutionContext;
+
+import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.Filter;
+
 import com.tangosol.util.filter.EqualsFilter;
 import com.tangosol.util.filter.KeyAssociatedFilter;
+
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
+
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An {@link CommandExecutor} is responsible for coordinating and
  * executing {@link Command}s (represented as {@link CommandExecutionRequest}s)
- * for a single a {@link Context}.
+ * for a single {@link Context}.
  * <p>
  * Included in this responsibility is the recovery and potential
  * re-execution of {@link CommandExecutionRequest}s
  * (in-the-originally-submitted-order).  Such recovery may be due
  * to Coherence load-balancing or recovering cache partitions.
  * <p>
- * Internally {@link CommandExecutor}s operate as a simple
- * finite-state-machine (see {@link State} for details on states).
+ * Internally {@link CommandExecutor}s operate as a {@link FiniteStateMachine}
+ * (see {@link State} for details on states).
  * <p>
- * {@link CommandExecutor}s state transitions are typically controlled
- * via 'events' delivered a {@link ContextBackingMapListener} or through the
- * {@link SubmitCommandExecutionRequestProcessor}.
+ * {@link CommandExecutor}s state transitions are driven by 'events'
+ * raised by the {@link ContextEventInterceptor} or through requests made by
+ * the {@link SubmitCommandExecutionRequestProcessor}.
  * <p>
  * All {@link CommandExecutor}s are monitorable through JMX.  They are
  * automatically registered and de-registered when they created and stopped
  * (respectively).
  * <p>
- * Use a {@link ContextsManager} register and manage {@link Context}s.
- * <p>
- * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2008-2012. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @see CommandExecutionRequest
@@ -93,56 +113,138 @@ import java.util.concurrent.TimeUnit;
  * @author Brian Oliver
  * @author Simon Bisson
  */
+@Transitions(
+{
+    @Transition(
+        name       = "Start",
+        fromStates = "NEW",
+        toState    = "STARTING"
+    ) , @Transition(
+        name       = "Wait",
+        fromStates = {"STARTING", "EXECUTING"},
+        toState    = "WAITING"
+    ) , @Transition(
+        name       = "Schedule",
+        fromStates = {"STARTING", "WAITING", "EXECUTING"},
+        toState    = "SCHEDULED"
+    ) , @Transition(
+        name       = "Execute",
+        fromStates = {"SCHEDULED", "DELAYING"},
+        toState    = "EXECUTING"
+    ) , @Transition(
+        name       = "Delay",
+        fromStates = "EXECUTING",
+        toState    = "DELAYING"
+    ) , @Transition(
+        name       = "Stop",
+        fromStates =
+        {
+            "NEW", "STARTING", "WAITING", "SCHEDULED", "EXECUTING", "DELAYING"
+        },
+        toState    = "STOPPING"
+    )
+})
 public class CommandExecutor implements CommandExecutorMBean
 {
+    /**
+     * The types of events the {@link CommandExecutor}
+     * {@link FiniteStateMachine} will accept.
+     */
+    public static enum CommandExecutorEvent implements Event<State>
+    {
+        START(State.STARTING),
+        STOP(State.STOPPING),
+        ACCEPT(State.SCHEDULED);
+
+        /**
+         * The desired {@link State} after the {@link Event}.
+         */
+        private State m_desiredState;
+
+
+        /**
+         * Constructs a {@link CommandExecutorEvent}
+         *
+         * @param desiredState the desired {@link State} after the event
+         */
+        private CommandExecutorEvent(State desiredState)
+        {
+            m_desiredState = desiredState;
+        }
+
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public State getDesiredState(State            currentState,
+                                     ExecutionContext context)
+        {
+            return m_desiredState;
+        }
+    }
+
+
     /**
      * The set of possible {@link State}s for a {@link CommandExecutor}.
      */
     public static enum State
     {
         /**
-         * The <code>New</code> state indicates that a {@link CommandExecutor}
-         * has been created, and may accept {@link CommandExecutionRequest}s, but
+         * Indicates that a {@link CommandExecutor} has been created,
+         * and may accept {@link CommandExecutionRequest}s, but
          * will not execute them until the associated {@link Context} has
          * been provided.
          */
-        New,
+        NEW,
 
         /**
-         * The <code>Starting</code> state indicates that a {@link CommandExecutor}
-         * is in the process of initializing itself to commence executing
+         * Indicates that a {@link CommandExecutor} is in the process of
+         * initializing itself to commence executing
          * {@link CommandExecutionRequest}s.
          */
-        Starting,
+        STARTING,
 
         /**
-         * <code>Waiting</code> indicates that a {@link CommandExecutor} has
-         * been successfully started but is currently waiting for
+         * Indicates that a {@link CommandExecutor} has been successfully
+         * started but is currently waiting for
          * {@link CommandExecutionRequest}s to arrive.
          */
-        Waiting,
+        WAITING,
 
         /**
-         * <code>Scheduled</code> indicates that a {@link CommandExecutor} has
-         * been been scheduled to execute {@link CommandExecutionRequest}s,
+         * Indicates that a {@link CommandExecutor} has been been scheduled
+         * to execute {@link CommandExecutionRequest}s,
          * but has yet to commence execution.
          */
-        Scheduled,
+        SCHEDULED,
 
         /**
-         * <code>Executing</code> indicates that a {@link CommandExecutor}
-         * is in the process of executing {@link CommandExecutionRequest}s.
+         * Indicates that a {@link CommandExecutor} has delayed execution
+         * do to some doubt in the ownership of the underlying Command
+         * Context.
          */
-        Executing,
+        DELAYING,
 
         /**
-         * <code>Stopped</code> indicates that a {@link CommandExecutor} is
-         * now stopped and will no longer execute or accept requests
+         * Indicates that a {@link CommandExecutor} is in the process of
+         * executing {@link CommandExecutionRequest}s.
+         */
+        EXECUTING,
+
+        /**
+         * Indicates that a {@link CommandExecutor} is in the process of
+         * stopping.  It will no longer execute or accept requests
          * to execute {@link CommandExecutionRequest}s.
          */
-        Stopped
+        STOPPING
     }
 
+
+    /**
+     * The logger for this class.
+     */
+    private static final Logger logger = Logger.getLogger(CommandExecutor.class.getName());
 
     /**
      * The amount of time we should delay performing some task
@@ -152,42 +254,43 @@ public class CommandExecutor implements CommandExecutorMBean
     private static long OWNERSHIP_DOUBT_DELAY_SECONDS = 2;
 
     /**
+     * The {@link FiniteStateMachine} defining the valid state, transitions
+     * and events for the {@link CommandExecutor}.
+     */
+    private NonBlockingFiniteStateMachine<State> m_fsm;
+
+    /**
+     * The {@link PartitionedService} that can be used to determine if the
+     * {@link CommandExecutor} for the command context is currently owned
+     * by the {@link Member} in which the {@link CommandExecutor} is located.
+     */
+    private PartitionedService m_svcPartition;
+
+    /**
      * The {@link Identifier} of the {@link Context} for which this {@link CommandExecutor} is
      * coordinating {@link CommandExecutionRequest} execution.
      *
      * {@link Context} {@link Identifier}s are unique across a cluster.
      */
-    private Identifier contextIdentifier;
+    private Identifier m_ctxIdentifier;
 
     /**
      * The {@link ContextConfiguration} for the {@link Context}
      * being managed by this {@link CommandExecutor}.
      */
-    private ContextConfiguration contextConfiguration;
-
-    /**
-     * The {@link BackingMapManagerContext} to which this {@link CommandExecutor}
-     * is associated.  This is used to help locate the underlying {@link PartitionedService}
-     * on which the {@link CommandExecutor} depends.
-     */
-    private BackingMapManagerContext backingMapManagerContext;
-
-    /**
-     * The current {@link State} of the {@link CommandExecutor}.
-     */
-    private volatile State state;
+    private ContextConfiguration m_ctxConfiguration;
 
     /**
      * A {@link SequenceGenerator} that may be used to generate ticket issuer ids
      */
-    private SequenceGenerator sequenceGenerator;
+    private SequenceGenerator m_seqGenerator;
 
     /**
      * The current ticket issuer id that this {@link CommandExecutor}
      * is using for issuing {@link Ticket}s.  Over time this value may change
      * as it's not dependent on an individual instance of a {@link CommandExecutor}.
      */
-    private long ticketIssuerId;
+    private long m_ticketIssuerId;
 
     /**
      * The ordered set of {@link TicketBook}s representing the {@link Ticket}s
@@ -195,31 +298,31 @@ public class CommandExecutor implements CommandExecutorMBean
      * {@link Ticket}s for {@link CommandExecutionRequest}s that have been
      * recovered.
      */
-    private LinkedList<TicketBook> recoveredTicketBooks;
+    private LinkedList<TicketBook> m_recoveredTicketBooks;
 
     /**
      * The in-order collection of {@link Ticket}s for {@link CommandExecutionRequest}s
      * that the {@link CommandExecutor} has accepted and are currently pending execution.
      */
-    private TicketBook ticketBook;
+    private TicketBook m_ticketBook;
 
     /**
      * The in-order collection of {@link Ticket}s for {@link CommandExecutionRequest}s
      * that are have high-priority for execution by the {@link CommandExecutor}.
      */
-    private TicketBook priorityTicketBook;
+    private TicketBook m_priorityTicketBook;
 
     /**
      * The version of the {@link Context} (ie: {@link ContextWrapper}) this
      * {@link CommandExecutor} is managing.
      */
-    private long contextVersion;
+    private long m_contextVersion;
 
     /**
      * The cluster-wide uniquely generated JMX bean name for
      * the {@link CommandExecutor}.
      */
-    private String mBeanName;
+    private String m_mBeanName;
 
     /**
      * The local number of {@link CommandExecutionRequest}s that
@@ -292,17 +395,25 @@ public class CommandExecutor implements CommandExecutorMBean
      * <b>NOTE:</b> To construct a {@link CommandExecutor} for your application,
      * you should use a {@link ContextsManager}.
      *
-     * @param contextIdentifier
-     * @param backingMapManagerContext
+     * @param ctxIdentifier
      */
-    public CommandExecutor(Identifier               contextIdentifier,
-                           BackingMapManagerContext backingMapManagerContext)
+    public CommandExecutor(Identifier               ctxIdentifier,
+                           PartitionedService       svcPartition,
+                           ScheduledExecutorService executorService)
     {
-        this.contextIdentifier        = contextIdentifier;
-        this.contextConfiguration     = null;
-        this.backingMapManagerContext = backingMapManagerContext;
-        this.state                    = State.New;
-        this.sequenceGenerator        = new ClusteredSequenceGenerator("ticketIssuerIds", 0);
+        // establish a non-blocking finite state machine for the context
+        AnnotationDrivenModel<State> model = new AnnotationDrivenModel<State>(State.class, this);
+
+        m_fsm = new NonBlockingFiniteStateMachine<State>(ctxIdentifier.toString(),
+                                                         model,
+                                                         State.NEW,
+                                                         executorService,
+                                                         false);
+
+        m_svcPartition     = svcPartition;
+        m_ctxIdentifier    = ctxIdentifier;
+        m_ctxConfiguration = null;
+        m_seqGenerator     = new ClusteredSequenceGenerator("ticketIssuerIds", 0);
 
         // we need two Ticket issuer ids.  The first is used to allocate Tickets to
         // CommandExecutionRequests that arrive *before* our Context (and ContextConfiguration)
@@ -311,17 +422,17 @@ public class CommandExecutor implements CommandExecutorMBean
         // ContextConfiguration).  The second issuer id is used for all other
         // CommandExecutionRequests.  They will be located using the ManagementStrategy
         // provided by the ContextConfiguration.
-        this.ticketIssuerId = sequenceGenerator.next(2).getFrom();
-        this.ticketBook     = new TicketBook(ticketIssuerId);
+        m_ticketIssuerId = m_seqGenerator.next(2).getFrom();
+        m_ticketBook     = new TicketBook(m_ticketIssuerId);
 
         // tickets for priority commands have a negative issuer id
-        this.priorityTicketBook   = new TicketBook(Long.MIN_VALUE + ticketIssuerId);
+        m_priorityTicketBook   = new TicketBook(Long.MIN_VALUE + m_ticketIssuerId);
 
-        this.recoveredTicketBooks = new LinkedList<TicketBook>();
-        this.contextVersion       = -1;
+        m_recoveredTicketBooks = new LinkedList<TicketBook>();
+        m_contextVersion       = -1;
 
         // JMX attributes
-        this.mBeanName                            = null;
+        m_mBeanName                               = null;
         this.localCommandsSubmitted               = 0;
         this.localCommandsExecuted                = 0;
         this.localLastCommandExecutionDuration    = 0;
@@ -345,37 +456,16 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     public Identifier getContextIdentifier()
     {
-        return contextIdentifier;
+        return m_ctxIdentifier;
     }
 
 
     /**
-     * Sets the {@link State} of the {@link CommandExecutor}.
-     *
-     * @param state
-     */
-    public void setState(State state)
-    {
-        if (this.state == State.Stopped && state != State.Stopped)
-        {
-            Logger.log(Logger.ERROR,
-                       "Attempting to set the CommandExecutor %s state to %s when it's already Stopped",
-                       contextIdentifier,
-                       this.state);
-        }
-        else
-        {
-            this.state = state;
-        }
-    }
-
-
-    /**
-     * Returns the current {@link State} of the {@link CommandExecutor}.
+     * Obtains the current {@link State} of the {@link CommandExecutor}.
      */
     public State getState()
     {
-        return state;
+        return m_fsm.getState();
     }
 
 
@@ -385,7 +475,7 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     public String getMBeanName()
     {
-        return mBeanName;
+        return m_mBeanName;
     }
 
 
@@ -397,7 +487,7 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     void setMBeanName(String mBeanName)
     {
-        this.mBeanName = mBeanName;
+        this.m_mBeanName = mBeanName;
     }
 
 
@@ -406,7 +496,7 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     public String getContextIdentity()
     {
-        return contextIdentifier.toString();
+        return m_ctxIdentifier.toString();
     }
 
 
@@ -415,7 +505,7 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     public long getContextVersion()
     {
-        return contextVersion;
+        return m_contextVersion;
     }
 
 
@@ -424,7 +514,7 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     public String getStatus()
     {
-        return state.name();
+        return getState().name();
     }
 
 
@@ -433,7 +523,7 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     public long getTicketIssuerId()
     {
-        return ticketIssuerId;
+        return m_ticketIssuerId;
     }
 
 
@@ -442,11 +532,11 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     public long getTotalCommandsPendingExecution()
     {
-        long totalPendingCommands = ticketBook.size();
+        long totalPendingCommands = m_ticketBook.size();
 
-        if (recoveredTicketBooks != null &&!recoveredTicketBooks.isEmpty())
+        if (m_recoveredTicketBooks != null &&!m_recoveredTicketBooks.isEmpty())
         {
-            for (TicketBook ticketBook : recoveredTicketBooks)
+            for (TicketBook ticketBook : m_recoveredTicketBooks)
             {
                 totalPendingCommands += ticketBook.size();
             }
@@ -575,10 +665,178 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     private boolean isContextOwned()
     {
-        PartitionedService partitionedService = (PartitionedService) backingMapManagerContext.getCacheService();
-        Member             keyOwner           = partitionedService.getKeyOwner(contextIdentifier);
+        Member keyOwner = m_svcPartition.getKeyOwner(m_ctxIdentifier);
 
         return CacheFactory.getCluster().getLocalMember().equals(keyOwner);
+    }
+
+
+    /**
+     * Starts ups, initializes, recovers and schedules the {@link CommandExecutor}
+     * to start processing {@link CommandExecutionRequest}s.
+     *
+     * @param previousState  the previous {@link State}
+     * @param newState       the new {@link State}
+     *
+     * @return  the {@link Instruction} to perform once the {@link CommandExecutor}
+     *          is started.
+     */
+    @SuppressWarnings("unchecked")
+    @OnEnterState("STARTING")
+    public Instruction onStarting(State            previousState,
+                                  State            newState,
+                                  ExecutionContext context)
+    {
+        if (logger.isLoggable(Level.FINEST))
+        {
+            logger.log(Level.FINEST, String.format("Starting CommandExecutor for %s", m_ctxIdentifier));
+        }
+
+        // claim ownership of the Context
+        NamedCache contextsCache = CacheFactory.getCache(ContextWrapper.CACHENAME);
+        ContextWrapper contextWrapper = (ContextWrapper) contextsCache.invoke(m_ctxIdentifier,
+                                                                              new ClaimContextProcessor(CacheFactory
+                                                                                  .getCluster().getLocalMember()
+                                                                                  .getUid()));
+
+        if (contextWrapper == null)
+        {
+            if (logger.isLoggable(Level.FINEST))
+            {
+                logger.log(Level.FINEST,
+                           String
+                           .format("CommandExecutor for %s can not be started.  The Context has been moved (or deleted) since the CommandExecutor was established and scheduled to start.  Now stopped.",
+                               m_ctxIdentifier));
+            }
+
+            return new Instruction.TransitionTo<State>(State.STOPPING);
+        }
+        else
+        {
+            synchronized (this)
+            {
+                // move onto the next ticket issuer id
+                // NOTE: we do this as any Tickets that have been issued prior to now
+                // will have been managed without ContextConfiguration).
+                //
+                // (this allows us to accept CommandExecutionRequests for this Context
+                // before it has been created/started)
+                m_ticketIssuerId++;
+                m_ticketBook                              = new TicketBook(m_ticketIssuerId);
+                m_priorityTicketBook                      = new TicketBook(Long.MIN_VALUE + m_ticketIssuerId);
+
+                m_ctxConfiguration                        = contextWrapper.getContextConfiguration();
+                m_contextVersion                          = contextWrapper.getContextVersion();
+                this.totalCommandsExecuted                = contextWrapper.getTotalCommandsExecuted();
+                this.totalCommandExecutionDuration        = contextWrapper.getTotalCommandExecutionDuration();
+                this.totalCommandExecutionWaitingDuration = contextWrapper.getTotalCommandExecutionWaitingDuration();
+            }
+
+            if (logger.isLoggable(Level.FINEST))
+            {
+                logger.log(Level.FINEST,
+                           String.format("CommandExecutor for %s has been configured as %s", m_ctxIdentifier,
+                                         m_ctxConfiguration));
+            }
+
+            // recover any previously accepted CommandExecutionRequests (but have not been/completed execution)
+            if (logger.isLoggable(Level.FINEST))
+            {
+                logger.log(Level.FINEST,
+                           String.format("Recovering unexecuted commands for CommandExecutor %s ", m_ctxIdentifier));
+            }
+
+            // create a filter that will locate all of the CommandExecutionRequests for this Context
+            // that are in the cache.  We need to (re)execute these to recover the Context in this Member
+            Filter filter = new EqualsFilter("getContextIdentifier", getContextIdentifier());
+
+            // aggregate all of the DISTRIBUTED commands to recover
+            TreeSet<TicketBook> recoveredTicketBookSet = new TreeSet<TicketBook>();
+
+            recoveredTicketBookSet
+                .addAll((LinkedList<TicketBook>) CacheFactory
+                    .getCache(CommandExecutionRequest.getCacheName(ManagementStrategy.DISTRIBUTED))
+                    .aggregate(filter, new TicketAggregator("getTicket")));
+
+            // aggregate all of the COLOCATED commands to recover
+            recoveredTicketBookSet
+                .addAll((LinkedList<TicketBook>) CacheFactory
+                    .getCache(CommandExecutionRequest.getCacheName(ManagementStrategy.COLOCATED))
+                    .aggregate(new KeyAssociatedFilter(filter,
+                                                       getContextIdentifier()), new TicketAggregator("getTicket")));
+
+            // combine the commands to recover
+            synchronized (this)
+            {
+                m_recoveredTicketBooks.addAll(recoveredTicketBookSet);
+
+                if (m_recoveredTicketBooks.size() > 0)
+                {
+                    if (logger.isLoggable(Level.FINEST))
+                    {
+                        logger.log(Level.FINEST,
+                                   String.format("Recovered %d Tickets for CommandExecutor %s. Books are %s",
+                                                 getTotalCommandsPendingExecution() - m_ticketBook.size(),
+                                                 m_ctxIdentifier, m_recoveredTicketBooks));
+                    }
+
+                }
+                else
+                {
+                    if (logger.isLoggable(Level.FINEST))
+                    {
+                        logger.log(Level.FINEST,
+                                   String.format("No commands to recover for CommandExecutor %s", m_ctxIdentifier));
+                    }
+                }
+            }
+
+            // register MBean here (if required)
+            Registry registry = CacheFactory.getCluster() == null ? null : CacheFactory.getCluster().getManagement();
+
+            if (registry != null)
+            {
+                if (logger.isLoggable(Level.FINEST))
+                {
+                    logger.log(Level.FINEST,
+                               String.format("Registering JMX management extensions for CommandExecutor %s",
+                                             m_ctxIdentifier));
+                }
+
+                setMBeanName(registry.ensureGlobalName(String.format("type=CommandExecutor,id=%s", m_ctxIdentifier)));
+                registry.register(getMBeanName(), this);
+            }
+
+            if (logger.isLoggable(Level.FINEST))
+            {
+                logger.log(Level.FINEST, String.format("Started CommandExecutor for %s", m_ctxIdentifier));
+            }
+
+            // wait for commands to arrive or schedule execution?
+            if (m_recoveredTicketBooks.isEmpty() && m_ticketBook.isEmpty())
+            {
+                if (logger.isLoggable(Level.FINEST))
+                {
+                    logger.log(Level.FINEST,
+                               String
+                               .format("No commands to execute for CommandExecutor %s.  (waiting for commands to be submitted)",
+                                   m_ctxIdentifier));
+                }
+
+                return new Instruction.TransitionTo<State>(State.WAITING);
+            }
+            else
+            {
+                if (logger.isLoggable(Level.FINEST))
+                {
+                    logger.log(Level.FINEST,
+                               String.format("Scheduling CommandExecutor %s to execute commands", m_ctxIdentifier));
+                }
+
+                // schedule execution immediately
+                return new Instruction.TransitionTo<State>(State.SCHEDULED);
+            }
+        }
     }
 
 
@@ -586,186 +844,104 @@ public class CommandExecutor implements CommandExecutorMBean
      * Starts up, initializes, recovers and schedules the {@link CommandExecutor}
      * to start processing {@link CommandExecutionRequest}s.
      */
-    @SuppressWarnings("unchecked")
     public void start()
     {
-        if (getState() == State.New)
+        m_fsm.processLater(CommandExecutorEvent.START);
+    }
+
+
+    /**
+     * Handles when the {@link CommandExecutor} schedules to execute
+     * {@link CommandExecutionRequest}s.
+     *
+     * @param previousState  the previous {@link State}
+     * @param newState       the new {@link State}
+     *
+     * @return  the {@link Instruction} to perform once the {@link CommandExecutor}
+     *          is started.
+     */
+    @OnEnterState("SCHEDULED")
+    public Instruction onScheduled(State            previousState,
+                                   State            newState,
+                                   ExecutionContext context)
+    {
+        return new NonBlockingFiniteStateMachine.DelayedTransitionTo<State>(State.EXECUTING);
+    }
+
+
+    /**
+     * Handles when the {@link CommandExecutor} has to delay execution of
+     * {@link CommandExecutionRequest}s due to doubt of context ownership
+     *
+     * @param previousState  the previous {@link State}
+     * @param newState       the new {@link State}
+     *
+     * @return  the {@link Instruction} to perform once the {@link CommandExecutor}
+     *          is started.
+     */
+    @OnEnterState("DELAYING")
+    public Instruction onDelaying(State            previousState,
+                                  State            newState,
+                                  ExecutionContext context)
+    {
+        return new NonBlockingFiniteStateMachine.DelayedTransitionTo<State>(State.EXECUTING,
+                                                                            OWNERSHIP_DOUBT_DELAY_SECONDS,
+                                                                            TimeUnit.SECONDS);
+    }
+
+
+    /**
+     * Handles the shutdown/stopping process, afterwhich no further
+     * requests will be processed.
+     *
+     * @param previousState  the previous {@link State}
+     * @param newState       the new {@link State}
+     *
+     * @return  the {@link Instruction} to perform once the {@link CommandExecutor}
+     *          is started.
+     */
+    @OnEnterState("STOPPING")
+    public Instruction onStopping(State            previousState,
+                                  State            newState,
+                                  ExecutionContext context)
+    {
+        if (logger.isLoggable(Level.FINEST))
         {
-            if (Logger.isEnabled(Logger.DEBUG))
+            logger.log(Level.FINEST, String.format("Stopping CommandExecutor for %s", m_ctxIdentifier));
+        }
+
+        // this CommandExecutor must not be available any further to other threads
+        CommandExecutorManager.ensure().removeCommandExecutor(this.getContextIdentifier());
+
+        // unregister JMX mbean for the CommandExecutor
+        Registry registry = CacheFactory.getCluster() == null ? null : CacheFactory.getCluster().getManagement();
+
+        if (registry != null)
+        {
+            if (logger.isLoggable(Level.FINEST))
             {
-                Logger.log(Logger.DEBUG, "Starting CommandExecutor for %s", contextIdentifier);
+                logger.log(Level.FINEST,
+                           String.format("Unregistering JMX management extensions for CommandExecutor %s",
+                                         m_ctxIdentifier));
             }
 
-            // claim ownership of the Context
-            NamedCache contextsCache = CacheFactory.getCache(ContextWrapper.CACHENAME);
-            ContextWrapper contextWrapper = (ContextWrapper) contextsCache.invoke(contextIdentifier,
-                                                                                  new ClaimContextProcessor(CacheFactory
-                                                                                      .getCluster().getLocalMember()
-                                                                                      .getUid()));
-
-            if (contextWrapper == null)
+            try
             {
-                if (Logger.isEnabled(Logger.DEBUG))
-                {
-                    Logger.log(Logger.DEBUG,
-                               "CommandExecutor for %s can not be started.  The Context has been moved (or deleted) since the CommandExecutor was established and scheduled to start.  Now stopped.",
-                               contextIdentifier);
-                }
-
-                stop();
-
+                registry.unregister(getMBeanName());
             }
-            else
+            catch (Exception e)
             {
-                synchronized (this)
-                {
-                    // move onto the next ticket issuer id
-                    // NOTE: we do this as any Tickets that have been issued prior to now
-                    // will have been managed without ContextConfiguration).
-                    //
-                    // (this allows us to accept CommandExecutionRequests for this Context
-                    // before it has been created/started)
-                    this.ticketIssuerId++;
-                    this.ticketBook                           = new TicketBook(ticketIssuerId);
-                    this.priorityTicketBook                   = new TicketBook(Long.MIN_VALUE + ticketIssuerId);
-
-                    this.contextConfiguration                 = contextWrapper.getContextConfiguration();
-                    this.contextVersion                       = contextWrapper.getContextVersion();
-                    this.totalCommandsExecuted                = contextWrapper.getTotalCommandsExecuted();
-                    this.totalCommandExecutionDuration        = contextWrapper.getTotalCommandExecutionDuration();
-                    this.totalCommandExecutionWaitingDuration =
-                        contextWrapper.getTotalCommandExecutionWaitingDuration();
-                }
-
-                if (Logger.isEnabled(Logger.DEBUG))
-                {
-                    Logger.log(Logger.DEBUG,
-                               "CommandExecutor for %s has been configured as %s",
-                               contextIdentifier,
-                               contextConfiguration);
-                }
-
-                // recover any previously accepted CommandExecutionRequests (but have not been/completed execution)
-                if (Logger.isEnabled(Logger.DEBUG))
-                {
-                    Logger.log(Logger.DEBUG,
-                               "Recovering unexecuted commands for CommandExecutor %s ",
-                               contextIdentifier);
-                }
-
-                // create a filter that will locate all of the CommandExecutionRequests for this Context
-                // that are in the cache.  We need to (re)execute these to recover the Context in this Member
-                Filter filter = new EqualsFilter("getContextIdentifier", getContextIdentifier());
-
-                // aggregate all of the DISTRIBUTED commands to recover
-                TreeSet<TicketBook> recoveredTicketBookSet = new TreeSet<TicketBook>();
-
-                recoveredTicketBookSet
-                    .addAll((LinkedList<TicketBook>) CacheFactory
-                        .getCache(CommandExecutionRequest.getCacheName(ManagementStrategy.DISTRIBUTED))
-                        .aggregate(filter, new TicketAggregator("getTicket")));
-
-                // aggregate all of the COLOCATED commands to recover
-                recoveredTicketBookSet
-                    .addAll((LinkedList<TicketBook>) CacheFactory
-                        .getCache(CommandExecutionRequest.getCacheName(ManagementStrategy.COLOCATED))
-                        .aggregate(new KeyAssociatedFilter(filter,
-                                                           getContextIdentifier()), new TicketAggregator("getTicket")));
-
-                // combine the commands to recover
-                synchronized (this)
-                {
-                    recoveredTicketBooks.addAll(recoveredTicketBookSet);
-
-                    if (recoveredTicketBooks.size() > 0)
-                    {
-                        if (Logger.isEnabled(Logger.DEBUG))
-                        {
-                            Logger.log(Logger.DEBUG,
-                                       "Recovered %d Tickets for CommandExecutor %s. Books are %s",
-                                       getTotalCommandsPendingExecution() - ticketBook.size(),
-                                       contextIdentifier,
-                                       recoveredTicketBooks);
-                        }
-
-                    }
-                    else
-                    {
-                        if (Logger.isEnabled(Logger.DEBUG))
-                        {
-                            Logger.log(Logger.DEBUG,
-                                       "No commands to recover for CommandExecutor %s",
-                                       contextIdentifier);
-                        }
-                    }
-                }
-
-                // register MBean here (if required)
-                Registry registry = CacheFactory.getCluster() == null ? null : CacheFactory.getCluster().getManagement();
-
-                if (registry != null)
-                {
-                    if (Logger.isEnabled(Logger.DEBUG))
-                    {
-                        Logger.log(Logger.DEBUG,
-                                   "Registering JMX management extensions for CommandExecutor %s",
-                                   contextIdentifier);
-                    }
-
-                    setMBeanName(registry.ensureGlobalName(String.format("type=CommandExecutor,id=%s",
-                                                                         contextIdentifier)));
-                    registry.register(getMBeanName(), this);
-                }
-
-                // wait for commands to arrive or schedule execution?
-                if (recoveredTicketBooks.isEmpty() && ticketBook.isEmpty())
-                {
-                    if (Logger.isEnabled(Logger.DEBUG))
-                    {
-                        Logger.log(Logger.DEBUG,
-                                   "No commands to execute for CommandExecutor %s.  (waiting for commands to be submitted)",
-                                   contextIdentifier);
-                    }
-
-                    setState(State.Waiting);
-                }
-                else
-                {
-                    if (Logger.isEnabled(Logger.DEBUG))
-                    {
-                        Logger.log(Logger.DEBUG,
-                                   "Scheduling CommandExecutor %s to execute commands",
-                                   contextIdentifier);
-                    }
-
-                    // schedule execution immediately
-                    setState(State.Scheduled);
-                    CommandExecutorManager.schedule(new Runnable()
-                    {
-                        public void run()
-                        {
-                            execute();
-                        }
-                    }, 0, TimeUnit.SECONDS);
-                }
-
-                if (Logger.isEnabled(Logger.DEBUG))
-                {
-                    Logger.log(Logger.DEBUG, "Started CommandExecutor for %s", contextIdentifier);
-                }
+                // TODO: provide advice that the system isn't configured with JMX
             }
 
         }
-        else
+
+        if (logger.isLoggable(Level.FINEST))
         {
-            if (Logger.isEnabled(Logger.DEBUG))
-            {
-                Logger.log(Logger.DEBUG,
-                           "Attempted to start CommandExecutor for %s, but it's already Started (current state %s)",
-                           contextIdentifier,
-                           getState());
-            }
+            logger.log(Level.FINEST, String.format("Stopped CommandExecutor for %s", m_ctxIdentifier));
         }
+
+        return Instruction.STOP;
     }
 
 
@@ -775,36 +951,7 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     public void stop()
     {
-        if (Logger.isEnabled(Logger.DEBUG))
-        {
-            Logger.log(Logger.DEBUG, "Stopping CommandExecutor for %s", contextIdentifier);
-        }
-
-        // stop immediately
-        setState(State.Stopped);
-
-        // this CommandExecutor must not be available any further to other threads
-        CommandExecutorManager.removeCommandExecutor(this.getContextIdentifier());
-
-        // unregister JMX mbean for the CommandExecutor
-        Registry registry = CacheFactory.getCluster() == null ? null : CacheFactory.getCluster().getManagement();
-
-        if (registry != null)
-        {
-            if (Logger.isEnabled(Logger.DEBUG))
-            {
-                Logger.log(Logger.DEBUG,
-                           "Unregistering JMX management extensions for CommandExecutor %s",
-                           contextIdentifier);
-            }
-
-            registry.unregister(getMBeanName());
-        }
-
-        if (Logger.isEnabled(Logger.DEBUG))
-        {
-            Logger.log(Logger.DEBUG, "Stopped CommandExecutor for %s", contextIdentifier);
-        }
+        m_fsm.process(CommandExecutorEvent.STOP);
     }
 
 
@@ -822,17 +969,16 @@ public class CommandExecutor implements CommandExecutorMBean
      *
      * @param commandExecutionRequest The {@link CommandExecutionRequest} to be accepted
      */
-    @SuppressWarnings("unchecked")
-    public synchronized SubmissionOutcome acceptCommandExecutionRequest(final CommandExecutionRequest commandExecutionRequest)
+    public synchronized SubmissionOutcome acceptCommandExecutionRequest(final CommandExecutionRequest commandExecutionRequest,
+                                                                        BackingMapManagerContext      ctxBackingMapManagerContext)
     {
-        if (getState() == State.Stopped)
+        if (getState() == State.STOPPING)
         {
-            if (Logger.isEnabled(Logger.DEBUG))
+            if (logger.isLoggable(Level.FINEST))
             {
-                Logger.log(Logger.DEBUG,
-                           "CommandExecutor for %s can't accept %s as it has been Stopped",
-                           contextIdentifier,
-                           commandExecutionRequest);
+                logger.log(Level.FINEST,
+                           String.format("CommandExecutor for %s can't accept %s as it has been Stopped",
+                                         m_ctxIdentifier, commandExecutionRequest));
             }
 
             return new SubmissionOutcome.UnknownContext();
@@ -843,7 +989,7 @@ public class CommandExecutor implements CommandExecutorMBean
             // generate a ticket for the CommandExecutionRequest
             // (this will be used to keep it in order, just in case we need to recover it later)
             Ticket ticket = (commandExecutionRequest.getCommand() instanceof PriorityCommand
-                             ? priorityTicketBook : ticketBook).extend();
+                             ? m_priorityTicketBook : m_ticketBook).extend();
 
             commandExecutionRequest.setTicket(ticket);
 
@@ -855,11 +1001,11 @@ public class CommandExecutor implements CommandExecutorMBean
             // determine how we are going to manage and store commands
             ManagementStrategy managementStrategy = (ticket.getIssuerId() % 2 == 0 || ticket.getIssuerId() < 0)
                                                     ? ManagementStrategy.COLOCATED
-                                                    : contextConfiguration.getManagementStrategy();
+                                                    : m_ctxConfiguration.getManagementStrategy();
 
             // store the CommandExecutionRequest in the cache so we can execute it later
             // (we dynamically create a key here based on the ManagementStrategy)
-            CommandExecutionRequest.Key key = new CommandExecutionRequest.Key(contextIdentifier,
+            CommandExecutionRequest.Key key = new CommandExecutionRequest.Key(m_ctxIdentifier,
                                                                               ticket,
                                                                               managementStrategy);
 
@@ -870,15 +1016,22 @@ public class CommandExecutor implements CommandExecutorMBean
             if (managementStrategy == ManagementStrategy.COLOCATED)
             {
                 // for COLOCATED strategies, we put the command directly into the backing map on this JVM
-                DistributedCacheService distributedCacheService =
-                    (DistributedCacheService) CacheFactory.getService("DistributedCacheForCommandPattern");
-                DefaultConfigurableCacheFactory.Manager backingMapManager =
-                    (DefaultConfigurableCacheFactory.Manager) distributedCacheService.getBackingMapManager();
+                BackingMapContext ctxColocatedCommandsBackingMap =
+                    ctxBackingMapManagerContext
+                        .getBackingMapContext(CommandExecutionRequest.COLOCATED_COMMANDS_CACHENAME);
 
-                backingMapManager.getBackingMap(cacheName)
-                    .put(backingMapManager.getContext().getKeyToInternalConverter().convert(key),
-                         backingMapManager.getContext().getValueToInternalConverter().convert(commandExecutionRequest));
+                if (ctxColocatedCommandsBackingMap == null)
+                {
+                    System.out.printf(" WTF! %s\n WTF! %s\n WTF! %s\n",
+                                      Thread.currentThread(),
+                                      key,
+                                      ctxBackingMapManagerContext);
+                }
 
+                Object      oKey     = ctxBackingMapManagerContext.getKeyToInternalConverter().convert(key);
+                BinaryEntry binEntry = (BinaryEntry) ctxColocatedCommandsBackingMap.getBackingMapEntry(oKey);
+
+                binEntry.setValue(commandExecutionRequest);
             }
             else
             {
@@ -892,17 +1045,9 @@ public class CommandExecutor implements CommandExecutorMBean
             localCommandsSubmitted++;
 
             // schedule the CommandExecutor to process the CommandExecutionRequests
-            if (getState() == State.Waiting)
+            if (getState() == State.WAITING)
             {
-                // schedule execution immediately
-                setState(State.Scheduled);
-                CommandExecutorManager.schedule(new Runnable()
-                {
-                    public void run()
-                    {
-                        execute();
-                    }
-                }, 0, TimeUnit.SECONDS);
+                m_fsm.process(CommandExecutorEvent.ACCEPT);
             }
 
             return new SubmissionOutcome.Accepted(key, managementStrategy);
@@ -910,12 +1055,12 @@ public class CommandExecutor implements CommandExecutorMBean
         }
         else
         {
-            if (Logger.isEnabled(Logger.DEBUG))
+            if (logger.isLoggable(Level.FINEST))
             {
-                Logger.log(Logger.DEBUG,
-                           "CommandExecutor for %s can't accept %s as Context ownership is currently in doubt",
-                           contextIdentifier,
-                           commandExecutionRequest);
+                logger.log(Level.FINEST,
+                           String
+                           .format("CommandExecutor for %s can't accept %s as Context ownership is currently in doubt",
+                               m_ctxIdentifier, commandExecutionRequest));
             }
 
             // TODO: perhaps we need to return something here?  but this should never happen.
@@ -926,413 +1071,337 @@ public class CommandExecutor implements CommandExecutorMBean
 
 
     /**
-     * The method is used to asynchronously execute queued {@link CommandExecutionRequest}s.
+     * Executes one or more {@link CommandExecutionRequest}s that are
+     * currently waiting to be executed for the command context.
+     *
+     * @param previousState  the previous {@link State}
+     * @param newState       the new {@link State}
+     *
+     * @return  the {@link Instruction} to perform once the {@link CommandExecutor}
+     *          is started.
      */
     @SuppressWarnings("unchecked")
-    public void execute()
+	@OnEnterState("EXECUTING")
+    public Instruction onExecuting(State            previousState,
+                                   State            newState,
+                                   ExecutionContext context)
     {
         try
         {
-            // only execute if we're scheduled to execute
-            if (getState() == State.Scheduled)
+            // execute if and only if we're the key owner
+            if (isContextOwned())
             {
-                // execute if and only if we're the key owner
-                if (isContextOwned())
+                // determine a TicketBook from which we'll use Tickets to locate CommandExecutionRequests to execute.
+                TicketBook       executionTicketBook = null;
+                Iterator<Ticket> ticketsToExecute    = null;
+
+                synchronized (this)
                 {
-                    // determine a TicketBook from which we'll use Tickets to locate CommandExecutionRequests to execute.
-                    TicketBook       executionTicketBook = null;
-                    Iterator<Ticket> ticketsToExecute    = null;
-
-                    synchronized (this)
+                    // attempt to use a recovered ticket book first
+                    while (!m_recoveredTicketBooks.isEmpty() && executionTicketBook == null)
                     {
-                        // attempt to use a recovered ticket book first
-                        while (!recoveredTicketBooks.isEmpty() && executionTicketBook == null)
-                        {
-                            executionTicketBook = recoveredTicketBooks.getFirst();
+                        executionTicketBook = m_recoveredTicketBooks.getFirst();
 
-                            if (executionTicketBook.isEmpty())
-                            {
-                                recoveredTicketBooks.removeFirst();
-                                executionTicketBook = null;
-                            }
-                        }
-
-                        // attempt to use the priority ticket book next
-                        // (if we don't have a recovered ticket book or
-                        // the tickets to recover aren't priority ones)
-                        if (!priorityTicketBook.isEmpty())
-                        {
-                            if (executionTicketBook == null)
-                            {
-                                executionTicketBook = priorityTicketBook;
-                            }
-                            else
-                            {
-                                // we must execute priority commands before
-                                // recovered non-priority commands
-                                if (executionTicketBook.getIssuerId() >= 0)
-                                {
-                                    executionTicketBook = priorityTicketBook;
-                                }
-                            }
-                        }
-
-                        // lastly we use the regular ticket book
-                        if (executionTicketBook == null)
-                        {
-                            executionTicketBook = ticketBook;
-                        }
-
-                        // execute if and only if we have tickets!
                         if (executionTicketBook.isEmpty())
                         {
-                            // no Tickets to execute, so we have to wait until some arrive
-                            setState(State.Waiting);
-
-                        }
-                        else
-                        {
-                            // we've got tickets to execute, so let's go into the Execution state
-                            setState(State.Executing);
-
-                            // get the batch of tickets we're going to execute
-                            ticketsToExecute = executionTicketBook.first(maximumBatchSize);
+                            m_recoveredTicketBooks.removeFirst();
+                            executionTicketBook = null;
                         }
                     }
 
-                    // start the execution if and only if we are still in the execution state
-                    if (getState() == State.Executing)
+                    // attempt to use the priority ticket book next
+                    // (if we don't have a recovered ticket book or
+                    // the tickets to recover aren't priority ones)
+                    if (!m_priorityTicketBook.isEmpty())
                     {
-                        // get the ContextWrapper for the Context for which we're executing CommandExecutionRequests
-                        NamedCache     contextWrapperCache = CacheFactory.getCache(ContextWrapper.CACHENAME);
-                        ContextWrapper contextWrapper      =
-                            (ContextWrapper) contextWrapperCache.get(contextIdentifier);
-
-                        // remember the last number of commands we've executed
-                        totalCommandsExecuted = contextWrapper.getTotalCommandsExecuted();
-
-                        // ensure this CommandExecutor still owns the Context (by checking the version number)
-                        if (contextWrapper.getContextVersion() == contextVersion)
+                        if (executionTicketBook == null)
                         {
-                            // create an environment in which to execute CommandExecutionRequests
-                            Environment environment = new Environment(contextWrapper);
-
-                            // execute all of the tickets in our batch while this Member owns the Context and we remain in the execution state.
-                            while (isContextOwned() && getState() == State.Executing && ticketsToExecute.hasNext())
-                            {
-                                // get the ticket of the next CommandExecutionRequest
-                                Ticket ticket = ticketsToExecute.next();
-
-                                // determine the cache that contains the CommandExecutionRequest
-                                // NOTE: All odd tickets are COLOCATED as these are issued to CommandExecutionRequests
-                                // before Contexts are provide.  All even tickets are managed according to the
-                                // ContextConfiguration of the associated Context
-                                ManagementStrategy managementStrategy =
-                                    (ticket.getIssuerId() % 2 == 0 || ticket.getIssuerId() < 0)
-                                    ? ManagementStrategy.COLOCATED : contextConfiguration.getManagementStrategy();
-
-                                // determine the key of the next CommandExecutionRequest to execute
-                                CommandExecutionRequest.Key commandExecutionRequestKey =
-                                    new CommandExecutionRequest.Key(contextIdentifier,
-                                                                    ticket,
-                                                                    managementStrategy);
-
-                                long startLocalServiceExecuteTime = CacheFactory.getSafeTimeMillis();
-
-                                // get the next CommandExecutionRequest to execute
-                                NamedCache commandExecutionRequestsCache =
-                                    CacheFactory.getCache(CommandExecutionRequest.getCacheName(managementStrategy));
-                                CommandExecutionRequest commandExecutionRequest =
-                                    (CommandExecutionRequest) commandExecutionRequestsCache
-                                        .invoke(commandExecutionRequestKey,
-                                                new StartCommandProcessor());
-
-                                // ensure that the CommandExecutionRequest exists
-                                if (commandExecutionRequest == null)
-                                {
-                                    // SKIP: This is not so severe anymore as we'll only lose commands if they have been executed previously or deliberately removed
-
-                                }
-                                else if (commandExecutionRequest.isCanceled())
-                                {
-                                    if (Logger.isEnabled(Logger.QUIET))
-                                    {
-                                        Logger.log(Logger.QUIET,
-                                                   "Skipping %s for CommandExecutor %s as it was canceled",
-                                                   commandExecutionRequest,
-                                                   contextIdentifier);
-                                    }
-
-                                }
-                                else
-                                {
-                                    // configure the environment for the next command to execute
-                                    // (we are recovering when the command execution request ticket is from a previous instance of a command executor)
-                                    environment.configure(ticket,
-                                                          managementStrategy,
-                                                          ticket.getIssuerId() < getTicketIssuerId() - 1
-                                                          && ticket.getIssuerId() + Long.MIN_VALUE
-                                                             != getTicketIssuerId() - 1,
-                                                          commandExecutionRequest.getCheckpoint());
-
-                                    // try to execute the CommandExecutionRequest
-                                    long startCommandExecutionTime = CacheFactory.getSafeTimeMillis();
-
-                                    try
-                                    {
-                                        if (Logger.isEnabled(Logger.QUIET))
-                                        {
-                                            Logger.log(Logger.QUIET,
-                                                       "Executing %s for CommandExecutor %s",
-                                                       commandExecutionRequest,
-                                                       contextIdentifier);
-                                        }
-
-                                        // execute the command
-                                        commandExecutionRequest.getCommand().execute(environment);
-
-                                    }
-                                    catch (RuntimeException runtimeException)
-                                    {
-                                        Logger.log(Logger.ERROR,
-                                                   "Failed to execute %s with CommandExecutor %s",
-                                                   commandExecutionRequestKey,
-                                                   contextIdentifier);
-                                        CacheFactory.log(runtimeException);
-
-                                        // FUTURE: set the state of the CommandExecutionRequest as being executed (but failed)
-
-                                    }
-                                    catch (Throwable throwable)
-                                    {
-                                        Logger.log(Logger.ERROR,
-                                                   "Failed to execute %s with CommandExecutor %s",
-                                                   commandExecutionRequestKey,
-                                                   contextIdentifier);
-                                        CacheFactory.log(throwable);
-
-                                        // FUTURE: set the state of the CommandExecutionRequest as being executed (but failed)
-                                    }
-                                    finally
-                                    {
-                                        // update local JMX statistics
-                                        long endCommandExecutionTime = CacheFactory.getSafeTimeMillis();
-
-                                        localCommandsExecuted++;
-                                        localLastCommandExecutionDuration = Math.max(0, endCommandExecutionTime
-                                                                                     - startCommandExecutionTime);
-                                        localCommandExecutionServiceDuration += endCommandExecutionTime
-                                                                                - startLocalServiceExecuteTime;
-
-                                        long localLastCommandExecutionWaitingDuration = Math.max(0,
-                                                                                                 startCommandExecutionTime
-                                                                                                 - commandExecutionRequest
-                                                                                                     .getInstantQueued());
-
-                                        localCommandExecutionDuration += localLastCommandExecutionDuration;
-                                        localMaximumCommandExecutionDuration =
-                                            Math.max(localMaximumCommandExecutionDuration,
-                                                     localLastCommandExecutionDuration);
-                                        localMinimumCommandExecutionDuration =
-                                            Math.min(localMinimumCommandExecutionDuration,
-                                                     localLastCommandExecutionDuration);
-
-                                        totalCommandsExecuted++;
-                                        totalCommandExecutionDuration        += localLastCommandExecutionDuration;
-                                        totalCommandExecutionWaitingDuration +=
-                                            localLastCommandExecutionWaitingDuration;
-
-                                        // update the ContextWrapper with the Ticket we've just executed and the Context (if we changed it)
-                                        // (if this is successful we know we've executed the Command successfully)
-                                        if ((Boolean) contextWrapperCache
-                                            .invoke(contextIdentifier, new UpdateContextProcessor(contextVersion,
-                                                                                                  environment.isContextUpdated()
-                                                                                                  ? environment.getContext()
-                                                                                                  : null,
-                                                                                                  ticket,
-                                                                                                  localCommandExecutionDuration,
-                                                                                                  localLastCommandExecutionWaitingDuration)))
-                                        {
-                                            // remove executed CommandExecutionRequest
-                                            commandExecutionRequestsCache.remove(commandExecutionRequestKey);
-
-                                        }
-                                        else
-                                        {
-                                            if (Logger.isEnabled(Logger.DEBUG))
-                                            {
-                                                Logger.log(Logger.DEBUG,
-                                                           "Failed to update ContextWrapper for %s as the CommandExecutor no longer owns the Context.  Detected that the context version number has changed during UpdateContextProcessor.",
-                                                           contextIdentifier);
-                                            }
-
-                                            stop();
-                                        }
-                                    }    // try
-                                }        // if - CommandExecutionRequest exists
-
-                                // remove the ticket from the current ticket book
-                                synchronized (this)
-                                {
-                                    executionTicketBook.consume(1);
-
-                                    if (executionTicketBook.isEmpty())
-                                    {
-                                        if (Logger.isEnabled(Logger.QUIET))
-                                        {
-                                            Logger.log(Logger.QUIET,
-                                                       "Completed %s for ContextWrapper for %s",
-                                                       executionTicketBook,
-                                                       contextIdentifier);
-                                        }
-                                    }
-                                }
-                            }    // while
-
-                            // schedule the next execution
-                            synchronized (this)
-                            {
-                                if (isContextOwned())
-                                {
-                                    if (getState() == State.Executing)
-                                    {
-                                        // do we need to reschedule execution or just wait as there's nothing to do?
-                                        if (ticketBook.isEmpty() && recoveredTicketBooks.isEmpty()
-                                            && priorityTicketBook.isEmpty())
-                                        {
-                                            setState(State.Waiting);
-
-                                        }
-                                        else
-                                        {
-                                            setState(State.Scheduled);
-                                            CommandExecutorManager.schedule(new Runnable()
-                                            {
-                                                public void run()
-                                                {
-                                                    execute();
-                                                }
-                                            }, 0, TimeUnit.SECONDS);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (Logger.isEnabled(Logger.DEBUG))
-                                        {
-                                            Logger.log(Logger.DEBUG,
-                                                       "CommandExecutor for %s has been Stopped during execution.",
-                                                       contextIdentifier,
-                                                       getState());
-                                        }
-                                    }
-
-                                }
-                                else
-                                {
-                                    if (Logger.isEnabled(Logger.DEBUG))
-                                    {
-                                        Logger.log(Logger.DEBUG,
-                                                   "Ownership for CommandExecutor %s is currently in doubt (after execution).  Delaying execution for %d seconds",
-                                                   contextIdentifier,
-                                                   OWNERSHIP_DOUBT_DELAY_SECONDS);
-                                    }
-
-                                    setState(State.Scheduled);
-                                    CommandExecutorManager.schedule(new Runnable()
-                                    {
-                                        public void run()
-                                        {
-                                            execute();
-                                        }
-                                    }, OWNERSHIP_DOUBT_DELAY_SECONDS, TimeUnit.SECONDS);
-
-                                }
-                            }
-
+                            executionTicketBook = m_priorityTicketBook;
                         }
                         else
                         {
-                            if (Logger.isEnabled(Logger.DEBUG))
+                            // we must execute priority commands before
+                            // recovered non-priority commands
+                            if (executionTicketBook.getIssuerId() >= 0)
                             {
-                                Logger.log(Logger.DEBUG,
-                                           "CommandExecutor for %s no longer owns the Context.  Detected that the context version number has changed.",
-                                           contextIdentifier);
+                                executionTicketBook = m_priorityTicketBook;
                             }
-
-                            stop();
                         }
+                    }
 
+                    // lastly we use the regular ticket book
+                    if (executionTicketBook == null)
+                    {
+                        executionTicketBook = m_ticketBook;
+                    }
+
+                    // execute if and only if we have tickets!
+                    if (executionTicketBook.isEmpty())
+                    {
+                        // no Tickets to execute, so we have to wait until some arrive
+                        return new Instruction.TransitionTo<State>(State.WAITING);
                     }
                     else
                     {
-                        if (Logger.isEnabled(Logger.DEBUG))
+                        // get the batch of tickets we're going to execute
+                        ticketsToExecute = executionTicketBook.first(maximumBatchSize);
+                    }
+                }
+
+                // get the ContextWrapper for the Context for which we're executing CommandExecutionRequests
+                NamedCache     contextWrapperCache = CacheFactory.getCache(ContextWrapper.CACHENAME);
+                ContextWrapper contextWrapper      = (ContextWrapper) contextWrapperCache.get(m_ctxIdentifier);
+
+                // remember the last number of commands we've executed
+                totalCommandsExecuted = contextWrapper.getTotalCommandsExecuted();
+
+                // ensure this CommandExecutor still owns the Context (by checking the version number)
+                if (contextWrapper.getContextVersion() == m_contextVersion)
+                {
+                    // create an environment in which to execute CommandExecutionRequests
+                    Environment environment = new Environment(contextWrapper);
+
+                    // execute all of the tickets in our batch while this Member owns the Context and we remain in the execution state.
+                    while (isContextOwned() && ticketsToExecute.hasNext())
+                    {
+                        // get the ticket of the next CommandExecutionRequest
+                        Ticket ticket = ticketsToExecute.next();
+
+                        // determine the cache that contains the CommandExecutionRequest
+                        // NOTE: All odd tickets are COLOCATED as these are issued to CommandExecutionRequests
+                        // before Contexts are provide.  All even tickets are managed according to the
+                        // ContextConfiguration of the associated Context
+                        ManagementStrategy managementStrategy = (ticket.getIssuerId() % 2 == 0
+                                                                 || ticket.getIssuerId()
+                                                                    < 0) ? ManagementStrategy.COLOCATED
+                                                                         : m_ctxConfiguration.getManagementStrategy();
+
+                        // determine the key of the next CommandExecutionRequest to execute
+                        CommandExecutionRequest.Key commandExecutionRequestKey =
+                            new CommandExecutionRequest.Key(m_ctxIdentifier,
+                                                            ticket,
+                                                            managementStrategy);
+
+                        long startLocalServiceExecuteTime = CacheFactory.getSafeTimeMillis();
+
+                        // get the next CommandExecutionRequest to execute
+                        NamedCache commandExecutionRequestsCache =
+                            CacheFactory.getCache(CommandExecutionRequest.getCacheName(managementStrategy));
+                        CommandExecutionRequest commandExecutionRequest =
+                            (CommandExecutionRequest) commandExecutionRequestsCache.invoke(commandExecutionRequestKey,
+                                                                                           new StartCommandProcessor());
+
+                        // ensure that the CommandExecutionRequest exists
+                        if (commandExecutionRequest == null)
                         {
-                            Logger.log(Logger.DEBUG,
-                                       "CommandExecutor for %s was scheduled to execute, but no longer needs to do so.  (current state is %s, %d pending commands)",
-                                       contextIdentifier,
-                                       getState(),
-                                       getTotalCommandsPendingExecution());
+                            // SKIP: This is not so severe anymore as we'll only lose commands if they have been executed previously or deliberately removed
+
+                        }
+                        else if (commandExecutionRequest.isCanceled())
+                        {
+                            if (logger.isLoggable(Level.FINER))
+                            {
+                                logger.log(Level.FINER,
+                                           String.format("Skipping %s for CommandExecutor %s as it was canceled",
+                                                         commandExecutionRequest, m_ctxIdentifier));
+                            }
+
+                        }
+                        else
+                        {
+                            // configure the environment for the next command to execute
+                            // (we are recovering when the command execution request ticket is from a previous instance of a command executor)
+                            environment.configure(ticket,
+                                                  managementStrategy,
+                                                  ticket.getIssuerId() < getTicketIssuerId() - 1
+                                                  && ticket.getIssuerId() + Long.MIN_VALUE != getTicketIssuerId() - 1,
+                                                  commandExecutionRequest.getCheckpoint());
+
+                            // try to execute the CommandExecutionRequest
+                            long startCommandExecutionTime = CacheFactory.getSafeTimeMillis();
+
+                            try
+                            {
+                                if (logger.isLoggable(Level.FINER))
+                                {
+                                    logger.log(Level.FINER,
+                                               String.format("Executing %s for CommandExecutor %s",
+                                                             commandExecutionRequest, m_ctxIdentifier));
+                                }
+
+                                // execute the command
+                                commandExecutionRequest.getCommand().execute(environment);
+
+                            }
+                            catch (RuntimeException runtimeException)
+                            {
+                                logger.log(Level.SEVERE,
+                                           String.format("Failed to execute %s with CommandExecutor %s",
+                                                         commandExecutionRequestKey, m_ctxIdentifier));
+                                CacheFactory.log(runtimeException);
+
+                                // FUTURE: set the state of the CommandExecutionRequest as being executed (but failed)
+
+                            }
+                            catch (Throwable throwable)
+                            {
+                                logger.log(Level.SEVERE,
+                                           String.format("Failed to execute %s with CommandExecutor %s",
+                                                         commandExecutionRequestKey, m_ctxIdentifier));
+                                CacheFactory.log(throwable);
+
+                                // FUTURE: set the state of the CommandExecutionRequest as being executed (but failed)
+                            }
+                            finally
+                            {
+                                // update local JMX statistics
+                                long endCommandExecutionTime = CacheFactory.getSafeTimeMillis();
+
+                                localCommandsExecuted++;
+                                localLastCommandExecutionDuration = Math.max(0, endCommandExecutionTime
+                                                                             - startCommandExecutionTime);
+                                localCommandExecutionServiceDuration += endCommandExecutionTime
+                                                                        - startLocalServiceExecuteTime;
+
+                                long localLastCommandExecutionWaitingDuration = Math.max(0,
+                                                                                         startCommandExecutionTime
+                                                                                         - commandExecutionRequest
+                                                                                             .getInstantQueued());
+
+                                localCommandExecutionDuration += localLastCommandExecutionDuration;
+                                localMaximumCommandExecutionDuration = Math.max(localMaximumCommandExecutionDuration,
+                                                                                localLastCommandExecutionDuration);
+                                localMinimumCommandExecutionDuration = Math.min(localMinimumCommandExecutionDuration,
+                                                                                localLastCommandExecutionDuration);
+
+                                totalCommandsExecuted++;
+                                totalCommandExecutionDuration        += localLastCommandExecutionDuration;
+                                totalCommandExecutionWaitingDuration += localLastCommandExecutionWaitingDuration;
+
+                                // update the ContextWrapper with the Ticket we've just executed and the Context (if we changed it)
+                                // (if this is successful we know we've executed the Command successfully)
+                                if ((Boolean) contextWrapperCache.invoke(m_ctxIdentifier,
+                                                                         new UpdateContextProcessor(m_contextVersion,
+                                                                                                    environment.isContextUpdated()
+                                                                                                    ? environment.getContext()
+                                                                                                    : null,
+                                                                                                    ticket,
+                                                                                                    localCommandExecutionDuration,
+                                                                                                    localLastCommandExecutionWaitingDuration)))
+                                {
+                                    // remove executed CommandExecutionRequest
+                                    commandExecutionRequestsCache.remove(commandExecutionRequestKey);
+
+                                }
+                                else
+                                {
+                                    if (logger.isLoggable(Level.FINEST))
+                                    {
+                                        logger.log(Level.FINEST,
+                                                   String
+                                                   .format("Failed to update ContextWrapper for %s as the CommandExecutor no longer owns the Context.  Detected that the context version number has changed during UpdateContextProcessor.",
+                                                       m_ctxIdentifier));
+                                    }
+
+                                    stop();
+                                }
+                            }    // try
+                        }        // if - CommandExecutionRequest exists
+
+                        // remove the ticket from the current ticket book
+                        synchronized (this)
+                        {
+                            executionTicketBook.consume(1);
+
+                            if (executionTicketBook.isEmpty())
+                            {
+                                if (logger.isLoggable(Level.FINER))
+                                {
+                                    logger.log(Level.FINER,
+                                               String.format("Completed %s for ContextWrapper for %s",
+                                                             executionTicketBook, m_ctxIdentifier));
+                                }
+                            }
+                        }
+                    }    // while
+
+                    // schedule the next execution
+                    synchronized (this)
+                    {
+                        if (isContextOwned())
+                        {
+                            // do we need to reschedule execution or just wait as there's nothing to do?
+                            if (m_ticketBook.isEmpty() && m_recoveredTicketBooks.isEmpty()
+                                && m_priorityTicketBook.isEmpty())
+                            {
+                                return new Instruction.TransitionTo<State>(State.WAITING);
+                            }
+                            else
+                            {
+                                return new Instruction.TransitionTo<State>(State.SCHEDULED);
+                            }
+                        }
+                        else
+                        {
+                            if (logger.isLoggable(Level.FINEST))
+                            {
+                                logger.log(Level.FINEST,
+                                           String
+                                           .format("Ownership for CommandExecutor %s is currently in doubt (after execution).  Delaying execution for %d seconds",
+                                               m_ctxIdentifier, OWNERSHIP_DOUBT_DELAY_SECONDS));
+                            }
+
+                            return new Instruction.TransitionTo<State>(State.DELAYING);
                         }
                     }
-
                 }
                 else
                 {
-                    if (Logger.isEnabled(Logger.DEBUG))
+                    if (logger.isLoggable(Level.FINEST))
                     {
-                        Logger.log(Logger.DEBUG,
-                                   "Ownership for CommandExecutor %s is currently in doubt.  Delaying execution for %d seconds",
-                                   contextIdentifier,
-                                   OWNERSHIP_DOUBT_DELAY_SECONDS);
+                        logger.log(Level.FINEST,
+                                   String
+                                   .format("CommandExecutor for %s no longer owns the Context.  Detected that the context version number has changed.",
+                                       m_ctxIdentifier));
                     }
 
-                    synchronized (this)
-                    {
-                        setState(State.Scheduled);
-                        CommandExecutorManager.schedule(new Runnable()
-                        {
-                            public void run()
-                            {
-                                execute();
-                            }
-                        }, OWNERSHIP_DOUBT_DELAY_SECONDS, TimeUnit.SECONDS);
-                    }
+                    return new Instruction.TransitionTo<State>(State.STOPPING);
                 }
-
             }
             else
             {
-                if (Logger.isEnabled(Logger.DEBUG))
+                if (logger.isLoggable(Level.FINEST))
                 {
-                    Logger.log(Logger.DEBUG,
-                               "CommandExecutor for %s was scheduled to execute, but it is no longer executable (current state is %s)",
-                               contextIdentifier,
-                               getState());
+                    logger.log(Level.FINEST,
+                               String
+                               .format("Ownership for CommandExecutor %s is currently in doubt.  Delaying execution for %d seconds",
+                                   m_ctxIdentifier, OWNERSHIP_DOUBT_DELAY_SECONDS));
                 }
-            }
 
+                return new Instruction.TransitionTo<State>(State.DELAYING);
+            }
         }
         catch (RuntimeException runtimeException)
         {
-            if (Logger.isEnabled(Logger.ERROR))
+            if (logger.isLoggable(Level.SEVERE))
             {
-                Logger.log(Logger.ERROR, "CommandExecutor for %s failed horribly...", contextIdentifier);
+                logger.log(Level.SEVERE, String.format("CommandExecutor for %s failed horribly...", m_ctxIdentifier));
             }
 
             runtimeException.printStackTrace();
 
-            setState(State.Waiting);
+            return new Instruction.TransitionTo<State>(State.WAITING);
         }
         catch (Throwable throwable)
         {
-            if (Logger.isEnabled(Logger.ERROR))
+            if (logger.isLoggable(Level.SEVERE))
             {
-                Logger.log(Logger.ERROR, "CommandExecutor for %s failed horribly...", contextIdentifier);
+                logger.log(Level.SEVERE, String.format("CommandExecutor for %s failed horribly...", m_ctxIdentifier));
             }
 
             throwable.printStackTrace();
 
-            setState(State.Waiting);
+            return new Instruction.TransitionTo<State>(State.WAITING);
         }
     }
 
@@ -1340,7 +1409,7 @@ public class CommandExecutor implements CommandExecutorMBean
     /**
      * An internal implementation of an {@link ExecutionEnvironment}.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     static class Environment implements ExecutionEnvironment
     {
         private Identifier           contextIdentifier;

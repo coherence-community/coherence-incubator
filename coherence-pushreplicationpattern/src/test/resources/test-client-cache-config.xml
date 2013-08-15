@@ -48,11 +48,11 @@
 				<tcp-initiator> 
 					<remote-addresses> 
 						<socket-address> 
-							<address system-property="remote.address">localhost</address> 
+							<address system-property="remote.address">localhost</address>
 							<port system-property="remote.port">10000</port> 
 						</socket-address> 
 					</remote-addresses> 
-					<connect-timeout>10s</connect-timeout> 
+					<connect-timeout>10s</connect-timeout>
 				</tcp-initiator> 
 				<outgoing-message-handler> 
 					<request-timeout>10s</request-timeout> 
@@ -66,7 +66,7 @@
 				<tcp-initiator> 
 					<remote-addresses> 
 						<socket-address> 
-							<address system-property="remote.address">localhost</address> 
+							<address system-property="remote.address">localhost</address>
 							<port system-property="remote.port">10000</port> 
 						</socket-address> 
 					</remote-addresses> 

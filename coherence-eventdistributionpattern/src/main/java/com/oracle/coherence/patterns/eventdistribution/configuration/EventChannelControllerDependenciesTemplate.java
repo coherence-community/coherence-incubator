@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,18 +26,11 @@
 
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.configuration.Mandatory;
-import com.oracle.coherence.configuration.Property;
-import com.oracle.coherence.configuration.SubType;
-import com.oracle.coherence.configuration.Type;
-import com.oracle.coherence.configuration.expressions.Expression;
-import com.oracle.coherence.configuration.expressions.MacroParameterExpression;
-import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
-import com.oracle.coherence.configuration.parameters.Parameter;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
-import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
+
+import com.oracle.coherence.common.expression.SerializableExpressionHelper;
+import com.oracle.coherence.common.expression.SerializableParameter;
+import com.oracle.coherence.common.expression.SerializableParameterMacroExpression;
+import com.oracle.coherence.common.expression.SerializableScopedParameterResolver;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
@@ -46,6 +40,11 @@ import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController.DefaultDependencies;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.annotation.Injectable;
+import com.tangosol.config.expression.Expression;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PortableObject;
 
@@ -58,19 +57,18 @@ import com.tangosol.io.pof.PortableObject;
  *
  * @author Brian Oliver
  */
-public class EventChannelControllerDependenciesTemplate
-    implements ParameterizedBuilder<EventChannelController.Dependencies>
+public class EventChannelControllerDependenciesTemplate implements ParameterizedBuilder<Dependencies>
 {
     /**
      * The {@link Expression} that when evaluated will yield the name of the {@link EventChannel}.
      */
-    private Expression eventChannelNameExpression;
+    private Expression<String> eventChannelNameExpression;
 
     /**
      * (optional) The name the {@link EventDistributorBuilder} should use for the {@link EventChannelController}
      * when using external resources.  By default this will be {site-name}:{cluster-name}:{distributor-name}:{channel-name}
      */
-    private Expression externalNameExpression;
+    private Expression<String> externalNameExpression;
 
     /**
      * The {@link EventChannelBuilder} for the {@link EventChannelControllerDependenciesTemplate}.
@@ -88,12 +86,12 @@ public class EventChannelControllerDependenciesTemplate
     private Mode startingMode;
 
     /**
-     * The number of milliseconds to wait between attempts to distribute {@link Event}s.
+     * The number of milliseconds to wait between attempts to distribute events.
      */
     private long batchDistributionDelayMS;
 
     /**
-     * The maximum number of {@link Event}s that may be "batched" together in a single batch.
+     * The maximum number of events that may be "batched" together in a single batch.
      */
     private int batchSize;
 
@@ -117,7 +115,8 @@ public class EventChannelControllerDependenciesTemplate
     public EventChannelControllerDependenciesTemplate()
     {
         this.externalNameExpression =
-            new MacroParameterExpression("{site-name}:{cluster-name}:{distributor-name}:{channel-name}");
+            new SerializableParameterMacroExpression("{site-name}:{cluster-name}:{distributor-name}:{channel-name}",
+                                                     String.class);
         this.startingMode = AbstractEventChannelController.DefaultDependencies.STARTING_MODE_DEFAULT;
         this.batchDistributionDelayMS =
             AbstractEventChannelController.DefaultDependencies.BATCH_DISTRIBUTION_DELAY_DEFAULT;
@@ -133,7 +132,7 @@ public class EventChannelControllerDependenciesTemplate
      *
      * @return An {@link Expression}
      */
-    public Expression getChannelNameExpression()
+    public Expression<String> getChannelNameExpression()
     {
         return eventChannelNameExpression;
     }
@@ -144,13 +143,11 @@ public class EventChannelControllerDependenciesTemplate
      *
      * @param channelNameExpression A {@link String} {@link Expression}
      */
-    @Property("channel-name")
-    @Type(Expression.class)
-    @SubType(String.class)
-    @Mandatory
+    @Injectable("channel-name")
     public void setEventChannelNameExpression(Expression channelNameExpression)
     {
-        this.eventChannelNameExpression = channelNameExpression;
+        this.eventChannelNameExpression = SerializableExpressionHelper.ensureSerializable(
+                channelNameExpression);
     }
 
 
@@ -159,7 +156,7 @@ public class EventChannelControllerDependenciesTemplate
      *
      * @return
      */
-    public Expression getExternalNameExpression()
+    public Expression<String> getExternalNameExpression()
     {
         return externalNameExpression;
     }
@@ -170,12 +167,11 @@ public class EventChannelControllerDependenciesTemplate
      *
      * @param externalName
      */
-    @Property("channel-external-name")
-    @Type(Expression.class)
-    @SubType(String.class)
+    @Injectable("channel-external-name")
     public void setExternalNameExpression(Expression externalName)
     {
-        this.externalNameExpression = externalName;
+        this.externalNameExpression = SerializableExpressionHelper.ensureSerializable(
+                externalName);
     }
 
 
@@ -195,10 +191,13 @@ public class EventChannelControllerDependenciesTemplate
      *
      * @param startingMode The starting {@link Mode}
      */
-    @Property("starting-mode")
-    public void setStartingMode(Mode startingMode)
+    @Injectable("starting-mode")
+    public void setStartingMode(String startingMode)
     {
-        this.startingMode = startingMode;
+        if (startingMode != null)
+        {
+            this.startingMode = Mode.valueOf(startingMode.toUpperCase());
+        }
     }
 
 
@@ -214,13 +213,13 @@ public class EventChannelControllerDependenciesTemplate
 
 
     /**
-     * Sets the number of milliseconds to wait between attempts to distribute batches of {@link Event}s.
+     * Sets the number of milliseconds to wait between attempts to distribute batches of events.
      * <p>
      * NOTE: This value should be greater than zero.  If the value is close to zero, very little batching may occur.
      *
      * @param batchDistributionDelayMS The delay in milliseconds
      */
-    @Property("distribution-delay")
+    @Injectable("distribution-delay")
     public void setBatchDistributionDelay(long batchDistributionDelayMS)
     {
         this.batchDistributionDelayMS = batchDistributionDelayMS;
@@ -239,13 +238,13 @@ public class EventChannelControllerDependenciesTemplate
 
 
     /**
-     * Sets the maximum number of {@link Event}s that may be "batched" together in an individual batch.
+     * Sets the maximum number of events that may be "batched" together in an individual batch.
      * <p>
      * NOTE: This value should be greater than one.  If the value is one no batching will occur.
      *
      * @param batchSize
      */
-    @Property("batch-size")
+    @Injectable("batch-size")
     public void setBatchSize(int batchSize)
     {
         this.batchSize = batchSize;
@@ -269,7 +268,7 @@ public class EventChannelControllerDependenciesTemplate
      *
      * @param restartDelay
      */
-    @Property("restart-delay")
+    @Injectable("restart-delay")
     public void setRestartDelay(long restartDelay)
     {
         this.restartDelay = restartDelay;
@@ -300,7 +299,7 @@ public class EventChannelControllerDependenciesTemplate
      *
      * @param totalConsecutiveFailuresBeforeSuspending
      */
-    @Property("maximum-failures")
+    @Injectable("maximum-failures")
     public void setTotalConsecutiveFailuresBeforeSuspending(int totalConsecutiveFailuresBeforeSuspending)
     {
         this.totalConsecutiveFailuresBeforeSuspending = totalConsecutiveFailuresBeforeSuspending;
@@ -324,8 +323,7 @@ public class EventChannelControllerDependenciesTemplate
      *
      * @param eventChannelBuilder The {@link EventChannelBuilder} for the {@link EventChannelControllerDependenciesTemplate}
      */
-    @Property("channel-scheme")
-    @Mandatory
+    @Injectable("channel-scheme")
     public void setEventChannelBuilder(ParameterizedBuilder<EventChannel> eventChannelBuilder)
     {
         this.eventChannelBuilder = eventChannelBuilder;
@@ -349,9 +347,7 @@ public class EventChannelControllerDependenciesTemplate
      *
      * @param builder A {@link EventIteratorTransformer} {@link ParameterizedBuilder}
      */
-    @Property("transformer-scheme")
-    @Type(ParameterizedBuilder.class)
-    @SubType(EventIteratorTransformer.class)
+    @Injectable("transformer-scheme")
     public void setEventIteratorTransformerBuilder(ParameterizedBuilder<EventIteratorTransformer> builder)
     {
         this.eventIteratorTransformerBuilder = builder;
@@ -362,28 +358,19 @@ public class EventChannelControllerDependenciesTemplate
      * {@inheritDoc}
      */
     @Override
-    public boolean realizesClassOf(Class<?>          clazz,
-                                   ParameterProvider parameterProvider)
+    public Dependencies realize(ParameterResolver parameterResolver,
+                                ClassLoader       classLoader,
+                                ParameterList     parameters)
     {
-        return EventChannelController.Dependencies.class.isAssignableFrom(clazz);
-    }
+        String                              channelName    = getChannelNameExpression().evaluate(parameterResolver);
 
+        SerializableScopedParameterResolver scopedResolver = new SerializableScopedParameterResolver(parameterResolver);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Dependencies realize(ParameterProvider parameterProvider)
-    {
-        String                   channelName = getChannelNameExpression().evaluate(parameterProvider).getString();
+        scopedResolver.add(new SerializableParameter("channel-name", channelName));
 
-        MutableParameterProvider mutableParameterProvider = new ScopedParameterProvider(parameterProvider);
+        String externalName = getExternalNameExpression().evaluate(scopedResolver);
 
-        mutableParameterProvider.addParameter(new Parameter("channel-name", channelName));
-
-        String externalName = getExternalNameExpression().evaluate(mutableParameterProvider).getString();
-
-        mutableParameterProvider.addParameter(new Parameter("channel-external-name", externalName));
+        scopedResolver.add(new SerializableParameter("channel-external-name", externalName));
 
         return new DefaultDependencies(channelName,
                                        externalName,

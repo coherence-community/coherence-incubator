@@ -25,7 +25,6 @@
 
 package com.oracle.coherence.patterns.processing.friends;
 
-import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
 
 /**
@@ -37,7 +36,7 @@ import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
  *
  * @author Noah Arliss
  */
-public interface DispatcherManager extends DependentResource
+public interface DispatcherManager
 {
     /**
      * Register a {@link Dispatcher} with the system.

@@ -48,6 +48,7 @@ public class SubmissionStateTest
     {
         assertTrue(SubmissionState.DONE.isFinalState());
         assertTrue(SubmissionState.FAILED.isFinalState());
+        assertTrue(SubmissionState.CANCELLED.isFinalState());
     }
 
 

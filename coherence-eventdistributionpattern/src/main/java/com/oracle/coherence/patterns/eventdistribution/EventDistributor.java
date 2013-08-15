@@ -26,7 +26,7 @@
 package com.oracle.coherence.patterns.eventdistribution;
 
 import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
@@ -37,6 +37,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.List;
+
 
 /**
  * An {@link EventDistributor} is an application defined domain to which related application {@link Event}s are
@@ -70,11 +71,11 @@ public interface EventDistributor
      * to caches is generally permitted.
      *
      * @param dependencies      The {@link EventChannelController.Dependencies} for the {@link EventChannelController}.
-     * @param parameterProvider The {@link ParameterProvider} for resolving parameters when building {@link EventChannel}s.
+     * @param parameterResolver The {@link ParameterResolver} for resolving parameters when building {@link EventChannel}s.
+     * @param loader            The {@link ClassLoader).}
      */
-    public EventChannelController.Identifier establishEventChannelController(EventChannelController
-        .Dependencies                                                                          dependencies,
-                                                                             ParameterProvider parameterProvider);
+    public EventChannelController.Identifier establishEventChannelController(
+            EventChannelController.Dependencies dependencies, ParameterResolver parameterResolver, ClassLoader loader);
 
 
     /**

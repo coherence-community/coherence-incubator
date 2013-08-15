@@ -484,6 +484,15 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
         throw new UnsupportedOperationException("DistributableEntry doesn't support updateBinaryValue(Binary).");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateBinaryValue(Binary binary, boolean b)
+    {
+        throw new UnsupportedOperationException("DistributableEntry doesn't support updateBinaryValue(Binary).");
+    }
+
 
     /**
      * {@inheritDoc}

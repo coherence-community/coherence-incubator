@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,15 +27,34 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.common.leasing.Lease;
-import com.oracle.coherence.common.logging.Logger;
+
+import com.oracle.coherence.common.liveobjects.LiveObject;
+import com.oracle.coherence.common.liveobjects.OnArrived;
+import com.oracle.coherence.common.liveobjects.OnDeparting;
+import com.oracle.coherence.common.liveobjects.OnInserted;
+import com.oracle.coherence.common.liveobjects.OnRemoved;
+import com.oracle.coherence.common.liveobjects.OnUpdated;
+
+import com.oracle.coherence.patterns.messaging.management.MessagingMBeanManager;
+import com.oracle.coherence.patterns.messaging.management.QueueSubscriptionProxy;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
+
+import com.tangosol.util.BinaryEntry;
+
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A {@link QueueSubscription} represents the <strong>state</strong> of an individual subscription
@@ -45,9 +65,16 @@ import java.util.Iterator;
  *
  * @author Brian Oliver
  */
+@LiveObject
 @SuppressWarnings("serial")
 public class QueueSubscription extends LeasedSubscription
 {
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(QueueSubscription.class.getName());
+
+
     /**
      * Required for {@link ExternalizableLite} and {@link PortableObject}.
      */
@@ -131,10 +158,62 @@ public class QueueSubscription extends LeasedSubscription
     public void onLeaseSuspended(Object leaseOwner,
                                  Lease  lease)
     {
-        Logger.log(Logger.ERROR,
-                   "Unexpected %s Lease %s was suspended.  This should never happen! Ignoring request",
-                   leaseOwner,
-                   lease);
+        logger.log(Level.SEVERE,
+                   "Unexpected {0} Lease {1} was suspended.  This should never happen! Ignoring request",
+                   new Object[] {leaseOwner, lease});
+    }
+
+
+    /**
+     * When an Entry is inserted, updated, or arrived via a partition transfer need to ensure that the
+     * MBean and lease for this {@link QueueSubscription} is properly visible.
+     *
+     * @param entry The {@link BinaryEntry} provided by the LiveObjectInterceptor
+     */
+    @OnInserted
+    @OnUpdated
+    @OnArrived
+    public void onChanged(BinaryEntry entry)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "QueueSubscription:onChanged identifier:{0}", getIdentifier());
+        }
+
+        // Handle lease processing
+        registerLease();
+
+        // Register the subscription MBEAN
+        MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
+
+        MBeanManager.registerMBean(this,
+                                   QueueSubscriptionProxy.class,
+                                   MBeanManager.buildQueueSubscriptionMBeanName(getIdentifier()));
+    }
+
+
+    /**
+     * When a {@link QueueSubscription} is removed from the cache or removed via a partition departing
+     * need to unregister its MBean and clean up the lease.
+     *
+     * @param entry The {@link BinaryEntry} provided by the LiveObjectInterceptor
+     */
+    @OnRemoved
+    @OnDeparting
+    public void onRemoved(BinaryEntry entry)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "QueueSubscription:onRemoved identifier:{0}", getIdentifier());
+        }
+
+        // Handle lease processing
+        unregisterLease();
+
+        // Unregister the subscription MBEAN
+        MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
+
+        MBeanManager.unregisterMBean(this, MBeanManager.buildQueueSubscriptionMBeanName(getIdentifier()));
     }
 
 

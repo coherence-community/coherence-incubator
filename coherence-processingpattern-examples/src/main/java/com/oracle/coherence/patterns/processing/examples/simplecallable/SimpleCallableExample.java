@@ -65,7 +65,8 @@ public class SimpleCallableExample
             // Then we create and submit 10 callables
             ArrayList<SubmissionOutcome> submissionlist = new ArrayList<SubmissionOutcome>();
 
-            for (int i = 0; i < 10; i++)
+            //for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1; i++)
             {
                 // We create a callable
                 Callable aCallable = new SimpleCallable();
@@ -84,11 +85,9 @@ public class SimpleCallableExample
             {
                 // The call to the SubmissionOutcome.get() will block if the
                 // Submission is not completed.
-                System.out.println("Result:" + Integer.toString(i) + ":" + submissionlist.get(i).get().toString());
-
                 Date submittime = new Date(submissionlist.get(i).getSubmissionTime());
 
-                System.out.println("Submitted at:" + submittime.toString() + " Latency:"
+                System.out.println("Submitted " + i + " at:" + submittime.toString() + " Latency:"
                                    + Long.toString(submissionlist.get(i).getWaitDuration()) + " Execution took "
                                    + Long.toString(submissionlist.get(i).getExecutionDuration()) + " msec.");
             }

@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,6 +27,7 @@
 package com.oracle.coherence.patterns.functor;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.CommandSubmitter;
 import com.oracle.coherence.patterns.command.Context;
@@ -62,7 +64,7 @@ public interface FunctorSubmitter extends CommandSubmitter
      *
      * @throws IllegalArgumentException If no {@link Context} with the specified {@link Identifier} exists.
      */
-    public <C extends Context, T> Future<T> submitFunctor(Identifier    contextIdentifier,
+    public <C extends Context, T> Future<T> submitFunctor(Identifier contextIdentifier,
                                                           Functor<C, T> functor);
 
 
@@ -83,7 +85,7 @@ public interface FunctorSubmitter extends CommandSubmitter
      * @throws IllegalArgumentException If no {@link Context} with the specified {@link Identifier} exists
      *                                  and allowSubmissionWhenContextDoesNotExist is <code>false</code>
      */
-    public <C extends Context, T> Future<T> submitFunctor(Identifier    contextIdentifier,
+    public <C extends Context, T> Future<T> submitFunctor(Identifier contextIdentifier,
                                                           Functor<C, T> functor,
-                                                          boolean       allowSubmissionWhenContextDoesNotExist);
+                                                          boolean allowSubmissionWhenContextDoesNotExist);
 }

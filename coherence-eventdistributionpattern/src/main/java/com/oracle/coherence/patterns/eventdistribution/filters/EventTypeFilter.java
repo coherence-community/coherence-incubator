@@ -39,6 +39,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.EnumSet;
 
+
 /**
  * An {@link EventTypeFilter} is a specialized {@link Filter} that checks
  * the type of {@link EntryEvent}s.
@@ -79,8 +80,8 @@ public class EventTypeFilter implements Filter, Serializable, PortableObject
     /**
      * Construct an {@link EventTypeFilter}.
      *
-     * @param eventTypes  the type of {@link EntryEvent}s that satisfy the
-     *                    {@link EventTypeFilter}
+     * @param setEventTypes  the type of {@link EntryEvent}s that satisfy the
+     *                       {@link EventTypeFilter}
      */
     public EventTypeFilter(EnumSet<EventType> setEventTypes)
     {
@@ -106,9 +107,12 @@ public class EventTypeFilter implements Filter, Serializable, PortableObject
     @Override
     public boolean evaluate(Object oValue)
     {
-        return oValue instanceof EntryInsertedEvent && m_setEventTypes.contains(EventType.INSERTED)
-               || oValue instanceof EntryUpdatedEvent && m_setEventTypes.contains(EventType.UPDATED)
-               || oValue instanceof EntryRemovedEvent && m_setEventTypes.contains(EventType.REMOVED);
+        return oValue instanceof EntryInsertedEvent && m_setEventTypes.contains(
+                EventType.INSERTED)
+               || oValue instanceof EntryUpdatedEvent && m_setEventTypes.contains(
+                EventType.UPDATED)
+               || oValue instanceof EntryRemovedEvent && m_setEventTypes.contains(
+                EventType.REMOVED);
     }
 
 

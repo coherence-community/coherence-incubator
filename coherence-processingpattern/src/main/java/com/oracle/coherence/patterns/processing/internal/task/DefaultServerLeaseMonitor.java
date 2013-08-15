@@ -25,28 +25,15 @@
 
 package com.oracle.coherence.patterns.processing.internal.task;
 
-import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.lifecycle.LifecycleEvent;
-import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
-import com.oracle.coherence.common.events.lifecycle.LifecycleStoppedEvent;
-import com.oracle.coherence.common.events.lifecycle.NamedCacheStorageReleasedEvent;
-import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
 import com.oracle.coherence.common.leasing.Lease;
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
-import com.oracle.coherence.environment.Environment;
-import com.oracle.coherence.environment.extensible.LifecycleEventFilter;
-import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResourceReference;
-import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
+import com.oracle.coherence.patterns.processing.internal.Environment;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -62,9 +49,8 @@ import java.util.logging.Logger;
  *
  * @author Christer Fahlgren
  */
-public class DefaultServerLeaseMonitor extends AbstractAsynchronousEventProcessor<LifecycleEvent<?>>
-    implements ServerLeaseMonitor,
-               DependentResource
+public class DefaultServerLeaseMonitor
+    implements ServerLeaseMonitor
 {
     /**
      * The {@link Logger} to use.
@@ -152,6 +138,7 @@ public class DefaultServerLeaseMonitor extends AbstractAsynchronousEventProcesso
     /**
      * {@inheritDoc}
      */
+
     public void onDependenciesSatisfied(Environment environment)
     {
         taskProcessorMediatorCache = CacheFactory.getCache(DefaultTaskProcessorMediator.CACHENAME);
@@ -160,28 +147,34 @@ public class DefaultServerLeaseMonitor extends AbstractAsynchronousEventProcesso
                                                  leaseValidityCheckingDelay,
                                                  TimeUnit.MILLISECONDS);
 
+        /*
         // Start listening for lifecycle events since we want to know when we are shutting down
         environment.getResource(EventDispatcher.class).registerEventProcessor(LifecycleEventFilter.INSTANCE, this);
 
         environment.getResource(EventDispatcher.class)
             .dispatchEvent(new LifecycleStartedEvent<DependentResource>(this));
+            */
     }
-
 
     /**
      * {@inheritDoc}
      */
+
+    /*
+    todo PFM
+
     public Set<DependencyReference> getDependencyReferences()
     {
         return Collections
             .singleton((DependencyReference) new DependentResourceReference(environment
                 .getResource(DispatchController.class)));
     }
-
+    */
 
     /**
      * {@inheritDoc}
      */
+    /* todo pfm
     public void onDependenciesViolated(Environment environment)
     {
         if (logger.isLoggable(Level.INFO))
@@ -193,11 +186,14 @@ public class DefaultServerLeaseMonitor extends AbstractAsynchronousEventProcesso
         environment.getResource(EventDispatcher.class)
             .dispatchEvent(new LifecycleStoppedEvent<DependentResource>(this));
     }
-
+    */
 
     /**
      * {@inheritDoc}
      */
+    /*
+    todo pfm
+
     @Override
     public void processLater(EventDispatcher   eventDispatcher,
                              LifecycleEvent<?> event)
@@ -210,7 +206,7 @@ public class DefaultServerLeaseMonitor extends AbstractAsynchronousEventProcesso
             }
         }
     }
-
+            */
 
     /**
      * A {@link LeaseValidator} is responsible for ensuring all of the {@link Lease}s coordinated by a

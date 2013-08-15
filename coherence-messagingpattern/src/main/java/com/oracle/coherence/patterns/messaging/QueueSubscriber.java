@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,18 +26,22 @@
 
 package com.oracle.coherence.patterns.messaging;
 
-import com.oracle.coherence.common.logging.Logger;
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeMessageProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeSubscriptionMessagesProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.RequestMessageFromQueueProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.RequestMessageProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.RollbackMessageProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.SubscriptionRollbackProcessor;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.processor.ExtractorProcessor;
 
 import java.util.ArrayList;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A specific implementation of {@link Subscriber} for {@link Queue}s.
@@ -50,6 +55,12 @@ import java.util.ArrayList;
 class QueueSubscriber extends AbstractSubscriber<QueueSubscription>
 {
     /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(QueueSubscriber.class.getName());
+
+
+    /**
      * Package Level Constructor.
      *
      * @param messagingSession messaging session
@@ -59,7 +70,6 @@ class QueueSubscriber extends AbstractSubscriber<QueueSubscription>
                     SubscriptionIdentifier subscriptionIdentifier)
     {
         super(messagingSession, subscriptionIdentifier);
-
     }
 
 
@@ -91,9 +101,9 @@ class QueueSubscriber extends AbstractSubscriber<QueueSubscription>
 
         if (messageIdentifier == null)
         {
-            Logger.log(Logger.ERROR,
-                       "Queue Subscriber.getMessage got null messageIdentifier for subscription %s\n",
-                       subscription.getIdentifier().toString());
+            logger.log(Level.SEVERE,
+                       "Queue Subscriber.getMessage got null messageIdentifier for subscription {0}",
+                       subscription.getIdentifier());
 
             return null;
         }
@@ -114,9 +124,9 @@ class QueueSubscriber extends AbstractSubscriber<QueueSubscription>
 
             if (message == null)
             {
-                Logger.log(Logger.ERROR,
-                           "AcknowledgeMessageProcessor returned null message for subscription %s\n",
-                           subscription.getIdentifier().toString());
+                logger.log(Level.SEVERE,
+                           "AcknowledgeMessageProcessor returned null message for subscription {0}",
+                           subscription.getIdentifier());
 
                 return null;
             }
@@ -145,9 +155,9 @@ class QueueSubscriber extends AbstractSubscriber<QueueSubscription>
 
             if (message == null)
             {
-                Logger.log(Logger.ERROR,
-                           "RequestMessageProcessor returned null message for subscription %s\n",
-                           subscription.getIdentifier().toString());
+                logger.log(Level.SEVERE,
+                           "RequestMessageProcessor returned null message for subscription {0}",
+                           subscription.getIdentifier());
 
                 return null;
             }

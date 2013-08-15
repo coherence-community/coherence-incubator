@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,22 +27,30 @@
 package com.oracle.coherence.patterns.messaging.entryprocessors;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionConfiguration;
 import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
 import com.oracle.coherence.patterns.messaging.Topic;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.InvocableMap.Entry;
+
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The {@link TopicSubscribeProcessor} is used to create a {@link Subscription} to a {@link Topic}.
@@ -59,6 +68,11 @@ public class TopicSubscribeProcessor<C extends SubscriptionConfiguration> extend
     implements ExternalizableLite,
                PortableObject
 {
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(TopicSubscribeProcessor.class.getName());
+
     /**
      * The proposed {@link Identifier} of the {@link Subscription} to the {@link Topic}.
      */
@@ -122,8 +136,8 @@ public class TopicSubscribeProcessor<C extends SubscriptionConfiguration> extend
 
         if (topic == null)
         {
-            Logger.log(Logger.ERROR,
-                       "Subscription cannot be created because the destination is not found for key %s",
+            logger.log(Level.SEVERE,
+                       "Subscription cannot be created because the destination is not found for key {0}",
                        entry.getKey());
 
             return null;

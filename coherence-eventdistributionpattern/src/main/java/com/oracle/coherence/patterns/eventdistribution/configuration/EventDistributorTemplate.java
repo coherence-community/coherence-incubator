@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,26 +26,25 @@
 
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.configuration.Mandatory;
-import com.oracle.coherence.configuration.Property;
-import com.oracle.coherence.configuration.SubType;
-import com.oracle.coherence.configuration.Type;
-import com.oracle.coherence.configuration.expressions.Expression;
-import com.oracle.coherence.configuration.expressions.MacroParameterExpression;
-import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
-import com.oracle.coherence.configuration.parameters.Parameter;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
-import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
+
+import com.oracle.coherence.common.expression.SerializableExpressionHelper;
+import com.oracle.coherence.common.expression.SerializableParameter;
+import com.oracle.coherence.common.expression.SerializableParameterMacroExpression;
+import com.oracle.coherence.common.expression.SerializableScopedParameterResolver;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
-import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.annotation.Injectable;
+import com.tangosol.config.expression.Expression;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.Serializer;
 import com.tangosol.net.GuardSupport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,17 +67,17 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
     /**
      * An {@link Expression} that when resolved will produce a suitable {@link EventDistributor} symbolic name.
      */
-    private Expression m_exprDistributorName;
+    private Expression<String> m_exprDistributorName;
 
     /**
      * An {@link Expression} that when resolved will produce a suitable {@link EventDistributor} external name.
      */
-    private Expression m_exprDistributorExternalName;
+    private Expression<String> m_exprDistributorExternalName;
 
     /**
-     * The {@link EventDistributorBuilder} to construct the {@link EventDistributor}.
+     * The {@link com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder} to construct the {@link EventDistributor}.
      */
-    private EventDistributorBuilder m_bldrDistributor;
+    private com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder m_bldrDistributor;
 
     /**
      * The {@link ParameterizedBuilder} that will produce {@link Serializer}s for the {@link EventDistributor}.
@@ -88,7 +88,7 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
      * The {@link Collection} of {@link EventChannelControllerDependenciesTemplate} that will be used to construct
      * {@link EventChannelController}s with {@link EventChannel}s.
      */
-    private Collection<EventChannelControllerDependenciesTemplate> m_colChannelControllerDependenciesTemplates;
+    private List<EventChannelControllerDependenciesTemplate> m_listChannelControllerDependenciesTemplates;
 
 
     /**
@@ -96,10 +96,10 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
      */
     public EventDistributorTemplate()
     {
-        m_exprDistributorName                       = new MacroParameterExpression("{cache-name}");
-        m_exprDistributorExternalName               = new MacroParameterExpression("{cache-name}");
-        m_colChannelControllerDependenciesTemplates = new ArrayList<EventChannelControllerDependenciesTemplate>();
-        m_bldrSerializer                            = null;
+        m_exprDistributorName = new SerializableParameterMacroExpression<String>("{cache-name}", String.class);
+        m_exprDistributorExternalName = new SerializableParameterMacroExpression<String>("{cache-name}", String.class);
+        m_listChannelControllerDependenciesTemplates = new ArrayList<EventChannelControllerDependenciesTemplate>();
+        m_bldrSerializer                             = null;
     }
 
 
@@ -120,11 +120,11 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
      *
      * @param expression An {@link Expression}.
      */
-    @Property("distributor-name")
-    @Type(Expression.class)
+    @Injectable
     public void setDistributorName(Expression expression)
     {
-        m_exprDistributorName = expression;
+        m_exprDistributorName = SerializableExpressionHelper.ensureSerializable(
+                expression);
     }
 
 
@@ -133,23 +133,23 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
      *
      * @param expression An {@link Expression}.
      */
-    @Property("distributor-external-name")
-    @Type(Expression.class)
+    @Injectable
     public void setDistributorExternalName(Expression expression)
     {
-        m_exprDistributorExternalName = expression;
+        m_exprDistributorExternalName = SerializableExpressionHelper.ensureSerializable(
+                expression);
+        ;
     }
 
 
     /**
-     * Sets the {@link EventDistributorBuilder} for the {@link EventDistributorTemplate}.
+     * Sets the {@link com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder} for the {@link EventDistributorTemplate}.
      *
-     * @param builder The {@link EventDistributorBuilder}.
+     * @param builder The {@link com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder}.
      */
-    @Property("distributor-scheme")
-    @Type(EventDistributorBuilder.class)
-    @Mandatory
-    public void setEventDistributorBuilder(EventDistributorBuilder builder)
+    @Injectable("distributor-scheme")
+    public void setEventDistributorBuilder(com.oracle.coherence.patterns.eventdistribution
+        .EventDistributorBuilder builder)
     {
         m_bldrDistributor = builder;
     }
@@ -160,25 +160,24 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
      *
      * @param templates
      */
-    @Property("distribution-channels")
-    @Type(Collection.class)
-    public void setEventChannelControllerDependenciesTemplates(Collection<EventChannelControllerDependenciesTemplate> templates)
+    @Injectable("distribution-channels")
+    public void setEventChannelControllerDependenciesTemplates(List<EventChannelControllerDependenciesTemplate> templates)
     {
-        m_colChannelControllerDependenciesTemplates = templates;
+        m_listChannelControllerDependenciesTemplates = templates;
     }
 
 
     /**
      * Determines the symbolic name of the {@link EventDistributor} that will be created by this template
-     * given the specified {@link ParameterProvider}.
+     * given the specified {@link ParameterResolver}.
      *
-     * @param parameterProvider The {@link ParameterProvider} used to resolve parameters.
+     * @param parameterResolver The {@link ParameterResolver} used to resolve parameters.
      *
      * @return The name of the {@link EventDistributor}.
      */
-    public String getDistributorName(ParameterProvider parameterProvider)
+    public String getDistributorName(ParameterResolver parameterResolver)
     {
-        return m_exprDistributorName.evaluate(parameterProvider).getString();
+        return m_exprDistributorName.evaluate(parameterResolver);
     }
 
 
@@ -187,9 +186,7 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
      *
      * @param serializerBuilder The {@link ParameterizedBuilder} for the {@link Serializer}.
      */
-    @Property("serializer")
-    @Type(ParameterizedBuilder.class)
-    @SubType(Serializer.class)
+    @Injectable("serializer")
     public void setSerializerBuilder(ParameterizedBuilder<Serializer> serializerBuilder)
     {
         m_bldrSerializer = serializerBuilder;
@@ -211,31 +208,38 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
      * {@inheritDoc}
      */
     @Override
-    public EventDistributor realize(ParameterProvider parameterProvider)
+    public EventDistributor realize(ParameterResolver parameterResolver,
+                                    ClassLoader       loader,
+                                    ParameterList     parameterList)
     {
+        String externalName = m_exprDistributorExternalName.evaluate(parameterResolver);
+
         // resolve the event distributor names
-        String distributorName = getDistributorName(parameterProvider);
-        String externalName    = m_exprDistributorExternalName.evaluate(parameterProvider).getString();
+        String distributorName = getDistributorName(parameterResolver);
 
         // establish the event distributor
         GuardSupport.heartbeat();
 
-        EventDistributor distributor = m_bldrDistributor.realize(distributorName, externalName, m_bldrSerializer);
+        EventDistributor distributor = m_bldrDistributor.realize(distributorName,
+                                                                 externalName,
+                                                                 m_bldrSerializer,
+                                                                 loader);
 
         GuardSupport.heartbeat();
 
         // establish the event channels for the event distributor using the event channel controller dependencies
-        MutableParameterProvider parameters = new ScopedParameterProvider(parameterProvider);
+        SerializableScopedParameterResolver scopedResolver = new SerializableScopedParameterResolver(parameterResolver);
 
-        parameters.addParameter(new Parameter("distributor-name", distributor.getIdentifier().getSymbolicName()));
-        parameters.addParameter(new Parameter("distributor-external-name",
-                                              distributor.getIdentifier().getExternalName()));
+        scopedResolver.add(new SerializableParameter("distributor-name",
+                                                     distributor.getIdentifier().getSymbolicName()));
+        scopedResolver.add(new SerializableParameter("distributor-external-name",
+                                                     distributor.getIdentifier().getExternalName()));
 
-        for (EventChannelControllerDependenciesTemplate template : m_colChannelControllerDependenciesTemplates)
+        for (EventChannelControllerDependenciesTemplate template : m_listChannelControllerDependenciesTemplates)
         {
             GuardSupport.heartbeat();
 
-            EventChannelController.Dependencies dependencies = template.realize(parameters);
+            EventChannelController.Dependencies dependencies = template.realize(scopedResolver, loader, parameterList);
 
             if (logger.isLoggable(Level.CONFIG))
             {
@@ -244,22 +248,11 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
                             dependencies.getChannelName(), distributorName, externalName, dependencies));
             }
 
-            distributor.establishEventChannelController(dependencies, parameters);
+            distributor.establishEventChannelController(dependencies, scopedResolver, loader);
         }
 
         GuardSupport.heartbeat();
 
         return distributor;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean realizesClassOf(Class<?>          clazz,
-                                   ParameterProvider parameterProvider)
-    {
-        return EventDistributor.class.isAssignableFrom(clazz);
     }
 }

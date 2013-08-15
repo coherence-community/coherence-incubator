@@ -25,13 +25,6 @@
 
 package com.oracle.coherence.patterns.processing.internal;
 
-import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryArrivedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryDepartedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryEvictedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryInsertedEvent;
-import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.util.ChangeIndication;
 import com.oracle.coherence.patterns.processing.SubmissionConfiguration;
@@ -41,6 +34,7 @@ import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.UUID;
 
@@ -61,10 +55,8 @@ import java.util.logging.Logger;
  * @author Christer Fahlgren
  */
 @SuppressWarnings("serial")
-public class DefaultSubmission extends AbstractAsynchronousEventProcessor implements PortableObject,
-                                                                                     ExternalizableLite,
-                                                                                     Submission,
-                                                                                     ChangeIndication
+public class DefaultSubmission implements PortableObject, ExternalizableLite,
+        Submission, ChangeIndication
 {
     /**
      * The {@link DispatchController} that accepts or rejects the {@link DefaultSubmission}. This is a per class
@@ -265,92 +257,104 @@ public class DefaultSubmission extends AbstractAsynchronousEventProcessor implem
                              resultIdentifier);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void onDeparting(BinaryEntry entry)
+    {
+        getDispatchController()
+                .discard(new DefaultPendingSubmission((SubmissionKey) entry.getKey(),
+                        getResultIdentifier(),
+                        getContent().getSubmissionConfiguration(),
+                        0));
+    }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void processLater(EventDispatcher eventDispatcher,
-                             Event           event)
+    public void onInserted(BinaryEntry entry)
     {
-        if (event instanceof BackingMapEntryInsertedEvent)
+        if (logger.isLoggable(Level.FINEST))
         {
-            BackingMapEntryInsertedEvent bmEvent = (BackingMapEntryInsertedEvent) event;
-
-            // This is the case when an entry was failed over from another node
-            Submission sub = (Submission) bmEvent.getEntry().getValue();
-
-            if (event instanceof BackingMapEntryArrivedEvent)
-            {
-                try
-                {
-                    SubmissionState state = getDispatchController().getSubmissionState(resultIdentifier);
-
-                    // If a Submission is in a non-final state then we shall re-dispatch it in this JVM
-                    if (!state.isFinalState())
-                    {
-                        getDispatchController()
-                            .acceptTransferredSubmission(new DefaultPendingSubmission((SubmissionKey) bmEvent.getEntry()
-                                .getKey(),
-                                                                                      sub.getResultIdentifier(),
-                                                                                      sub.getContent()
-                                                                                          .getSubmissionConfiguration(),
-                                                                                      sub.getContent()
-                                                                                          .getSubmissionConfiguration()
-                                                                                          .getSubmissionDelay()));
-                    }
-                    else
-                    {
-                        if (logger.isLoggable(Level.FINE))
-                        {
-                            logger.log(Level.FINE, "Submission {0} was failed over and is in a final state.", sub);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    if (logger.isLoggable(Level.WARNING))
-                    {
-                        logger.log(Level.WARNING,
-                                   "Submission {0} was failed over but is already removed. Exception caught: {1}.",
-                                   new Object[] {sub, e});
-                    }
-
-                }
-            }
-            else
-            {
-                if (logger.isLoggable(Level.FINEST))
-                {
-                    logger.log(Level.FINEST, " {0} was received for dispatch", sub);
-                }
-
-                getDispatchController().accept(new DefaultPendingSubmission((SubmissionKey) bmEvent.getEntry().getKey(),
-                                                                            sub.getResultIdentifier(),
-                                                                            sub.getContent()
-                                                                                .getSubmissionConfiguration(),
-                                                                            sub.getContent()
-                                                                                .getSubmissionConfiguration()
-                                                                                .getSubmissionDelay()));
-            }
+            logger.log(Level.FINEST, " {0} was received for dispatch", this);
         }
-        else if (event instanceof BackingMapEntryDepartedEvent)
-        {
-            BackingMapEntryDepartedEvent bmEvent = (BackingMapEntryDepartedEvent) event;
 
-            getDispatchController().discard(new DefaultPendingSubmission((SubmissionKey) bmEvent.getEntry().getKey(),
-                                                                         ((Submission) bmEvent.getEntry().getValue())
-                                                                             .getResultIdentifier(),
-                                                                         ((Submission) bmEvent.getEntry().getValue())
-                                                                             .getContent().getSubmissionConfiguration(),
-                                                                         0));
-        }
+        getDispatchController().accept(
+                new DefaultPendingSubmission(
+                        (SubmissionKey) entry.getKey(),
+                        getResultIdentifier(),
+                        getContent().getSubmissionConfiguration(),
+                        getContent().getSubmissionConfiguration()
+                                .getSubmissionDelay()));
+        /*
+
         else if (event instanceof BackingMapEntryEvictedEvent)
         {
             throw new RuntimeException("The processing pattern doesn't handle eviction.");
         }
-
+          */
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void onArrived(BinaryEntry entry)
+    {
+        if (logger.isLoggable(Level.FINEST))
+        {
+            logger.log(Level.FINEST, " {0} was received for dispatch", this);
+        }
+
+        try
+        {
+            SubmissionState state = getDispatchController()
+                    .getSubmissionState(resultIdentifier);
+
+            // If a Submission is in a non-final state then we shall re-dispatch it in this JVM
+            if (!state.isFinalState())
+            {
+                getDispatchController()
+                        .acceptTransferredSubmission(
+                                new DefaultPendingSubmission(
+                                        (SubmissionKey) entry.getKey(),
+                                        getResultIdentifier(),
+                                        getContent()
+                                                .getSubmissionConfiguration(),
+                                        getContent()
+                                                .getSubmissionConfiguration()
+                                                .getSubmissionDelay()));
+            }
+            else
+            {
+                if (logger.isLoggable(Level.FINE))
+                {
+                    logger.log(Level.FINE,
+                            "Submission {0} was failed over and is in a final state.",
+                            this);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            if (logger.isLoggable(Level.WARNING))
+            {
+                logger.log(Level.WARNING,
+                        "Submission {0} was failed over but is already removed. Exception caught: {1}.",
+                        new Object[]{this, e});
+            }
+
+        }
+    }
+
+    /*
+
+  todo PFM - what to do here?
+
+  else if (event instanceof BackingMapEntryEvictedEvent)
+  {
+      throw new RuntimeException("The processing pattern doesn't handle eviction.");
+  }
+    */
 
 
     /**

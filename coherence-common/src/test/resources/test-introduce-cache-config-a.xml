@@ -1,0 +1,50 @@
+<cache-config
+	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+    xmlns:test="class://com.oracle.coherence.common.namespace.preprocessing.TestNamespaceHandler">
+
+    <defaults>
+        <serializer>pof</serializer>
+    </defaults>
+
+    <test:element>
+        <test:id>test-a-1</test:id>
+    </test:element>
+
+    <caching-scheme-mapping>
+        <cache-mapping>
+            <cache-name>a-*</cache-name>
+            <scheme-name>distributed-scheme</scheme-name>
+        </cache-mapping>
+        <cache-mapping>
+            <cache-name>common-*</cache-name>
+            <scheme-name>distributed-scheme</scheme-name>
+        </cache-mapping>
+
+        <test:element>
+            <test:id>test-a-2</test:id>
+        </test:element>
+    </caching-scheme-mapping>
+
+    <caching-schemes>
+        <distributed-scheme>
+            <scheme-name>a-distributed-scheme</scheme-name>
+            <service-name>distributed-service</service-name>
+            <thread-count>10</thread-count>
+            <backing-map-scheme>
+                <local-scheme>
+                    <unit-calculator>BINARY</unit-calculator>
+                </local-scheme>
+            </backing-map-scheme>
+            <autostart>true</autostart>
+        </distributed-scheme>
+
+        <test:element>
+            <test:id>test-a-3</test:id>
+        </test:element>
+    </caching-schemes>
+
+    <test:element>
+        <test:id>test-a-4</test:id>
+    </test:element>
+
+</cache-config>

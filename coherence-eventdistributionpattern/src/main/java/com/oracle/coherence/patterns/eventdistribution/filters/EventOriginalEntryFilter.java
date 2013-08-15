@@ -33,6 +33,7 @@ import com.tangosol.util.filter.EntryFilter;
 
 import java.io.Serializable;
 
+
 /**
  * An {@link EventOriginalEntryFilter} an {@link EventEntryFilter}
  * that applies to the original value of an {@link EntryEvent}.
@@ -76,7 +77,7 @@ public class EventOriginalEntryFilter extends EventEntryFilter
         if (object instanceof DistributableEntryEvent)
         {
             DistributableEntryEvent e     = (DistributableEntryEvent) object;
-            SimpleMapEntry          entry = new SimpleMapEntry(e.getEntry().getKey(), e.getEntry().getOriginalValue());
+            SimpleMapEntry entry = new SimpleMapEntry(e.getEntry().getKey(), e.getEntry().getOriginalValue());
 
             return m_filter.evaluateEntry(entry);
         }

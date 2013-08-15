@@ -25,9 +25,7 @@
 
 package com.oracle.coherence.patterns.processing.internal.task;
 
-import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.common.events.processing.EventProcessor;
-import com.oracle.coherence.common.events.processing.EventProcessorFactory;
+
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.leasing.Lease;
 import com.oracle.coherence.common.leasing.Leasing;
@@ -38,6 +36,7 @@ import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -64,14 +63,13 @@ import java.util.logging.Logger;
 public class DefaultTaskProcessorMediator implements ExternalizableLite,
                                                      PortableObject,
                                                      TaskProcessorMediator,
-                                                     EventProcessorFactory<Event>,
                                                      TaskProcessorMediatorProxyMBean,
                                                      ChangeIndication
 {
     /**
-     * The {@link EventProcessor} for this class.
+     * The MBean manager for this class.
      */
-    private static EventProcessor<Event> eventProcessor;
+    private static TaskProcessorMBeanManager m_mgrMbean;
 
     /**
      * A {@link ServerLeaseMonitor} helps keep track of when the {@link Lease} for the associated
@@ -206,6 +204,15 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         initialize();
     }
 
+    /**
+     * Set the MBean manager.
+     *
+     * @param mgr  the MBean manager
+     */
+    public static void setMBeanManager(TaskProcessorMBeanManager mgr)
+    {
+        m_mgrMbean = mgr;
+    }
 
     /**
      * Sets the {@link ServerLeaseMonitor} to use for this class.
@@ -216,29 +223,6 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
     {
         DefaultTaskProcessorMediator.leaseMonitor = leaseMonitor;
     }
-
-
-    /**
-     * Returns the {@link EventProcessor} for life cycle events for this class.
-     *
-     * @return the {@link EventProcessor} for this class
-     */
-    public static EventProcessor<Event> getEventProcessor()
-    {
-        return eventProcessor;
-    }
-
-
-    /**
-     * Sets the {@link EventProcessor} for life cycle events for this class.
-     *
-     * @param eventProcessor the {@link EventProcessor} to use
-     */
-    public static void setEventProcessor(EventProcessor<Event> eventProcessor)
-    {
-        DefaultTaskProcessorMediator.eventProcessor = eventProcessor;
-    }
-
 
     /**
      * {@inheritDoc}
@@ -747,16 +731,6 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         return stateEnum;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    public EventProcessor<Event> getEventProcessor(Event e)
-    {
-        return eventProcessor;
-    }
-
-
     /**
      * {@inheritDoc}
      */
@@ -807,6 +781,64 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         return changed;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    public void onInserted(BinaryEntry entry)
+    {
+        if (logger.isLoggable(Level.FINEST))
+        {
+            logger.log(Level.FINEST, " insert was received for TaskProcessorMediator", this);
+        }
+
+        if (!m_mgrMbean.isShuttingDown())
+        {
+            m_mgrMbean.addMBean((TaskProcessorMediatorKey) entry.getKey());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void onUpdated(BinaryEntry entry)
+    {
+        if (logger.isLoggable(Level.FINEST))
+        {
+            logger.log(Level.FINEST, " update was received for TaskProcessorMediator", this);
+        }
+
+        if (!m_mgrMbean.isShuttingDown())
+        {
+            m_mgrMbean.updateMBean(entry.getKey(), this);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void onRemoved(BinaryEntry entry)
+    {
+        // placeholder
+    }
+
+    /**
+     * Called if this entry has arrived to this node due to partitions moving or failover.
+     */
+    public void onArrived(BinaryEntry entry)
+    {
+        entryArrived();
+        onInserted(entry);
+    }
+
+    /**
+     * Called if this entry has departed from this node due to partitions moving or failover.
+     */
+    public void onDeparted(BinaryEntry entry)
+    {
+        entryDeparted();
+        onRemoved(entry);
+    }
 
     /**
      * {@inheritDoc}

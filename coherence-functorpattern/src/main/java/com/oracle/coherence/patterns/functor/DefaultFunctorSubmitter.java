@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,18 +28,23 @@ package com.oracle.coherence.patterns.functor;
 
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.identifiers.UUIDBasedIdentifier;
+
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.CommandSubmitter;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.DefaultCommandSubmitter;
+
 import com.oracle.coherence.patterns.functor.internal.FunctorFuture;
 import com.oracle.coherence.patterns.functor.internal.FunctorResult;
 import com.oracle.coherence.patterns.functor.internal.SingleFunctorCommand;
 import com.oracle.coherence.patterns.functor.internal.SingleFunctorFuture;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MultiplexingMapListener;
+
 import com.tangosol.util.filter.EqualsFilter;
 import com.tangosol.util.filter.MapEventFilter;
 
@@ -67,20 +73,20 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
      * This is used to register listeners for the results of {@link Functor}
      * executions.
      */
-    private Identifier identifier;
+    private Identifier m_identifier;
 
     /**
      * A map of {@link FunctorFuture}s for the {@link Functor}s
      * that were submitted by this {@link FunctorSubmitter} but are
      * yet to complete execution.
      */
-    private ConcurrentHashMap<Identifier, FunctorFuture> functorFutures;
+    private ConcurrentHashMap<Identifier, FunctorFuture> m_functorFutures;
 
     /**
      * The {@link CommandSubmitter} that will be used to submit {@link Functor}s
      * for execution.
      */
-    private CommandSubmitter commandSubmitter;
+    private CommandSubmitter m_commandSubmitter;
 
 
     /**
@@ -108,12 +114,12 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
      * @param identifier
      * @param commandSubmitter
      */
-    public DefaultFunctorSubmitter(Identifier       identifier,
+    public DefaultFunctorSubmitter(Identifier identifier,
                                    CommandSubmitter commandSubmitter)
     {
-        this.identifier       = identifier;
-        this.functorFutures   = new ConcurrentHashMap<Identifier, FunctorFuture>();
-        this.commandSubmitter = commandSubmitter;
+        m_identifier       = identifier;
+        m_functorFutures   = new ConcurrentHashMap<Identifier, FunctorFuture>();
+        m_commandSubmitter = commandSubmitter;
 
         // register a map listener on the functor results cache to handle the delivery
         // of Results back to this FunctorSubmitter from the Coherence member
@@ -131,7 +137,7 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
                     FunctorResult functorResult = (FunctorResult) mapEvent.getNewValue();
 
                     // find the FunctorFuture for the FunctorResult just delivered (using the functorResultIdentifier)
-                    FunctorFuture functorFuture = functorFutures.get(mapEvent.getKey());
+                    FunctorFuture functorFuture = m_functorFutures.get(mapEvent.getKey());
 
                     // have the FunctorFuture accept the provided result
                     if (functorFuture != null)
@@ -143,7 +149,7 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
                     if (functorResult.isComplete())
                     {
                         mapEvent.getMap().remove(mapEvent.getKey());
-                        functorFutures.remove(mapEvent.getKey());
+                        m_functorFutures.remove(mapEvent.getKey());
                     }
                 }
             }
@@ -156,7 +162,7 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
      */
     public Identifier getIdentifier()
     {
-        return identifier;
+        return m_identifier;
     }
 
 
@@ -166,7 +172,7 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
     public <C extends Context> Identifier submitCommand(Identifier contextIdentifier,
                                                         Command<C> command)
     {
-        return commandSubmitter.submitCommand(contextIdentifier, command);
+        return m_commandSubmitter.submitCommand(contextIdentifier, command);
     }
 
 
@@ -175,16 +181,16 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
      */
     public <C extends Context> Identifier submitCommand(Identifier contextIdentifier,
                                                         Command<C> command,
-                                                        boolean    allowSubmissionWhenContextDoesNotExist)
+                                                        boolean allowSubmissionWhenContextDoesNotExist)
     {
-        return commandSubmitter.submitCommand(contextIdentifier, command, allowSubmissionWhenContextDoesNotExist);
+        return m_commandSubmitter.submitCommand(contextIdentifier, command, allowSubmissionWhenContextDoesNotExist);
     }
 
 
     /**
      * {@inheritDoc}
      */
-    public <C extends Context, T> Future<T> submitFunctor(Identifier    contextIdentifier,
+    public <C extends Context, T> Future<T> submitFunctor(Identifier contextIdentifier,
                                                           Functor<C, T> functor)
     {
         return submitFunctor(contextIdentifier, functor, false);
@@ -194,22 +200,22 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
     /**
      * {@inheritDoc}
      */
-    public <C extends Context, T> Future<T> submitFunctor(Identifier    contextIdentifier,
+    public <C extends Context, T> Future<T> submitFunctor(Identifier contextIdentifier,
                                                           Functor<C, T> functor,
-                                                          boolean       allowSubmissionWhenContextDoesNotExist)
+                                                          boolean allowSubmissionWhenContextDoesNotExist)
     {
         // create an identifier for the functor result
         Identifier functorResultIdentifier = UUIDBasedIdentifier.newInstance();
 
         // create a future representing the result of the functor to be executed.
-        SingleFunctorFuture<T> future = new SingleFunctorFuture<T>(identifier, functorResultIdentifier, this);
+        SingleFunctorFuture<T> future = new SingleFunctorFuture<T>(m_identifier, functorResultIdentifier, this);
 
         // register the pending future for this functor execution
-        functorFutures.put(functorResultIdentifier, future);
+        m_functorFutures.put(functorResultIdentifier, future);
 
         // submit the functor (as a command) for execution
         Identifier commandIdentifier = submitCommand(contextIdentifier,
-                                                     new SingleFunctorCommand<C, T>(identifier,
+                                                     new SingleFunctorCommand<C, T>(m_identifier,
                                                                                     functorResultIdentifier,
                                                                                     functor),
                                                      allowSubmissionWhenContextDoesNotExist);
@@ -225,7 +231,7 @@ public class DefaultFunctorSubmitter implements CommandSubmitter, FunctorSubmitt
      */
     public <C extends Context> boolean cancelCommand(Identifier commandIdentifier)
     {
-        return commandSubmitter.cancelCommand(commandIdentifier);
+        return m_commandSubmitter.cancelCommand(commandIdentifier);
     }
 
 

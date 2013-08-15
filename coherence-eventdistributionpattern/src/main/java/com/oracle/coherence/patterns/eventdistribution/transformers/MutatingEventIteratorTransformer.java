@@ -32,6 +32,7 @@ import com.oracle.coherence.patterns.eventdistribution.EventTransformer;
 
 import java.util.Iterator;
 
+
 /**
  * An {@link MutatingEventIteratorTransformer} is an {@link EventIteratorTransformer} that simply applies an
  * {@link EventTransformer} to each {@link Event} in the provided {@link Iterator}.

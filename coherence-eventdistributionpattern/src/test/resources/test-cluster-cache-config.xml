@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
     File: test-cluster-cache-config-config.xml
- 
+
     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-    
-    The contents of this file are subject to the terms and conditions of 
+
+    The contents of this file are subject to the terms and conditions of
     the Common Development and Distribution License 1.0 (the "License").
 
     You may not use this file except in compliance with the License.
@@ -22,37 +22,37 @@
     If applicable, add the following below the License Header, with the fields
     enclosed by brackets [] replaced by your own identifying information:
     "Portions Copyright [year] [name of copyright owner]"
-    
+
     Copyright (c) 2011. All Rights Reserved. Oracle Corporation.
  -->
 <cache-config
-	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd">
+        xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd">
 
-	<defaults>
-		<serializer>pof</serializer>
-	</defaults>
+    <defaults>
+        <serializer>pof</serializer>
+    </defaults>
 
-	<caching-scheme-mapping>
-		<cache-mapping>
-			<cache-name>*</cache-name>
-			<scheme-name>distributed-scheme</scheme-name>
-		</cache-mapping>
-	</caching-scheme-mapping>
+    <caching-scheme-mapping>
+        <cache-mapping>
+            <cache-name>*</cache-name>
+            <scheme-name>distributed-scheme</scheme-name>
+        </cache-mapping>
+    </caching-scheme-mapping>
 
-	<caching-schemes>
+    <caching-schemes>
 
-		<distributed-scheme>
-			<scheme-name>distributed-scheme</scheme-name>
-			<service-name>DistributedScheme</service-name>
-			<backing-map-scheme>
-				<local-scheme>
-				</local-scheme>
-			</backing-map-scheme>
+        <distributed-scheme>
+            <scheme-name>distributed-scheme</scheme-name>
+            <service-name>DistributedScheme</service-name>
+            <backing-map-scheme>
+                <local-scheme>
+                </local-scheme>
+            </backing-map-scheme>
 
-			<autostart>true</autostart>
-		</distributed-scheme>
+            <autostart>true</autostart>
+        </distributed-scheme>
 
         <proxy-scheme>
             <service-name>ExtendTcpProxyService</service-name>
@@ -66,6 +66,5 @@
             </acceptor-config>
             <autostart>true</autostart>
         </proxy-scheme>
-	</caching-schemes>
+    </caching-schemes>
 </cache-config>
-		

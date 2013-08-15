@@ -89,15 +89,9 @@
 
         <menu name="Modules">
             <item name="The Common Package" href="common/index.html">
-                <item name="Extensible Environments" href="common/extensible-environments-overview.html"/>
-                <item name="Cache Config Namespaces" href="common/extensible-environments-namespaces.html"/>
-                <item name="Custom Namespaces Tutorial" href="common/extensible-environments-tutorial.html"/>
-                <item name="The Coherence Namespace" href="common/coherence-namespace.html"/>
                 <item name="The Element Namespace" href="common/element-namespace.html"/>
                 <item name="The Filter Namespace" href="common/filter-namespace.html"/>
                 <item name="The JNDI Namespace" href="common/jndi-namespace.html"/>
-                <item name="The Instance Namespace*" href="common/instance-namespace.html"/>
-                <item name="The Value Namespace*" href="common/value-namespace.html"/>
                 <item name="Working with Amazon EC2" href="common/amazon-ec2-addressprovider.html"/>
             </item>
             <item name="The Command Pattern" href="commandpattern/index.html">

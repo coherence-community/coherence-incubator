@@ -25,9 +25,10 @@
 
 package com.oracle.coherence.patterns.eventdistribution.transformers;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
@@ -38,6 +39,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
+
 
 /**
  * A {@link ChainedEventIteratorTransformerBuilder} is a  builder for {@link ChainedEventIteratorTransformer}s.
@@ -79,14 +81,14 @@ public class ChainedEventIteratorTransformerBuilder extends AbstractEventIterato
     /**
      * {@inheritDoc}
      */
-    public EventIteratorTransformer realize(ParameterProvider parameterProvider)
+    public EventIteratorTransformer realize(ParameterResolver parameterResolver, ClassLoader loader, ParameterList parameterList)
     {
         // construct a list of EventsTransformers from their builders
         ArrayList<EventIteratorTransformer> transformers = new ArrayList<EventIteratorTransformer>();
 
         for (ParameterizedBuilder<EventIteratorTransformer> builder : transformerBuilders)
         {
-            transformers.add(builder.realize(parameterProvider));
+            transformers.add(builder.realize(parameterResolver, loader, parameterList));
         }
 
         return new ChainedEventIteratorTransformer(transformers);
@@ -100,7 +102,8 @@ public class ChainedEventIteratorTransformerBuilder extends AbstractEventIterato
     {
         super.readExternal(in);
         this.transformerBuilders = new ArrayList<ParameterizedBuilder<EventIteratorTransformer>>();
-        ExternalizableHelper.readCollection(in, transformerBuilders, this.getClass().getClassLoader());
+        ExternalizableHelper.readCollection(in, transformerBuilders,
+                this.getClass().getClassLoader());
     }
 
 

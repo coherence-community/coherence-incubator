@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+
 /**
  * A {@link ChainedEventIteratorTransformer} chains a collection of {@link EventIteratorTransformer}s together
  * so they may be used as a single {@link EventIteratorTransformer}.

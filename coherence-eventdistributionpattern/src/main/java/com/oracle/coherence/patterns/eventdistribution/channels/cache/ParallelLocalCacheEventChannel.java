@@ -25,13 +25,9 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.resourcing.InvocationServiceSupervisedResourceProvider;
-import com.oracle.coherence.common.resourcing.ResourceProviderManager;
 import com.oracle.coherence.common.resourcing.SupervisedResourceProvider;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
@@ -39,6 +35,8 @@ import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.InvocationObserver;
@@ -49,6 +47,8 @@ import com.tangosol.net.RequestTimeoutException;
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.NullImplementation;
+import com.tangosol.util.ResourceRegistry;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -132,10 +132,15 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     private EventChannelBuilder remoteChannelBuilder;
 
     /**
-     * The {@link ParameterProvider} that must be used to construct remote
+     * The {@link ParameterResolver} that must be used to construct remote
      * {@link com.oracle.coherence.patterns.eventdistribution.EventChannel}s.
      */
-    private ParameterProvider parameterProvider;
+    private ParameterResolver resolver;
+
+    /**
+     * The ResourceRegistry.
+     */
+    private ResourceRegistry registry;
 
     /**
      * The total number of entries that have been inserted for this batch
@@ -158,21 +163,22 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
      */
     private String invocationServiceName;
 
-
     /**
      * Standard Constructor.
      */
     public ParallelLocalCacheEventChannel(String              targetCacheName,
                                           String              invocationServiceName,
                                           EventChannelBuilder remoteChannelBuilder,
-                                          ParameterProvider   parameterProvider)
+                                          ResourceRegistry    registry,
+                                          ParameterResolver   resolver)
     {
         super();
 
         this.targetCacheName       = targetCacheName;
-        this.remoteChannelBuilder  = remoteChannelBuilder;
-        this.parameterProvider     = parameterProvider;
         this.invocationServiceName = invocationServiceName;
+        this.remoteChannelBuilder  = remoteChannelBuilder;
+        this.resolver              = resolver;
+        this.registry              = registry;
     }
 
 
@@ -181,12 +187,10 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
      *
      * @return The {@link SupervisedResourceProvider} for the remote {@link InvocationService}
      */
-    private SupervisedResourceProvider<InvocationService> getSupervisedResourceProvider()
+    private SupervisedResourceProvider<InvocationService> getSupervised()
     {
-        return (SupervisedResourceProvider<InvocationService>) ((Environment) CacheFactory
-            .getConfigurableCacheFactory()).getResource(ResourceProviderManager.class)
-                .getResourceProvider(InvocationService.class,
-                                     invocationServiceName);
+        // register a Supervised for the remote invocation scheme
+        return registry.getResource(InvocationServiceSupervisedResourceProvider.class, invocationServiceName);
     }
 
 
@@ -399,19 +403,17 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
     protected RemoteChannelAgentObserver publishList(Member      member,
                                                      List<Event> eventList)
     {
-        // get the SupervisedResourceProvider that controls access to the underlying remote Invocation Service
-        SupervisedResourceProvider<InvocationService> resourceProvider = getSupervisedResourceProvider();
+        // get the Supervised that controls access to the underlying remote Invocation Service
+        SupervisedResourceProvider<InvocationService> resourceProvider = getSupervised();
 
         if (resourceProvider == null)
         {
-            // register a SupervisedResourceProvider for the remote invocation scheme
-            ((Environment) CacheFactory.getConfigurableCacheFactory()).getResource(ResourceProviderManager.class)
-                .registerResourceProvider(InvocationService.class,
-                                          invocationServiceName,
-                                          new InvocationServiceSupervisedResourceProvider(invocationServiceName));
+            // register a Supervised for the remote invocation scheme
+            registry.registerResource(InvocationServiceSupervisedResourceProvider.class, invocationServiceName,
+                    new InvocationServiceSupervisedResourceProvider(invocationServiceName));
 
             // now ask for it again (just in case it was replaced by the supervisor)
-            resourceProvider = getSupervisedResourceProvider();
+            resourceProvider = getSupervised();
         }
 
         if (resourceProvider.isResourceAccessible())
@@ -423,7 +425,7 @@ public class ParallelLocalCacheEventChannel implements CacheEventChannel
                                                                                             controllerIdentifier,
                                                                                             eventList,
                                                                                             remoteChannelBuilder,
-                                                                                            parameterProvider),
+                                                                                            resolver),
                                       Collections.singleton(member),
                                       observer);
 

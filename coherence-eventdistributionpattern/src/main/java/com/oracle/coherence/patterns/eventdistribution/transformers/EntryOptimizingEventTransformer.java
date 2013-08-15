@@ -31,6 +31,7 @@ import com.oracle.coherence.patterns.eventdistribution.EventTransformer;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
 import com.tangosol.util.BinaryEntry;
 
+
 /**
  * The {@link EntryOptimizingEventTransformer} is a {@link UniformTransformer} that will transform
  * {@link DistributableEntryEvent}s by removing an original values in the {@link BinaryEntry}, thus optimizing
@@ -51,7 +52,8 @@ public class EntryOptimizingEventTransformer implements EventTransformer
     {
         if (event instanceof DistributableEntryEvent)
         {
-            DistributableEntryEvent distributableEntryEvent = (DistributableEntryEvent) event;
+            DistributableEntryEvent
+                    distributableEntryEvent = (DistributableEntryEvent) event;
 
             distributableEntryEvent.getEntry().setOriginalBinaryValue(null);
 

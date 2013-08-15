@@ -25,7 +25,7 @@
 
 package com.oracle.coherence.patterns.processing.taskprocessor;
 
-import com.oracle.coherence.common.network.AvailablePortIterator;
+import com.oracle.tools.runtime.network.AvailablePortIterator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

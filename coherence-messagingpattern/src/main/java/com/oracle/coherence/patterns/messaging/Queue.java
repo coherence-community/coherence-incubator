@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,46 +26,52 @@
 
 package com.oracle.coherence.patterns.messaging;
 
-import com.oracle.coherence.common.events.EntryEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryArrivedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryInsertedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryRemovedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryUpdatedEvent;
-import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
-import com.oracle.coherence.common.events.processing.EventProcessor;
-import com.oracle.coherence.common.events.processing.EventProcessorFactory;
 import com.oracle.coherence.common.identifiers.Identifier;
-import com.oracle.coherence.common.logging.Logger;
+
+import com.oracle.coherence.common.liveobjects.LiveObject;
+import com.oracle.coherence.common.liveobjects.OnArrived;
+import com.oracle.coherence.common.liveobjects.OnDeparting;
+import com.oracle.coherence.common.liveobjects.OnInserted;
+import com.oracle.coherence.common.liveobjects.OnRemoved;
+import com.oracle.coherence.common.liveobjects.OnUpdated;
+
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
+
 import com.oracle.coherence.patterns.messaging.Subscription.Status;
 import com.oracle.coherence.patterns.messaging.management.MessagingMBeanManager;
 import com.oracle.coherence.patterns.messaging.management.QueueProxy;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-import com.tangosol.net.BackingMapManager;
-import com.tangosol.net.BackingMapManagerContext;
+
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.CacheService;
 import com.tangosol.net.NamedCache;
+
+import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
-import com.tangosol.util.ObservableMap;
+import com.tangosol.util.ResourceRegistry;
+
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * A {@link Queue} is a {@link Destination} that manages the state of a
  * one-to-one messaging implementation.  {@link MessageIdentifier}s are sent to the {@link Queue}
- * by the MessageEventManager and distributed to waiting {@link Subscription}s
+ * by the MessageCacheInterceptor and distributed to waiting {@link Subscription}s
  * in round robin order.  Each {@link Message} is delivered to a single {@link Subscription} only.  If
  * the {@link Subscription} rolls back the {@link Message} then the {@link Message} is re-delivered to
  * another {@link Subscription}
@@ -75,14 +82,14 @@ import java.util.LinkedList;
  * @author Brian Oliver
  * @author Paul Mackin
  */
+@LiveObject
 @SuppressWarnings("serial")
-public class Queue extends Destination implements EventProcessorFactory<EntryEvent>
+public class Queue extends Destination
 {
     /**
-     * The {@link ProcessorStateManager} manages the state of the queue processor so that
-     * the getEntryProcessor method will know whether a processor should be queued up.
+     * Logger
      */
-    private static ProcessorStateManager stateManager = new ProcessorStateManager();
+    private static Logger logger = Logger.getLogger(Queue.class.getName());
 
     /**
      * This is a map<partitionId, lastMsgSeqNum> used to keep track of the last
@@ -177,12 +184,19 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      * @param queueName queue name
      * @param maxSubscribers the maximum number of subscribers this queue may have
      */
-    public Queue(String queueName,int maxSubscribers)
+    public Queue(String queueName,
+                 int    maxSubscribers)
     {
         this(queueName);
-        if (maxSubscribers <= 0 )
+
+        if (maxSubscribers <= 0)
         {
-            Logger.log(Logger.WARN,"maxSubscribers value of %d is invalid, defaulting to unbounded (-1)",maxSubscribers);
+            if (logger.isLoggable(Level.WARNING))
+            {
+                logger.log(Level.WARNING,
+                           "maxSubscribers value of {0}is invalid, defaulting to unbounded (-1)",
+                           maxSubscribers);
+            }
         }
         else
         {
@@ -278,6 +292,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
         return waitingSubscriptions.size() > 0;
     }
 
+
     /**
      * <p>Returns the maximum number of subscribers allowed in this {@link Queue}.</p>
      * @return the maximum subscribers allowed.
@@ -287,6 +302,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
         return maxSubscribers;
     }
 
+
     /**
      * <p>Returns if the {@link Queue} is fully subscribed. On non-bounded {@link Queue}s this is always false.</p>
      * @return true if the {@link Queue} is fully subscribed, false otherwise.
@@ -294,21 +310,6 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
     public boolean isFullySubscribed()
     {
         return maxSubscribers == -1 ? false : getSubscriptionIdentifiers().size() == maxSubscribers;
-    }
-
-    /**
-     * Return true if there are messages to deliver or re-deliver.
-     *
-     * @return true if there are messages to deliver or re-deliver.
-     */
-    private boolean isReadyToDeliver()
-    {
-        if (hasWaitingSubscriptions())
-        {
-            return (hasMessagesToDeliver() || hasMessagesToRedeliver());
-        }
-
-        return false;
     }
 
 
@@ -517,7 +518,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      *
      * @return delivery results
      */
-    private QueueDeliveryResults doDelivery()
+    public QueueDeliveryResults doDelivery()
     {
         // Delivery results of all messages that were delivered.
         //
@@ -560,18 +561,41 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
 
         try
         {
-            // The message event processor will make the message visible to the
-            // subscription
-            CacheFactory.getCache(Message.CACHENAME).invoke(messageKey,
-                                                            new UpdaterProcessor("makeVisibleTo",
-                                                                                 subscriptionIdentifier));
+            try
+            {
+                // The message event processor will make the message visible to the
+                // subscription
+                CacheFactory.getCache(Message.CACHENAME).invoke(messageKey,
+                                                                new UpdaterProcessor("makeVisibleTo",
+                                                                                     subscriptionIdentifier));
+            }
+            catch (Throwable e)
+            {
+                logger.log(Level.WARNING, "deliver message");
+            }
 
             // make the message known to the subscription.
-            NamedCache subscriptions = CacheFactory.getCache(Subscription.CACHENAME);
-            InvokeMethodProcessor proc = new InvokeMethodProcessor("acceptOneMessage",
-                                                                   new Object[] {messageIdentifier,
-                                                                                 Boolean.valueOf(forceAccept)});
+            NamedCache            subscriptions = CacheFactory.getCache(Subscription.CACHENAME);
+
+            InvokeMethodProcessor proc          = null;
+
+            try
+            {
+                proc = new InvokeMethodProcessor("acceptOneMessage",
+                                                 new Object[] {messageIdentifier, Boolean.valueOf(forceAccept)});
+
+            }
+            catch (Throwable e)
+            {
+                logger.log(Level.WARNING, "deliver message");
+            }
+
             Object acceptedObj = subscriptions.invoke(subscriptionIdentifier, proc);
+
+            if (acceptedObj instanceof Throwable)
+            {
+                throw(Throwable) acceptedObj;
+            }
 
             if (acceptedObj != null)
             {
@@ -592,12 +616,15 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
                 }
             }
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
-            Logger.log(Logger.WARN,
-                       "An exception occurred when the Queue tried to invoke Message.makeVisibleTo for message %s and subscription %s.  The message will be delivered to another subscription\n",
-                       messageIdentifier.toString(),
-                       subscriptionIdentifier.toString());
+            if (logger.isLoggable(Level.WARNING))
+            {
+                logger.log(Level.WARNING,
+                           "An exception occurred when the Queue tried to invoke Message.makeVisibleTo for message {0}"
+                           + " and subscription {1} The message will be delivered to another subscription\n",
+                           new Object[] {messageIdentifier, subscriptionIdentifier});
+            }
 
             // Add the subscription for removal since it is most likely gone.
             results.addSubscription(subscriptionIdentifier);
@@ -667,7 +694,77 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
         {
             messagesToRedeliver.add(deliveryResults.nextMessageToRedeliver());
         }
+    }
 
+
+    /**
+     * When an Entry is inserted, updated, or arrives via a partition transfer need to ensure that the MBean
+     * for this {@link Queue} is properly visible.
+     *
+     *  @param entry The {@link BinaryEntry} provided by the LiveObjectInterceptor
+     */
+    @OnInserted
+    @OnUpdated
+    @OnArrived
+    public void onChanged(BinaryEntry entry)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "Queue:onChanged identifier: {0}", getIdentifier());
+        }
+
+        MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
+
+        MBeanManager.registerMBean(this, QueueProxy.class, MBeanManager.buildQueueMBeanName(getIdentifier()));
+
+        // The finite state machine will coalesce processor requests.  Without coalescing the requests
+        // the event queue backs up eventually causing an out of memory error.
+        QueueEngine qEngine =
+            CacheFactory.getConfigurableCacheFactory().getResourceRegistry().getResource(QueueEngine.class,
+                                                                                         getIdentifier().toString());
+
+        if (qEngine == null)
+        {
+            qEngine = new QueueEngine(getIdentifier());
+            CacheFactory.getConfigurableCacheFactory().getResourceRegistry().registerResource(QueueEngine.class,
+                                                                                              getIdentifier()
+                                                                                                  .toString(),
+                                                                                              qEngine);
+        }
+
+        qEngine.processRunEvent(entry);
+    }
+
+
+    /**
+     *  When a {@link Queue} is removed from the cache or removed via a departing partition
+     *  need to unregister its MBean
+     *
+     * @param entry The {@link BinaryEntry} provided by the LiveObjectInterceptor
+     */
+    @OnRemoved
+    @OnDeparting
+    public void onRemoved(BinaryEntry entry)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "Queue:onRemoved identifier: {0}", getIdentifier());
+        }
+
+        // Shutdown the Engine which contains the finite state machine, used to coalesce queue event processing.
+        ResourceRegistry registry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
+        QueueEngine      qEngine  = registry.getResource(QueueEngine.class, getIdentifier().toString());
+
+        if (qEngine != null)
+        {
+            registry.unregisterResource(QueueEngine.class, getIdentifier().toString());
+            qEngine.dispose();
+        }
+
+        // Unregister the destination MBEAN
+        MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
+
+        MBeanManager.unregisterMBean(this, MBeanManager.buildQueueMBeanName(getIdentifier()));
     }
 
 
@@ -700,7 +797,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
 
         numMessagesReceived  = ExternalizableHelper.readLong(in);
         numMessagesDelivered = ExternalizableHelper.readLong(in);
-        maxSubscribers = ExternalizableHelper.readInt(in);
+        maxSubscribers       = ExternalizableHelper.readInt(in);
 
     }
 
@@ -745,7 +842,7 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
 
         numMessagesReceived  = reader.readLong(105);
         numMessagesDelivered = reader.readLong(106);
-        maxSubscribers = reader.readInt(107);
+        maxSubscribers       = reader.readInt(107);
     }
 
 
@@ -771,123 +868,12 @@ public class Queue extends Destination implements EventProcessorFactory<EntryEve
      */
     public String toString()
     {
-        return String.format("Queue{%s, messagesToDeliver=%s, maxSubscribers=%d, messagesToRedeliver=%s,  waitingSubscriptions=%s}",
-                             super.toString(),
-                             messagesToDeliver,
-                             maxSubscribers,
-                             messagesToRedeliver,
-                             waitingSubscriptions);
-    }
-
-
-    /**
-     * Return an event processor to perform asynchronous processing of the {@link Queue} after it has been
-     * written to the cache.  The event processor will deliver {@link Message}s to {@link Subscription}s
-     *
-     *  @param e event
-     *  @return EventProcessor processor
-     */
-    public EventProcessor<EntryEvent> getEventProcessor(EntryEvent e)
-    {
-        if ((e instanceof BackingMapEntryInsertedEvent) || (e instanceof BackingMapEntryArrivedEvent)
-            || (e instanceof BackingMapEntryUpdatedEvent))
-        {
-            MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
-
-            MBeanManager.registerMBean(this, QueueProxy.class, MBeanManager.buildQueueMBeanName(getIdentifier()));
-
-            // Only return a processor if there are none waiting on the dispatch queue.
-            // A processor is really used like an event to trigger background delivery by
-            // the event processor, so we only need one trigger.  Without this check, the
-            // dispatch event queue backs up eventually causing an out of memory error.
-            if (isReadyToDeliver() &&!stateManager.isScheduled(getIdentifier()))
-            {
-                stateManager.setScheduled(getIdentifier());
-
-                return new QueueEventProcessor();
-            }
-        }
-        else if (e instanceof BackingMapEntryRemovedEvent)
-        {
-            MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
-
-            MessagingMBeanManager.getInstance().unregisterMBean(this,
-                                                                MBeanManager.buildQueueMBeanName(getIdentifier()));
-        }
-
-        return null;
-    }
-
-
-    /**
-     * A {@link QueueEventProcessor} delivers {@link Message}s stored in the {@link Queue} to
-     * any waiting subscriptions.
-     */
-    static class QueueEventProcessor extends AbstractAsynchronousEventProcessor<EntryEvent>
-    {
-        /**
-         * {@inheritDoc}
-         */
-        public void processLater(EventDispatcher dispatcher,
-                                 EntryEvent      event)
-        {
-            Identifier destinationIdentifier = (Identifier) event.getEntry().getKey();
-
-            Queue.stateManager.setRunning(destinationIdentifier);
-
-            Queue queue = getQueueFromBackingMap((Identifier) event.getEntry().getKey());
-
-            if (queue == null)
-            {
-                return;
-            }
-
-            // Deliver any messages to waiting subscriptions
-            QueueDeliveryResults results = queue.doDelivery();
-
-            if (results.hasMessage())
-            {
-                // Update the queue object with the delivery results
-                NamedCache destinationCache = CacheFactory.getCache(Destination.CACHENAME);
-
-                destinationCache.invoke(queue.getIdentifier(), new UpdaterProcessor("processDeliveryResults", results));
-            }
-
-            Queue.stateManager.setIdle(destinationIdentifier);
-        }
-
-
-        /**
-         * Get the {@link Queue} from the backing map for performance optimization.
-         *
-         * @param destinationIdentifier destination identifier
-         * @return Queue or null if the Queue has moved or been deleted.
-         */
-        private Queue getQueueFromBackingMap(Identifier destinationIdentifier)
-        {
-            Queue                    queue      = null;
-
-            NamedCache               cache      = CacheFactory.getCache(Destination.CACHENAME);
-            CacheService             service    = cache.getCacheService();
-            BackingMapManager        manager    = service.getBackingMapManager();
-            BackingMapManagerContext context    = manager.getContext();
-            ObservableMap            backingMap = (ObservableMap) context.getBackingMap(Destination.CACHENAME);
-
-            Object                   binaryKey  = context.getKeyToInternalConverter().convert(destinationIdentifier);
-
-            if (context.isKeyOwned(binaryKey))
-            {
-                // Get the queue - check if it is null in case the partition
-                // moved.
-                Object binaryVal = backingMap.get(binaryKey);
-
-                if (binaryVal != null)
-                {
-                    queue = (Queue) context.getValueFromInternalConverter().convert(binaryVal);
-                }
-            }
-
-            return queue;
-        }
+        return String
+            .format("Queue{%s, messagesToDeliver=%s, maxSubscribers=%d, messagesToRedeliver=%s,  waitingSubscriptions=%s}",
+                    super.toString(),
+                    messagesToDeliver,
+                    maxSubscribers,
+                    messagesToRedeliver,
+                    waitingSubscriptions);
     }
 }

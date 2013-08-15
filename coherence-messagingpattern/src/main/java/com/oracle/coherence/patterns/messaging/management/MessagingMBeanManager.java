@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,7 +27,7 @@
 package com.oracle.coherence.patterns.messaging.management;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.patterns.messaging.Destination;
 import com.oracle.coherence.patterns.messaging.Queue;
 import com.oracle.coherence.patterns.messaging.QueueSubscription;
@@ -34,10 +35,15 @@ import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
 import com.oracle.coherence.patterns.messaging.Topic;
 import com.oracle.coherence.patterns.messaging.TopicSubscription;
+
 import com.tangosol.net.CacheFactory;
+
 import com.tangosol.net.management.Registry;
 
 import java.util.HashMap;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The {@link MessagingMBeanManager} is used to register and unregister messaging MBeans with the MBean Server.
@@ -58,6 +64,11 @@ public class MessagingMBeanManager
      * The singleton instance of the {@link MessagingMBeanManager}.
      */
     private static MessagingMBeanManager INSTANCE = new MessagingMBeanManager();
+
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(MessagingMBeanManager.class.getName());
 
     /**
      * HashMap keeping track of the {@link MBean} objects.
@@ -95,7 +106,7 @@ public class MessagingMBeanManager
      * @param mbeanName the MBean name of the object
      * @return mbean name
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public String registerMBean(Object object,
                                 Class  proxyClass,
                                 String mbeanName)
@@ -163,7 +174,7 @@ public class MessagingMBeanManager
      * @param key map key
      * @param managedObject object to be managed
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private synchronized void addMBean(Registry registry,
                                        Class    proxyClass,
                                        String   key,
@@ -188,7 +199,7 @@ public class MessagingMBeanManager
         }
         catch (Throwable t)
         {
-            Logger.log(Logger.ERROR, "Error adding MBean for key %s " + key);
+            logger.log(Level.SEVERE, "Error adding MBean for key {0}", key);
         }
     }
 

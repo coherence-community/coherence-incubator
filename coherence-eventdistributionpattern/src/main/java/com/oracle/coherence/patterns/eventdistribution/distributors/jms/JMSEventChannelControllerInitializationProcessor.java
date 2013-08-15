@@ -25,7 +25,7 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
-import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
+import com.oracle.coherence.common.expression.SerializablePropertiesParameterResolver;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
@@ -118,7 +118,8 @@ public class JMSEventChannelControllerInitializationProcessor extends AbstractPr
                 {
                     // create a connection factory from the configuration
                     ConnectionFactory connectionFactory =
-                        configuration.getConnectionFactoryBuilder().realize(SystemPropertyParameterProvider.INSTANCE);
+                        configuration.getConnectionFactoryBuilder().realize(new SerializablePropertiesParameterResolver(System.getProperties()),
+                                JMSEventChannelControllerInitializationProcessor.class.getClassLoader(), null);
 
                     // create a new connection for the subscription
                     Connection connection = connectionFactory.createConnection();

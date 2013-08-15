@@ -25,17 +25,7 @@
 
 package com.oracle.coherence.patterns.processing.internal;
 
-import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.lifecycle.LifecycleEvent;
-import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
-import com.oracle.coherence.common.events.lifecycle.LifecycleStoppedEvent;
-import com.oracle.coherence.common.events.lifecycle.NamedCacheStorageReleasedEvent;
-import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
-import com.oracle.coherence.environment.Environment;
-import com.oracle.coherence.environment.extensible.LifecycleEventFilter;
-import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
-import com.oracle.coherence.environment.extensible.dependencies.EnvironmentReference;
+
 import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
 import com.oracle.coherence.patterns.processing.friends.DispatcherManager;
 import com.tangosol.net.ConfigurableCacheFactory;
@@ -46,9 +36,7 @@ import com.tangosol.util.filter.PresentFilter;
 import com.tangosol.util.processor.ConditionalPut;
 import com.tangosol.util.processor.ConditionalRemove;
 
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -59,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Noah Arliss
  */
-public class DefaultDispatcherManager extends AbstractAsynchronousEventProcessor<LifecycleEvent<?>>
+public class DefaultDispatcherManager
     implements DispatcherManager
 {
     /**
@@ -119,10 +107,12 @@ public class DefaultDispatcherManager extends AbstractAsynchronousEventProcessor
         }
 
         // Start listening for lifecycle events since we want to know when we are shutting down
+        /*
         environment.getResource(EventDispatcher.class).registerEventProcessor(LifecycleEventFilter.INSTANCE, this);
 
         environment.getResource(EventDispatcher.class)
             .dispatchEvent(new LifecycleStartedEvent<DependentResource>(this));
+            */
 
     }
 
@@ -130,13 +120,17 @@ public class DefaultDispatcherManager extends AbstractAsynchronousEventProcessor
     /**
      * {@inheritDoc}
      */
+    /**
+
+     todo PFM
+
     public void onDependenciesViolated(Environment environment)
     {
         dispatcherCache = null;
         environment.getResource(EventDispatcher.class)
             .dispatchEvent(new LifecycleStoppedEvent<DependentResource>(this));
     }
-
+      **/
 
     /**
      * {@inheritDoc}
@@ -170,16 +164,21 @@ public class DefaultDispatcherManager extends AbstractAsynchronousEventProcessor
     /**
      * {@inheritDoc}
      */
+    /*
+    todo PFM
+
     public Set<DependencyReference> getDependencyReferences()
     {
         return Collections.singleton((DependencyReference) new EnvironmentReference());
     }
-
+    */
 
     /**
      * {@inheritDoc}
      */
-    @Override
+    /*
+    todo PFM
+
     public void processLater(EventDispatcher   eventDispatcher,
                              LifecycleEvent<?> event)
     {
@@ -191,4 +190,5 @@ public class DefaultDispatcherManager extends AbstractAsynchronousEventProcessor
             }
         }
     }
+    */
 }

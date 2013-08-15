@@ -25,21 +25,22 @@
 	
 	Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
  	Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
-  -->
+ -->
 <cache-config
 	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     
-    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+    xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
     element:introduce-cache-config="coherence-commandpattern-cache-config.xml">
+	
+	<defaults>
+		<serializer>pof</serializer>
+	</defaults>
 
     <caching-schemes>
         <proxy-scheme>
             <service-name>ExtendTcpProxyService</service-name>
             <acceptor-config>
-                <serializer>
-                    <class-name>com.tangosol.io.pof.ConfigurablePofContext</class-name>
-                </serializer>
                 <tcp-acceptor>
                     <local-address>
                         <address>localhost</address>

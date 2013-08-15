@@ -30,7 +30,7 @@
 	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     
-    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+    xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
     element:introduce-cache-config="coherence-functorpattern-cache-config.xml">
 
     <caching-schemes>

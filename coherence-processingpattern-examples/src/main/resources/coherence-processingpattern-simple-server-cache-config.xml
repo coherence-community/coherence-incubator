@@ -25,9 +25,9 @@
     
     Copyright (c) 2009. All Rights Reserved. Oracle Corporation.
   -->
-<cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler"
-                xmlns:instance="class://com.oracle.coherence.environment.extensible.namespaces.InstanceNamespaceContentHandler"
-                xmlns:value="class://com.oracle.coherence.environment.extensible.namespaces.ValueNamespaceContentHandler">
+<cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler"
+                xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
+                element:introduce-cache-config="coherence-processingpattern-cache-config.xml">>
     <processing:cluster-config pof="true">
         <processing:dispatchers>
             <processing:logging-dispatcher displayname="Logging Dispatcher" />
@@ -43,10 +43,13 @@
           <processing:taskprocessors>
             <processing:taskprocessordefinition id="SingleTaskProcessor" displayname="Single Task Processor"
                 type="SINGLE">
-                <instance:class classname="com.oracle.coherence.patterns.processing.taskprocessor.DefaultTaskProcessor">
-                    <value:string>Single Task Processor</value:string>
-                    <value:integer>10</value:integer>
-                </instance:class>
+                <instance>
+                  <class-name>com.oracle.coherence.patterns.processing.taskprocessor.DefaultTaskProcessor</class-name>
+                    <init-params>
+                      <init-param>String Task Processor</init-param>
+                      <init-param>10</init-param>
+                    </init-params>
+                </instance>
                 <processing:attribute name="type">single</processing:attribute>
              </processing:taskprocessordefinition>
         </processing:taskprocessors>

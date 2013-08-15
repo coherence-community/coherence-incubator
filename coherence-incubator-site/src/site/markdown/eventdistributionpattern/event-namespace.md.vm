@@ -7,7 +7,7 @@ the [Push Replication Pattern](../pushreplicationpattern/index.html).
 
 <h4>Namespace Content Handler</h4>
 
-The implementation is provided by the `com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler` 
+The implementation is provided by the `com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler`
 class.
 
 <h4>Declaration</h4>
@@ -18,7 +18,7 @@ when declaring the namespace.
 
 To use the namespace you should declare it as follows:
 
-    <cache-config xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler">
+    <cache-config xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler">
     
        ...
     
@@ -35,7 +35,7 @@ of which defines an `EventDistributor` to be used for distributing Events.
 The following xml schema provides a guide to the over all structure and main
 elements provided by this namespace.
 
-&lt;cache-config xmls:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"&gt;
+&lt;cache-config xmls:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler"&gt;
 
 &nbsp;&nbsp;&nbsp;&nbsp;[&lt;event:distributor&gt;](#event-distributor)<sup>* ...</sup>
 
@@ -239,11 +239,6 @@ Zero or more the following elements may be defined as a child element of this el
 
     An Oracle Coherence `<instance>` element defining an `EventIteratorTransformer`.
 
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element defining an `EventIteratorTransformer`.
-
-
 *Example:*
 
 An transformer scheme that only allows distribution of coalesced INSERTED and UPDATED 
@@ -362,12 +357,7 @@ One of following elements must be defined as child element this element:
 *   &lt;instance&gt;
 
     An Oracle Coherence `<instance>` element, defining an `EventChannelBuilder`
-    to be used for instantiating a custom `EventChannel` implementation.    
-
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element, defining an `EventChannelBuilder`
-    to be used for instantiating a custom `EventChannel` implementation.    
+    to be used for instantiating a custom `EventChannel` implementation.
 
 
 ------------------------------------------------------------------------------
@@ -439,8 +429,8 @@ and the cache configuration for the Messaging Pattern is appropriately included
 in the application cache configuration.  For example:
 
     <cache-config
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
-        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
+        xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler"
         element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
 
         ...
@@ -468,11 +458,7 @@ One of the following elements must be defined as a child of this element:
     
 *   &lt;instance&gt;
 
-    An Oracle Coherence `<instance>` element defining a `JMSConnectionFactory`.    
-
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element defining a `JMSConnectionFactory`. 
+    An Oracle Coherence `<instance>` element defining a `JMSConnectionFactory`.
 
 *   or an element from the [JNDI Namespace](../common/jndi-namespace.html).
 
@@ -712,12 +698,7 @@ One of the following elements must be defined as child element of this element:
 *   &lt;instance&gt;
 
     An Oracle Coherence `<instance>` element, defining an `EventDistributorBuilder`
-    to be used for instantiating a custom event distributor implementation.    
-
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element, defining an `EventDistributorBuilder`
-    to be used for instantiating a custom event distributor implementation.    
+    to be used for instantiating a custom event distributor implementation.
 
 
 ------------------------------------------------------------------------------
@@ -742,12 +723,7 @@ One of the following elements must be defined as a child element of this element
 *   &lt;instance&gt;
 
     An Oracle Coherence `<instance>` element, defining a `Filter`
-    to be used for instantiating a custom `Filter`.    
-
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element, defining an `Filter>`
-    to be used for instantiating a custom `Filter`.    
+    to be used for instantiating a custom `Filter`.
 
 *   or any one of the filters defined by the [Filter Namespace](../common/filter-namespace.html).
 
@@ -782,11 +758,7 @@ One of the following elements must be defined as a child of this element:
     
 *   &lt;instance&gt;
 
-    An Oracle Coherence `<instance>` element defining a `EventTransformer`.    
-
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element defining a `EventTransformer`. 
+    An Oracle Coherence `<instance>` element defining a `EventTransformer`.
 
 *Example:*
 
@@ -796,9 +768,9 @@ distributed:
     <event:transformer-scheme>
        <event:mutating-transformer-scheme>
           <event:event-transformer>
-             <class-scheme>
-                <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.EntryOptimizingEventTransformer</class-scheme>
-             </class-scheme>
+             <instance>
+                <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.EntryOptimizingEventTransformer</class-name>
+             </instance>
           </event:event-transformer>
        </event:mutating-transformer-scheme>
     </event:transformer-scheme>
@@ -917,10 +889,6 @@ One of the following elements must be defined as a child element of this element
 *   &lt;instance&gt;
 
     An Oracle Coherence `<instance>` element defining an `EventIteratorTransformer`.
-
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element defining an `EventIteratorTransformer`.
 
 
 >   **IMPORTANT**
@@ -1056,9 +1024,9 @@ Converting string-based entries in a batch into upper-case prior to them being d
     <event:transformer-scheme>
        <event:mutating-transformer-scheme>
           <event:event-transformer>
-             <class-scheme>
+             <instance>
                 <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.UppercaseEntryEventTransformer</class-name>
-             </class-scheme>
+             </instance>
           </event:event-transformer>
        </event:mutating-transformer-scheme>
     <event:transformer-scheme>
@@ -1068,9 +1036,9 @@ Optimize the entries in a batch by removing their original values prior to them 
     <event:transformer-scheme>
        <event:mutating-transformer-scheme>
           <event:event-transformer>
-             <class-scheme>
+             <instance>
                 <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.EntryOptimizingEventTransformer</class-name>
-             </class-scheme>
+             </instance>
           </event:event-transformer>
        </event:mutating-transformer-scheme>
     <event:transformer-scheme>
@@ -1100,10 +1068,6 @@ One of the following elements must be defined as a child element of this element
     An Oracle Coherence `<instance>` element, defining a `Filter`
     to be used for instantiating a custom `Filter`.    
 
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element, defining an `Filter>`
-    to be used for instantiating a custom `Filter`.    
 
 *   or any one of the filters defined by the [Filter Namespace](../common/filter-namespace.html).
 
@@ -1279,9 +1243,5 @@ One of the following elements must be defined as child element of this element:
 *   &lt;instance&gt;
 
     An Oracle Coherence `<instance>` element defining an `EventIteratorTransformer`.
-
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element defining an `EventIteratorTransformer`.
 
 ------------------------------------------------------------------------------

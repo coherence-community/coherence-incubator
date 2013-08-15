@@ -25,14 +25,13 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.configuration.Mandatory;
-import com.oracle.coherence.configuration.Property;
-import com.oracle.coherence.configuration.SubType;
-import com.oracle.coherence.configuration.Type;
+
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.annotation.Injectable;
 import com.tangosol.io.Serializer;
+import com.tangosol.util.ResourceRegistry;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -60,6 +59,11 @@ public class JMSEventDistributorBuilder implements EventDistributorBuilder
      */
     private ParameterizedBuilder<ConnectionFactory> connectionFactoryBuilder;
 
+    /**
+     * The {@link ResourceRegistry}.
+     */
+    private ResourceRegistry registry;
+
 
     /**
      * Standard Constructor.
@@ -78,19 +82,15 @@ public class JMSEventDistributorBuilder implements EventDistributorBuilder
 
 
     /**
-     * Method description
+     * Set the ConnectionFactory builder.
      *
      * @param connectionFactoryBuilder
      */
-    @Property("connection-factory-scheme")
-    @Type(ParameterizedBuilder.class)
-    @SubType(ConnectionFactory.class)
-    @Mandatory
+    @Injectable("connection-factory-scheme")
     public void setConnectionFactoryBuilder(ParameterizedBuilder<ConnectionFactory> connectionFactoryBuilder)
     {
         this.connectionFactoryBuilder = connectionFactoryBuilder;
     }
-
 
     /**
      * {@inheritDoc}
@@ -98,11 +98,14 @@ public class JMSEventDistributorBuilder implements EventDistributorBuilder
     @Override
     public EventDistributor realize(String                           symbolicName,
                                     String                           suggestedExternalName,
-                                    ParameterizedBuilder<Serializer> serializerBuilder)
+                                    ParameterizedBuilder<Serializer> serializerBuilder,
+                                    ClassLoader                      loader)
     {
+
         return new JMSEventDistributor(symbolicName,
                                        suggestedExternalName,
                                        serializerBuilder,
-                                       connectionFactoryBuilder);
+                                       connectionFactoryBuilder,
+                                       loader);
     }
 }

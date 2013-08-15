@@ -25,11 +25,11 @@
 
 package com.oracle.coherence.patterns.processing.dispatchers.logging;
 
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.processing.dispatchers.AbstractDispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchOutcome;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
+import com.oracle.coherence.patterns.processing.internal.Environment;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;

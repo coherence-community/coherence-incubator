@@ -30,6 +30,7 @@ import com.oracle.coherence.common.util.IteratorTransformer;
 
 import java.util.Iterator;
 
+
 /**
  * An {@link EventIteratorTransformer} is an {@link IteratorTransformer} designed to transform batches of
  * {@link Event}s (represented by an {@link Iterator}), into another {@link Iterator} over {@link Event}s.

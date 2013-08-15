@@ -4,7 +4,7 @@
     <parent>
         <artifactId>coherence-incubator</artifactId>
         <groupId>com.oracle.coherence.incubator</groupId>
-        <version>11.1.1-SNAPSHOT</version>
+        <version>12.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -56,7 +56,6 @@
             <groupId>com.oracle.tools</groupId>
             <artifactId>oracle-tools-core</artifactId>
             <version>${oracle.tools.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -93,5 +92,10 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+      <dependency>
+        <artifactId>oracle-tools-core</artifactId>
+        <groupId>com.oracle.tools</groupId>
+        <version>${oracle.tools.version}</version>
+      </dependency>
     </dependencies>
 </project>

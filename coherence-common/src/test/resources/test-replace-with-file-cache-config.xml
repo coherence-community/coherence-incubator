@@ -1,0 +1,23 @@
+<cache-config
+	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
+
+    xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler">
+
+    <defaults>
+        <serializer>pof</serializer>
+    </defaults>
+
+    <caching-scheme-mapping>
+        <cache-mapping>
+            <cache-name>common-*</cache-name>
+            <scheme-name>distributed-scheme</scheme-name>
+        </cache-mapping>
+    </caching-scheme-mapping>
+
+    <caching-schemes>
+        <distributed-scheme element:replace-with-file="test-replace-with-file-distributed-scheme.xml"/>
+    </caching-schemes>
+
+</cache-config>

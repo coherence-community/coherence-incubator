@@ -26,8 +26,7 @@
     
     Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
  -->
-<cache-config xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-    xmlns:cr="class:com.oracle.coherence.environment.extensible.namespaces.InstanceNamespaceContentHandler">
+<cache-config xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler">
 
     <defaults>
         <serializer>pof</serializer>
@@ -58,7 +57,11 @@
                                     <event:local-cache-channel-scheme>
                                         <event:target-cache-name>bidding-cache</event:target-cache-name>
                                         <event:conflict-resolver-scheme>
-                                            <cr:class classname="com.oracle.coherence.patterns.pushreplication.examples.auction.BidderConflictResolver" />
+                                          <instance>
+                                            <class-name system-property="conflict.resolver.classname">
+                                              com.oracle.coherence.patterns.pushreplication.examples.auction.BidderConflictResolver
+                                            </class-name>
+                                          </instance>
                                         </event:conflict-resolver-scheme>
                                     </event:local-cache-channel-scheme>
                                 </event:remote-channel-scheme>

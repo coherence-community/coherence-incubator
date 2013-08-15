@@ -27,6 +27,7 @@ package com.oracle.coherence.common.events;
 
 import java.util.Map.Entry;
 
+
 /**
  * An {@link EntryEvent} represents a {@link CacheEvent} that occurred on
  * a specific cache {@link Entry}.

@@ -1,38 +1,67 @@
 Upgrading from Previous Releases
 --------------------------------
 
-<h4>Upgrading from Coherence Incubator 11.0.0</h4>
+<h4>Upgrading from Coherence Incubator 10 and 11</h4>
 
-Upgrading to Coherence Incubator 11.1.0 is as simple as replacing previous `jars`.
+While Coherence Incubator 12 is considered a major release, most developers should find that
+upgrading from Coherence Incubator 10 or 11 should be as simple as replacing the previous `jars`.
 
-For the most part this release should be considered a "patch", but as we changed one
-of the internal, yet public APIs, we've increased the version number.
+>   In terms of branches, Coherence Incubator 12 was branched from Coherence Incubator 11.1.0
+>   which means all of the latest fixes in Coherence 11.1.0 are also in Coherence Incubator 12.
 
-The detailed change history can be found [here](history.html).
+There of course will be exceptions, especially for those developers that have customized internal
+implementation classes (as these may have changed, been refactored or removed), but for the
+most part challenged like this should be very isolated.   We've tried hard to ensure we didn't
+remove important interfaces, especially those that aren't now provided and supported directly
+by Coherence.
 
-<h4>Upgrading from Coherence Incubator 10</h4>
-
-Upgrading from Oracle Coherence Incubator 10 is typically as simple as replacing
-previous `jars` with the new `jars`, those of which are available for download
-(if you're not using Maven) from [maven.java.net](http://maven.java.net).
-
-If you're using Maven, all you need to do is include the appropriate
-artifacts from the maven.java.net repository.
+If you're using Maven, all you should do is update the appropriate artifact version from the
+maven.java.net repository.
 
     <dependency>
         <groupId>com.oracle.oracle.incubator<groupId>
         <artifactId>${project.name}<artifactId>
-        <version>11.0.0</version>
+        <version>12.0.0</version>
     </dependency>
 
 Where the ${project.name} is one of: `coherence-common`, `coherence-commandpattern`,
 `coherence-functorpattern`, `coherence-messagingpattern`, `coherence-eventdistributionpattern`,
 or `coherence-pushreplicationpattern`.
 
-While the source code is readily available on [github](http://github.com/coherence-community),
-the source code and java documentation for each released artifact is also published to
-[maven.java.net](http://maven.java.net).  This enables simple and clean integration with
-all development environments supporting Maven.
+Fundamentally there are two major areas of change:
+
+1.  This release extensively leverages the new configuration models provided by Coherence 12.1.2
+    (as part of the `com.tangosol.config` and `com.tangosol.coherence.config` packages)
+    instead of the previous configuration models provided by the Coherence Common module
+    (as part of the `com.oracle.coherence.common.configuration` and
+    `com.oracle.coherence.common.environment` packages).   The previous packages have now been
+    removed as all future configuration infrastructure will be based on that which is provided
+    by Coherence.
+
+    Developers that are familiar with the previous approaches will find these features now
+    available in Coherence itself (in some manner).   Migrating to use the Coherence provided
+    infrastructure should not be too difficult (as the method signatures are almost identical).
+
+    Developers that aren't familiar with this should have nothing to worry about - if you don't
+    know about it, then it should not affect you.
+
+    Importantly all of the patterns that made use of the previous technology have been refactored
+    to use the new approach provided by Coherence 12.1.2.  If you're using the previous patterns
+    that leveraged namespaces, there should be little or no change as we refactored those
+    implementations to use Coherence 12.1.2.  We've even kept the class names the same so
+    configuration files should not need to change.
+
+2.  This release extensively leverages the new Live Events framework provided by Coherence 12.1.2
+    instead of the previously provided BackingMapListener-based framework.   The previous packages
+    supporting this, namely `com.oracle.coherence.common.events` and
+    `com.oracle.coherence.common.backingmaplisteners` have now been removed.  All future use of
+    server-side event technology will be based on Live Events.
+
+    Importantly all patterns that made use of BackingMapListener features have now been refactored
+    to use Live Events.  This has dramatically simplified the implementations, including many of
+    the threading models previously implemented in earlier releases of the Coherence Incubator.
+
+The change history for Coherence Incubator 12 can be found [here](history.html).
 
 <h4>Upgrading from pre-Coherence Incubator 10 Releases</h4>
 

@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,16 +31,21 @@ import com.tangosol.net.CacheFactoryBuilder;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.Service;
+
+import com.tangosol.net.events.InterceptorRegistry;
+
 import com.tangosol.run.xml.XmlElement;
+
+import com.tangosol.util.ResourceRegistry;
+
+import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
-
 /**
  * This is a utility class derived from an Easymock variant of this class in main Coherence.
- * <p>
+ *
  * This utility class to ease the creation of mock {@link NamedCache} instances
  * using Mockito. This utility can be used like this:
  * <p>
@@ -50,12 +56,9 @@ import static org.mockito.Mockito.mock;
  *   // mockCache is backed by Mockito
  *   ...
  * </pre>
- * <p>
- * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
- * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
- * @author Patrick Peralta
- * @author Christer Fahlgren
+ * @author pp  2010.02.05
+ * @author Christer Fahlgren 2010.05.18
  */
 public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
 {
@@ -75,16 +78,8 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
     /**
      * {@inheritDoc}
      */
-    public XmlElement getConfig()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setConfig(XmlElement xmlConfig)
+    @Override
+    public InterceptorRegistry getInterceptorRegistry()
     {
         throw new UnsupportedOperationException();
     }
@@ -133,6 +128,24 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void activate()
+    {
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose()
+    {
+    }
+
+
     // ----- helper methods -------------------------------------------------
 
     /**
@@ -156,6 +169,19 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
         CacheFactory.setConfigurableCacheFactory(null);
 
         CacheFactory.setCacheFactoryBuilder(m_previousCacheFactoryBuilder);
+    }
+
+
+    /**
+     * Method description
+     *
+     * @return
+     */
+    @Override
+    public ResourceRegistry getResourceRegistry()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 
@@ -228,6 +254,27 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
         public void release(ConfigurableCacheFactory factory)
         {
             throw new UnsupportedOperationException();
+        }
+
+
+        /**
+         * Method description
+         *
+         * @param arg0
+         * @param arg1
+         * @param arg2
+         * @param arg3
+         *
+         * @return
+         */
+        @Override
+        public ConfigurableCacheFactory setConfigurableCacheFactory(ConfigurableCacheFactory arg0,
+                                                                    String                   arg1,
+                                                                    ClassLoader              arg2,
+                                                                    boolean                  arg3)
+        {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
 	File: coherence-common-cache-config.xml
- 
+
  	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- 	
-	The contents of this file are subject to the terms and conditions of 
+
+	The contents of this file are subject to the terms and conditions of
 	the Common Development and Distribution License 1.0 (the "License").
 
 	You may not use this file except in compliance with the License.
@@ -22,97 +22,55 @@
 	If applicable, add the following below the License Header, with the fields
 	enclosed by brackets [] replaced by your own identifying information:
 	"Portions Copyright [year] [name of copyright owner]"
-	
- 	Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
+
+ 	Copyright (c) 2012. All Rights Reserved. Oracle Corporation.
  -->
-<cache-config    
-	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd">
-    
-	<caching-scheme-mapping>
-		<cache-mapping>
-			<cache-name>coherence.common.sequencegenerators</cache-name>
-			<scheme-name>distributed-scheme-for-sequence-generators</scheme-name>
-		</cache-mapping>
-		
+<cache-config
+        xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd">
+
+    <caching-scheme-mapping>
+        <cache-mapping>
+            <cache-name>coherence.common.sequencegenerators</cache-name>
+            <scheme-name>distributed-scheme-for-sequence-generators</scheme-name>
+        </cache-mapping>
+
         <cache-mapping>
             <cache-name>coherence.live.objects.distributed</cache-name>
             <scheme-name>distributed-scheme-for-live-objects</scheme-name>
+            <interceptors>
+                <interceptor>
+                    <name>live-object-interceptor</name>
+                    <instance>
+                        <class-name>com.oracle.coherence.common.liveobjects.LiveObjectEventInterceptor</class-name>
+                    </instance>
+                </interceptor>
+            </interceptors>
         </cache-mapping>
+    </caching-scheme-mapping>
 
-        <cache-mapping>
-            <cache-name>coherence.live.objects.replicated</cache-name>
-            <scheme-name>replicated-scheme-for-live-objects</scheme-name>
-        </cache-mapping>
-	</caching-scheme-mapping>
-
-	<caching-schemes>
-		<distributed-scheme>
-			<scheme-name>distributed-scheme-for-sequence-generators</scheme-name>
-			<service-name>DistributedCacheForSequenceGenerators</service-name>
-			
-			<backing-map-scheme>
-				<local-scheme>
-				</local-scheme>
-			</backing-map-scheme>
-
-			<autostart>true</autostart>
-		</distributed-scheme>
-			
+    <caching-schemes>
         <distributed-scheme>
-            <scheme-name>distributed-scheme-for-live-objects</scheme-name>
-            <service-name>DistributedCacheForLiveObjects</service-name>
-            
+            <scheme-name>distributed-scheme-for-sequence-generators</scheme-name>
+            <service-name>DistributedCacheForSequenceGenerators</service-name>
+
             <backing-map-scheme>
-                <local-scheme>
-                    <listener> 
-                        <class-scheme>
-                            <class-name>com.oracle.coherence.common.events.dispatching.listeners.DelegatingBackingMapListener</class-name>
-                            <init-params>
-                                <init-param>
-                                    <param-type>com.tangosol.net.BackingMapManagerContext</param-type>
-                                    <param-value>{manager-context}</param-value>
-                                </init-param>
-                                <init-param>
-                                    <param-type>java.lang.String</param-type>
-                                    <param-value>{cache-name}</param-value>
-                                </init-param>
-                            </init-params>
-                        </class-scheme>
-                    </listener>
-                </local-scheme>
+                <local-scheme/>
             </backing-map-scheme>
 
             <autostart>true</autostart>
         </distributed-scheme>
-				
-        <replicated-scheme>
-            <scheme-name>replicated-scheme-for-live-objects</scheme-name>
-            <service-name>ReplicatedCacheForLiveObjects</service-name>
-            
+
+        <distributed-scheme>
+            <scheme-name>distributed-scheme-for-live-objects</scheme-name>
+            <service-name>DistributedCacheForLiveObjects</service-name>
+
             <backing-map-scheme>
-                <local-scheme>
-                    <listener> 
-                        <class-scheme>
-                            <class-name>com.oracle.coherence.common.events.dispatching.listeners.DelegatingBackingMapListener</class-name>
-                            <init-params>
-                                <init-param>
-                                    <param-type>com.tangosol.net.BackingMapManagerContext</param-type>
-                                    <param-value>{manager-context}</param-value>
-                                </init-param>
-                                <init-param>
-                                    <param-type>java.lang.String</param-type>
-                                    <param-value>{cache-name}</param-value>
-                                </init-param>
-                            </init-params>
-                        </class-scheme>
-                    </listener>
-                </local-scheme>
+                <local-scheme/>
             </backing-map-scheme>
 
             <autostart>true</autostart>
-        </replicated-scheme>
-	</caching-schemes>
+        </distributed-scheme>
+    </caching-schemes>
 </cache-config>
-		

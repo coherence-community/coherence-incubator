@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-	File: coherence-commandpattern-client-cache-config.xml
+    File: coherence-commandpattern-client-cache-config.xml
  
  	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  	
@@ -25,8 +25,12 @@
 	
 	Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
  	Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
-  -->
+ -->
 <cache-config>
+	<defaults>
+		<serializer>pof</serializer>
+	</defaults>
+
     <caching-scheme-mapping>
         <cache-mapping>
             <cache-name>coherence.*</cache-name>
@@ -46,9 +50,6 @@
                         </socket-address>
                     </remote-addresses>
                 </tcp-initiator>
-                <serializer>
-                    <class-name>com.tangosol.io.pof.ConfigurablePofContext</class-name>
-                </serializer>
             </initiator-config>
         </remote-cache-scheme>
     </caching-schemes>

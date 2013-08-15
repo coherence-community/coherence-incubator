@@ -25,14 +25,14 @@
 
 package com.oracle.coherence.patterns.eventdistribution;
 
-import com.oracle.coherence.common.builders.Builder;
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.Event;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.io.Serializer;
 import com.tangosol.net.Guardian;
 
+
 /**
- * An {@link EventDistributorBuilder} is a {@link Builder} for {@link EventDistributor}s.
+ * An {@link EventDistributorBuilder} is a builder for {@link EventDistributor}s.
  * <p>
  * For convenience, several {@link EventDistributorBuilder} implementations are provided in the
  * com.oracle.coherence.patterns.pushreplication.providers package, including the default implementation based
@@ -43,7 +43,7 @@ import com.tangosol.net.Guardian;
  *
  * @author Brian Oliver
  */
-public interface EventDistributorBuilder extends Builder<EventDistributor>
+public interface EventDistributorBuilder
 {
     /**
      * Establishes a {@link EventDistributor} with the specified symbolic name.
@@ -74,10 +74,12 @@ public interface EventDistributorBuilder extends Builder<EventDistributor>
      *                                  the cluster, devices and/or other clusters that are using Event Distribution.
      * @param serializerBuilder         The {@link ParameterizedBuilder} that will produce a {@link Serializer} to be
      *                                  used for (de)serializing {@link Event}s during distribution.
+     * @param loader                    The {@link ClassLoader}
      *
      * @return A {@link EventDistributor}
      */
-    public EventDistributor realize(String                           symbolicName,
-                                    String                           suggestedExternalName,
-                                    ParameterizedBuilder<Serializer> serializerBuilder);
+    public EventDistributor realize(String symbolicName,
+            String suggestedExternalName,
+            ParameterizedBuilder<Serializer> serializerBuilder,
+            ClassLoader loader);
 }

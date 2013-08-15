@@ -29,11 +29,8 @@
 	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
-
-    xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
-
-    element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
+    xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
+>
 
 	<defaults>
 		<serializer>pof</serializer>
@@ -58,17 +55,25 @@
 			<autostart>true</autostart>
 		</distributed-scheme>
 
-        <proxy-scheme>
-            <service-name>ExtendTcpProxyService</service-name>
-            <acceptor-config>
-                <tcp-acceptor>
-                    <local-address>
-                        <address system-property="proxy.address">localhost</address>
-                        <port system-property="proxy.port">10000</port>
-                    </local-address>
-                </tcp-acceptor>
-            </acceptor-config>
-            <autostart>true</autostart>
-        </proxy-scheme>
-	</caching-schemes>
+      <proxy-scheme>
+          <service-name>ExtendTcpProxyService</service-name>
+          <acceptor-config>
+              <tcp-acceptor>
+                  <local-address>
+                      <address system-property="proxy.address">localhost</address>
+                      <port system-property="proxy.port">10000</port>
+                  </local-address>
+              </tcp-acceptor>
+          </acceptor-config>
+          <autostart>true</autostart>
+      </proxy-scheme>
+
+    <invocation-scheme>
+      <scheme-name>publishing-svc</scheme-name>
+      <service-name>PublishingInvocationService</service-name>
+      <thread-count>4</thread-count>
+      <autostart system-property="tangosol.coherence.invocation.autostart">true</autostart>
+    </invocation-scheme>
+
+  </caching-schemes>
 </cache-config>

@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,17 +26,17 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.EntryEvent;
-import com.oracle.coherence.configuration.Mandatory;
-import com.oracle.coherence.configuration.Property;
-import com.oracle.coherence.configuration.SubType;
-import com.oracle.coherence.configuration.Type;
-import com.oracle.coherence.configuration.expressions.Expression;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
+import com.oracle.coherence.common.expression.SerializableExpressionHelper;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.channels.AbstractInterClusterEventChannelBuilder;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.annotation.Injectable;
+import com.tangosol.config.expression.Expression;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.net.CacheService;
@@ -59,7 +60,7 @@ public class RemoteCacheEventChannelBuilder extends AbstractInterClusterEventCha
     /**
      * The name of the cache to which the {@link EntryEvent}s will be distributed and applied.
      */
-    private Expression targetCacheName;
+    private Expression<String> targetCacheName;
 
     /**
      * The {@link ParameterizedBuilder} that can realize a {@link ConflictResolver} when required.
@@ -82,35 +83,32 @@ public class RemoteCacheEventChannelBuilder extends AbstractInterClusterEventCha
 
 
     /**
-     * Method description
+     * Return the target cache name expression.
      *
-     * @return
+     * @return  the target cache name expression
      */
-    public Expression getTargetCacheName()
+    public Expression<String> getTargetCacheName()
     {
         return targetCacheName;
     }
 
 
     /**
-     * Method description
+     * Set the target cache name expression.
      *
-     * @param targetCacheName
+     * @param targetCacheName  the target cache name expression
      */
-    @Property("target-cache-name")
-    @Mandatory
-    @Type(Expression.class)
-    @SubType(String.class)
-    public void setTargetCacheName(Expression targetCacheName)
+    @Injectable
+    public void setTargetCacheName(Expression<String> targetCacheName)
     {
-        this.targetCacheName = targetCacheName;
+        this.targetCacheName = SerializableExpressionHelper.ensureSerializable(targetCacheName);
     }
 
 
     /**
-     * Method description
+     * Return the conflict resolver builder.
      *
-     * @return
+     * @return  the conflict resolver builder
      */
     public ParameterizedBuilder<ConflictResolver> getConflictResolverBuilder()
     {
@@ -119,13 +117,11 @@ public class RemoteCacheEventChannelBuilder extends AbstractInterClusterEventCha
 
 
     /**
-     * Method description
+     * Set the conflict resolver builder.
      *
-     * @param conflictResolverBuilder
+     * @param conflictResolverBuilder  the conflict resolver builder
      */
-    @Property("conflict-resolver-scheme")
-    @Type(ParameterizedBuilder.class)
-    @SubType(ConflictResolver.class)
+    @Injectable("conflict-resolver-scheme")
     public void setConflictResolverBuilder(ParameterizedBuilder<ConflictResolver> conflictResolverBuilder)
     {
         this.conflictResolverBuilder = conflictResolverBuilder;
@@ -133,9 +129,9 @@ public class RemoteCacheEventChannelBuilder extends AbstractInterClusterEventCha
 
 
     /**
-     * Method description
+     * Return the remote cache service name.
      *
-     * @return
+     * @return  the remote cache service name
      */
     public String getRemoteCacheServiceName()
     {
@@ -144,12 +140,11 @@ public class RemoteCacheEventChannelBuilder extends AbstractInterClusterEventCha
 
 
     /**
-     * Method description
+     * Set the remote cache service name.
      *
-     * @param remoteCacheServiceName
+     * @param remoteCacheServiceName  the remote cache service name
      */
-    @Property("remote-cache-service-name")
-    @Mandatory
+    @Injectable("remote-cache-service-name")
     public void setRemoteCacheServiceName(String remoteCacheServiceName)
     {
         this.remoteCacheServiceName = remoteCacheServiceName;
@@ -159,12 +154,13 @@ public class RemoteCacheEventChannelBuilder extends AbstractInterClusterEventCha
     /**
      * {@inheritDoc}
      */
-    public EventChannel realize(ParameterProvider parameterProvider)
+    @Override
+    public EventChannel realize(ParameterResolver resolver,
+                                ClassLoader       classLoader,
+                                ParameterList     parameters)
     {
-        String targetCacheName = getTargetCacheName().evaluate(parameterProvider).getString();
-
         return new RemoteCacheEventChannel(getDistributionRole(),
-                                           targetCacheName,
+                                           getTargetCacheName().evaluate(resolver),
                                            getConflictResolverBuilder(),
                                            remoteCacheServiceName);
     }

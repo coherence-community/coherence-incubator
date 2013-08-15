@@ -6,7 +6,7 @@ the [Processing Pattern](../processingpattern/index.html).
 
 <h4>Namespace Content Handler</h4>
 
-The implementation is provided by the `com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler`
+The implementation is provided by the `com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler`
 class.
 
 <h4>Declaration</h4>
@@ -17,7 +17,7 @@ when declaring the namespace.
 
 To use the namespace you should declare it as follows:
 
-    <cache-config xmlns:processing="class://com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+    <cache-config xmlns:processing="class://com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler">
     
        ...
     
@@ -27,9 +27,8 @@ To use the namespace you should declare it as follows:
 
 The following section outlines the elements defined by this namespace, the most
 important of which are the [&lt;processing:cluster-config&gt;](#cluster-config)
-and the [&lt;processing:extend-config&gt;](#extend-config) elements.  These
-elements are typically incorporated into Coherence Cache Config &lt;cache-config&gt;
-elements.
+elements.  These elements are typically incorporated into Coherence Cache 
+Config &lt;cache-config&gt; elements.
 
 **Reference:**
 
@@ -41,7 +40,6 @@ The following elements are defined by this namespace.
 *   [composite-policy](#composite-policy)
 *   [default-taskprocessor](#default-taskprocessor)
 *   [dispatchers](#dispatchers)
-*   [extend-config](#extend-config)
 *   [local-executor-dispatcher](#local-executor-dispatcher)
 *   [logging-dispatcher](#logging-dispatcher)
 *   [random-policy](#random-policy)
@@ -164,11 +162,6 @@ Exactly two of the following elements must be defined as children of this elemen
     An Oracle Coherence `<instance>` element, defining an `TaskDispatchPolicy`
     to be used for instantiating a custom `TaskDispatchPolicy` implementation.
 
-*   &lt;class-scheme&gt;
-
-    An Oracle Coherence `<class-scheme>` element, defining an `TaskDispatchPolicy`
-    to be used for instantiating a custom `TaskDispatchPolicy` implementation.
-
 *Example:*
 
     <processing:composite-policy>
@@ -244,37 +237,6 @@ Zero or more the following elements may be defined as a child element ofthis ele
 
     An Oracle Coherence `<class-scheme>` element, defining an `Dispatcher`
     to be used for instantiating a custom `Dispatcher` implementation.
-
-
-------------------------------------------------------------------------------
-
-<a name="extend-config"><h5>&lt;processing:extend-config&gt;</h5></a>
-
-This element defines configuration for a Processing Pattern Extend Client, that
-of which may optionally participate and perform calculations on behalf of the
-Processing Pattern Cluster Members.
-
->   An Extend client can serve as a client to the processing pattern submitting work
->   as well as execute tasks using TaskProcessors. However, it can't serve as a
->   Dispatcher. That means that any processing pattern deployment needs Processing
->   Pattern Cluster Members to do the dispatching.
-
-*Used in:*
-
-This element is to be defined as a child of a `<cache-config>` element with in
-an Oracle Coherence Cache Configuration file.
-
-*Child Elements:*
-
-The following elements may be defined as a child element ofthis element:
-
-*   [&lt;<initiator-config>&gt;](http://docs.oracle.com/cd/E24290_01/coh.371/e22837/appendix_cacheconfig.htm#BABIDEHJ) **(required)**
-
-    Specifies the Coherence Extend Client connection configuration.
-
-*   [&lt;processing:taskprocessors&gt;](#taskprocessors) (optional)
-
-    Specifies the configuration of optional Extend Client-side `TaskProcessors`.
 
 
 ------------------------------------------------------------------------------
@@ -487,8 +449,7 @@ for executing `Tasks`.
 
 *Used in:*
 
-This element is a child element ofeither [&lt;processing:cluster-config&gt;](#cluster-config)
-or [&lt;processing:extend-config&gt;](#extend-config).
+This element is a child element of [&lt;processing:cluster-config&gt;](#cluster-config).
 
 *Child Elements:*
 

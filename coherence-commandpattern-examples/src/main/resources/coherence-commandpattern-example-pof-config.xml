@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-	File: coherence-commandpattern-example-pof-config.xml
+    File: coherence-commandpattern-example-pof-config.xml
  
  	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  	
@@ -25,7 +25,7 @@
 	
 	Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
  	Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
-  -->
+ -->
 <pof-config>
     <user-type-list>
         <include>coherence-pof-config.xml</include>
@@ -34,17 +34,20 @@
 
         <user-type>
             <type-id>1000</type-id>
-            <class-name>com.oracle.coherence.patterns.command.examples.GenericContext</class-name>
+            <class-name>com.oracle.coherence.patterns.command.examples.GenericContext
+            </class-name>
         </user-type>
 
         <user-type>
             <type-id>1001</type-id>
-            <class-name>com.oracle.coherence.patterns.command.examples.LoggingCommand</class-name>
+            <class-name>com.oracle.coherence.patterns.command.examples.TraceCommand
+            </class-name>
         </user-type>
 
         <user-type>
             <type-id>1002</type-id>
-            <class-name>com.oracle.coherence.patterns.command.examples.SetValueCommand</class-name>
+            <class-name>com.oracle.coherence.patterns.command.examples.SetValueCommand
+            </class-name>
         </user-type>
     </user-type-list>
 </pof-config>

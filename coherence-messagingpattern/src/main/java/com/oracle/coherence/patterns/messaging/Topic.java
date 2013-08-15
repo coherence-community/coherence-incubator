@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,21 +26,28 @@
 
 package com.oracle.coherence.patterns.messaging;
 
-import com.oracle.coherence.common.events.EntryEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryArrivedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryInsertedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryRemovedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryUpdatedEvent;
-import com.oracle.coherence.common.events.processing.EventProcessor;
-import com.oracle.coherence.common.events.processing.EventProcessorFactory;
+import com.oracle.coherence.common.liveobjects.LiveObject;
+import com.oracle.coherence.common.liveobjects.OnArrived;
+import com.oracle.coherence.common.liveobjects.OnDeparting;
+import com.oracle.coherence.common.liveobjects.OnInserted;
+import com.oracle.coherence.common.liveobjects.OnRemoved;
+import com.oracle.coherence.common.liveobjects.OnUpdated;
+
 import com.oracle.coherence.patterns.messaging.Subscription.Status;
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeMessageProcessor;
 import com.oracle.coherence.patterns.messaging.management.MessagingMBeanManager;
 import com.oracle.coherence.patterns.messaging.management.TopicProxy;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.net.CacheFactory;
 
+import com.tangosol.util.BinaryEntry;
+
 import java.util.ArrayList;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A {@link Topic} is a {@link Destination} that manages the state of a
@@ -50,9 +58,16 @@ import java.util.ArrayList;
  *
  * @author Brian Oliver
  */
+@LiveObject
 @SuppressWarnings("serial")
-public class Topic extends Destination implements EventProcessorFactory<EntryEvent>
+public class Topic extends Destination
 {
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(Topic.class.getName());
+
+
     /**
      * For {@link ExternalizableLite}.
      */
@@ -104,38 +119,53 @@ public class Topic extends Destination implements EventProcessorFactory<EntryEve
 
 
     /**
+     * When an Entry is inserted, updated, or arrives via a partition transfer need to ensure that the MBean
+     * for this {@link Topic} is properly visible.
+     *
+     * @param entry The {@link BinaryEntry} provided by the LiveObjectInterceptor
+     */
+    @OnInserted
+    @OnUpdated
+    @OnArrived
+    public void onChanged(BinaryEntry entry)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "Topic:onChanged identifier:{0}", getIdentifier());
+        }
+
+        MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
+
+        MBeanManager.registerMBean(this, TopicProxy.class, MBeanManager.buildTopicMBeanName(getIdentifier()));
+    }
+
+
+    /**
+     * When a {@link Topic} is removed from the cache or is removed via a departing partition
+     * need to unregister its MBean.
+     *
+     * @param entry The {@link BinaryEntry} provided by the LiveObjectInterceptor
+     */
+    @OnRemoved
+    @OnDeparting
+    public void onRemoved(BinaryEntry entry)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "Topic:onRemoved identifier:{0}", getIdentifier());
+        }
+
+        MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
+
+        MBeanManager.unregisterMBean(this, MBeanManager.buildTopicMBeanName(getIdentifier()));
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     public String toString()
     {
         return String.format("Topic{%s}", super.toString());
-    }
-
-
-    /**
-     * Register or unregister the MBean depending on the event.  There is no need to run an
-     * event processor for Topic.
-     *
-     * @param e event
-     * @return event processor
-     */
-    public EventProcessor<EntryEvent> getEventProcessor(EntryEvent e)
-    {
-        if ((e instanceof BackingMapEntryInsertedEvent) || (e instanceof BackingMapEntryArrivedEvent)
-            || (e instanceof BackingMapEntryUpdatedEvent))
-        {
-            MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
-
-            MBeanManager.registerMBean(this, TopicProxy.class, MBeanManager.buildTopicMBeanName(getIdentifier()));
-        }
-        else if (e instanceof BackingMapEntryRemovedEvent)
-        {
-            MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
-
-            MessagingMBeanManager.getInstance().unregisterMBean(this,
-                                                                MBeanManager.buildTopicMBeanName(getIdentifier()));
-        }
-
-        return null;
     }
 }

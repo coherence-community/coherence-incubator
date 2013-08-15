@@ -25,13 +25,8 @@
 
 package com.oracle.coherence.patterns.processing.internal.task;
 
-import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-import com.oracle.coherence.environment.Environment;
-import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResourceReference;
+import com.oracle.coherence.patterns.processing.internal.Environment;
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
@@ -106,7 +101,7 @@ public class DefaultTaskProcessorDefinitionManager implements TaskProcessorDefin
      * @param environment the {@link Environment} to use
      * @param configurableCacheFactory the {@link ConfigurableCacheFactory} to use
      */
-    public DefaultTaskProcessorDefinitionManager(Environment              environment,
+    public DefaultTaskProcessorDefinitionManager(Environment environment,
                                                  ConfigurableCacheFactory configurableCacheFactory)
     {
         this.configurableCacheFactory = configurableCacheFactory;
@@ -234,6 +229,8 @@ public class DefaultTaskProcessorDefinitionManager implements TaskProcessorDefin
     /**
      * {@inheritDoc}
      */
+    /*
+    todo pfm
     public Set<DependencyReference> getDependencyReferences()
     {
         Set<DependencyReference> dependencies = new HashSet<DependencyReference>();
@@ -247,11 +244,13 @@ public class DefaultTaskProcessorDefinitionManager implements TaskProcessorDefin
 
         return dependencies;
     }
-
+    */
 
     /**
      * {@inheritDoc}
      */
+
+
     public void onDependenciesSatisfied(Environment environment)
     {
         if (logger.isLoggable(Level.INFO))
@@ -277,11 +276,7 @@ public class DefaultTaskProcessorDefinitionManager implements TaskProcessorDefin
         }
 
         started = true;
-        environment.getResource(EventDispatcher.class)
-            .dispatchEvent(new LifecycleStartedEvent<DependentResource>(this));
-
     }
-
 
     /**
      * {@inheritDoc}

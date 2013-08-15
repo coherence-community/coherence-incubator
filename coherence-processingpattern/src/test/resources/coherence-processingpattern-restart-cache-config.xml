@@ -28,7 +28,7 @@
 <cache-config
     xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler"
     
-    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+    xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
     element:introduce-cache-config="coherence-processingpattern-cache-config.xml">
 
     <processing:cluster-config pof="true">

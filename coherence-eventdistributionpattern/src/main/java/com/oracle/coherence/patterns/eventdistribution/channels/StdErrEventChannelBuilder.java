@@ -25,9 +25,10 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels;
 
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PortableObject;
 
@@ -55,8 +56,11 @@ public class StdErrEventChannelBuilder extends AbstractEventChannelBuilder
     /**
      * {@inheritDoc}
      */
-    public EventChannel realize(ParameterProvider parameterProvider)
+    @Override
+    public EventChannel realize(ParameterResolver parameterResolver,
+            ClassLoader classLoader, ParameterList parameters)
     {
         return new StdErrEventChannel();
     }
+
 }

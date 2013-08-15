@@ -27,11 +27,11 @@ package com.oracle.coherence.patterns.processing.dispatchers.task;
 
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.util.ObjectProxyFactory;
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.processing.dispatchers.AbstractDispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchOutcome;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
+import com.oracle.coherence.patterns.processing.internal.Environment;
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;
 import com.oracle.coherence.patterns.processing.internal.task.DefaultTaskProcessorDefinition;
@@ -509,26 +509,32 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
     /**
      * Initialization of the {@link DefaultTaskDispatcher}.
      *
-     * @param oCCFactory the {@link ConfigurableCacheFactory} to use
+     * @param ccf the {@link ConfigurableCacheFactory} to use
      *
      */
     @SuppressWarnings("unchecked")
-    private void initialize(final ConfigurableCacheFactory oCCFactory)
+    private void initialize(final ConfigurableCacheFactory ccf)
     {
-        this.environment = (Environment) oCCFactory;
+        this.environment = ccf.getResourceRegistry().getResource(Environment.class);
         submissionResultProxyFactory =
             (ObjectProxyFactory<SubmissionResult>) environment.getResource(SubmissionResult.class);
         submissionProxyFactory = (ObjectProxyFactory<Submission>) environment.getResource(Submission.class);
         taskProcessorMediatorFactory =
             (ObjectProxyFactory<TaskProcessorMediator>) environment.getResource(TaskProcessorMediator.class);
-        taskProcessorMediatorCache = oCCFactory.ensureCache(DefaultTaskProcessorMediator.CACHENAME, null);
+        taskProcessorMediatorCache = ccf.ensureCache(DefaultTaskProcessorMediator.CACHENAME, null);
         taskProcessorMediatorMBeanFactory =
             new ObjectProxyFactory<TaskProcessorMediatorProxyMBean>(DefaultTaskProcessorMediator.CACHENAME,
                                                                     TaskProcessorMediatorProxyMBean.class);
+
+        /*
+        todo pfm
+
         taskProcessorMediatorMBeanFactory.onDependenciesSatisfied(environment);
+         */
+
         initializeTaskProcessorMediatorListener();
-        taskProcessorDefinitionCache = oCCFactory.ensureCache(DefaultTaskProcessorDefinition.CACHENAME, null);
-        initializeTaskProcessorDefinitionListener(oCCFactory);
+        taskProcessorDefinitionCache = ccf.ensureCache(DefaultTaskProcessorDefinition.CACHENAME, null);
+        initializeTaskProcessorDefinitionListener(ccf);
     }
 
 
@@ -782,11 +788,15 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
 
                 if (oTaskProcessorDefinition.getTaskProcessorType() == TaskProcessorType.GRID)
                 {
-                    tps.setAttribute("taskprocessortype", "grid");
+                    tps.setAttribute("type", "grid");
+
+             //       tps.setAttribute("taskprocessortype", "grid");
                 }
                 else
                 {
-                    tps.setAttribute("taskprocessortype", "single");
+                    tps.setAttribute("type", "single");
+
+              //      tps.setAttribute("taskprocessortype", "single");
                 }
 
                 TaskProcessor processor = oTaskProcessorDefinition.getTaskProcessor();

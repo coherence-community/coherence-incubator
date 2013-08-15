@@ -25,13 +25,10 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.coherence;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
 import com.oracle.coherence.common.tuples.Pair;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
@@ -47,6 +44,8 @@ import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeMessageProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeSubscriptionMessagesProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.DrainSubscriptionMessagesProcessor;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.Serializer;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
@@ -97,15 +96,15 @@ public class CoherenceEventChannelController extends AbstractEventChannelControl
     public CoherenceEventChannelController(EventDistributor.Identifier         distributorIdentifier,
                                            EventChannelController.Identifier   controllerIdentifier,
                                            EventChannelController.Dependencies controllerDependencies,
-                                           Environment                         environment,
-                                           ParameterProvider                   parameterProvider,
+                                           ClassLoader                         loader,
+                                           ParameterResolver                   resolver,
                                            ParameterizedBuilder<Serializer>    serializerBuilder)
     {
         super(distributorIdentifier,
               controllerIdentifier,
               controllerDependencies,
-              environment,
-              parameterProvider,
+              loader,
+              resolver,
               serializerBuilder);
 
         // the subscriber is to the topic identified by the cacheName, with the subscriber being the external name.

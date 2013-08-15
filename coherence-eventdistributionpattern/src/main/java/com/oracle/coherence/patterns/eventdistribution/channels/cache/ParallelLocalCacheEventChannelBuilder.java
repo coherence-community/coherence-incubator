@@ -25,19 +25,20 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.configuration.Mandatory;
-import com.oracle.coherence.configuration.Property;
-import com.oracle.coherence.configuration.SubType;
-import com.oracle.coherence.configuration.Type;
-import com.oracle.coherence.configuration.expressions.Constant;
-import com.oracle.coherence.configuration.expressions.Expression;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
+import com.oracle.coherence.common.expression.SerializableExpressionHelper;
+import com.oracle.coherence.common.expression.SerializableLiteralExpression;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.AbstractEventChannelBuilder;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.annotation.Injectable;
+import com.tangosol.config.expression.Expression;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
+import com.tangosol.net.CacheFactory;
 import com.tangosol.util.ExternalizableHelper;
+import com.tangosol.util.ResourceRegistry;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -59,20 +60,21 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
      */
     public static final String INVOCATION_SVC = "PublishingInvocationService";
 
+
     /**
      * The name of the local cache to which the {@link com.oracle.coherence.patterns.eventdistribution.EventChannel} will apply {@link com.oracle.coherence.common.events.EntryEvent}.
      */
-    private Expression targetCacheName;
+    private Expression<String> targetCacheName;
 
     /**
-     * The {@link com.oracle.coherence.common.builders.ParameterizedBuilder} that can realize a {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.ConflictResolver} when required.
+     * The {@link ParameterizedBuilder} that can realize a {@link com.oracle.coherence.patterns.eventdistribution.channels.cache.ConflictResolver} when required.
      */
     private ParameterizedBuilder<ConflictResolver> conflictResolverBuilder = null;
 
     /**
      * The name of the Invocation Service to use.
      */
-    private Expression invocationServiceName;
+    private Expression<String> invocationServiceName;
 
 
     /**
@@ -81,17 +83,22 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
     public ParallelLocalCacheEventChannelBuilder()
     {
         super();
-        invocationServiceName = new Constant(INVOCATION_SVC);
+
+        invocationServiceName = new SerializableLiteralExpression<String>(INVOCATION_SVC);
     }
 
 
     /**
      * {@inheritDoc}
      */
-    public EventChannel realize(ParameterProvider parameterProvider)
+    @Override
+    public EventChannel realize(ParameterResolver parameterResolver,
+            ClassLoader classLoader, ParameterList parameters)
     {
-        String                        targetCacheName = getTargetCacheName().evaluate(parameterProvider).getString();
-        String invocationServiceName = getInvocationServiceName().evaluate(parameterProvider).getString();
+        ResourceRegistry registry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
+
+        String targetCacheName       = getTargetCacheName().evaluate(parameterResolver);
+        String invocationServiceName = getInvocationServiceName().evaluate(parameterResolver);
 
         LocalCacheEventChannelBuilder localEventChannelBuilder = new LocalCacheEventChannelBuilder();
 
@@ -101,40 +108,38 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
         return new ParallelLocalCacheEventChannel(targetCacheName,
                                                   invocationServiceName,
                                                   localEventChannelBuilder,
-                                                  parameterProvider);
+                                                  registry,
+                                                  parameterResolver);
     }
 
 
     /**
-     * Method description
+     * Return the target cache name expression.
      *
-     * @return
+     * @return the target cache name expression
      */
-    public Expression getTargetCacheName()
+    public Expression<String> getTargetCacheName()
     {
         return targetCacheName;
     }
 
 
     /**
-     * Method description
+     * Set the target cache name expression.
      *
-     * @param targetCacheName
+     * @param targetCacheName  the target cache name expression
      */
-    @Property("target-cache-name")
-    @Mandatory
-    @Type(Expression.class)
-    @SubType(String.class)
+    @Injectable
     public void setTargetCacheName(Expression targetCacheName)
     {
-        this.targetCacheName = targetCacheName;
+        this.targetCacheName = SerializableExpressionHelper.ensureSerializable(targetCacheName);
     }
 
 
     /**
-     * Method description
+     * Return the conflict resolver builder.
      *
-     * @return the Conflict Resolver Builder
+     * @return  the conflict resolver builder
      */
     public ParameterizedBuilder<ConflictResolver> getConflictResolverBuilder()
     {
@@ -143,13 +148,11 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
 
 
     /**
-     * Method description
+     * Set the conflict resolver builder.
      *
-     * @param conflictResolverBuilder
+     * @param conflictResolverBuilder  the conflict resolver builder
      */
-    @Property("conflict-resolver-scheme")
-    @Type(ParameterizedBuilder.class)
-    @SubType(ConflictResolver.class)
+    @Injectable("conflict-resolver-scheme")
     public void setConflictResolverBuilder(ParameterizedBuilder<ConflictResolver> conflictResolverBuilder)
     {
         this.conflictResolverBuilder = conflictResolverBuilder;
@@ -157,39 +160,33 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
 
 
     /**
-     * Method description
+     * Return the InvocationService name expression.
      *
-     * @return the Invocation Service name
+     * @return the Invocation Service name expression
      */
-    public Expression getInvocationServiceName()
+    public Expression<String> getInvocationServiceName()
     {
         return invocationServiceName;
     }
 
 
     /**
-     * Method description
+     * Set the InvocationService name expression.
      *
-     * @param serviceName The name of the service to use
+     * @param serviceName  the Invocation Service name expression
      */
-    @Property("invocation-service-name")
-    @Type(Expression.class)
-    @SubType(String.class)
+    @Injectable("remote-invocation-service-scheme")
     public void setInvocationServiceName(Expression serviceName)
     {
-        invocationServiceName = serviceName;
+        invocationServiceName = SerializableExpressionHelper
+                .ensureSerializable(serviceName);
     }
 
 
     /**
-     * Method description
-     *
-     * @param in
-     *
-     * @throws java.io.IOException
+     * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void readExternal(DataInput in) throws IOException
     {
         super.readExternal(in);
@@ -199,11 +196,7 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
 
 
     /**
-     * Method description
-     *
-     * @param out
-     *
-     * @throws java.io.IOException
+     * {@inheritDoc}
      */
     @Override
     public void writeExternal(DataOutput out) throws IOException
@@ -215,14 +208,9 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
 
 
     /**
-     * Method description
-     *
-     * @param reader
-     *
-     * @throws java.io.IOException
+     * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void readExternal(PofReader reader) throws IOException
     {
         super.readExternal(reader);
@@ -233,11 +221,7 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
 
 
     /**
-     * Method description
-     *
-     * @param writer
-     *
-     * @throws java.io.IOException
+     * {@inheritDoc}
      */
     @Override
     public void writeExternal(PofWriter writer) throws IOException

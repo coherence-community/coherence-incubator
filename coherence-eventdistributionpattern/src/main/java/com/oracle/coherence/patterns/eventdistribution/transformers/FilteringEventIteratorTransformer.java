@@ -32,6 +32,7 @@ import com.tangosol.util.Filter;
 
 import java.util.Iterator;
 
+
 /**
  * A {@link FilteringEventIteratorTransformer} applies a {@link Filter} to batch of
  * {@link Event}s, returning only those that satisfy the {@link Filter} in the resulting batch.

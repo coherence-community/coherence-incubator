@@ -25,13 +25,13 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors;
 
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.management.Registry;
+import com.tangosol.util.ResourceRegistry;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * of {@link EventChannelController}s by {@link EventDistributor}s.  Included in this responsibility is
  * the management of JMX infrastructure registrations.
  * <p>
- * An instance of this class may be acquired via an {@link Environment}.
+ * An instance of this class may be acquired via an {@link ResourceRegistry}.
  * <p>
  * Copyright (c) 2011. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
@@ -50,24 +50,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EventChannelControllerManager
 {
     /**
-     * The {@link Environment} in which this {@link EventChannelControllerManager} is operating.
-     */
-    private Environment environment;
-
-    /**
      * The collection of {@link EventChannelController}s being managed.
      */
-    private ConcurrentHashMap<EventDistributor.Identifier, ConcurrentHashMap<EventChannelController.Identifier, EventChannelController>> controllersByDistributor;
+    private ConcurrentHashMap<EventDistributor.Identifier,
+            ConcurrentHashMap<EventChannelController.Identifier, EventChannelController>> controllersByDistributor;
 
 
     /**
      * Standard Constructor.
-     *
-     * @param environment The {@link Environment} in which the {@link EventChannelControllerManager} is operating
      */
-    public EventChannelControllerManager(Environment environment)
+    public EventChannelControllerManager()
     {
-        this.environment = environment;
         this.controllersByDistributor = new ConcurrentHashMap<EventDistributor.Identifier,
                                                               ConcurrentHashMap<EventChannelController.Identifier,
                                                                                 EventChannelController>>();
@@ -119,7 +112,7 @@ public class EventChannelControllerManager
         {
             synchronized (controllers)
             {
-                controller = builder.realize(distributorIdentifier, controllerIdentifier, dependencies, environment);
+                controller = builder.realize(distributorIdentifier, controllerIdentifier, dependencies);
 
                 controllers.put(controllerIdentifier, controller);
 
@@ -154,8 +147,7 @@ public class EventChannelControllerManager
      *                                for the {@link EventChannelController}.
      */
     public EventChannelController unregisterEventChannelController(EventDistributor.Identifier distributorIdentifier,
-                                                                   EventChannelController
-                                                                       .Identifier             controllerIdentifier)
+                                                                   EventChannelController.Identifier controllerIdentifier)
     {
         EventChannelController controller = null;
 

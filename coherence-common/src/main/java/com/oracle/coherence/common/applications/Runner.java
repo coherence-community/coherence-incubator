@@ -82,16 +82,16 @@ public class Runner
             if (!propertiesFileName.endsWith(".properties"))
             {
                 System.out
-                    .printf("WARNING: The specified application properties file [%s] doesn't end in .properties\n",
-                            propertiesFileName);
+                        .printf("WARNING: The specified application properties file [%s] doesn't end in .properties\n",
+                                propertiesFileName);
             }
 
             try
             {
                 // attempt to load the properties (via the classpath)
                 BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(ClassLoader
-                        .getSystemResourceAsStream(propertiesFileName)));
+                        new BufferedReader(new InputStreamReader(ClassLoader
+                                .getSystemResourceAsStream(propertiesFileName)));
 
                 Properties applicationProperties = new Properties();
 
@@ -105,7 +105,7 @@ public class Runner
                 if (applicationClassName == null || applicationClassName.trim().isEmpty())
                 {
                     System.out
-                        .println("ERROR: Failed to load the Main-Class for the application as it is either undefined or empty");
+                            .println("ERROR: Failed to load the Main-Class for the application as it is either undefined or empty");
                 }
                 else
                 {
@@ -131,8 +131,8 @@ public class Runner
                                 else
                                 {
                                     throw new IllegalArgumentException(String
-                                        .format("ERROR: Invalid Property Value for [%s=%s].  Should be of the form: System-PropertyN=-Dproperty.name=property.value\n",
-                                                propertyName, propertyDefinition));
+                                            .format("ERROR: Invalid Property Value for [%s=%s].  Should be of the form: System-PropertyN=-Dproperty.name=property.value\n",
+                                                    propertyName, propertyDefinition));
                                 }
                             }
 
@@ -148,19 +148,19 @@ public class Runner
                                 catch (Exception e)
                                 {
                                     throw new IllegalArgumentException(String
-                                        .format("ERROR: Invalid Argument Index for [%s=%s].  Should be of the form: ArgumentN=value (where N is an integer)\n",
-                                                propertyName, applicationProperties.getProperty(propertyName)),
-                                                                       e);
+                                            .format("ERROR: Invalid Argument Index for [%s=%s].  Should be of the form: ArgumentN=value (where N is an integer)\n",
+                                                    propertyName, applicationProperties.getProperty(propertyName)),
+                                            e);
                                 }
                             }
                         }
 
                         // determine the Application Name and Description
                         String applicationName = applicationProperties.containsKey("Application-Name")
-                                                 ? applicationProperties.getProperty("Application-Name").trim() : null;
+                                ? applicationProperties.getProperty("Application-Name").trim() : null;
                         String applicationDescription =
-                            applicationProperties.containsKey("Application-Description")
-                            ? applicationProperties.getProperty("Application-Description").trim() : null;
+                                applicationProperties.containsKey("Application-Description")
+                                        ? applicationProperties.getProperty("Application-Description").trim() : null;
 
                         // output the application details
                         if (applicationName != null)
@@ -175,8 +175,8 @@ public class Runner
 
                         System.out.printf("Application Class       : %s\n", applicationClass);
                         System.out.printf("With Arguments          : %s\n",
-                                          (applicationArguments == null || applicationArguments.size() == 0
-                                           ? "(no arguments)" : applicationArguments));
+                                (applicationArguments == null || applicationArguments.size() == 0
+                                        ? "(no arguments)" : applicationArguments));
                         System.out.printf("Using System Properties : %s\n", System.getProperties());
                         System.out.println();
 
@@ -198,22 +198,22 @@ public class Runner
                     catch (Exception e)
                     {
                         System.out.printf("ERROR: Failed to load and execute the Main-Class [%s] due to:\n%s",
-                                          applicationClassName,
-                                          e);
+                                applicationClassName,
+                                e);
                     }
                 }
             }
             catch (Exception e)
             {
                 System.out.printf("ERROR: Unable to loaded the application properties file [%s] due to:\n%s",
-                                  propertiesFileName,
-                                  e);
+                        propertiesFileName,
+                        e);
             }
         }
         else
         {
             System.out
-                .println("Oracle Java Application Runner requires a single parameter, specifying a .properties file on the classpath");
+                    .println("Oracle Java Application Runner requires a single parameter, specifying a .properties file on the classpath");
         }
     }
 }

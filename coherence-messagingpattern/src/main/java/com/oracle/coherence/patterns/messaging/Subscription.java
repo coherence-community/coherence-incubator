@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,22 +26,20 @@
 
 package com.oracle.coherence.patterns.messaging;
 
-import com.oracle.coherence.common.backingmaplisteners.Cause;
-import com.oracle.coherence.common.backingmaplisteners.LifecycleAwareCacheEntry;
 import com.oracle.coherence.common.ranges.Ranges;
-import com.oracle.coherence.patterns.messaging.management.MessagingMBeanManager;
-import com.oracle.coherence.patterns.messaging.management.QueueSubscriptionProxy;
-import com.oracle.coherence.patterns.messaging.management.SubscriptionProxy;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
-import com.tangosol.util.MapEvent;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -60,7 +59,7 @@ import java.util.Map;
  * @author Brian Oliver
  */
 @SuppressWarnings("serial")
-public abstract class Subscription implements ExternalizableLite, PortableObject, LifecycleAwareCacheEntry
+public abstract class Subscription implements ExternalizableLite, PortableObject
 {
     /**
      * All {@link Subscription}s have a {@link Status} indicating if they are current accepting messages.
@@ -459,58 +458,6 @@ public abstract class Subscription implements ExternalizableLite, PortableObject
         visibleMessageTracker = new DefaultMessageTracker();
 
         return outTracker;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public void onCacheEntryLifecycleEvent(MapEvent mapEvent,
-                                           Cause    cause)
-    {
-        if (this instanceof LeasedSubscription)
-        {
-            ((LeasedSubscription) this).onCacheEntryEvent(mapEvent, cause);
-        }
-
-        if (mapEvent.getId() == MapEvent.ENTRY_INSERTED || mapEvent.getId() == MapEvent.ENTRY_UPDATED)
-        {
-            // Register the subscription MBEAN
-            if (this instanceof QueueSubscription)
-            {
-                MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
-
-                MBeanManager.registerMBean(this,
-                                           QueueSubscriptionProxy.class,
-                                           MBeanManager.buildQueueSubscriptionMBeanName(getIdentifier()));
-            }
-            else
-            {
-                MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
-
-                MBeanManager.registerMBean(this,
-                                           SubscriptionProxy.class,
-                                           MBeanManager.buildTopicSubscriptionMBeanName(getIdentifier()));
-            }
-
-        }
-        else
-        {
-            // Unregister the subscription MBEAN
-            if (this instanceof QueueSubscription)
-            {
-                MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
-
-                MBeanManager.unregisterMBean(this, MBeanManager.buildQueueSubscriptionMBeanName(getIdentifier()));
-            }
-            else
-            {
-                MessagingMBeanManager MBeanManager = MessagingMBeanManager.getInstance();
-
-                MBeanManager.unregisterMBean(this, MBeanManager.buildTopicSubscriptionMBeanName(getIdentifier()));
-            }
-
-        }
     }
 
 

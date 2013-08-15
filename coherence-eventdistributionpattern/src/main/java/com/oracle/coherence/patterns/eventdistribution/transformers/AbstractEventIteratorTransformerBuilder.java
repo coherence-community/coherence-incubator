@@ -25,9 +25,9 @@
 
 package com.oracle.coherence.patterns.eventdistribution.transformers;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
@@ -36,6 +36,7 @@ import com.tangosol.io.pof.PortableObject;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 
 /**
  * An {@link AbstractEventIteratorTransformerBuilder} is an builder for {@link EventIteratorTransformer}s.
@@ -47,14 +48,14 @@ import java.io.IOException;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractEventIteratorTransformerBuilder implements ParameterizedBuilder<EventIteratorTransformer>,
-                                                                         ExternalizableLite,
-                                                                         PortableObject
+        ExternalizableLite,
+        PortableObject
 {
     /**
      * {@inheritDoc}
      */
     public boolean realizesClassOf(Class<?>          clazz,
-                                   ParameterProvider parameterProvider)
+                                   ParameterResolver parameterResolver)
     {
         return EventIteratorTransformer.class.isAssignableFrom(clazz);
     }

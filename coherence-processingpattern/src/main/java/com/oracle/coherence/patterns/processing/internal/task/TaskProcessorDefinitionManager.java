@@ -25,7 +25,6 @@
 
 package com.oracle.coherence.patterns.processing.internal.task;
 
-import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
 
 /**
@@ -36,7 +35,7 @@ import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
  *
  * @author Christer Fahlgren
  */
-public interface TaskProcessorDefinitionManager extends DependentResource
+public interface TaskProcessorDefinitionManager
 {
     /**
      * Registers a {@link TaskProcessorDefinition}.

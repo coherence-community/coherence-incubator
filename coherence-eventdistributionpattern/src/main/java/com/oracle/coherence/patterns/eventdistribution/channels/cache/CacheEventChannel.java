@@ -25,9 +25,9 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.CacheEvent;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.net.NamedCache;
 
 /**

@@ -27,19 +27,20 @@ simply add the following declaration to your application `pom.xml` file
 
 <h4>Contents</h4>
 
+>   Releases prior to Incubator 12 provided several classes that enabled
+>   the development of customized namespaces for Coherence.  As this
+>   capability is now provided by Coherence 12.1.2+, these classes have
+>   been removed and all dependencies on these capabilities now use
+>   native Coherence.
+>
+>   For information how to develop custom namespaces for Coherence 12.1.2+,
+>   refer to the following official documentation and presentations:
+>
+>   *   [You Tube: Coherence Channel](http://www.youtube.com/user/OracleCoherence)
+>   *   [You Tube: Coherence 12.1.2 Play List](http://www.youtube.com/playlist?list=PLxqhEJ4CA3JtQwuPS8Qmd88lGX-gsIbHV)
+>   *   [Building Your Own Services (and Namespaces)](http://coherence.oracle.com/download/attachments/5112972/Coherence-12.1.2-Configuration-Enhancements.pdf?version=1&modificationDate=1366058577469)
+
 Noteworthy packages, classes and interfaces:
-
-*   The `ExtensibleEnvironment` Class:
-
-    A replacement for the standard Coherence `ConfigurableCacheFactory` 
-    implementation, responsible for processing cache configurations, that 
-    allows developers to independently create custom configurations and 
-    runtime extensions to Coherence.
-
-*   The `com.oracle.coherence.common.events` Package:
-
-    A simple framework to enable the development of server-side synchronous 
-    and asynchronous event-based applications, embedded within Coherence.
 
 *   The `CoherenceLogHandler` Class:
 
@@ -74,34 +75,7 @@ Noteworthy packages, classes and interfaces:
     (often useful for cache keys), handling `Tickets`, `Ranges`, `Tuples`, `Leases` 
     and some customized `ThreadFactories`.
 
-<h3>Further Documentation</h3>
-
-<h4>Extensible Environments</h4>
-
-The Oracle Coherence Incubator provides a mechanism to support custom extension
-of Cache Configurations through the use of what we call `ExtensibleEnvironments`, 
-including the ability to introduce other cache configurations.  The following
-section provides information about said extensions.
-
-*   *[Background and Motivation](extensible-environments-overview.html)* 
-
-    An introduction to Coherence Configuration, the Configurable Cache Factory 
-    Coherence startup sequence.
-    
-*   *[Introduction to XML Namespaces](extensible-environments-namespaces.html)*
-
-    XML Namespaces and XML Namespaces in Cache Configurations.
-
-*   *[Creating Custom Cache Configuration Namespaces](extensible-environments-tutorial.html)*
-
-    A tutorial outlining how to create your own XML Cache Configuration 
-    Namespace for Coherence.
-    
-<h4>Cache Configuration Namespaces defined by the Coherence Incubator Common Package</h4>
-
-*   *[The Coherence Namespace](coherence-namespace.html)*:
-    The default and implicitly defined namespace for processing Coherence Cache 
-    Configuration elements.
+<h4>Cache Configuration Namespaces defined by the this module</h4>
 
 *   *[The Element Namespace](element-namespace.html)*:
     A namespace enabling runtime transformation of XML elements in a cache 
@@ -114,13 +88,6 @@ section provides information about said extensions.
     
 *   *[The JNDI Namespace](jndi-namespace.html)*:
     A utility namespace providing the ability to lookup resources from JNDI.
-
-*   *[The Instance Namespace](instance-namespace.html)* (deprecated):
-    A utility namespace providing the ability to specify how custom classes may 
-    be instantiated.
-
-*   *[The Value Namespace](value-namespace.html)* (deprecated): 
-     A utility namespace providing the ability to define strongly typed values.
 
 <h4>The Amazon EC2 Address Provider</h4>
 

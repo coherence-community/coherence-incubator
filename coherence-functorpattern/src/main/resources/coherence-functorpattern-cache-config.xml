@@ -31,22 +31,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
     
-    xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+    xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
     element:introduce-cache-config="coherence-commandpattern-cache-config.xml">
 
 	<caching-scheme-mapping>
 		<cache-mapping>
 			<cache-name>coherence.functorpattern.results</cache-name>
-			<scheme-name>distributed-scheme-for-functor-results</scheme-name>
+			<scheme-name>distributed-scheme-for-command-pattern</scheme-name>
 		</cache-mapping>
 	</caching-scheme-mapping>
-     
-    <caching-schemes>
-        <distributed-scheme>
-            <scheme-name>distributed-scheme-for-functor-results</scheme-name>
-            <scheme-ref>distributed-scheme-with-backing-map-listener</scheme-ref>
-            <autostart>true</autostart>
-        </distributed-scheme>
-    </caching-schemes>
 </cache-config>
 		

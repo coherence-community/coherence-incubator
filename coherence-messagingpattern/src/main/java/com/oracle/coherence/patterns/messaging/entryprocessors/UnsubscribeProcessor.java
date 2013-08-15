@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,24 +26,32 @@
 
 package com.oracle.coherence.patterns.messaging.entryprocessors;
 
-import com.oracle.coherence.common.logging.Logger;
 import com.oracle.coherence.patterns.messaging.Destination;
 import com.oracle.coherence.patterns.messaging.MessageTracker;
 import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
+
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.InvocableMap.Entry;
+
 import com.tangosol.util.processor.AbstractProcessor;
 import com.tangosol.util.processor.ExtractorProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The {@link UnsubscribeProcessor} is used to remove a {@link Subscription} to
@@ -56,6 +65,11 @@ import java.io.IOException;
 @SuppressWarnings("serial")
 public class UnsubscribeProcessor extends AbstractProcessor implements ExternalizableLite, PortableObject
 {
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(UnsubscribeProcessor.class.getName());
+
     /**
      * The {@link SubscriptionIdentifier} of the {@link Subscription} to the {@link Destination}.
      */
@@ -93,9 +107,9 @@ public class UnsubscribeProcessor extends AbstractProcessor implements Externali
             return null;
         }
 
-        if (Logger.isEnabled(Logger.QUIET))
+        if (logger.isLoggable(Level.FINER))
         {
-            Logger.log(Logger.QUIET, "Unsubscribing %s", subscriptionIdentifier);
+            logger.log(Level.FINER, "Unsubscribing {0}", subscriptionIdentifier);
         }
 
         // get the visible message range from either environment or subscription

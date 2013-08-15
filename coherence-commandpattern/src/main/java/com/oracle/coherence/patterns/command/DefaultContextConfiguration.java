@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,9 +27,11 @@
 package com.oracle.coherence.patterns.command;
 
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -38,7 +41,7 @@ import java.io.IOException;
 /**
  * The default implementation of a {@link ContextConfiguration}.
  * <p>
- * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2008-2012. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -49,7 +52,7 @@ public class DefaultContextConfiguration implements ContextConfiguration, Extern
     /**
      * The {@link ContextConfiguration.ManagementStrategy} for the {@link ContextConfiguration}.
      */
-    private ManagementStrategy managementStrategy;
+    private ManagementStrategy m_managementStrategy;
 
 
     /**
@@ -59,7 +62,7 @@ public class DefaultContextConfiguration implements ContextConfiguration, Extern
      */
     public DefaultContextConfiguration()
     {
-        this.managementStrategy = ManagementStrategy.DISTRIBUTED;
+        m_managementStrategy = ManagementStrategy.DISTRIBUTED;
     }
 
 
@@ -70,7 +73,7 @@ public class DefaultContextConfiguration implements ContextConfiguration, Extern
      */
     public DefaultContextConfiguration(ManagementStrategy managementStrategy)
     {
-        this.managementStrategy = managementStrategy;
+        m_managementStrategy = managementStrategy;
     }
 
 
@@ -79,7 +82,7 @@ public class DefaultContextConfiguration implements ContextConfiguration, Extern
      */
     public ManagementStrategy getManagementStrategy()
     {
-        return managementStrategy;
+        return m_managementStrategy;
     }
 
 
@@ -88,7 +91,7 @@ public class DefaultContextConfiguration implements ContextConfiguration, Extern
      */
     public void readExternal(DataInput in) throws IOException
     {
-        managementStrategy = ManagementStrategy.values()[ExternalizableHelper.readInt(in)];
+        m_managementStrategy = ManagementStrategy.values()[ExternalizableHelper.readInt(in)];
     }
 
 
@@ -97,7 +100,7 @@ public class DefaultContextConfiguration implements ContextConfiguration, Extern
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        ExternalizableHelper.writeInt(out, managementStrategy.ordinal());
+        ExternalizableHelper.writeInt(out, m_managementStrategy.ordinal());
     }
 
 
@@ -106,7 +109,7 @@ public class DefaultContextConfiguration implements ContextConfiguration, Extern
      */
     public void readExternal(PofReader reader) throws IOException
     {
-        managementStrategy = ManagementStrategy.values()[reader.readInt(0)];
+        m_managementStrategy = ManagementStrategy.values()[reader.readInt(0)];
     }
 
 
@@ -115,7 +118,7 @@ public class DefaultContextConfiguration implements ContextConfiguration, Extern
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeInt(0, managementStrategy.ordinal());
+        writer.writeInt(0, m_managementStrategy.ordinal());
     }
 
 
@@ -124,6 +127,6 @@ public class DefaultContextConfiguration implements ContextConfiguration, Extern
      */
     public String toString()
     {
-        return String.format("DefaultContextConfiguration{managementStrategy=%s}", managementStrategy);
+        return String.format("DefaultContextConfiguration{managementStrategy=%s}", m_managementStrategy);
     }
 }

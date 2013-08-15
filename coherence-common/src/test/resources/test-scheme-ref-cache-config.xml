@@ -43,7 +43,7 @@
     <caching-schemes>
         <class-scheme>
             <scheme-name>class-scheme-with-scheme-ref</scheme-name>
-            <class-name>com.oracle.coherence.environment.extensible.MyCache</class-name>
+            <class-name>com.oracle.coherence.configuration.MyCache</class-name>
             <init-params>
                 <init-param>
                     <param-type>java.lang.String</param-type>
@@ -58,7 +58,7 @@
 
         <class-scheme>
             <scheme-name>just-a-class-scheme</scheme-name>
-            <class-name>com.oracle.coherence.environment.extensible.MyClass</class-name>
+            <class-name>com.oracle.coherence.configuration.MyClass</class-name>
         </class-scheme>
     </caching-schemes>
 </cache-config>

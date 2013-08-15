@@ -25,18 +25,20 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
-import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
+import com.oracle.coherence.common.expression.SystemPropertyParameterList;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.NullParameterResolver;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.Serializer;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.util.Base;
 import com.tangosol.util.BinaryWriteBuffer;
+import com.tangosol.util.ResourceRegistry;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -101,6 +103,10 @@ public class JMSEventDistributor implements EventDistributor
      */
     private MessageProducer messageProducer;
 
+    /**
+     * The {@link ResourceRegistry}.
+     */
+    private ResourceRegistry registry;
 
     /**
      * Standard Constructor.
@@ -113,7 +119,8 @@ public class JMSEventDistributor implements EventDistributor
     public JMSEventDistributor(String                                  symbolicName,
                                String                                  suggestedExternalName,
                                ParameterizedBuilder<Serializer>        serializerBuilder,
-                               ParameterizedBuilder<ConnectionFactory> connectionFactoryBuilder)
+                               ParameterizedBuilder<ConnectionFactory> connectionFactoryBuilder,
+                               ClassLoader                             loader)
     {
         if (logger.isLoggable(Level.INFO))
         {
@@ -139,8 +146,8 @@ public class JMSEventDistributor implements EventDistributor
         try
         {
             // create the connection
-            this.connection =
-                connectionFactoryBuilder.realize(SystemPropertyParameterProvider.INSTANCE).createConnection();
+            this.connection = connectionFactoryBuilder.realize( new NullParameterResolver(),
+                    loader, new SystemPropertyParameterList()).createConnection();
 
             // create the session
             this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -203,8 +210,9 @@ public class JMSEventDistributor implements EventDistributor
      * {@inheritDoc}
      */
     @Override
-    public EventChannelController.Identifier establishEventChannelController(Dependencies      dependencies,
-                                                                             ParameterProvider parameterProvider)
+    public EventChannelController.Identifier establishEventChannelController(
+            Dependencies dependencies, ParameterResolver parameterResolver,
+            ClassLoader loader)
     {
         if (logger.isLoggable(Level.FINER))
         {
@@ -216,7 +224,7 @@ public class JMSEventDistributor implements EventDistributor
         // establish the serializer (if we haven't done so already)
         if (serializer == null)
         {
-            serializer = serializerBuilder.realize(parameterProvider);
+            serializer = serializerBuilder.realize(parameterResolver, loader, null);
         }
 
         // create an EventChannelController identifier (with an external name that is JMS compliant)
@@ -229,9 +237,10 @@ public class JMSEventDistributor implements EventDistributor
             new JMSEventChannelControllerConfiguration(getIdentifier(),
                                                        controllerIdentifier,
                                                        dependencies,
-                                                       parameterProvider,
+                                                       parameterResolver,
                                                        serializerBuilder,
-                                                       connectionFactoryBuilder);
+                                                       connectionFactoryBuilder,
+                                                       loader);
 
         // place the configuration into the live objects cache
         // (this will kick off establishing the required internal infrastructure for the EventChannelController)

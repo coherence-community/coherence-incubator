@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map.Entry;
 
+
 /**
  * An {@link EventEntryFilter} is a {@link Filter} that is designed to
  * evaluate an {@link EntryEvent} by extracting the {@link Entry} contained

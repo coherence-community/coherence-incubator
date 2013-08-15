@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,27 +27,37 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.common.ranges.Range;
 import com.oracle.coherence.common.ranges.Ranges;
+
 import com.oracle.coherence.common.ticketing.Ticket;
 import com.oracle.coherence.common.ticketing.TicketBook;
+
 import com.oracle.coherence.patterns.messaging.Destination.DestinationType;
 import com.oracle.coherence.patterns.messaging.entryprocessors.PublishMessageProcessor;
+
 import com.tangosol.net.BackingMapManager;
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.CacheService;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.InvocableMap.EntryProcessor;
+
 import com.tangosol.util.extractor.ReflectionExtractor;
+
 import com.tangosol.util.processor.ExtractorProcessor;
 
 import java.io.Serializable;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The {@link MessagePublisher} is responsible for generating {@link MessageIdentifier}s and putting a
@@ -78,6 +89,11 @@ import java.util.Set;
 @SuppressWarnings("serial")
 public class MessagePublisher
 {
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(MessagePublisher.class.getName());
+
     /**
      * The identifier of the partition serviced by this {@link MessagePublisher}.
      */
@@ -153,7 +169,7 @@ public class MessagePublisher
      * <p>
      * Note: This method must be synchronized since multiple publishers may be writing to the
      * same partition.  It is imperative that the backing map event is called is the message sequence
-     * number order.  This ensures that {@link MessageEventManager} getEventProcessor method exposes the
+     * number order.  This ensures that {@link MessageCacheInterceptor} exposes the
      * messages in monotonically increasing order.
      *
      * @param requestId request identifier
@@ -214,7 +230,7 @@ public class MessagePublisher
             }
             else if (lastSeqNum > requestId.getMessageSequenceNumber())
             {
-                Logger.log(Logger.ERROR, "MessagePublisher.checkRequestExists found an invalid sequence number.\n");
+                logger.log(Level.SEVERE, "MessagePublisher.checkRequestExists found an invalid sequence number.\n");
             }
         }
 
@@ -421,7 +437,7 @@ public class MessagePublisher
      * message sequence numbers. It is critical that message ordering is maintained per client
      * session, i.e. {@link MessagingSession}.  When an message partition is transferred to a new member,
      * the last message sequence number is tracked and we recreate the {@link TicketBook} once the transfer
-     * is done. See {@link MessageEventManager}.  However, if the partition is empty there are
+     * is done. See {@link MessageCacheInterceptor}.  However, if the partition is empty there are
      * no arriving messages, the next sequence number is not known. This can happen if message consumption
      * is faster than message production.  In that case, the code gets the sequence number from the destination or
      * subscription.
@@ -502,7 +518,7 @@ public class MessagePublisher
             String error = "Error generating message identifier. Destination " + this.destinationIdentifier
                            + " is not found.";
 
-            Logger.log(Logger.ERROR, error);
+            logger.log(Level.SEVERE, error);
 
             throw new IllegalStateException(error);
         }
@@ -552,7 +568,7 @@ public class MessagePublisher
 
             if (destination == null)
             {
-                Logger.log(Logger.ERROR, "Destination " + this.destinationIdentifier + " is not found.");
+                logger.log(Level.SEVERE, "Destination {0} is not found.", destinationIdentifier);
 
                 return;
             }

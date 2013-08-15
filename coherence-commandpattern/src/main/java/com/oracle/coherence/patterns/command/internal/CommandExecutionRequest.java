@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,23 +27,31 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.common.ticketing.Ticket;
+
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.CommandSubmitter;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStrategy;
 import com.oracle.coherence.patterns.command.ExecutionEnvironment;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.net.cache.KeyAssociation;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.Date;
 
 /**
@@ -99,28 +108,32 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      * The names of the Coherence Caches that will store
      * {@link CommandExecutionRequest}s.
      */
-    private static final String COLOCATED_COMMANDS_CACHENAME   = "coherence.commandpattern.commands.colocated";
-    private static final String DISTRIBUTED_COMMANDS_CACHENAME = "coherence.commandpattern.commands.distributed";
+    public static final String COLOCATED_COMMANDS_CACHENAME = "coherence.commandpattern.commands.colocated";
+
+    /**
+     * Field description
+     */
+    public static final String DISTRIBUTED_COMMANDS_CACHENAME = "coherence.commandpattern.commands.distributed";
 
     /**
      * The {@link Identifier} of the {@link Context} in which the
      * {@link CommandExecutionRequest} will execute its associated
      * {@link Command}.
      */
-    private Identifier contextIdentifier;
+    private Identifier m_ctxIdentifier;
 
     /**
      * The {@link Ticket} issued to the {@link CommandExecutionRequest} by a
      * {@link CommandExecutor} so that we may order the execution of
      * the said {@link CommandExecutionRequest}.
      */
-    private Ticket ticket;
+    private Ticket m_ticket;
 
     /**
      * The developer provided {@link Command} to be executed by
      * the {@link CommandExecutor}.
      */
-    private Command<?> command;
+    private Command<?> m_command;
 
     /**
      * The time (in milliseconds) using cluster time (since the EPOC) when the
@@ -128,12 +141,12 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      * {@link CommandExecutor}.  This is to allow us to determine the waiting
      * time for the {@link Command} before it is executed.
      */
-    private long instantQueued;
+    private long m_instantQueued;
 
     /**
      * The current status of the request
      */
-    private Status status;
+    private Status m_status;
 
     /**
      * The checkpoint (state) that can be used when recovering
@@ -141,7 +154,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      *
      * @see ExecutionEnvironment
      */
-    private Object checkpoint;
+    private Object m_checkpoint;
 
 
     /**
@@ -161,12 +174,12 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
     public CommandExecutionRequest(Identifier contextIdentifier,
                                    Command<?> command)
     {
-        this.contextIdentifier = contextIdentifier;
-        this.ticket            = null;
-        this.command           = command;
-        this.instantQueued     = 0;
-        this.status            = Status.Pending;
-        this.checkpoint        = null;
+        m_ctxIdentifier = contextIdentifier;
+        m_ticket        = null;
+        m_command       = command;
+        m_instantQueued = 0;
+        m_status        = Status.Pending;
+        m_checkpoint    = null;
     }
 
 
@@ -177,7 +190,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public Identifier getContextIdentifier()
     {
-        return contextIdentifier;
+        return m_ctxIdentifier;
     }
 
 
@@ -189,7 +202,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public Ticket getTicket()
     {
-        return ticket;
+        return m_ticket;
     }
 
 
@@ -200,7 +213,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public void setTicket(Ticket ticket)
     {
-        this.ticket = ticket;
+        m_ticket = ticket;
     }
 
 
@@ -209,7 +222,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public Command<?> getCommand()
     {
-        return command;
+        return m_command;
     }
 
 
@@ -219,7 +232,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public long getInstantQueued()
     {
-        return instantQueued;
+        return m_instantQueued;
     }
 
 
@@ -229,7 +242,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public void setInstantQueued(long instantQueued)
     {
-        this.instantQueued = instantQueued;
+        m_instantQueued = instantQueued;
     }
 
 
@@ -240,7 +253,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public Status getStatus()
     {
-        return status;
+        return m_status;
     }
 
 
@@ -250,7 +263,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public void setStatus(Status status)
     {
-        this.status = status;
+        m_status = status;
     }
 
 
@@ -269,7 +282,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public Object getCheckpoint()
     {
-        return checkpoint;
+        return m_checkpoint;
     }
 
 
@@ -280,7 +293,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public void setCheckpoint(Object checkpoint)
     {
-        this.checkpoint = checkpoint;
+        m_checkpoint = checkpoint;
     }
 
 
@@ -289,12 +302,12 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public void readExternal(DataInput in) throws IOException
     {
-        this.contextIdentifier = (Identifier) ExternalizableHelper.readObject(in);
-        this.ticket            = (Ticket) ExternalizableHelper.readObject(in);
-        this.command           = (Command<?>) ExternalizableHelper.readObject(in);
-        this.instantQueued     = ExternalizableHelper.readLong(in);
-        this.status            = Status.values()[ExternalizableHelper.readInt(in)];
-        this.checkpoint        = ExternalizableHelper.readObject(in);
+        m_ctxIdentifier = (Identifier) ExternalizableHelper.readObject(in);
+        m_ticket        = (Ticket) ExternalizableHelper.readObject(in);
+        m_command       = (Command<?>) ExternalizableHelper.readObject(in);
+        m_instantQueued = ExternalizableHelper.readLong(in);
+        m_status        = Status.values()[ExternalizableHelper.readInt(in)];
+        m_checkpoint    = ExternalizableHelper.readObject(in);
     }
 
 
@@ -303,12 +316,12 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        ExternalizableHelper.writeObject(out, contextIdentifier);
-        ExternalizableHelper.writeObject(out, ticket);
-        ExternalizableHelper.writeObject(out, command);
-        ExternalizableHelper.writeLong(out, instantQueued);
-        ExternalizableHelper.writeInt(out, status.ordinal());
-        ExternalizableHelper.writeObject(out, checkpoint);
+        ExternalizableHelper.writeObject(out, m_ctxIdentifier);
+        ExternalizableHelper.writeObject(out, m_ticket);
+        ExternalizableHelper.writeObject(out, m_command);
+        ExternalizableHelper.writeLong(out, m_instantQueued);
+        ExternalizableHelper.writeInt(out, m_status.ordinal());
+        ExternalizableHelper.writeObject(out, m_checkpoint);
     }
 
 
@@ -317,12 +330,12 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public void readExternal(PofReader reader) throws IOException
     {
-        this.contextIdentifier = (Identifier) reader.readObject(0);
-        this.ticket            = (Ticket) reader.readObject(1);
-        this.command           = (Command<?>) reader.readObject(2);
-        this.instantQueued     = reader.readLong(3);
-        this.status            = Status.values()[reader.readInt(4)];
-        this.checkpoint        = reader.readObject(5);
+        m_ctxIdentifier = (Identifier) reader.readObject(0);
+        m_ticket        = (Ticket) reader.readObject(1);
+        m_command       = (Command<?>) reader.readObject(2);
+        m_instantQueued = reader.readLong(3);
+        m_status        = Status.values()[reader.readInt(4)];
+        m_checkpoint    = reader.readObject(5);
     }
 
 
@@ -331,12 +344,12 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeObject(0, contextIdentifier);
-        writer.writeObject(1, ticket);
-        writer.writeObject(2, command);
-        writer.writeLong(3, instantQueued);
-        writer.writeInt(4, status.ordinal());
-        writer.writeObject(5, checkpoint);
+        writer.writeObject(0, m_ctxIdentifier);
+        writer.writeObject(1, m_ticket);
+        writer.writeObject(2, m_command);
+        writer.writeLong(3, m_instantQueued);
+        writer.writeInt(4, m_status.ordinal());
+        writer.writeObject(5, m_checkpoint);
     }
 
 
@@ -345,7 +358,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
      */
     public int compareTo(CommandExecutionRequest other)
     {
-        return this.getTicket().compareTo(other.getTicket());
+        return getTicket().compareTo(other.getTicket());
     }
 
 
@@ -356,12 +369,12 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
     {
         return String
             .format("CommandExecutionRequest{contextIdentifier=%s, ticket=%s, command=%s, instantQueued=%s, status=%s, checkpoint=%s}",
-                    contextIdentifier,
-                    ticket,
-                    command,
-                    new Date(instantQueued),
-                    status,
-                    checkpoint);
+                    m_ctxIdentifier,
+                    m_ticket,
+                    m_command,
+                    new Date(m_instantQueued),
+                    m_status,
+                    m_checkpoint);
     }
 
 
@@ -391,20 +404,20 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
          * for associated {@link Context}s are co-located (in the same cache partition)
          * on the same JVM for execution.
          */
-        private Identifier contextIdentifier;
+        private Identifier m_ctxIdentifier;
 
         /**
          * The {@link Ticket} issued to the {@link CommandExecutionRequest} by
          * the {@link CommandExecutor} that accepted the submission of the {@link Command}.
          */
-        private Ticket ticket;
+        private Ticket m_ticket;
 
         /**
          * The {@link ManagementStrategy} for {@link CommandExecutionRequest}s.
          *
          * May be <code>null</code> if the context has not been configured
          */
-        private ManagementStrategy managementStrategy;
+        private ManagementStrategy m_managementStrategy;
 
 
         /**
@@ -418,17 +431,17 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
         /**
          * Standard Constructor.
          *
-         * @param contextIdentifier
+         * @param ctxIdentifier
          * @param ticket
          * @param managementStrategy
          */
-        public Key(Identifier         contextIdentifier,
-                   Ticket             ticket,
+        public Key(Identifier ctxIdentifier,
+                   Ticket ticket,
                    ManagementStrategy managementStrategy)
         {
-            this.contextIdentifier  = contextIdentifier;
-            this.ticket             = ticket;
-            this.managementStrategy = managementStrategy;
+            m_ctxIdentifier      = ctxIdentifier;
+            m_ticket             = ticket;
+            m_managementStrategy = managementStrategy;
         }
 
 
@@ -437,7 +450,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
          */
         public Identifier getContextIdentifier()
         {
-            return contextIdentifier;
+            return m_ctxIdentifier;
         }
 
 
@@ -447,7 +460,7 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
         public Object getAssociatedKey()
         {
             // for COLOCATED management we use the contextIdentifer, otherwise we just use the ticket
-            return managementStrategy == ManagementStrategy.COLOCATED ? contextIdentifier : ticket;
+            return m_managementStrategy == ManagementStrategy.COLOCATED ? m_ctxIdentifier : m_ticket;
         }
 
 
@@ -456,9 +469,9 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
          */
         public void readExternal(DataInput in) throws IOException
         {
-            this.contextIdentifier  = (Identifier) ExternalizableHelper.readObject(in);
-            this.ticket             = (Ticket) ExternalizableHelper.readExternalizableLite(in);
-            this.managementStrategy = ManagementStrategy.values()[ExternalizableHelper.readInt(in)];
+            m_ctxIdentifier      = (Identifier) ExternalizableHelper.readObject(in);
+            m_ticket             = (Ticket) ExternalizableHelper.readExternalizableLite(in);
+            m_managementStrategy = ManagementStrategy.values()[ExternalizableHelper.readInt(in)];
         }
 
 
@@ -467,9 +480,9 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
          */
         public void writeExternal(DataOutput out) throws IOException
         {
-            ExternalizableHelper.writeObject(out, contextIdentifier);
-            ExternalizableHelper.writeExternalizableLite(out, ticket);
-            ExternalizableHelper.writeInt(out, managementStrategy.ordinal());
+            ExternalizableHelper.writeObject(out, m_ctxIdentifier);
+            ExternalizableHelper.writeExternalizableLite(out, m_ticket);
+            ExternalizableHelper.writeInt(out, m_managementStrategy.ordinal());
         }
 
 
@@ -478,9 +491,9 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
          */
         public void readExternal(PofReader reader) throws IOException
         {
-            this.contextIdentifier  = (Identifier) reader.readObject(0);
-            this.ticket             = (Ticket) reader.readObject(1);
-            this.managementStrategy = ManagementStrategy.values()[reader.readInt(2)];
+            m_ctxIdentifier      = (Identifier) reader.readObject(0);
+            m_ticket             = (Ticket) reader.readObject(1);
+            m_managementStrategy = ManagementStrategy.values()[reader.readInt(2)];
         }
 
 
@@ -489,9 +502,9 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
          */
         public void writeExternal(PofWriter writer) throws IOException
         {
-            writer.writeObject(0, contextIdentifier);
-            writer.writeObject(1, ticket);
-            writer.writeInt(2, managementStrategy.ordinal());
+            writer.writeObject(0, m_ctxIdentifier);
+            writer.writeObject(1, m_ticket);
+            writer.writeInt(2, m_managementStrategy.ordinal());
         }
 
 
@@ -501,9 +514,9 @@ public class CommandExecutionRequest implements ExternalizableLite, PortableObje
         public String toString()
         {
             return String.format("CommandExecutionRequest.Key{contextIdentifier=%s, ticket=%s, managementStrategy=%s}",
-                                 contextIdentifier,
-                                 ticket,
-                                 managementStrategy);
+                                 m_ctxIdentifier,
+                                 m_ticket,
+                                 m_managementStrategy);
         }
     }
 }

@@ -27,6 +27,7 @@ package com.oracle.coherence.common.resourcing;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+
 /**
  * The role of a {@link ResourceProviderManager} instance to so manage a named collection of {@link ResourceProvider}s.
  * <p>

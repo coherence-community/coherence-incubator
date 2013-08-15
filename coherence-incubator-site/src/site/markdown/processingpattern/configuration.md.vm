@@ -4,7 +4,7 @@ Configuring the Processing Pattern
 The Processing Pattern is configured using Coherence Cache Configuration
 files with the addition of the following namespace:
 
-    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler">
 
 Configuration typically occurs using either Out-Of-The-Box Configurations or
 through explicit declarations based on the [Processing Pattern Namespace](processing-namespace.html)
@@ -40,7 +40,7 @@ that is configured with the following features:
 
 Below follows the relevant parts of the configuration:
 
-    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler">
 
         ...
 
@@ -86,23 +86,39 @@ command line parameter:
 The configuration file `coherence-processingpattern-cluster-client-config.xml`
 as provided with the distribution is essentially defined as follows:
 
-    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler">
         <processing:cluster-config pof="true"/>
     </cache-config>
 
 <h4>Configuring Coherence *Extend Clients (without local Task Processing capabilities)</h4>
 
+In prior releases the <processing:extend-config> </processing:extend-config> elements were 
+used to help configure the extend client for the processing pattern. These elements are no longer 
+supported in INC-12. The extend client for the processing pattern can be defined using the standard
+Coherence cache configuration elements. 
+
 The configuration file `coherence-processingpattern-extend-client-config.xml`
-as provided with the distribution defines a Coherence *Extend-based Client.
+as provided with the distribution defines a Coherence *Extend-based Client. 
+
 
 The relevant parts of the included configuration are as follows:
 
-    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+ <cache-config    
+     		xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+      		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   			xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd">
 
-        ...
+	   <caching-scheme-mapping>
+	     <cache-mapping>
+	       <cache-name>coherence.patterns.processing.*</cache-name>
+	 	   <scheme-name>extend-dist</scheme-name>
+	 	 </cache-mapping>
+	   </caching-scheme-mapping>
 
-        <processing:extend-config>
-            <initiator-config>
+	   <caching-schemes>
+	     <remote-cache-scheme>
+	 	   <scheme-name>extend-dist</scheme-name>
+             <initiator-config>
                 <tcp-initiator>
                     <remote-addresses>
                         <socket-address>
@@ -113,13 +129,19 @@ The relevant parts of the included configuration are as follows:
                     <connect-timeout>10s</connect-timeout>
                 </tcp-initiator>
             </initiator-config>
-        </processing:extend-config>
-
+         </remote-cache-scheme>
+       </caching-schemes>
         ...
 
     </cache-config>
 
 <h4>Configuring Coherence *Extend Clients (with Task Processing capabilities)</h4>
+
+In prior releases the <processing:extend-config> </processing:extend-config> elements were 
+used to help configure the extend client for the processing pattern. These elements are no longer 
+supported in INC-12. The extend client for the processing pattern can be defined using the standard
+C0herence cache configuration elements. 
+
 
 The configuration file `coherence-processingpattern-extend-taskprocessing-config.xml`
 as provided with the distribution defines a Coherence *Extend-base Client that is
@@ -127,12 +149,22 @@ capable of processing `Tasks` using locally managed `TaskProcessors`.
 
 The relevant parts of the included configuration are as follows:
 
-    <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
+<cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler"
+              xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
+              element:introduce-cache-config="coherence-processingpattern-cache-config.xml">>
 
-        ...
-
-        <processing:extend-config pof="true">
-            <initiator-config>
+      ...
+	  <caching-scheme-mapping>
+	      <cache-mapping>
+	 		<cache-name>coherence.patterns.processing.*</cache-name>
+	 		<scheme-name>extend-dist</scheme-name>
+	 	  </cache-mapping>
+	 </caching-scheme-mapping>
+		 
+	 <caching-schemes>
+	 	<remote-cache-scheme>
+	 		<scheme-name>extend-dist</scheme-name>
+              <initiator-config>
                 <tcp-initiator>
                     <remote-addresses>
                         <socket-address>
@@ -142,7 +174,7 @@ The relevant parts of the included configuration are as follows:
                     </remote-addresses>
                     <connect-timeout>10s</connect-timeout>
                 </tcp-initiator>
-            </initiator-config>
+              </initiator-config>
 
             <processing:taskprocessors>
                 <processing:taskprocessordefinition id="SingleTaskProcessor"
@@ -156,7 +188,8 @@ The relevant parts of the included configuration are as follows:
                     <processing:attribute name="type">single</processing:attribute>
                 </processing:taskprocessordefinition>
             </processing:taskprocessors>
-        </processing:extend-config>
+        </remote-cache-scheme>
+     </caching-schemes>
 
         ...
 
@@ -180,7 +213,7 @@ that listens for connection on localhost.
 The relevant parts of the included configuration are as follows:
 
     <cache-config
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
+        xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
         element:introduce-cache-config="coherence-processingpattern-pof-cache-config.xml">
 
         <caching-schemes>

@@ -25,17 +25,12 @@
 
 package com.oracle.coherence.patterns.processing.taskprocessor;
 
-import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.lifecycle.LifecycleStartedEvent;
 import com.oracle.coherence.common.leasing.Lease;
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
-import com.oracle.coherence.environment.Environment;
-import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResourceReference;
 import com.oracle.coherence.patterns.processing.dispatchers.task.DefaultTaskDispatcher;
+import com.oracle.coherence.patterns.processing.internal.Environment;
 import com.oracle.coherence.patterns.processing.internal.Submission;
 import com.oracle.coherence.patterns.processing.internal.SubmissionResult;
 import com.oracle.coherence.patterns.processing.internal.task.DefaultTaskProcessorMediator;
@@ -62,7 +57,7 @@ import java.util.logging.Logger;
  *
  * @author Christer Fahlgren
  */
-public class DefaultClientLeaseMaintainer implements DependentResource, ClientLeaseMaintainer
+public class DefaultClientLeaseMaintainer implements  ClientLeaseMaintainer
 {
     /**
      * The default duration of a lease.
@@ -140,6 +135,7 @@ public class DefaultClientLeaseMaintainer implements DependentResource, ClientLe
     /**
      * {@inheritDoc}
      */
+
     public void onDependenciesSatisfied(Environment environment)
     {
         this.taskProcessorMediatorCache = CacheFactory.getCache(DefaultTaskProcessorMediator.CACHENAME);
@@ -158,10 +154,11 @@ public class DefaultClientLeaseMaintainer implements DependentResource, ClientLe
                        "Started ClientLeaseMaintainer - checking lease validity every {0} ms. Extending leases with {1}",
                        new Object[] {leaseValidityCheckingDelay, LEASE_DURATION});
         }
+        /*
 
         environment.getResource(EventDispatcher.class)
             .dispatchEvent(new LifecycleStartedEvent<DependentResource>(this));
-
+       */
     }
 
 
@@ -198,6 +195,9 @@ public class DefaultClientLeaseMaintainer implements DependentResource, ClientLe
     /**
      * {@inheritDoc}
      */
+    /*
+    todo pfm
+
     public Set<DependencyReference> getDependencyReferences()
     {
         Set<DependencyReference> dependencies = new HashSet<DependencyReference>();
@@ -211,7 +211,7 @@ public class DefaultClientLeaseMaintainer implements DependentResource, ClientLe
 
         return dependencies;
     }
-
+    */
 
     /**
      * The {@link LeaseExtender} is a {@link Runnable} that iterates over the registered {@link Lease}s and extends

@@ -69,7 +69,7 @@ The Messaging Pattern advocates that:*
     application shutdown or disconnection.
 
 While it's rare that an architecture making extensive use of Coherence will require 
-Store and Forward Messaging (due to the ability to use MapListeners, Continuous 
+Store and Forward Messaging (due to the ability to use Live Events, Continuous 
 Queries and events for notifications), there are arguably some circumstances where 
 the pattern is particularly useful.
 
@@ -102,7 +102,7 @@ which it will create `Destinations`, subsribe to `Destinations and then publish
 `Messages` to those `Destinations`.
 
 When an application publishes a `Message`, it is put in the `Messages` cache.  
-A backing map listener on the `Messages` cache then receives an insert event 
+A Live Event on the `Messages` cache then receives an insert event 
 after which schedules a thread to process the newly inserted `Message`.  
 
 For `Topics`, the background thread will notify each `Subscription` about the new 

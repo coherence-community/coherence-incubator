@@ -26,17 +26,19 @@
 package com.oracle.coherence.patterns.eventdistribution.channels;
 
 import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.configuration.Mandatory;
-import com.oracle.coherence.configuration.Property;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.config.annotation.Injectable;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+import com.tangosol.net.CacheFactory;
 import com.tangosol.net.InvocationService;
 import com.tangosol.util.ExternalizableHelper;
+import com.tangosol.util.ResourceRegistry;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -66,7 +68,6 @@ public class RemoteClusterEventChannelBuilder extends AbstractInterClusterEventC
      */
     private EventChannelBuilder remoteEventChannelBuilder;
 
-
     /**
      * Required for {@link ExternalizableLite} and {@link PortableObject}.
      */
@@ -79,7 +80,7 @@ public class RemoteClusterEventChannelBuilder extends AbstractInterClusterEventC
     /**
      * Set the service name used for doing remote invocation.
      */
-    @Property("remote-invocation-service-name")
+    @Injectable
     public void setRemoteInvocationServiceName(String remoteInvocationServiceName)
     {
         this.remoteInvocationServiceName = remoteInvocationServiceName;
@@ -98,8 +99,7 @@ public class RemoteClusterEventChannelBuilder extends AbstractInterClusterEventC
     /**
      * Set the {@link EventChannelBuilder} used for doing remote distribution.
      */
-    @Property("remote-channel-scheme")
-    @Mandatory
+    @Injectable("remote-channel-scheme")
     public void setRemoteEventChannelBuilder(EventChannelBuilder remoteEventChannelBuilder)
     {
         this.remoteEventChannelBuilder = remoteEventChannelBuilder;
@@ -109,6 +109,8 @@ public class RemoteClusterEventChannelBuilder extends AbstractInterClusterEventC
     /**
      * Get the {@link EventChannelBuilder} that we can use to realize an {@link EventChannel} for remote
      * {@link Event} distribution.
+     *
+     * @return the remote EventChannelBuilder
      */
     public EventChannelBuilder getRemoteEventChannelBuilder()
     {
@@ -119,18 +121,29 @@ public class RemoteClusterEventChannelBuilder extends AbstractInterClusterEventC
     /**
      * {@inheritDoc}
      */
-    public EventChannel realize(ParameterProvider parameterProvider)
+    @Override
+    public EventChannel realize(ParameterResolver parameterResolver,
+            ClassLoader classLoader, ParameterList parameters)
     {
+        ResourceRegistry registry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
+
+        if (registry == null)
+        {
+            throw new IllegalArgumentException("ResourceRegistry must be specified when realizing a RemoteClusterEventChannel");
+        }
+
         return new RemoteClusterEventChannel(getDistributionRole(),
                                              remoteInvocationServiceName,
                                              remoteEventChannelBuilder,
-                                             parameterProvider);
+                                             registry,
+                                             parameterResolver);
     }
 
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void readExternal(DataInput in) throws IOException
     {
         super.readExternal(in);
@@ -142,6 +155,7 @@ public class RemoteClusterEventChannelBuilder extends AbstractInterClusterEventC
     /**
      * {@inheritDoc}
      */
+    @Override
     public void writeExternal(DataOutput out) throws IOException
     {
         super.writeExternal(out);
@@ -153,6 +167,7 @@ public class RemoteClusterEventChannelBuilder extends AbstractInterClusterEventC
     /**
      * {@inheritDoc}
      */
+    @Override
     public void readExternal(PofReader reader) throws IOException
     {
         super.readExternal(reader);
@@ -164,6 +179,7 @@ public class RemoteClusterEventChannelBuilder extends AbstractInterClusterEventC
     /**
      * {@inheritDoc}
      */
+    @Override
     public void writeExternal(PofWriter writer) throws IOException
     {
         super.writeExternal(writer);

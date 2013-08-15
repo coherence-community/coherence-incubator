@@ -25,23 +25,14 @@
 
 package com.oracle.coherence.patterns.processing.internal.task;
 
-import com.oracle.coherence.common.events.EntryEvent;
-import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryArrivedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryDepartedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryInsertedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryRemovedEvent;
-import com.oracle.coherence.common.events.backingmap.BackingMapEntryUpdatedEvent;
-import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.lifecycle.NamedCacheStorageReleasedEvent;
-import com.oracle.coherence.common.events.processing.EventProcessor;
-import com.oracle.coherence.environment.Environment;
-import com.oracle.coherence.environment.extensible.LifecycleEventFilter;
-import com.oracle.coherence.environment.extensible.dependencies.DependencyReference;
-import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
-import com.oracle.coherence.environment.extensible.dependencies.EnvironmentReference;
+import com.oracle.coherence.common.liveobjects.OnArrived;
+import com.oracle.coherence.common.liveobjects.OnInserted;
+import com.oracle.coherence.common.liveobjects.OnUpdated;
+import com.oracle.coherence.patterns.processing.internal.Environment;
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.events.partition.cache.EntryEvent;
 import com.tangosol.net.management.Registry;
+import com.tangosol.util.BinaryEntry;
 
 import java.util.Collections;
 import java.util.Map.Entry;
@@ -59,7 +50,7 @@ import java.util.logging.Logger;
  *
  * @author Christer Fahlgren
  */
-public class TaskProcessorMBeanManager implements DependentResource, EventProcessor<Event>
+public class TaskProcessorMBeanManager
 {
     /**
      * The {@link Logger} to use.
@@ -67,7 +58,7 @@ public class TaskProcessorMBeanManager implements DependentResource, EventProces
     private static Logger logger = Logger.getLogger(TaskProcessorMBeanManager.class.getName());
 
     /**
-     * HashMap keeping track of the {@link TaskProcessorMBeanProxy} objects.
+     * HashMap keeping track of the {@link TaskProcessorMediatorProxy} objects.
      */
     private ConcurrentHashMap<TaskProcessorMediatorKey, TaskProcessorMediatorProxy> localMBeans;
 
@@ -84,23 +75,23 @@ public class TaskProcessorMBeanManager implements DependentResource, EventProces
     {
         localMBeans  = new ConcurrentHashMap<TaskProcessorMediatorKey, TaskProcessorMediatorProxy>();
         shuttingDown = false;
-        DefaultTaskProcessorMediator.setEventProcessor(this);
+        DefaultTaskProcessorMediator.setMBeanManager(this);
     }
-
 
     /**
      * Adds a {@link TaskProcessorMediatorProxyMBean} and register it with the MBeanServer.
      *
      * @param key the {@link TaskProcessorMediatorKey} this {@link TaskProcessorMediatorProxyMBean} represents.
-     * @param mBeanProxy the {@link TaskProcessorMediatorProxy} that is to be registered
      */
-    private void addMBean(TaskProcessorMediatorKey   key,
-                          TaskProcessorMediatorProxy mBeanProxy)
+    public void addMBean(TaskProcessorMediatorKey   key)
     {
-        localMBeans.put(key, mBeanProxy);
-        registerMBean(key, mBeanProxy);
-    }
 
+        // create a new MBean and register it
+        TaskProcessorMediatorProxy proxy = new TaskProcessorMediatorProxy(key);
+
+        localMBeans.put(key, proxy);
+        registerMBean(key, proxy);
+    }
 
     /**
      * Removes the MBean associated with the key.
@@ -121,16 +112,17 @@ public class TaskProcessorMBeanManager implements DependentResource, EventProces
     /**
      * Updates the MBean associated with the entry.
      *
-     * @param entry the updated {@link Entry}
+     * @param key   the TaskProcessorMediatorProxyMBean key
+     * @param bean  the MBean
      */
     @SuppressWarnings("rawtypes")
-    public void updateMBean(Entry entry)
+    public void updateMBean(Object key, TaskProcessorMediatorProxyMBean bean)
     {
-        TaskProcessorMediatorProxy proxy = localMBeans.get(entry.getKey());
+        TaskProcessorMediatorProxy proxy = localMBeans.get(key);
 
         if (proxy != null)
         {
-            proxy.setValue((TaskProcessorMediatorProxyMBean) entry.getValue());
+            proxy.setValue(bean);
         }
     }
 
@@ -197,82 +189,13 @@ public class TaskProcessorMBeanManager implements DependentResource, EventProces
 
 
     /**
-     * {@inheritDoc}
+     * Return true if shutting down.
+     *
+     * @return  true if shutting down
      */
-    @SuppressWarnings("rawtypes")
-    public void process(EventDispatcher eventDispatcher,
-                        Event           event)
+    public boolean isShuttingDown()
     {
-        if (!shuttingDown)
-        {
-            if (event instanceof NamedCacheStorageReleasedEvent)
-            {
-                if (DefaultTaskProcessorMediator.CACHENAME
-                    .equals(((NamedCacheStorageReleasedEvent) event).getCacheName()))
-                {
-                    onDependenciesViolated(eventDispatcher.getEnvironment());
-                }
-            }
-            else
-            {
-                if (event instanceof BackingMapEntryUpdatedEvent)
-                {
-                    updateMBean(((EntryEvent) event).getEntry());
-
-                }
-                else
-                {
-                    if ((event instanceof BackingMapEntryInsertedEvent)
-                        || (event instanceof BackingMapEntryArrivedEvent))
-                    {
-                        if (event instanceof BackingMapEntryArrivedEvent)
-                        {
-                            ((TaskProcessorMediator) ((EntryEvent) event).getEntry().getValue()).entryArrived();
-                        }
-
-                        // We now create a new MBean and register it.
-                        TaskProcessorMediatorProxy proxy =
-                            new TaskProcessorMediatorProxy((TaskProcessorMediatorKey) ((EntryEvent) event).getEntry()
-                                .getKey());
-
-                        addMBean((TaskProcessorMediatorKey) ((EntryEvent) event).getEntry().getKey(), proxy);
-                    }
-                    else
-                    {
-                        if ((event instanceof BackingMapEntryRemovedEvent)
-                            || (event instanceof BackingMapEntryDepartedEvent))
-                        {
-                            if (event instanceof BackingMapEntryDepartedEvent)
-                            {
-                                ((TaskProcessorMediator) ((EntryEvent) event).getEntry().getValue()).entryDeparted();
-                            }
-
-                            // We now remove the registered MBean.
-                            // removeMBean((TaskProcessorMediatorKey) ((EntryEvent) event).getEntry().getKey());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public Set<DependencyReference> getDependencyReferences()
-    {
-        return Collections.singleton((DependencyReference) new EnvironmentReference());
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public void onDependenciesSatisfied(Environment environment)
-    {
-        // Start listening for lifecycle events since we want to know when we are shutting down
-        environment.getResource(EventDispatcher.class).registerEventProcessor(LifecycleEventFilter.INSTANCE, this);
+        return shuttingDown;
     }
 
 

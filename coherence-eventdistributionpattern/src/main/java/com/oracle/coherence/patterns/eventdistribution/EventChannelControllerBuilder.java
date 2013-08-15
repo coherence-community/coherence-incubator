@@ -25,18 +25,18 @@
 
 package com.oracle.coherence.patterns.eventdistribution;
 
-import com.oracle.coherence.common.builders.Builder;
-import com.oracle.coherence.environment.Environment;
+import com.tangosol.util.ResourceRegistry;
+
 
 /**
- * A {@link EventChannelControllerBuilder} is a {@link Builder} for {@link EventChannelController}s.
+ * A {@link EventChannelControllerBuilder} is a builder for {@link EventChannelController}s.
  * <p>
  * Copyright (c) 2011. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
  */
-public interface EventChannelControllerBuilder extends Builder<EventChannelController>
+public interface EventChannelControllerBuilder
 {
     /**
      * Realizes an instance of a {@link EventChannelController}.
@@ -47,12 +47,11 @@ public interface EventChannelControllerBuilder extends Builder<EventChannelContr
      *                              {@link EventChannelController}.
      * @param dependencies          The {@link EventChannelController.Dependencies} for the resulting
      *                              {@link EventChannelController}.
-     * @param environment           The {@link Environment} in which the {@link EventChannelController} will operate.
      *
      * @return A {@link EventChannelController}
      */
-    public EventChannelController realize(EventDistributor.Identifier         distributorIdentifier,
-                                          EventChannelController.Identifier   controllerIdentifier,
-                                          EventChannelController.Dependencies dependencies,
-                                          Environment                         environment);
+    public EventChannelController realize(
+            EventDistributor.Identifier distributorIdentifier,
+            EventChannelController.Identifier controllerIdentifier,
+            EventChannelController.Dependencies dependencies);
 }

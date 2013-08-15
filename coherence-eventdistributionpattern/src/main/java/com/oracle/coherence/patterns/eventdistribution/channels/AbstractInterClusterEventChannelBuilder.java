@@ -25,8 +25,8 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels;
 
-import com.oracle.coherence.configuration.Property;
 import com.oracle.coherence.patterns.eventdistribution.channels.InterClusterEventChannel.DistributionRole;
+import com.tangosol.config.annotation.Injectable;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
@@ -65,11 +65,11 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
 
 
     /**
-     * Method description
+     * Set the {@link DistributionRole}.
      *
-     * @param distributionRole
+     * @param distributionRole  the DistributionRole
      */
-    @Property("distribution-role")
+    @Injectable("distribution-role")
     public void setDistributionRole(DistributionRole distributionRole)
     {
         this.distributionRole = distributionRole;
@@ -77,9 +77,9 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
 
 
     /**
-     * Method description
+     * Return the {@link DistributionRole}.
      *
-     * @return
+     * @return the DistributionRole
      */
     public DistributionRole getDistributionRole()
     {
@@ -90,6 +90,7 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void readExternal(DataInput in) throws IOException
     {
         super.readExternal(in);
@@ -100,6 +101,7 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void writeExternal(DataOutput out) throws IOException
     {
         super.writeExternal(out);
@@ -110,6 +112,7 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void readExternal(PofReader reader) throws IOException
     {
         super.readExternal(reader);
@@ -120,6 +123,7 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void writeExternal(PofWriter writer) throws IOException
     {
         super.writeExternal(writer);

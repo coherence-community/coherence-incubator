@@ -25,8 +25,8 @@
 
 package com.oracle.coherence.patterns.eventdistribution;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.Event;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
@@ -36,6 +36,7 @@ import com.tangosol.util.ExternalizableHelper;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 
 /**
  * A {@link EventChannelController} is responsible for managing the infrastructure to enable an {@link EventChannel}

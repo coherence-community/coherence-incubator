@@ -28,6 +28,7 @@ package com.oracle.coherence.patterns.eventdistribution;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.util.UniformTransformer;
 
+
 /**
  * An {@link EventTransformer} is an {@link UniformTransformer} for {@link Event}s.
  * <p>

@@ -25,15 +25,11 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
-import com.oracle.coherence.common.events.EntryEvent;
-import com.oracle.coherence.common.events.EntryInsertedEvent;
-import com.oracle.coherence.common.events.EntryRemovedEvent;
+
 import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.common.events.dispatching.EventDispatcher;
-import com.oracle.coherence.common.events.processing.LiveObject;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
-import com.oracle.coherence.environment.Environment;
+import com.oracle.coherence.common.liveobjects.LiveObject;
+import com.oracle.coherence.common.liveobjects.OnInserted;
+import com.oracle.coherence.common.liveobjects.OnRemoved;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
@@ -42,21 +38,25 @@ import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mo
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.distributors.EventChannelControllerManager;
-import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
 import com.tangosol.net.CacheFactory;
+import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
+import com.tangosol.util.ResourceRegistry;
 
-import javax.jms.ConnectionFactory;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.jms.ConnectionFactory;
 
 /**
  * An {@link JMSEventChannelControllerConfiguration} is a {@link LiveObject} that holds the configuration of a
@@ -68,8 +68,8 @@ import java.util.logging.Logger;
  * @author Brian Oliver
  */
 @SuppressWarnings("serial")
-public class JMSEventChannelControllerConfiguration implements LiveObject<DistributableEntry>,
-                                                               ExternalizableLite,
+@LiveObject
+public class JMSEventChannelControllerConfiguration implements ExternalizableLite,
                                                                PortableObject
 {
     /**
@@ -96,9 +96,9 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
     private EventChannelController.Dependencies dependencies;
 
     /**
-     * The {@link ParameterProvider} to use to create the {@link EventChannel}.
+     * The {@link ParameterResolver} to use to create the {@link EventChannel}.
      */
-    private ParameterProvider parameterProvider;
+    private ParameterResolver parameterResolver;
 
     /**
      * A {@link ParameterizedBuilder} that will realize the {@link Serializer} to (de)serialize {@link Event}s
@@ -111,6 +111,10 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
      */
     private ParameterizedBuilder<ConnectionFactory> connectionFactoryBuilder;
 
+    /**
+     * The {@link ClassLoader}.
+     */
+    private ClassLoader loader;
 
     /**
      * Required for {@link ExternalizableLite} and {@link PortableObject}.
@@ -127,16 +131,18 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
     public JMSEventChannelControllerConfiguration(EventDistributor.Identifier             distributorIdentifier,
                                                   EventChannelController.Identifier       controllerIdentifier,
                                                   EventChannelController.Dependencies     dependencies,
-                                                  ParameterProvider                       parameterProvider,
+                                                  ParameterResolver                       parameterResolver,
                                                   ParameterizedBuilder<Serializer>        serializerBuilder,
-                                                  ParameterizedBuilder<ConnectionFactory> connectionFactoryBuilder)
+                                                  ParameterizedBuilder<ConnectionFactory> connectionFactoryBuilder,
+                                                  ClassLoader                             loader)
     {
         this.distributorIdentifier    = distributorIdentifier;
         this.controllerIdentifier     = controllerIdentifier;
         this.dependencies             = dependencies;
-        this.parameterProvider        = parameterProvider;
+        this.parameterResolver        = parameterResolver;
         this.serializerBuilder        = serializerBuilder;
         this.connectionFactoryBuilder = connectionFactoryBuilder;
+        this.loader                   = loader;
     }
 
 
@@ -191,65 +197,68 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void process(EventDispatcher                eventDispatcher,
-                        EntryEvent<DistributableEntry> event)
+    @OnInserted
+    public void onEntryInserted(BinaryEntry entry)
     {
-        // get the environment in which we're operating
-        Environment environment = (Environment) CacheFactory.getConfigurableCacheFactory();
-
-        // get the EventChannelControllerManager to locate our EventChannelController for this EventChannel
-        EventChannelControllerManager manager = environment.getResource(EventChannelControllerManager.class);
-
-        if (event instanceof EntryInsertedEvent)
+        if (logger.isLoggable(Level.FINE))
         {
-            if (logger.isLoggable(Level.FINE))
-            {
-                logger.log(Level.FINE, "Establishing the EventChannelController for {0}.", new Object[] {this});
-            }
+            logger.log(Level.FINE, "Establishing the EventChannelController for {0}.", new Object[] {this});
+        }
 
-            EventChannelController controller = manager.registerEventChannelController(distributorIdentifier,
-                                                                                       controllerIdentifier,
-                                                                                       dependencies,
-                                                                                       new EventChannelControllerBuilder()
-            {
-                @Override
-                public EventChannelController realize(EventDistributor.Identifier distributorIdentifier,
-                                                      Identifier                  controllerIdentifier,
-                                                      Dependencies                dependencies,
-                                                      Environment                 environment)
+       // ResourceRegistry registry = entry.getContext().getManager().getCacheFactory().getResourceRegistry();
+        ResourceRegistry registry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
+        EventChannelControllerManager manager = registry.getResource(EventChannelControllerManager.class);
+
+        EventChannelController controller = manager.registerEventChannelController(distributorIdentifier,
+                controllerIdentifier,
+                dependencies,
+                new EventChannelControllerBuilder()
                 {
-                    return new JMSEventChannelController(distributorIdentifier,
-                                                         controllerIdentifier,
-                                                         dependencies,
-                                                         environment,
-                                                         parameterProvider,
-                                                         serializerBuilder,
-                                                         connectionFactoryBuilder);
-                }
-            });
+                    @Override
+                    public EventChannelController realize(EventDistributor.Identifier distributorIdentifier,
+                            Identifier controllerIdentifier,
+                            Dependencies dependencies)
+                    {
+                        return new JMSEventChannelController(distributorIdentifier,
+                                controllerIdentifier,
+                                dependencies,
+                                loader,
+                                parameterResolver,
+                                serializerBuilder,
+                                connectionFactoryBuilder);
+                    }
+                });
 
-            if (dependencies.getStartingMode() == Mode.ENABLED)
-            {
-                controller.start();
-            }
-
-        }
-        else if (event instanceof EntryRemovedEvent)
+        if (dependencies.getStartingMode() == Mode.ENABLED)
         {
-            // for deleted subscriptions, schedule the stopping of the associated EventChannelController
-
-            if (logger.isLoggable(Level.FINE))
-            {
-                logger.log(Level.FINE, "Scheduling the EventChannelController for {0} to stop.", new Object[] {this});
-            }
-
-            // remove registered service
-            EventChannelController controller = manager.unregisterEventChannelController(distributorIdentifier,
-                                                                                         controllerIdentifier);
-
-            controller.stop();
+            controller.start();
         }
+
+
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @OnRemoved
+    public void onEntryRemoved(BinaryEntry entry)
+    {
+        // for deleted subscriptions, schedule the stopping of the associated EventChannelController
+
+        ResourceRegistry registry  = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
+
+        if (logger.isLoggable(Level.FINE))
+        {
+            logger.log(Level.FINE, "Scheduling the EventChannelController for {0} to stop.", new Object[] {this});
+        }
+
+        EventChannelControllerManager manager = registry.getResource(EventChannelControllerManager.class);
+
+        EventChannelController controller = manager.unregisterEventChannelController(distributorIdentifier,
+                                                                                     controllerIdentifier);
+
+        controller.stop();
     }
 
 
@@ -262,7 +271,7 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
         this.distributorIdentifier    = (EventDistributor.Identifier) ExternalizableHelper.readObject(in);
         this.controllerIdentifier     = (EventChannelController.Identifier) ExternalizableHelper.readObject(in);
         this.dependencies             = (EventChannelController.Dependencies) ExternalizableHelper.readObject(in);
-        this.parameterProvider        = (ParameterProvider) ExternalizableHelper.readObject(in);
+        this.parameterResolver        = (ParameterResolver) ExternalizableHelper.readObject(in);
         this.serializerBuilder        = (ParameterizedBuilder<Serializer>) ExternalizableHelper.readObject(in);
         this.connectionFactoryBuilder = (ParameterizedBuilder<ConnectionFactory>) ExternalizableHelper.readObject(in);
     }
@@ -276,7 +285,7 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
         ExternalizableHelper.writeObject(out, distributorIdentifier);
         ExternalizableHelper.writeObject(out, controllerIdentifier);
         ExternalizableHelper.writeObject(out, dependencies);
-        ExternalizableHelper.writeObject(out, parameterProvider);
+        ExternalizableHelper.writeObject(out, parameterResolver);
         ExternalizableHelper.writeObject(out, serializerBuilder);
         ExternalizableHelper.writeObject(out, connectionFactoryBuilder);
     }
@@ -291,7 +300,7 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
         this.distributorIdentifier    = (EventDistributor.Identifier) reader.readObject(1);
         this.controllerIdentifier     = (EventChannelController.Identifier) reader.readObject(2);
         this.dependencies             = (EventChannelController.Dependencies) reader.readObject(3);
-        this.parameterProvider        = (ParameterProvider) reader.readObject(4);
+        this.parameterResolver        = (ParameterResolver) reader.readObject(4);
         this.serializerBuilder        = (ParameterizedBuilder<Serializer>) reader.readObject(5);
         this.connectionFactoryBuilder = (ParameterizedBuilder<ConnectionFactory>) reader.readObject(6);
     }
@@ -305,7 +314,7 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
         writer.writeObject(1, distributorIdentifier);
         writer.writeObject(2, controllerIdentifier);
         writer.writeObject(3, dependencies);
-        writer.writeObject(4, parameterProvider);
+        writer.writeObject(4, parameterResolver);
         writer.writeObject(5, serializerBuilder);
         writer.writeObject(6, connectionFactoryBuilder);
     }
@@ -321,7 +330,7 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
                     distributorIdentifier,
                     controllerIdentifier,
                     dependencies,
-                    parameterProvider,
+                    parameterResolver,
                     serializerBuilder,
                     connectionFactoryBuilder);
     }

@@ -25,9 +25,20 @@
     
     Copyright (c) 2009. All Rights Reserved. Oracle Corporation.
   -->
-<cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.configuration.ProcessingPatternNamespaceHandler">
-    <processing:extend-config>
-        <initiator-config>
+<cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler"
+              xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
+              element:introduce-cache-config="coherence-processingpattern-cache-config.xml">
+   <caching-scheme-mapping>
+     <cache-mapping>
+       <cache-name>coherence.patterns.processing.*</cache-name>
+ 	   <scheme-name>extend-dist</scheme-name>
+ 	 </cache-mapping>
+   </caching-scheme-mapping>
+ 
+   <caching-schemes>
+     <remote-cache-scheme>
+ 	   <scheme-name>extend-dist</scheme-name>
+         <initiator-config>
             <serializer>
                 <class-name>com.tangosol.io.pof.ConfigurablePofContext</class-name>
             </serializer>
@@ -50,5 +61,6 @@
                 <processing:attribute name="type">single</processing:attribute>
             </processing:taskprocessordefinition>
         </processing:taskprocessors>
-    </processing:extend-config>
+      </remote-cache-scheme>
+    </caching-schemes>
 </cache-config>

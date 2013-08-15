@@ -25,16 +25,11 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
 import com.oracle.coherence.common.tuples.Pair;
-import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
-import com.oracle.coherence.configuration.parameters.Parameter;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
-import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
-import com.oracle.coherence.environment.Environment;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
@@ -45,6 +40,8 @@ import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.EventTransformer;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
 import com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformer;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
 import com.tangosol.io.pof.PofReader;
@@ -90,7 +87,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         /**
          * <code>DISABLED</code> indicates that the {@link EventChannelController} has been taken off-line.  Once in this
          * state no distribution will occur for the {@link EventChannelController} until it is manually restarted
-         * (typically via JMX).  Further, <strong>no {@link Event}s</strong> will be queued for the distribution by the
+         * (typically via JMX).  Further, <strong>no events</strong> will be queued for the distribution by the
          * {@link EventChannelController}.
          * <p>
          * This is a starting state for a {@link EventChannelController}.
@@ -101,8 +98,8 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
          * <code>Suspended</code> indicates that the {@link EventChannelController} is not operational.  It typically means
          * that the {@link EventChannelController} has either failed too many times (and thus was automatically suspended)
          * or it has been has been manually suspended.  Once in this state no distribution will occur until it is
-         * manually restarted (typically via JMX).  Any {@link Event}s that are pending to be distributed, or new
-         * {@link Event}s arriving via in the associated {@link EventDistributor}, will be queued for later distribution
+         * manually restarted (typically via JMX).  Any events that are pending to be distributed, or new
+         * events arriving via in the associated {@link EventDistributor}, will be queued for later distribution
          * when the {@link EventChannelController} returns to service.
          * <p>
          * This is a starting state for a {@link EventChannelController}.
@@ -124,25 +121,25 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
         /**
          * <code>SCHEDULED</code> indicates that the {@link EventChannelController} is scheduled to commence distribution
-         * of {@link Event}s.
+         * of events.
          */
         SCHEDULED,
 
         /**
          * <code>DISTRIBUTING</code> indicates that the {@link EventChannelController} is currently in the process of
-         * distributing {@link Event}s using the {@link EventChannel}.
+         * distributing events using the {@link EventChannel}.
          */
         DISTRIBUTING,
 
         /**
          * <code>WAITING</code> indicates that the {@link EventChannelController} is currently in the process of waiting
-         * for {@link Event}s to distribute using the {@link EventChannel}.
+         * for events to distribute using the {@link EventChannel}.
          */
         WAITING,
 
         /**
          * <code>STOPPING</code> indicates that the {@link EventChannelController} is in the process of stopping
-         * the distribution of {@link Event}s, most likely because it is shutting down.
+         * the distribution of events, most likely because it is shutting down.
          */
         STOPPING,
 
@@ -159,9 +156,9 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     private static Logger logger = Logger.getLogger(AbstractEventChannelController.class.getName());
 
     /**
-     * The {@link Environment} in which the {@link EventChannelController} is operating.
+     * The {@link ClassLoader} used by the {@link EventChannelController}.
      */
-    protected Environment environment;
+    protected ClassLoader loader;
 
     /**
      * The {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor.Identifier} for the
@@ -181,12 +178,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     protected EventChannelController.Dependencies controllerDependencies;
 
     /**
-     * The {@link EventChannel} that will be used to distribute {@link Event}s for this {@link EventChannelController}.
+     * The {@link EventChannel} that will be used to distribute events for this {@link EventChannelController}.
      */
     protected EventChannel channel;
 
     /**
-     * (optional) The {@link EventIteratorTransformer} that should be used to transform {@link Event}s prior to
+     * (optional) The {@link EventIteratorTransformer} that should be used to transform events prior to
      * distribution with an {@link EventChannel}.
      */
     protected EventIteratorTransformer transformer;
@@ -197,27 +194,27 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     protected ScheduledExecutorService executorService;
 
     /**
-     * The {@link Serializer} to use for (de)serializing {@link Event}s during distribution using this {@link EventChannelController}.
+     * The {@link Serializer} to use for (de)serializing events during distribution using this {@link EventChannelController}.
      */
     protected Serializer serializer;
 
     /**
-     * The time (in ms) the last batch of {@link Event}s took to distribute.
+     * The time (in ms) the last batch of events took to distribute.
      */
     protected long lastDistributionDurationMS;
 
     /**
-     * The minimum time (in ms) a batch of {@link Event}s has taken to distribute.
+     * The minimum time (in ms) a batch of events has taken to distribute.
      */
     protected long minimumDistributionDurationMS;
 
     /**
-     * The maximum time (in ms) a batch of {@link Event}s has taken to distribute.
+     * The maximum time (in ms) a batch of events has taken to distribute.
      */
     protected long maximumDistributionDurationMS;
 
     /**
-     * The total time (in ms) the distribution of all {@link Event}s has taken.
+     * The total time (in ms) the distribution of all events has taken.
      */
     protected long totalDistributionDurationMS;
 
@@ -227,17 +224,17 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     protected int consecutiveDistributionFailures;
 
     /**
-     * The number of batches of {@link Event}s distributed.
+     * The number of batches of events distributed.
      */
     protected int totalBatchesDistributed;
 
     /**
-     * The number of {@link Event}s that have been considered for distribution.
+     * The number of events that have been considered for distribution.
      */
     protected int totalCandidateEvents;
 
     /**
-     * The number {@link Event}s that have been distributed.
+     * The number events that have been distributed.
      */
     protected int totalEventsDistributed;
 
@@ -255,36 +252,28 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     public AbstractEventChannelController(EventDistributor.Identifier         distributorIdentifier,
                                           EventChannelController.Identifier   controllerIdentifier,
                                           EventChannelController.Dependencies dependencies,
-                                          Environment                         environment,
-                                          ParameterProvider                   parameterProvider,
+                                          ClassLoader                         loader,
+                                          ParameterResolver                   parameterResolver,
                                           ParameterizedBuilder<Serializer>    serializerBuilder)
     {
         this.distributorIdentifier  = distributorIdentifier;
         this.controllerIdentifier   = controllerIdentifier;
         this.controllerDependencies = dependencies;
-        this.environment            = environment;
-
-        // create a parameter provider for realizing the necessary builders
-        MutableParameterProvider mutableParameterProvider = new ScopedParameterProvider(parameterProvider);
-
-        // add the standard coherence parameters to the parameter provider
-        mutableParameterProvider.addParameter(new Parameter("class-loader", environment.getClassLoader()));
+        this.loader                 = loader;
 
         // realize the channel using the builder
-        this.channel = dependencies.getEventChannelBuilder().realize(mutableParameterProvider);
+        this.channel = dependencies.getEventChannelBuilder().realize(parameterResolver, null, null);
 
         // realize the events transformer (if we have one)
         this.transformer = dependencies.getEventsTransformerBuilder() != null
-                           ? dependencies.getEventsTransformerBuilder().realize(mutableParameterProvider) : null;
+                         ? dependencies.getEventsTransformerBuilder().realize(parameterResolver, null, null) : null;
 
         // setup an executor service to perform background processing
-        this.executorService =
-            ExecutorServiceFactory
-                .newSingleThreadScheduledExecutor(ThreadFactories
+        this.executorService = ExecutorServiceFactory.newSingleThreadScheduledExecutor(ThreadFactories
                     .newThreadFactory(true, "EventChannelController", new ThreadGroup("EventChannelController")));
 
         // realize the serializer
-        this.serializer = serializerBuilder.realize(mutableParameterProvider);
+        this.serializer = serializerBuilder.realize(parameterResolver, null, null);
 
         // determine the controller starting state based on the specified starting mode
         switch (dependencies.getStartingMode())
@@ -315,7 +304,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
     /**
-     * Determines the {@link Serializer} to use for (de)serializing {@link Event}s using this {@link EventChannelController}.
+     * Determines the {@link Serializer} to use for (de)serializing events using this {@link EventChannelController}.
      *
      * @return A {@link Serializer}
      */
@@ -504,7 +493,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
     /**
-     * Preempting an {@link EventChannelController} forces it to immediately schedule distribution of {@link Event}s
+     * Preempting an {@link EventChannelController} forces it to immediately schedule distribution of events
      * if it is in a {@link State#WAITING} state.  If the {@link EventChannelController} is not in a
      * {@link State#WAITING}, the request is ignored and nothing happens.
      */
@@ -879,7 +868,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
     /**
-     * Starts the {@link EventChannelController} to distribute {@link Event}s
+     * Starts the {@link EventChannelController} to distribute events
      */
     private void onDistribute()
     {
@@ -985,6 +974,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                     minimumDistributionDurationMS = Math.min(minimumDistributionDurationMS, distributionDurationMS);
                     totalDistributionDurationMS   += distributionDurationMS;
 
+
                     if (logger.isLoggable(Level.FINER))
                     {
                         logger.log(Level.FINER,
@@ -1089,12 +1079,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
         /**
          * By default a {@link EventChannelController} will wait 1000 milliseconds between attempts to distribute batches
-         * of {@link Event}s.
+         * of events.
          */
         public final static long BATCH_DISTRIBUTION_DELAY_DEFAULT = 1000;
 
         /**
-         * By default a maximum of 100 {@link Event}s will be in a batch when distributed.
+         * By default a maximum of 100 events will be in a batch when distributed.
          */
         public final static int BATCH_SIZE_DEFAULT = 100;
 
@@ -1138,12 +1128,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         private Mode startingMode;
 
         /**
-         * The number of milliseconds to wait between attempts to distribute {@link Event}s.
+         * The number of milliseconds to wait between attempts to distribute events.
          */
         private long batchDistributionDelayMS;
 
         /**
-         * The maximum number of {@link Event}s that may be "batched" together in a single batch.
+         * The maximum number of events that may be "batched" together in a single batch.
          */
         private int batchSize;
 
@@ -1154,7 +1144,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
         /**
          * The number of consecutive failures that may occur with an {@link EventChannel} before it is suspended from
-         * distributing {@link Event}s.
+         * distributing events.
          */
         private int totalConsecutiveFailuresBeforeSuspending;
 
@@ -1173,7 +1163,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
          */
         public DefaultDependencies(String                                         channelName,
                                    String                                         externalName,
-                                   ParameterizedBuilder<EventChannel>             eventChannelBuilder,
+                                   ParameterizedBuilder<EventChannel> eventChannelBuilder,
                                    ParameterizedBuilder<EventIteratorTransformer> transformerBuilder,
                                    Mode                                           startingMode,
                                    long                                           batchDistributionDelayMS,

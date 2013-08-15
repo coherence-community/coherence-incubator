@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,22 +27,32 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-import com.oracle.coherence.common.logging.Logger;
+
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
+
 import com.oracle.coherence.patterns.command.Context;
+
 import com.tangosol.net.BackingMapManagerContext;
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.ExtensibleConfigurableCacheFactory;
+import com.tangosol.net.PartitionedService;
+
+import com.tangosol.util.ResourceRegistry;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * An {@link CommandExecutorManager} is responsible for managing and scheduling
  * the current {@link CommandExecutor}s for a Coherence Cluster Member.
  * <p>
- * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2008-2012. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -49,22 +60,70 @@ import java.util.concurrent.TimeUnit;
 public final class CommandExecutorManager
 {
     /**
+     * The logger for this class.
+     */
+    private static final Logger logger = Logger.getLogger(CommandExecutorManager.class.getName());
+
+    /**
      * The map of {@link Context} {@link ContextIdentifier}s to associated {@link CommandExecutor}s
      * that the {@link CommandExecutorManager} is managing.
      */
-    private static ConcurrentHashMap<Identifier, CommandExecutor> commandExecutors;
+    private ConcurrentHashMap<Identifier, CommandExecutor> m_mapCommandExecutors;
 
     /**
      * An {@link ScheduledExecutorService} that we can use to perform asynchronous tasks, like
      * managing {@link CommandExecutor}s.
      */
-    private static ScheduledExecutorService executorService;
+    private ScheduledExecutorService m_executorService;
 
     /**
      * A {@link ThreadGroup} for the {@link ExecutorService} so that {@link Thread}s
      * are not allocated within Coherence owned {@link Thread}s.
      */
-    private static ThreadGroup executorServiceThreadGroup;
+    private ThreadGroup m_executorServiceThreadGroup;
+
+
+    /**
+     * Constructs a {@link CommandExecutorManager}.
+     */
+    private CommandExecutorManager()
+    {
+        m_mapCommandExecutors        = new ConcurrentHashMap<Identifier, CommandExecutor>();
+        m_executorServiceThreadGroup = new ThreadGroup("CommandExecutorManager");
+        m_executorService = ExecutorServiceFactory.newScheduledThreadPool(5, ThreadFactories.newThreadFactory(true,
+            "CommandExecutor", m_executorServiceThreadGroup));
+    }
+
+
+    /**
+     * Ensures that the {@link CommandExecutorManager} has been created and
+     * exists in the {@link ResourceRegistry}.
+     *
+     * @return the registered {@link CommandExecutorManager}
+     */
+    public static CommandExecutorManager ensure()
+    {
+        ResourceRegistry registry =
+            ((ExtensibleConfigurableCacheFactory) CacheFactory.getConfigurableCacheFactory()).getResourceRegistry();
+
+        CommandExecutorManager manager = registry.getResource(CommandExecutorManager.class);
+
+        if (manager == null)
+        {
+            synchronized (registry)
+            {
+                manager = registry.getResource(CommandExecutorManager.class);
+
+                if (manager == null)
+                {
+                    manager = new CommandExecutorManager();
+                    registry.registerResource(CommandExecutorManager.class, manager);
+                }
+            }
+        }
+
+        return manager;
+    }
 
 
     /**
@@ -74,34 +133,33 @@ public final class CommandExecutorManager
      *
      * @param contextIdentifier The {@link Identifier} of the {@link Context} for which we
      *                          are requesting a {@link CommandExecutor}.
-     * @param backingMapManagerContext The {@link BackingMapManagerContext} to which the {@link CommandExecutor}
-     *                                 is associated
+     * @param svcPartitioned    the {@link PartitionedService} that owns the {@link CommandExecutor}
      *
      * @return {@link CommandExecutor}
      */
-    public static CommandExecutor ensureCommandExecutor(Identifier               contextIdentifier,
-                                                        BackingMapManagerContext backingMapManagerContext)
+    public CommandExecutor ensureCommandExecutor(Identifier contextIdentifier,
+                                                 PartitionedService svcPartitioned)
     {
-        CommandExecutor commandExecutor = commandExecutors.get(contextIdentifier);
+        CommandExecutor commandExecutor = m_mapCommandExecutors.get(contextIdentifier);
 
         if (commandExecutor == null)
         {
-            if (Logger.isEnabled(Logger.DEBUG))
+            if (logger.isLoggable(Level.FINER))
             {
-                Logger.log(Logger.DEBUG, "Creating CommandExecutor for %s", contextIdentifier);
+                logger.log(Level.FINER, String.format("Creating CommandExecutor for %s", contextIdentifier));
             }
 
             // create and register the new CommandExecutor
-            commandExecutor = new CommandExecutor(contextIdentifier, backingMapManagerContext);
+            commandExecutor = new CommandExecutor(contextIdentifier, svcPartitioned, m_executorService);
 
-            CommandExecutor previouslyRegisteredCommandExecutor = commandExecutors.putIfAbsent(contextIdentifier,
-                                                                                               commandExecutor);
+            CommandExecutor previouslyRegisteredCommandExecutor = m_mapCommandExecutors.putIfAbsent(contextIdentifier,
+                                                                                                    commandExecutor);
 
             if (previouslyRegisteredCommandExecutor == null)
             {
-                if (Logger.isEnabled(Logger.DEBUG))
+                if (logger.isLoggable(Level.FINER))
                 {
-                    Logger.log(Logger.DEBUG, "Created CommandExecutor for %s", contextIdentifier);
+                    logger.log(Level.FINER, String.format("Created CommandExecutor for %s", contextIdentifier));
                 }
             }
             else
@@ -109,9 +167,10 @@ public final class CommandExecutorManager
                 // use the previously created CommandExecutor
                 commandExecutor = previouslyRegisteredCommandExecutor;
 
-                if (Logger.isEnabled(Logger.DEBUG))
+                if (logger.isLoggable(Level.FINER))
                 {
-                    Logger.log(Logger.DEBUG, "Using previously created CommandExecutor for %s", contextIdentifier);
+                    logger.log(Level.FINER,
+                               String.format("Using previously created CommandExecutor for %s", contextIdentifier));
                 }
             }
         }
@@ -127,9 +186,9 @@ public final class CommandExecutorManager
      *
      * @return <code>null</code> if no such {@link CommandExecutor} exists with the specified {@link Identifier}.
      */
-    public static CommandExecutor getCommandExecutor(Identifier contextIdentifier)
+    public CommandExecutor getCommandExecutor(Identifier contextIdentifier)
     {
-        CommandExecutor commandExecutor = commandExecutors.get(contextIdentifier);
+        CommandExecutor commandExecutor = m_mapCommandExecutors.get(contextIdentifier);
 
         return commandExecutor;
     }
@@ -140,14 +199,14 @@ public final class CommandExecutorManager
      *
      * @param contextIdentifier
      */
-    public static CommandExecutor removeCommandExecutor(Identifier contextIdentifier)
+    public CommandExecutor removeCommandExecutor(Identifier contextIdentifier)
     {
-        if (Logger.isEnabled(Logger.DEBUG))
+        if (logger.isLoggable(Level.FINER))
         {
-            Logger.log(Logger.DEBUG, "Removing CommandExecutor for %s", contextIdentifier);
+            logger.log(Level.FINER, String.format("Removing CommandExecutor for %s", contextIdentifier));
         }
 
-        return commandExecutors.remove(contextIdentifier);
+        return m_mapCommandExecutors.remove(contextIdentifier);
     }
 
 
@@ -158,33 +217,17 @@ public final class CommandExecutorManager
      * @param delay The minimum delay from now until the execution should commence
      * @param timeUnit The {@link TimeUnit} for the specified delay
      */
-    public static void schedule(Runnable runnable,
-                                long     delay,
-                                TimeUnit timeUnit)
+    public void schedule(Runnable runnable,
+                         long delay,
+                         TimeUnit timeUnit)
     {
         if (delay == 0)
         {
-            executorService.execute(runnable);
+            m_executorService.execute(runnable);
         }
         else
         {
-            executorService.schedule(runnable, delay, timeUnit);
+            m_executorService.schedule(runnable, delay, timeUnit);
         }
-    }
-
-
-    /**
-     * Static initialization.
-     */
-    static
-    {
-        // TODO: get the size of the thread pool for our executorService from the system properties (or cache config?)
-
-        commandExecutors           = new ConcurrentHashMap<Identifier, CommandExecutor>();
-        executorServiceThreadGroup = new ThreadGroup("CommandExecutorManager");
-        executorService =
-            ExecutorServiceFactory
-                .newScheduledThreadPool(5, ThreadFactories
-                    .newThreadFactory(true, "CommandExecutor", executorServiceThreadGroup));
     }
 }

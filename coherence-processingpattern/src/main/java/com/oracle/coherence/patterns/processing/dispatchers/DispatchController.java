@@ -25,7 +25,6 @@
 
 package com.oracle.coherence.patterns.processing.dispatchers;
 
-import com.oracle.coherence.environment.extensible.dependencies.DependentResource;
 import com.oracle.coherence.patterns.processing.SubmissionState;
 import com.oracle.coherence.patterns.processing.internal.DefaultPendingSubmission;
 import com.tangosol.net.ConfigurableCacheFactory;
@@ -40,7 +39,7 @@ import com.tangosol.net.ConfigurableCacheFactory;
  *
  * @author Noah Arliss
  */
-public interface DispatchController extends Runnable, DependentResource
+public interface DispatchController extends Runnable
 {
     /**
      * Requests that the {@link DispatchController} accept the specified

@@ -9,7 +9,8 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting
+ * or https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,22 +26,25 @@
 
 package com.oracle.coherence.patterns.messaging;
 
-import com.oracle.coherence.common.events.EntryEvent;
-import com.oracle.coherence.common.events.processing.EventProcessor;
-import com.oracle.coherence.common.events.processing.EventProcessorFactory;
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+
+import java.util.logging.Logger;
 
 /**
  * A {@link Message} represents a developer provided
@@ -55,12 +59,17 @@ import java.util.TreeSet;
  * @author Brian Oliver
  */
 @SuppressWarnings("serial")
-public class Message implements EventProcessorFactory<EntryEvent>, ExternalizableLite, PortableObject
+public class Message implements ExternalizableLite, PortableObject
 {
     /**
      * The name of the Coherence Cache that will store {@link Message}s.
      */
     public static final String CACHENAME = "coherence.messagingpattern.messages";
+
+    /**
+     * Logger
+     */
+    private static Logger logger = Logger.getLogger(TopicSubscription.class.getName());
 
     /**
      * The key that identifies a {@link Message} in a coherence cache..
@@ -451,19 +460,5 @@ public class Message implements EventProcessorFactory<EntryEvent>, Externalizabl
                              deliveredTo,
                              acknowledgedBy,
                              payload);
-    }
-
-
-    /**
-     * Return an event processor to perform asynchronous processing of the {@link Message} after it has been
-     * written to the cache.  If there is nothing to do, then null is returned.  The event processor will be scheduled
-     * to run immediately
-     *
-     * @param e event
-     * @return event processor
-     */
-    public EventProcessor<EntryEvent> getEventProcessor(EntryEvent e)
-    {
-        return MessageEventManager.getInstance().getEventProcessor(e, this);
     }
 }

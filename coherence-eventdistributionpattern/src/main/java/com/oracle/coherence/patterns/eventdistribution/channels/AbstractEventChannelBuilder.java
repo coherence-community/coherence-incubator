@@ -25,8 +25,7 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels;
 
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
-import com.oracle.coherence.patterns.eventdistribution.EventChannel;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
@@ -56,18 +55,6 @@ public abstract class AbstractEventChannelBuilder implements EventChannelBuilder
     {
         // SKIP: deliberately empty
     }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean realizesClassOf(Class<?>          clazz,
-                                   ParameterProvider parameterProvider)
-    {
-        return EventChannel.class.isAssignableFrom(clazz);
-    }
-
 
     /**
      * {@inheritDoc}

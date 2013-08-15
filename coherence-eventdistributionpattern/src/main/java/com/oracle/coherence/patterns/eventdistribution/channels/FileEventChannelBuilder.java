@@ -25,11 +25,12 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels;
 
-import com.oracle.coherence.configuration.Mandatory;
-import com.oracle.coherence.configuration.Property;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.config.annotation.Injectable;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
@@ -81,8 +82,7 @@ public class FileEventChannelBuilder extends AbstractEventChannelBuilder
      *
      * @param directoryName
      */
-    @Property("directory-name")
-    @Mandatory
+    @Injectable
     public void setDirectoryName(String directoryName)
     {
         this.directoryName = directoryName;
@@ -105,7 +105,7 @@ public class FileEventChannelBuilder extends AbstractEventChannelBuilder
      *
      * @param isAppending
      */
-    @Property("appending")
+    @Injectable
     public void setAppending(boolean isAppending)
     {
         this.isAppending = isAppending;
@@ -115,7 +115,9 @@ public class FileEventChannelBuilder extends AbstractEventChannelBuilder
     /**
      * {@inheritDoc}
      */
-    public EventChannel realize(ParameterProvider parameterProvider)
+    @Override
+    public EventChannel realize(ParameterResolver parameterResolver,
+            ClassLoader classLoader, ParameterList parameters)
     {
         return new FileEventChannel(getDirectoryName(), isAppending());
     }

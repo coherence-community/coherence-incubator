@@ -25,16 +25,14 @@
 
 package com.oracle.coherence.patterns.eventdistribution.transformers;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.util.UniformTransformer;
-import com.oracle.coherence.configuration.Mandatory;
-import com.oracle.coherence.configuration.Property;
-import com.oracle.coherence.configuration.SubType;
-import com.oracle.coherence.configuration.Type;
-import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.EventTransformer;
+import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.annotation.Injectable;
+import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
@@ -44,6 +42,7 @@ import com.tangosol.util.ExternalizableHelper;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 
 /**
  * A {@link MutatingEventIteratorTransformerBuilder} is a {@link ParameterizedBuilder} for {@link MutatingEventIteratorTransformer}s.
@@ -77,10 +76,7 @@ public class MutatingEventIteratorTransformerBuilder extends AbstractEventIterat
      *
      * @param bldrEventTransformer The {@link UniformTransformer} for an {@link Event}.
      */
-    @Property("event-transformer")
-    @Type(ParameterizedBuilder.class)
-    @SubType(EventTransformer.class)
-    @Mandatory
+    @Injectable("event-transformer")
     public void setEventTransformerBuilder(ParameterizedBuilder<EventTransformer> bldrEventTransformer)
     {
         m_bldrEventTransformer = bldrEventTransformer;
@@ -90,9 +86,11 @@ public class MutatingEventIteratorTransformerBuilder extends AbstractEventIterat
     /**
      * {@inheritDoc}
      */
-    public EventIteratorTransformer realize(ParameterProvider parameterProvider)
+    public EventIteratorTransformer realize(ParameterResolver parameterResolver, ClassLoader loader,
+            ParameterList parameters)
     {
-        return new MutatingEventIteratorTransformer(m_bldrEventTransformer.realize(parameterProvider));
+        return new MutatingEventIteratorTransformer(m_bldrEventTransformer.realize(parameterResolver, loader,
+                parameters));
     }
 
 
@@ -103,7 +101,8 @@ public class MutatingEventIteratorTransformerBuilder extends AbstractEventIterat
     public void readExternal(DataInput in) throws IOException
     {
         super.readExternal(in);
-        m_bldrEventTransformer = (ParameterizedBuilder<EventTransformer>) ExternalizableHelper.readObject(in);
+        m_bldrEventTransformer = (ParameterizedBuilder<EventTransformer>) ExternalizableHelper
+                .readObject(in);
     }
 
 

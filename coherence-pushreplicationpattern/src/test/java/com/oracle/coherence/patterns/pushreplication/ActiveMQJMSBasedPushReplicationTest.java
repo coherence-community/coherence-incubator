@@ -34,6 +34,7 @@ import org.junit.BeforeClass;
 
 import java.io.File;
 
+
 /**
  * The {@link ActiveMQJMSBasedPushReplicationTest} is an
  * {@link AbstractPushReplicationTest} designed
@@ -44,7 +45,8 @@ import java.io.File;
  *
  * @author Brian Oliver
  */
-public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplicationTest
+public class ActiveMQJMSBasedPushReplicationTest
+        extends AbstractPushReplicationTest
 {
     /**
      * The JMS {@link BrokerService} for ActiveMQ.

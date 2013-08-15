@@ -29,6 +29,7 @@ import com.oracle.coherence.common.events.Event;
 
 import java.util.Iterator;
 
+
 /**
  * An {@link EventChannel} is responsible for the sending a batch of {@link Event}s to an end-point.  The
  * mechanism, transport and end-point to which the {@link Event}s will be sent is implementation dependent.
@@ -72,8 +73,8 @@ public interface EventChannel
      *
      * @throws EventChannelNotReadyException When the {@link EventChannel} is not ready for distributing {@link Event}s.
      */
-    public void connect(EventDistributor.Identifier       distributorIdentifier,
-                        EventChannelController.Identifier controllerIdentifier) throws EventChannelNotReadyException;
+    public void connect(EventDistributor.Identifier distributorIdentifier,
+            EventChannelController.Identifier controllerIdentifier) throws EventChannelNotReadyException;
 
 
     /**

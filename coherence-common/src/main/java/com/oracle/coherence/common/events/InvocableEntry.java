@@ -29,8 +29,9 @@ import com.tangosol.util.InvocableMap.EntryProcessor;
 
 import java.util.Map;
 
+
 /**
- * An {@link InvocableEntry} is an {@link java.util.Map.Entry} that supports execution of
+ * An {@link InvocableEntry} is an {@link Map.Entry} that supports execution of
  * {@link EntryProcessor}s, without explicitly requiring a reference to an
  * underlying {@link com.tangosol.net.NamedCache} and/or {@link com.tangosol.util.InvocableMap}.
  * <p>

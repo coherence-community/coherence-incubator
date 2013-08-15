@@ -120,9 +120,8 @@ The configuration of an `EventDistributor` occurs *inside* and *together* with t
 A Coherence Cache Configuration for this is as follows:
 
     <cache-config
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
-        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-        element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
+        xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler">
 
         <defaults>
             <serializer>pof</serializer>
@@ -201,9 +200,7 @@ occurs as part of configuring the `EventDistributor`.
 A Coherence Cache Configuration for this is as follows:
 
     <cache-config
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
-        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-        element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler">
 
         <defaults>
             <serializer>pof</serializer>
@@ -298,9 +295,7 @@ remote cache.  Consequently in order to configure a `RemoteCacheChannel` one mus
 A Coherence Cache Configuration for this is as follows:
 
     <cache-config
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
-        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-        element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
+         xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler">
 
         <defaults>
             <serializer>pof</serializer>
@@ -432,9 +427,7 @@ processed/replayed into a `CacheStoreChannel` that of which updates a local data
 A Coherence Cache Configuration for a `RemoteClusterChannel` is as follows:
 
     <cache-config
-        xmlns:element="class://com.oracle.coherence.environment.extensible.namespaces.XmlElementProcessingNamespaceContentHandler"
-        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceContentHandler"
-        element:introduce-cache-config="coherence-messagingpattern-cache-config.xml">
+        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler">
 
         <defaults>
             <serializer>pof</serializer>

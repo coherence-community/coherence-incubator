@@ -116,7 +116,7 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     /**
      * A simple method to wait a specified amount of time, with a message to stdout.
      *
-     * @param timeMs The time to wait in ms.
+     * @param time      The time to wait in ms.
      * @param rationale The rationale (message) for waiting.
      * @throws InterruptedException When interrupted while waiting.
      */

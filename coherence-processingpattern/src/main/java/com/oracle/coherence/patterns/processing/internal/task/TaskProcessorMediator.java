@@ -185,7 +185,7 @@ public interface TaskProcessorMediator
 
 
     /**
-     * Called if this entry has arrived to this node due to partitions moving or failover.
+     * Called if this entry has arrived on this node due to partitions moving or failover.
      */
     void entryArrived();
 

@@ -25,10 +25,11 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
-import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableCacheInvocationRequestEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
+import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.net.NamedCache;
 
 import java.util.Iterator;
@@ -75,9 +76,9 @@ public final class CacheEventChannelHelper
                 try
                 {
                     namedCache.invoke(entryEvent.getEntry().getBinaryKey(),
-                                      new EntryEventProcessor(entryEvent,
-                                                              conflictResolverBuilder,
-                                                              namedCache.getCacheName()));
+                            new EntryEventProcessor(entryEvent,
+                                    conflictResolverBuilder,
+                                    namedCache.getCacheName()));
 
                     distributionCount++;
 
