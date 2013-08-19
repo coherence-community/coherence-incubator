@@ -25,36 +25,46 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
-
 import com.oracle.coherence.common.builders.SerializableNamedCacheSerializerBuilder;
+
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
 import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
+
 import com.oracle.coherence.common.events.CacheEvent;
 import com.oracle.coherence.common.events.EntryRemovedEvent;
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.expression.SerializableParameter;
 import com.oracle.coherence.common.expression.SerializableResolvableParameterList;
 import com.oracle.coherence.common.expression.SerializableScopedParameterResolver;
+
 import com.oracle.coherence.common.resourcing.AbstractDeferredSingletonResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProvider;
+
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryInsertedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryRemovedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryUpdatedEvent;
+
 import com.tangosol.coherence.config.CacheMapping;
 import com.tangosol.coherence.config.ResolvableParameterList;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.io.Serializer;
+
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.ExtensibleConfigurableCacheFactory;
 import com.tangosol.net.GuardSupport;
+
 import com.tangosol.net.cache.BackingMapBinaryEntry;
 import com.tangosol.net.cache.BinaryEntryStore;
 import com.tangosol.net.cache.CacheStore;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
@@ -67,6 +77,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -134,33 +145,36 @@ public class PublishingCacheStore implements BinaryEntryStore
                 }
 
                 ExtensibleConfigurableCacheFactory eccf =
-                        (ExtensibleConfigurableCacheFactory) CacheFactory.getConfigurableCacheFactory();
-
+                    (ExtensibleConfigurableCacheFactory) CacheFactory.getConfigurableCacheFactory();
 
                 // grab the CacheMapping for this cache - it has enrichments for the dependency templates
-                CacheMapping cacheMapping =  eccf.getCacheConfig().getCacheMappingRegistry().findCacheMapping(cacheName);
+                CacheMapping cacheMapping = eccf.getCacheConfig().getCacheMappingRegistry().findCacheMapping(cacheName);
 
                 // NOTE: This temporary code until the core Coherence resolver/builder classes are serializable
-                ResolvableParameterList resolvableParams = (ResolvableParameterList) cacheMapping.getParameterResolver();
-                SerializableResolvableParameterList serializableParams = new SerializableResolvableParameterList(resolvableParams);
+                ResolvableParameterList resolvableParams =
+                    (ResolvableParameterList) cacheMapping.getParameterResolver();
+                SerializableResolvableParameterList serializableParams =
+                    new SerializableResolvableParameterList(resolvableParams);
 
                 // construct the new parameter provider for the cache
-                final SerializableScopedParameterResolver
-                        resolver = new SerializableScopedParameterResolver(serializableParams);
+                final SerializableScopedParameterResolver resolver =
+                    new SerializableScopedParameterResolver(serializableParams);
 
                 // add the standard coherence parameters to the parameter provider
                 resolver.add(new SerializableParameter("cache-name", cacheName));
-                resolver.add(new SerializableParameter("site-name",  localClusterMetaInfo.getSiteName()));
-                resolver.add(new SerializableParameter("cluster-name",  localClusterMetaInfo.getClusterName()));
+                resolver.add(new SerializableParameter("site-name", localClusterMetaInfo.getSiteName()));
+                resolver.add(new SerializableParameter("cluster-name", localClusterMetaInfo.getClusterName()));
 
                 // create a serializer builder for the cache that we can use when distributing events
                 final ParameterizedBuilder<Serializer> serializerBuilder =
-                        new SerializableNamedCacheSerializerBuilder(cacheName);
+                    new SerializableNamedCacheSerializerBuilder(cacheName);
 
                 // create the EventDistributors for the Cache
                 ArrayList<EventDistributor> distributors = new ArrayList<EventDistributor>();
 
-                EventDistributorTemplate templateEvent = cacheMapping.getResourceRegistry().getResource(EventDistributorTemplate.class);
+                EventDistributorTemplate templateEvent =
+                    cacheMapping.getResourceRegistry().getResource(EventDistributorTemplate.class);
+
                 if (templateEvent == null)
                 {
                     templateEvent = eccf.getResourceRegistry().getResource(EventDistributorTemplate.class);
@@ -177,14 +191,14 @@ public class PublishingCacheStore implements BinaryEntryStore
                     templateEvent.setSerializerBuilder(serializerBuilder);
                 }
 
-                distributors.add(templateEvent.realize(resolver, null,
-                        new SerializableResolvableParameterList()));
+                distributors.add(templateEvent.realize(resolver, null, new SerializableResolvableParameterList()));
 
                 return distributors;
             }
         };
 
     }
+
 
     /**
      * Requests an {@link Event} to be distributed via the established {@link EventDistributor}s.
@@ -386,39 +400,35 @@ public class PublishingCacheStore implements BinaryEntryStore
      */
     public synchronized void erase(BinaryEntry entry)
     {
-        // we only distribute if we actually have an entry
-        if (entry.getOriginalBinaryValue() != null)
+        Binary decoratedBinaryValue;
+
+        // If the entry was marked for erase we are erasing the original value.
+        if (entry.getOriginalBinaryValue() == null
+            || isMarkedForErase(entry.getContext(), entry.getOriginalBinaryValue()))
         {
-            Binary decoratedBinaryValue = null;
-
-            // If the entry was marked for erase we are erasing the original value.
-            if (isMarkedForErase(entry.getContext(), entry.getOriginalBinaryValue()))
-            {
-                decoratedBinaryValue = entry.getOriginalBinaryValue();
-
-            }
-            else
-            {
-                // If an entry is not marked for erase it is originating locally.
-                // We decorate the entry with the local cluster global name regardless
-                // of whether the entry was decorated earlier.  This allows
-                // this cluster to take ownership of the entry and permits it to
-                // propagate correctly.
-
-                // Without forcing this decoration an erase operation will retain
-                // an old cluster name and not get propagated to that cluster.
-                decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
-            }
-
-            Binary undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
-            Binary originalBinaryValue  = entry.getOriginalBinaryValue();
-
-            distribute(new DistributableEntryRemovedEvent(cacheName,
-                                                          new DistributableEntry(undecoratedBinaryKey,
-                                                                                 decoratedBinaryValue,
-                                                                                 originalBinaryValue,
-                                                                                 entry.getContext())));
+            decoratedBinaryValue = entry.getOriginalBinaryValue();
         }
+        else
+        {
+            // If an entry is not marked for erase it is originating locally.
+            // We decorate the entry with the local cluster global name regardless
+            // of whether the entry was decorated earlier.  This allows
+            // this cluster to take ownership of the entry and permits it to
+            // propagate correctly.
+
+            // Without forcing this decoration an erase operation will retain
+            // an old cluster name and not get propagated to that cluster.
+            decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
+        }
+
+        Binary undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
+        Binary originalBinaryValue  = entry.getOriginalBinaryValue();
+
+        distribute(new DistributableEntryRemovedEvent(cacheName,
+                                                      new DistributableEntry(undecoratedBinaryKey,
+                                                                             decoratedBinaryValue,
+                                                                             originalBinaryValue,
+                                                                             entry.getContext())));
     }
 
 
@@ -484,30 +494,28 @@ public class PublishingCacheStore implements BinaryEntryStore
 
         for (Iterator<BinaryEntry> iter = setEntries.iterator(); iter.hasNext(); )
         {
-            BinaryEntry entry                = (BinaryEntry) iter.next();
-            Binary      decoratedBinaryValue = null;
+            BinaryEntry entry = (BinaryEntry) iter.next();
+            Binary      decoratedBinaryValue;
 
-            if (entry.getOriginalBinaryValue() != null)
+            if (entry.getOriginalBinaryValue() == null
+                || isMarkedForErase(entry.getContext(), entry.getOriginalBinaryValue()))
             {
-                if (!isMarkedForErase(entry.getContext(), entry.getOriginalBinaryValue()))
-                {
-                    decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
-                }
-                else
-                {
-                    decoratedBinaryValue = entry.getOriginalBinaryValue();
-                }
-
-                Binary                undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
-                BackingMapBinaryEntry bmbe                 = (BackingMapBinaryEntry) entry;
-                Binary                originalBinaryValue  = bmbe.getOriginalBinaryValue();
-
-                events.add(new DistributableEntryRemovedEvent(cacheName,
-                                                              new DistributableEntry(undecoratedBinaryKey,
-                                                                                     decoratedBinaryValue,
-                                                                                     originalBinaryValue,
-                                                                                     entry.getContext())));
+                decoratedBinaryValue = entry.getOriginalBinaryValue();
             }
+            else
+            {
+                decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
+            }
+
+            Binary                undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
+            BackingMapBinaryEntry bmbe                 = (BackingMapBinaryEntry) entry;
+            Binary                originalBinaryValue  = bmbe.getOriginalBinaryValue();
+
+            events.add(new DistributableEntryRemovedEvent(cacheName,
+                                                          new DistributableEntry(undecoratedBinaryKey,
+                                                                                 decoratedBinaryValue,
+                                                                                 originalBinaryValue,
+                                                                                 entry.getContext())));
         }
 
         distribute(events);
