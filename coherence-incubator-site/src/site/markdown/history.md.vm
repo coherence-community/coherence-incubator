@@ -101,7 +101,9 @@ reverse chronological order.
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   No Changes
+*   [COHINC-65](http://java.net/jira/browse/COHINC-65): Resolved issue
+    where attempting to remove non-existing or expired entries would not
+    be replicated.
 
 <h4>coherence-pushreplicationpattern-examples</h4>
 
