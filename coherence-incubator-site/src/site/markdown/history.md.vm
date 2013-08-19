@@ -4,7 +4,22 @@ Change History
 The following sections outline Oracle Coherence Incubator changes in 
 reverse chronological order.
 
+
 <h3>Version ${project.version} @ ${timestamp} </h3>
+
+<h4>Source and Documentation Contributors</h4>
+
+*   Noah Arliss, Brian Oliver
+
+<h4>coherence-pushreplicationpattern</h4>
+
+*   [COHINC-65](http://java.net/jira/browse/COHINC-65): Resolved issue
+    where attempting to remove non-existing or expired entries would not
+    be replicated.
+
+--------------------------------------------------------------------------------
+
+<h3>Version 11.1.0 @ 2013-08-08 15:10</h3>
 
 <h4>Source and Documentation Contributors</h4>
 
