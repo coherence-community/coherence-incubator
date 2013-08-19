@@ -81,7 +81,6 @@ public class BruteForceConflictResolver implements ConflictResolver
         }
         else
         {
-            // TODO: unknown type of EntryEvent (log it and don't change anything)
             resolution.useLocalValue();
         }
 

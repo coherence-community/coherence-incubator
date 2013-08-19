@@ -28,20 +28,27 @@ package com.oracle.coherence.patterns.pushreplication;
 import com.oracle.coherence.common.builders.NamedCacheSerializerBuilder;
 import com.oracle.coherence.common.builders.NoArgsBuilder;
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
 import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
+
 import com.oracle.coherence.common.events.CacheEvent;
 import com.oracle.coherence.common.events.EntryRemovedEvent;
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.resourcing.AbstractDeferredSingletonResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
+
 import com.oracle.coherence.configuration.caching.CacheMapping;
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
+
 import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
+
 import com.oracle.coherence.environment.Environment;
+
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
 import com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate;
@@ -49,14 +56,18 @@ import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryInsertedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryRemovedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryUpdatedEvent;
+
 import com.tangosol.io.Serializer;
+
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.GuardSupport;
+
 import com.tangosol.net.cache.BackingMapBinaryEntry;
 import com.tangosol.net.cache.BinaryEntryStore;
 import com.tangosol.net.cache.CacheStore;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
@@ -68,6 +79,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -381,39 +393,35 @@ public class PublishingCacheStore implements BinaryEntryStore
      */
     public synchronized void erase(BinaryEntry entry)
     {
-        // we only distribute if we actually have an entry
-        if (entry.getOriginalBinaryValue() != null)
+        Binary decoratedBinaryValue;
+
+        // If the entry was marked for erase we are erasing the original value.
+        if (entry.getOriginalBinaryValue() == null
+            || isMarkedForErase(entry.getContext(), entry.getOriginalBinaryValue()))
         {
-            Binary decoratedBinaryValue = null;
-
-            // If the entry was marked for erase we are erasing the original value.
-            if (isMarkedForErase(entry.getContext(), entry.getOriginalBinaryValue()))
-            {
-                decoratedBinaryValue = entry.getOriginalBinaryValue();
-
-            }
-            else
-            {
-                // If an entry is not marked for erase it is originating locally.
-                // We decorate the entry with the local cluster global name regardless
-                // of whether the entry was decorated earlier.  This allows
-                // this cluster to take ownership of the entry and permits it to
-                // propagate correctly.
-
-                // Without forcing this decoration an erase operation will retain
-                // an old cluster name and not get propagated to that cluster.
-                decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
-            }
-
-            Binary undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
-            Binary originalBinaryValue  = entry.getOriginalBinaryValue();
-
-            distribute(new DistributableEntryRemovedEvent(cacheName,
-                                                          new DistributableEntry(undecoratedBinaryKey,
-                                                                                 decoratedBinaryValue,
-                                                                                 originalBinaryValue,
-                                                                                 entry.getContext())));
+            decoratedBinaryValue = entry.getOriginalBinaryValue();
         }
+        else
+        {
+            // If an entry is not marked for erase it is originating locally.
+            // We decorate the entry with the local cluster global name regardless
+            // of whether the entry was decorated earlier.  This allows
+            // this cluster to take ownership of the entry and permits it to
+            // propagate correctly.
+
+            // Without forcing this decoration an erase operation will retain
+            // an old cluster name and not get propagated to that cluster.
+            decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
+        }
+
+        Binary undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
+        Binary originalBinaryValue  = entry.getOriginalBinaryValue();
+
+        distribute(new DistributableEntryRemovedEvent(cacheName,
+                                                      new DistributableEntry(undecoratedBinaryKey,
+                                                                             decoratedBinaryValue,
+                                                                             originalBinaryValue,
+                                                                             entry.getContext())));
     }
 
 
@@ -479,30 +487,28 @@ public class PublishingCacheStore implements BinaryEntryStore
 
         for (Iterator<BinaryEntry> iter = setEntries.iterator(); iter.hasNext(); )
         {
-            BinaryEntry entry                = (BinaryEntry) iter.next();
-            Binary      decoratedBinaryValue = null;
+            BinaryEntry entry = (BinaryEntry) iter.next();
+            Binary      decoratedBinaryValue;
 
-            if (entry.getOriginalBinaryValue() != null)
+            if (entry.getOriginalBinaryValue() == null
+                || isMarkedForErase(entry.getContext(), entry.getOriginalBinaryValue()))
             {
-                if (!isMarkedForErase(entry.getContext(), entry.getOriginalBinaryValue()))
-                {
-                    decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
-                }
-                else
-                {
-                    decoratedBinaryValue = entry.getOriginalBinaryValue();
-                }
-
-                Binary                undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
-                BackingMapBinaryEntry bmbe                 = (BackingMapBinaryEntry) entry;
-                Binary                originalBinaryValue  = bmbe.getOriginalBinaryValue();
-
-                events.add(new DistributableEntryRemovedEvent(cacheName,
-                                                              new DistributableEntry(undecoratedBinaryKey,
-                                                                                     decoratedBinaryValue,
-                                                                                     originalBinaryValue,
-                                                                                     entry.getContext())));
+                decoratedBinaryValue = entry.getOriginalBinaryValue();
             }
+            else
+            {
+                decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
+            }
+
+            Binary                undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
+            BackingMapBinaryEntry bmbe                 = (BackingMapBinaryEntry) entry;
+            Binary                originalBinaryValue  = bmbe.getOriginalBinaryValue();
+
+            events.add(new DistributableEntryRemovedEvent(cacheName,
+                                                          new DistributableEntry(undecoratedBinaryKey,
+                                                                                 decoratedBinaryValue,
+                                                                                 originalBinaryValue,
+                                                                                 entry.getContext())));
         }
 
         distribute(events);
