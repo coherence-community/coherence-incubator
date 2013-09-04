@@ -25,10 +25,8 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.coherence;
 
-import com.oracle.coherence.common.builders.SerializableNamedCacheSerializerBuilder;
+import com.oracle.coherence.common.builders.NamedCacheSerializerBuilder;
 import com.oracle.coherence.common.events.Event;
-import com.oracle.coherence.common.expression.SerializableParameter;
-import com.oracle.coherence.common.expression.SerializableScopedParameterResolver;
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
 import com.oracle.coherence.common.liveobjects.LiveObject;
 import com.oracle.coherence.common.liveobjects.OnInserted;
@@ -43,7 +41,9 @@ import com.oracle.coherence.patterns.messaging.MessageIdentifier;
 import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+import com.tangosol.config.expression.Parameter;
 import com.tangosol.config.expression.ParameterResolver;
+import com.tangosol.config.expression.ScopedParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
 import com.tangosol.io.pof.PofReader;
@@ -208,14 +208,14 @@ public class CoherenceEventChannelSubscription extends Subscription
 
         EventChannelControllerManager manager = registry.getResource(EventChannelControllerManager.class);
 
-        final SerializableScopedParameterResolver scopedResolver = new SerializableScopedParameterResolver(resolver);
+        final ScopedParameterResolver scopedResolver = new ScopedParameterResolver(resolver);
 
         // add the standard coherence parameters to the parameter provider
-        scopedResolver.add(new SerializableParameter("class-loader", SerializableParameter.class.getClassLoader()));
+        scopedResolver.add(new Parameter("class-loader", Parameter.class.getClassLoader()));
 
         // create a serializer builder for the cache that we can use when distributing events
         final ParameterizedBuilder<Serializer> serializerBuilder =
-                new SerializableNamedCacheSerializerBuilder(cacheName);
+                new NamedCacheSerializerBuilder(cacheName);
 
         // This must be called to let Messaging Subscription handle this event also.
         // !! This is handled by interceptor chaining

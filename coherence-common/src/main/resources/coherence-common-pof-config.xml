@@ -124,53 +124,13 @@
     </user-type>
 
     <user-type>
+      <type-id>10070</type-id>
+      <class-name>com.oracle.coherence.common.builders.NamedCacheSerializerBuilder</class-name>
+    </user-type>
+
+    <user-type>
       <type-id>10071</type-id>
-      <class-name>com.oracle.coherence.common.expression.SerializableLiteralExpression</class-name>
-    </user-type>
-
-    <user-type>
-      <type-id>10072</type-id>
-      <class-name>com.oracle.coherence.common.expression.SerializableNullParameterResolver</class-name>
-    </user-type>
-
-    <user-type>
-      <type-id>10073</type-id>
-      <class-name>com.oracle.coherence.common.expression.SerializableParameter</class-name>
-    </user-type>
-
-    <user-type>
-      <type-id>10074</type-id>
-      <class-name>com.oracle.coherence.common.expression.SerializableParameterMacroExpression</class-name>
-    </user-type>
-
-    <user-type>
-      <type-id>10075</type-id>
-      <class-name>com.oracle.coherence.common.expression.SerializablePropertiesParameterResolver</class-name>
-    </user-type>
-
-    <user-type>
-      <type-id>10076</type-id>
-      <class-name>com.oracle.coherence.common.expression.SerializableResolvableParameterList</class-name>
-    </user-type>
-
-    <user-type>
-      <type-id>10077</type-id>
-      <class-name>com.oracle.coherence.common.expression.SerializableScopedParameterResolver</class-name>
-    </user-type>
-
-    <user-type>
-      <type-id>10078</type-id>
-      <class-name>com.oracle.coherence.common.expression.SerializableSimpleParameterList</class-name>
-    </user-type>
-
-    <user-type>
-      <type-id>10090</type-id>
-      <class-name>com.oracle.coherence.common.builders.SerializableInstanceBuilder</class-name>
-    </user-type>
-
-    <user-type>
-      <type-id>10091</type-id>
-      <class-name>com.oracle.coherence.common.builders.SerializableNamedCacheSerializerBuilder</class-name>
+      <class-name>com.oracle.coherence.common.expression.SystemPropertyParameterList</class-name>
     </user-type>
 
     <user-type>

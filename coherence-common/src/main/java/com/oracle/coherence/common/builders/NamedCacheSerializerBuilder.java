@@ -27,11 +27,10 @@
 package com.oracle.coherence.common.builders;
 
 
-import com.oracle.coherence.common.expression.SerializableExpressionHelper;
-import com.oracle.coherence.common.expression.SerializableLiteralExpression;
 import com.tangosol.coherence.config.ParameterList;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.config.expression.Expression;
+import com.tangosol.config.expression.LiteralExpression;
 import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
@@ -47,7 +46,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * A {@link SerializableNamedCacheSerializerBuilder} is a {@link ParameterizedBuilder}
+ * A {@link NamedCacheSerializerBuilder} is a {@link ParameterizedBuilder}
  * for a {@link Serializer} for a specific {@link NamedCache}.
  * <p>
  * Copyright (c) 2011. All Rights Reserved. Oracle Corporation.<br>
@@ -57,7 +56,7 @@ import java.io.IOException;
  * @author Paul Mackin
  */
 @SuppressWarnings("serial")
-public class SerializableNamedCacheSerializerBuilder implements ParameterizedBuilder<Serializer>,
+public class NamedCacheSerializerBuilder implements ParameterizedBuilder<Serializer>,
                                                                 ExternalizableLite,
                                                                 PortableObject
 {
@@ -70,7 +69,7 @@ public class SerializableNamedCacheSerializerBuilder implements ParameterizedBui
     /**
      * Required for serialization.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             bleLite} and {@link PortableObject}.
      */
-    public SerializableNamedCacheSerializerBuilder()
+    public NamedCacheSerializerBuilder()
     {
         // SKIP: deliberately empty
     }
@@ -81,9 +80,9 @@ public class SerializableNamedCacheSerializerBuilder implements ParameterizedBui
      *
      * @param exprCacheName An {@link Expression} to determine the cache name
      */
-    public SerializableNamedCacheSerializerBuilder(Expression exprCacheName)
+    public NamedCacheSerializerBuilder(Expression exprCacheName)
     {
-        exprCacheName = SerializableExpressionHelper.ensureSerializable(exprCacheName);
+        this.exprCacheName = exprCacheName;
     }
 
 
@@ -92,9 +91,9 @@ public class SerializableNamedCacheSerializerBuilder implements ParameterizedBui
      *
      * @param cacheName The name of the cache.
      */
-    public SerializableNamedCacheSerializerBuilder(String cacheName)
+    public NamedCacheSerializerBuilder(String cacheName)
     {
-        exprCacheName = new SerializableLiteralExpression<String>(cacheName);
+        exprCacheName = new LiteralExpression<String>(cacheName);
     }
 
 

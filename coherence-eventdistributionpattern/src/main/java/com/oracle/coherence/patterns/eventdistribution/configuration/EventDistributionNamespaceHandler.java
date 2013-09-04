@@ -27,7 +27,6 @@
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
 
-import com.oracle.coherence.common.builders.SerializableInstanceBuilder;
 import com.oracle.coherence.common.resourcing.ResourceProviderManager;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
@@ -55,6 +54,7 @@ import com.oracle.coherence.patterns.eventdistribution.transformers.FilteringEve
 import com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformerBuilder;
 import com.tangosol.coherence.config.CacheMapping;
 import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.builder.InstanceBuilder;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.config.ConfigurationException;
 import com.tangosol.config.xml.AbstractNamespaceHandler;
@@ -533,7 +533,7 @@ public class EventDistributionNamespaceHandler
                     XmlElement xmlElement)
                     throws ConfigurationException
             {
-                SerializableInstanceBuilder builder = new SerializableInstanceBuilder();
+                InstanceBuilder builder = new InstanceBuilder();
 
                 context.inject(builder, xmlElement.getElement("event:instance"));
 
@@ -561,7 +561,7 @@ public class EventDistributionNamespaceHandler
                     XmlElement xmlElement)
                     throws ConfigurationException
             {
-                SerializableInstanceBuilder builder = new SerializableInstanceBuilder();
+                InstanceBuilder builder = new InstanceBuilder();
 
                 context.inject(builder, xmlElement.getElement("event:instance"));
 

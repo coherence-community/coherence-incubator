@@ -27,7 +27,7 @@
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
 
-import com.oracle.coherence.common.expression.SerializableResolvableParameterList;
+import com.tangosol.coherence.config.ResolvableParameterList;
 import com.tangosol.config.ConfigurationException;
 import com.tangosol.config.expression.Parameter;
 import com.tangosol.config.expression.ParameterResolver;
@@ -40,7 +40,7 @@ import java.util.List;
 
 /**
  * An {@link InitParamsProcessor} is responsible for processing &lt;init-params&gt; {@link XmlElement}s to produce
- * {@link SerializableResolvableParameterList}s.
+ * {@link ResolvableParameterList}s.
  *
  * @author Brian Oliver
  */
@@ -52,10 +52,10 @@ public class InitParamsProcessor implements ElementProcessor<ParameterResolver>
      */
     @SuppressWarnings("unchecked")
     @Override
-    public SerializableResolvableParameterList process(ProcessingContext context,
+    public ResolvableParameterList process(ProcessingContext context,
                                                        XmlElement        element) throws ConfigurationException
     {
-        SerializableResolvableParameterList listParameters = new SerializableResolvableParameterList();
+        ResolvableParameterList listParameters = new ResolvableParameterList();
 
         for (XmlElement elementChild : ((List<XmlElement>) element.getElementList()))
         {

@@ -126,7 +126,7 @@
         <junit.version>4.10</junit.version>
         <miglayout.version>3.6</miglayout.version>
         <mockito.version>1.9.0</mockito.version>
-        <oracle.coherence.version>12.1.2-0-0</oracle.coherence.version>
+        <oracle.coherence.version>12.1.2-0-1</oracle.coherence.version>
         <oracle.tools.version>1.0.0</oracle.tools.version>
         <powermock.version>1.4.12</powermock.version>
     </properties>
