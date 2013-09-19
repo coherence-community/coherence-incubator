@@ -210,19 +210,11 @@ public class CoherenceEventChannelSubscription extends Subscription
 
         final ScopedParameterResolver scopedResolver = new ScopedParameterResolver(resolver);
 
-        // add the standard coherence parameters to the parameter provider
-        scopedResolver.add(new Parameter("class-loader", Parameter.class.getClassLoader()));
-
         // create a serializer builder for the cache that we can use when distributing events
         final ParameterizedBuilder<Serializer> serializerBuilder =
                 new NamedCacheSerializerBuilder(cacheName);
 
-        // This must be called to let Messaging Subscription handle this event also.
-        // !! This is handled by interceptor chaining
-       // super.onCacheEntryLifecycleEvent(mapEvent, cause);
-
         // for newly created subscriptions, schedule the start of an associated EventChannelController
-
         EventChannelController controller = manager.registerEventChannelController(distributorIdentifier,
                                                                                    controllerIdentifier,
                                                                                    controllerDependencies,
