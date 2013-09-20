@@ -9,7 +9,15 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
-*   Noah Arliss, Brian Oliver
+*   Noah Arliss, Brian Oliver, Alexandru Serban
+
+<h4>coherence-common</h4>
+
+*   [COHINC-69](http://java.net/jira/browse/COHINC-69): Resolved issue
+    where Coherence Xml Elements that produced custom instances would
+    introduce a "use-scheme" attribute.   This should only occur for custom
+    namespace elements.  This would cause some patterns, especially those
+    using custom namespaces to fail to deploy on WLS 10.3.6.
 
 <h4>coherence-pushreplicationpattern</h4>
 

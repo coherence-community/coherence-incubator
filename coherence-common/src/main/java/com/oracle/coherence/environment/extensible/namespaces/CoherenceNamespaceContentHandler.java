@@ -29,37 +29,50 @@ import com.oracle.coherence.common.builders.BuilderRegistry;
 import com.oracle.coherence.common.builders.ClassSchemeBasedParameterizedBuilder;
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
 import com.oracle.coherence.common.builders.StaticFactoryClassSchemeBasedParameterizedBuilder;
+
 import com.oracle.coherence.common.util.Value;
+
 import com.oracle.coherence.configuration.caching.CacheMapping;
 import com.oracle.coherence.configuration.caching.CacheMappingRegistry;
+
 import com.oracle.coherence.configuration.expressions.Constant;
 import com.oracle.coherence.configuration.expressions.Expression;
+
 import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.configuration.parameters.SimpleParameterProvider;
 import com.oracle.coherence.configuration.parameters.SystemPropertyParameterProvider;
+
 import com.oracle.coherence.environment.extensible.ConfigurationContext;
 import com.oracle.coherence.environment.extensible.ConfigurationException;
 import com.oracle.coherence.environment.extensible.ElementContentHandler;
 import com.oracle.coherence.environment.extensible.QualifiedName;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlValue;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.UUID;
 
 import java.io.File;
+
 import java.math.BigDecimal;
+
 import java.net.URI;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -132,6 +145,16 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
                     if (processed instanceof ParameterizedBuilder<?>)
                     {
                         builder = (ParameterizedBuilder<?>) processed;
+
+                        // create a unique id for the ClassScheme
+                        String id = new UUID().toString();
+
+                        // modify the <class-scheme> element so that it's identified as something "custom"
+                        xmlElement.addAttribute("use-scheme").setString(id);
+
+                        // register the class scheme with the associated id
+                        // (this is so we can look it up later when the DefaultConfigurableCacheFactory calls instantiateAny)
+                        context.getEnvironment().getResource(BuilderRegistry.class).registerBuilder(id, builder);
                     }
                     else
                     {
@@ -158,16 +181,6 @@ public class CoherenceNamespaceContentHandler extends AbstractNamespaceContentHa
                         context.configure(builder, qualifiedName, xmlElement);
                     }
                 }
-
-                // create a unique id for the ClassScheme
-                String id = new UUID().toString();
-
-                // modify the <class-scheme> element so that it's identified as something "custom"
-                xmlElement.addAttribute("use-scheme").setString(id);
-
-                // register the class scheme with the associated id
-                // (this is so we can look it up later when the DefaultConfigurableCacheFactory calls instantiateAny)
-                context.getEnvironment().getResource(BuilderRegistry.class).registerBuilder(id, builder);
 
                 return builder;
             }
