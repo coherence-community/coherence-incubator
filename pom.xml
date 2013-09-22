@@ -50,6 +50,11 @@
             <name>David Rowlands</name>
             <organization>Oracle Corporation</organization>
         </developer>
+        
+        <developer>
+            <name>Tim Middleton</name>
+            <organization>Oracle Corporation</organization>
+        </developer>
     </developers>
 
     <scm>
@@ -66,6 +71,8 @@
 
         <module>coherence-functorpattern</module>
         <module>coherence-functorpattern-examples</module>
+        
+        <module>coherence-jvisualvm</module>
 
         <module>coherence-processingpattern</module>
         <module>coherence-processingpattern-examples</module>

@@ -31,6 +31,11 @@ by the Oracle Coherence Incubator.
 Provides a distribution of all of the Oracle Coherence Incubator modules,
 without their third-party dependencies (like Coherence itself).
 
+[**The JVisualVM Plug-In:**](jvisualvm/index.html)
+
+Provides a JVisualVM Plug-In allowing developers to view summarized statistics 
+and information when connected to a JMX enabled Coherence cluster.
+
 [**The Common Package:**](common/index.html)
 
 Provides a collection of utility packages, classes and interfaces commonly 

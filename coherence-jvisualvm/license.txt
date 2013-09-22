@@ -1,0 +1,11 @@
+Oracle licenses the Oracle Coherence VisualVM Plugin under the Common Development and
+Distribution License (CDDL), Version 1.0. (http://opensource.org/licenses/cddl-1.0)
+
+Your use of the Oracle Coherence VisualVM Plugin is governed by the condition that you
+accept all of the terms of the CDDL. Read the terms carefully. If you are not willing
+to be bound by these terms, do not download or use the Oracle Coherence VisualVM Plugin.
+
+Third party and other Oracle technology that may be necessary for use with or to use
+the Oracle Coherence Incubator is licensed to you under the terms of the third party
+technology license agreement specified by the third parties and not under the CDDL.
+

@@ -88,6 +88,8 @@
         </menu>
 
         <menu name="Modules">
+            <item name="The JVisualVM Plug-In" href="jvisualvm/index.html">
+            </item>
             <item name="The Common Package" href="common/index.html">
                 <item name="The Element Namespace" href="common/element-namespace.html"/>
                 <item name="The Filter Namespace" href="common/filter-namespace.html"/>

@@ -1,0 +1,223 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>coherence-incubator</artifactId>
+        <groupId>com.oracle.coherence.incubator</groupId>
+        <version>11.1.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>coherence-jvisualvm</artifactId>
+    <packaging>nbm</packaging>
+    <name>Coherence Incubator JVisualVM Plugin</name>
+
+    <description>
+            Developer JVisualVM Plugin to provide a view into a Coherence Cluster runtime JMX statistics.
+        </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util</artifactId>
+            <version>RELEASE70</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-modules</artifactId>
+            <version>RELEASE70</version>
+        </dependency>
+
+        <!-- required for testing -->
+        <dependency>
+            <groupId>com.oracle.coherence</groupId>
+            <artifactId>coherence</artifactId>
+            <version>${oracle.coherence.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-integration</artifactId>
+            <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.tools</groupId>
+            <artifactId>oracle-tools-coherence</artifactId>
+            <version>${oracle.tools.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.tools</groupId>
+            <artifactId>oracle-tools-testing-support</artifactId>
+            <version>${oracle.tools.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.tools</groupId>
+            <artifactId>oracle-tools-runtime</artifactId>
+            <version>${oracle.tools.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JVisualVM libraries from 1.7 JDK -->
+        <dependency>
+            <groupId>com.sun.tools.visualvm</groupId>
+            <artifactId>core</artifactId>
+            <version>${com.sun.tools.visualvm.core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.tools.visualvm</groupId>
+            <artifactId>charts</artifactId>
+            <version>${com.sun.tools.visualvm.charts.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.tools.visualvm</groupId>
+            <artifactId>application</artifactId>
+            <version>${com.sun.tools.visualvm.application.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.tools.visualvm</groupId>
+            <artifactId>application-views</artifactId>
+            <version>${com.sun.tools.visualvm.application.views.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.tools.visualvm</groupId>
+            <artifactId>tools</artifactId>
+            <version>${com.sun.tools.visualvm.tools.version}</version>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>nbm-maven-plugin</artifactId>
+                <version>2.6.2</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <descriptor>src/main/nbm/module.xml</descriptor>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
+            <!-- required to install dependencies automatically -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <id>install-core</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${java.home}/../lib/visualvm/visualvm/modules/com-sun-tools-visualvm-core.jar</file>
+                            <groupId>com.sun.tools.visualvm</groupId>
+                            <artifactId>core</artifactId>
+                            <version>${com.sun.tools.visualvm.core.version}</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-charts</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${java.home}/../lib/visualvm/visualvm/modules/com-sun-tools-visualvm-charts.jar</file>
+                            <groupId>com.sun.tools.visualvm</groupId>
+                            <artifactId>charts</artifactId>
+                            <version>${com.sun.tools.visualvm.charts.version}</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-application</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${java.home}/../lib/visualvm/visualvm/modules/com-sun-tools-visualvm-application.jar</file>
+                            <groupId>com.sun.tools.visualvm</groupId>
+                            <artifactId>application</artifactId>
+                            <version>${com.sun.tools.visualvm.application.version}</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-application-view</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${java.home}/../lib/visualvm/visualvm/modules/com-sun-tools-visualvm-application-views.jar</file>
+                            <groupId>com.sun.tools.visualvm</groupId>
+                            <artifactId>application-views</artifactId>
+                            <version>${com.sun.tools.visualvm.application.views.version}</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-tools</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${java.home}/../lib/visualvm/visualvm/modules/com-sun-tools-visualvm-tools.jar</file>
+                            <groupId>com.sun.tools.visualvm</groupId>
+                            <artifactId>tools</artifactId>
+                            <version>${com.sun.tools.visualvm.tools.version}</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <com.sun.tools.visualvm.core.version>1.4</com.sun.tools.visualvm.core.version>
+        <com.sun.tools.visualvm.charts.version>1.6</com.sun.tools.visualvm.charts.version>
+        <com.sun.tools.visualvm.application.version>1.6</com.sun.tools.visualvm.application.version>
+        <com.sun.tools.visualvm.application.views.version>1.0</com.sun.tools.visualvm.application.views.version>
+        <com.sun.tools.visualvm.tools.version>1.2</com.sun.tools.visualvm.tools.version>
+    </properties>
+</project>
