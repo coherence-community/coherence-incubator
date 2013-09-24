@@ -179,7 +179,7 @@ public class CoherencePersistencePanel extends AbstractCoherencePanel
     public void updateGUI()
     {
         long         cTotalMemory    = 0;
-        final String MEM_FORMAT      = "%10.2f";
+        final String MEM_FORMAT      = "%,10.2f";
         long         cLatencyMax     = 0L;
         float        cLatencyTotal   = 0.0f;
         float        cLatencyAverage = 0.0f;

@@ -300,12 +300,12 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
                 cTotalCacheSize += new Float((Integer) entry.getValue().getColumn(CacheData.MEMORY_USAGE_MB));
             }
 
-            txtTotalMemory.setText(String.format("%10.2f", cTotalCacheSize));
+            txtTotalMemory.setText(String.format("%,10.2f", cTotalCacheSize));
         }
         else
         {
             txtTotalCaches.setText("0");
-            txtTotalMemory.setText(String.format("%10.2f", 0.0));
+            txtTotalMemory.setText(String.format("%,10.2f", 0.0));
         }
 
         Tuple selectedCache = model.getSelectedCache();
