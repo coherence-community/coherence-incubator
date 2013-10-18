@@ -31,7 +31,6 @@ import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
 import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
 import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
 import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.AbstractCoherenceTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.PersistenceTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.PersistenceData;
@@ -54,8 +53,9 @@ import javax.swing.JTextField;
 /**
  * An implementation of an {@link AbstractCoherencePanel} to
  * view summarized persistence data.<br>
- * <strong>Note:</strong> This data is experimental and may be
- * inaccurate and may change in a future release.
+ * <strong>Note:</strong> The data collected and displayed here 
+ * is experimental and may be inaccurate and may change in a future 
+ * release.
  *
  * @author Tim Middleton
  */
@@ -80,9 +80,9 @@ public class CoherencePersistencePanel extends AbstractCoherencePanel
     private List<Map.Entry<Object, Data>> persistenceData;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display persistence data.
+     * The {@link PersistenceTableModel} to display persistence data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodel;
+    protected PersistenceTableModel tmodel;
 
     /**
      * The graph of persistence latency averages.

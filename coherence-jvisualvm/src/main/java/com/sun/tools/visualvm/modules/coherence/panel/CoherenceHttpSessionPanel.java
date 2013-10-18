@@ -25,21 +25,9 @@
 
 package com.sun.tools.visualvm.modules.coherence.panel;
 
-import com.sun.tools.visualvm.charts.SimpleXYChartSupport;
-
-import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
-import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
-import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
-import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.AbstractCoherenceTableModel;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.HttpSessionTableModel;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.model.HttpSessionData;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +36,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+
+import com.sun.tools.visualvm.charts.SimpleXYChartSupport;
+import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
+import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
+import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
+import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.HttpSessionTableModel;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.model.HttpSessionData;
 
 /**
  * An implementation of an {@link AbstractCoherencePanel} to Coherence*Web
@@ -75,9 +72,9 @@ public class CoherenceHttpSessionPanel extends AbstractCoherencePanel
     private List<Map.Entry<Object, Data>> httpSessionData;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display http session data.
+     * The {@link HttpSessionTableModel} to display HTTP session data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodel;
+    protected HttpSessionTableModel tmodel;
 
     /**
      * The graph of session counts.
@@ -92,6 +89,8 @@ public class CoherenceHttpSessionPanel extends AbstractCoherencePanel
 
     /**
      * Create the layout for the {@link AbstractCoherencePanel}.
+     * 
+     * @param model {@link VisualVMModel} to use for this panel
      */
     public CoherenceHttpSessionPanel(VisualVMModel model)
     {

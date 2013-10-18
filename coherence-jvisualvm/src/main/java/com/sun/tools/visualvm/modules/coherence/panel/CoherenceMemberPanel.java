@@ -31,7 +31,6 @@ import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
 import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
 import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
 import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.AbstractCoherenceTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.MemberTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ClusterData;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
@@ -124,13 +123,13 @@ public class CoherenceMemberPanel extends AbstractCoherencePanel
     private List<Entry<Object, Data>> clusterData;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display member data.
+     * The {@link MemberTableModel} to display member data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodel;
+    protected MemberTableModel tmodel;
 
 
     /**
-     * Create the layout for the {@link AbstractCoherencePanel}.
+     * Create the layout for the {@link CoherenceMemberPanel}.
      *
      * @param model {@link VisualVMModel} to use for this panel
      */

@@ -28,9 +28,9 @@ package com.sun.tools.visualvm.modules.coherence.panel;
 import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
 import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
 import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.AbstractCoherenceTableModel;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.CacheDetailTableModel;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.CacheStorageManagerTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.CacheTableModel;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.ServiceTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.CacheData;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.CacheDetailData;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.CacheStorageManagerData;
@@ -93,19 +93,19 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
     private JTextField txtMaxQueryDescription;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display cache data.
+     * The {@link CacheTableModel} to display cache data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodel;
+    protected CacheTableModel tmodel;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display detail cache data.
+     * The {@link CacheDetailTableModel} to display detail cache data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodelDetail;
+    protected CacheDetailTableModel tmodelDetail;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display cache storage data.
+     * The {@link CacheStorageManagerTableModel} to display cache storage data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodelStorage;
+    protected CacheStorageManagerTableModel tmodelStorage;
 
     /**
      * The cache data retrieved from the {@link VisualVMModel}.
@@ -124,7 +124,7 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
 
 
     /**
-     * Create the layout for the {@link AbstractCoherencePanel}.
+     * Create the layout for the {@link CoherenceCachePanel}.
      *
      * @param model {@link VisualVMModel} to use for this panel
      */
@@ -153,8 +153,8 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
 
         // create any table models required
         tmodel        = new CacheTableModel(VisualVMModel.DataType.CACHE.getMetadata());
-        tmodelDetail  = new ServiceTableModel(VisualVMModel.DataType.CACHE_DETAIL.getMetadata());
-        tmodelStorage = new ServiceTableModel(VisualVMModel.DataType.CACHE_STORAGE_MANAGER.getMetadata());
+        tmodelDetail  = new CacheDetailTableModel(VisualVMModel.DataType.CACHE_DETAIL.getMetadata());
+        tmodelStorage = new CacheStorageManagerTableModel(VisualVMModel.DataType.CACHE_STORAGE_MANAGER.getMetadata());
 
         final ExportableJTable table        = new ExportableJTable(tmodel);
         final ExportableJTable tableDetail  = new ExportableJTable(tmodelDetail);
@@ -266,20 +266,9 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
         cacheDetailData  = model.getData(VisualVMModel.DataType.CACHE_DETAIL);
         cacheStorageData = model.getData(VisualVMModel.DataType.CACHE_STORAGE_MANAGER);
 
-        if (cacheData != null)
-        {
-            tmodel.setDataList(cacheData);
-        }
-
-        if (cacheDetailData != null)
-        {
-            tmodelDetail.setDataList(cacheDetailData);
-        }
-
-        if (cacheStorageData != null)
-        {
-            tmodelStorage.setDataList(cacheStorageData);
-        }
+        tmodel.setDataList(cacheData);
+        tmodelDetail.setDataList(cacheDetailData);
+        tmodelStorage.setDataList(cacheStorageData);
     }
 
 
@@ -372,7 +361,7 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
          * @param e  the {@link ListSelectionEvent} to respond to
          */
         @SuppressWarnings("unchecked")
-		public void valueChanged(ListSelectionEvent e)
+        public void valueChanged(ListSelectionEvent e)
         {
             if (e.getValueIsAdjusting())
             {

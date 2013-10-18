@@ -66,7 +66,7 @@ public class JMXUtils
             // loop through each result
             for (Iterator<ObjectName> restulsIter = resultSet.iterator(); restulsIter.hasNext(); )
             {
-                ObjectName objectjName   = restulsIter.next();
+                ObjectName objectName   = restulsIter.next();
                 Object[]   aoQueryResult = new Object[aFields.length];
                 int        i             = 0;
 
@@ -75,11 +75,11 @@ public class JMXUtils
                 {
                     if (jmxField instanceof Attribute)
                     {
-                        aoQueryResult[i++] = server.getAttribute(objectjName, jmxField.getName());
+                        aoQueryResult[i++] = server.getAttribute(objectName, jmxField.getName());
                     }
                     else
                     {
-                        aoQueryResult[i++] = objectjName.getKeyProperty(jmxField.getName());
+                        aoQueryResult[i++] = objectName.getKeyProperty(jmxField.getName());
                     }
 
                 }

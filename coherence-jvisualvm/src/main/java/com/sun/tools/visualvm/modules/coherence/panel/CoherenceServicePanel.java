@@ -25,23 +25,9 @@
 
 package com.sun.tools.visualvm.modules.coherence.panel;
 
-import com.sun.tools.visualvm.charts.SimpleXYChartSupport;
-
-import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
-import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
-import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
-import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.AbstractCoherenceTableModel;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.ServiceTableModel;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ServiceData;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ServiceMemberData;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-
 import java.util.List;
-
 import java.util.Map.Entry;
 
 import javax.swing.JLabel;
@@ -51,9 +37,19 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import com.sun.tools.visualvm.charts.SimpleXYChartSupport;
+import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
+import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
+import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
+import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.ServiceMemberTableModel;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.ServiceTableModel;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ServiceData;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ServiceMemberData;
 
 /**
  * An implementation of an {@link AbstractCoherencePanel} to
@@ -86,14 +82,14 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
     private JTextField txtTotalThreadUtil;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display service data.
+     * The {@link ServiceTableModel} to display service data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodel;
+    protected ServiceTableModel tmodel;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display service member data.
+     * The {@link ServiceMemberTableModel} to display service member data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodelDetail;
+    protected ServiceMemberTableModel tmodelDetail;
 
     /**
      * The service statistics data retrieved from the {@link VisualVMModel}.
@@ -137,7 +133,7 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
         JSplitPane pneSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
         tmodel       = new ServiceTableModel(VisualVMModel.DataType.SERVICE.getMetadata());
-        tmodelDetail = new ServiceTableModel(VisualVMModel.DataType.SERVICE_DETAIL.getMetadata());
+        tmodelDetail = new ServiceMemberTableModel(VisualVMModel.DataType.SERVICE_DETAIL.getMetadata());
 
         final ExportableJTable table       = new ExportableJTable(tmodel);
         final ExportableJTable tableDetail = new ExportableJTable(tmodelDetail);

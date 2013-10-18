@@ -133,7 +133,7 @@ public class CoherenceClusterOverviewPanel extends AbstractCoherencePanel
 
 
     /**
-     * Create the layout for the {@link AbstractCoherencePanel}.
+     * Create the layout for the {@link CoherenceClusterOverviewPanel}.
      *
      * @param model {@link VisualVMModel} to use for this panel
      */

@@ -31,7 +31,6 @@ import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
 import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
 import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
 import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.AbstractCoherenceTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.ProxyTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ProxyData;
@@ -82,9 +81,9 @@ public class CoherenceProxyPanel extends AbstractCoherencePanel
     private List<Entry<Object, Data>> proxyData;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display proxy data.
+     * The {@link ProxyTableModel} to display proxy data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodel;
+    protected ProxyTableModel tmodel;
 
 
     /**
@@ -196,9 +195,6 @@ public class CoherenceProxyPanel extends AbstractCoherencePanel
     {
         proxyData = model.getData(VisualVMModel.DataType.PROXY);
 
-        if (proxyData != null)
-        {
-            tmodel.setDataList(proxyData);
-        }
+        tmodel.setDataList(proxyData);
     }
 }

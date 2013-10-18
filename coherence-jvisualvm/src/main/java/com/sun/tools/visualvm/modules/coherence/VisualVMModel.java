@@ -320,6 +320,11 @@ public class VisualVMModel
     private boolean fis1213AndAbove = true;
 
     /**
+     * Defines is proxy servers were present when we first collected stats.
+     */
+    private Boolean fIsCoherenceExtendConfigured = null;
+
+    /**
      * Map of instances of data retrievers for execution of actual JMX queries.
      */
     private Map<Class, DataRetriever> mapDataRetrievers = new HashMap<Class, DataRetriever>();
@@ -489,12 +494,13 @@ public class VisualVMModel
                                     entry.getValue().getColumn(ClusterData.VERSION).toString().replaceFirst(" .*$",
                                                                                                             "");
                                 int nVersion = 0;
-                                if (sCoherenceVersion.startsWith("3.5")) 
+
+                                if (sCoherenceVersion.startsWith("3.5"))
                                 {
-                                	// manual check as version numbering changed after 35
-                                	nVersion = 353;
+                                    // manual check as version numbering changed after 35
+                                    nVersion = 353;
                                 }
-                                else 
+                                else
                                 {
                                     nVersion = new Integer(sCoherenceVersion.replaceAll("\\.", ""));
                                 }
@@ -754,7 +760,15 @@ public class VisualVMModel
      */
     public boolean isCoherenceExtendConfigured()
     {
-        return mapCollectedData.get(DataType.PROXY) != null && mapCollectedData.get(DataType.PROXY).size() != 0;
+    	// if we have never set this flag, do it once only so that
+    	// the tab will always display and be updated
+        if (fIsCoherenceExtendConfigured == null)
+        {
+            fIsCoherenceExtendConfigured = mapCollectedData.get(DataType.PROXY) != null
+                                           && mapCollectedData.get(DataType.PROXY).size() != 0;
+        }
+
+        return fIsCoherenceExtendConfigured;
     }
 
 

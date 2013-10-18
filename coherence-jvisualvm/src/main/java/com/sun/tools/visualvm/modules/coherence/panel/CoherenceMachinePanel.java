@@ -31,7 +31,6 @@ import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
 import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
 import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
 import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.AbstractCoherenceTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.MachineTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.MachineData;
@@ -82,13 +81,13 @@ public class CoherenceMachinePanel extends AbstractCoherencePanel
     private List<Entry<Object, Data>> machineData;
 
     /**
-     * The {@link AbstractCoherenceTableModel} to display machine data.
+     * The {@link MachineTableModel} to display machine data.
      */
-    protected AbstractCoherenceTableModel<Object, Data> tmodel;
+    protected MachineTableModel tmodel;
 
 
     /**
-     * Create the layout for the {@link AbstractCoherencePanel}.
+     * Create the layout for the {@link CoherenceMachinePanel}.
      *
      * @param model {@link VisualVMModel} to use for this panel
      */
