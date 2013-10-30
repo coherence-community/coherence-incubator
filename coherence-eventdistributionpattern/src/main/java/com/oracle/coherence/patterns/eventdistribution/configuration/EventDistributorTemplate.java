@@ -26,25 +26,32 @@
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.configuration.Mandatory;
 import com.oracle.coherence.configuration.Property;
 import com.oracle.coherence.configuration.SubType;
 import com.oracle.coherence.configuration.Type;
+
 import com.oracle.coherence.configuration.expressions.Expression;
 import com.oracle.coherence.configuration.expressions.MacroParameterExpression;
+
 import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
+
 import com.tangosol.io.Serializer;
+
 import com.tangosol.net.GuardSupport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -156,7 +163,8 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
 
 
     /**
-     * Method description
+     * Set the {@link EventChannelControllerDependenciesTemplate}s that define
+     * distribution channels for the {@link EventDistributor}.
      *
      * @param templates
      */
@@ -165,6 +173,18 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
     public void setEventChannelControllerDependenciesTemplates(Collection<EventChannelControllerDependenciesTemplate> templates)
     {
         m_colChannelControllerDependenciesTemplates = templates;
+    }
+
+
+    /**
+     * Obtains the {@link EventChannelControllerDependenciesTemplate}s that define
+     * distribution channels for the {@link EventDistributor}.
+     *
+     * @return an {@link Iterable} over the {@link EventChannelControllerDependenciesTemplate}s
+     */
+    public Iterable<EventChannelControllerDependenciesTemplate> getEventChannelControllerDependenciesTemplates()
+    {
+        return m_colChannelControllerDependenciesTemplates;
     }
 
 

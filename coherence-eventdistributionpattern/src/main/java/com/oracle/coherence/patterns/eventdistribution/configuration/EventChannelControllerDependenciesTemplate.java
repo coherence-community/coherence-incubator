@@ -26,27 +26,30 @@
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.configuration.Mandatory;
 import com.oracle.coherence.configuration.Property;
 import com.oracle.coherence.configuration.SubType;
 import com.oracle.coherence.configuration.Type;
+
 import com.oracle.coherence.configuration.expressions.Expression;
 import com.oracle.coherence.configuration.expressions.MacroParameterExpression;
+
 import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
-import com.oracle.coherence.patterns.eventdistribution.EventChannel;
-import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
-import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
+
+import com.oracle.coherence.patterns.eventdistribution.*;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode;
-import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
-import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController.DefaultDependencies;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PortableObject;
 
 /**

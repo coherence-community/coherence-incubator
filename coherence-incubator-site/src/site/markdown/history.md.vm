@@ -19,11 +19,27 @@ reverse chronological order.
     namespace elements.  This would cause some patterns, especially those
     using custom namespaces to fail to deploy on WLS 10.3.6.
 
+<h4>coherence-eventdistributionpattern</h4>
+
+*   [COHINC-71](http://java.net/jira/browse/COHINC-71): Introduce the
+    ability to filter events prior to queuing them for distribution.
+
+    Introduced EventChannelEventFilter interface that can be used to filter
+    Events.  Implemented filtering for InterClusterEventChannels
+    in the AbstractInterClusterEventChannelBuilder class.
+
 <h4>coherence-pushreplicationpattern</h4>
 
 *   [COHINC-65](http://java.net/jira/browse/COHINC-65): Resolved issue
     where attempting to remove non-existing or expired entries would not
     be replicated.
+
+*   [COHINC-71](http://java.net/jira/browse/COHINC-71): Introduce the
+    ability to filter events prior to queuing them for distribution.
+
+    Refactored PublishingCacheStore to consult the EventChannelEventFilters
+    for each configured EventChannel(Builder) priority to distributing
+    an Event.
 
 --------------------------------------------------------------------------------
 

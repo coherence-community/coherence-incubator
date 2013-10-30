@@ -25,17 +25,28 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels;
 
+import com.oracle.coherence.common.cluster.ClusterMetaInfo;
+
+import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.configuration.Property;
+
+import com.oracle.coherence.patterns.eventdistribution.EventChannelEventFilter;
 import com.oracle.coherence.patterns.eventdistribution.channels.InterClusterEventChannel.DistributionRole;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import java.util.logging.Level;
 
 /**
  * An {@link AbstractInterClusterEventChannelBuilder} is a base builder implementation for
@@ -48,6 +59,7 @@ import java.io.IOException;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEventChannelBuilder
+    implements EventChannelEventFilter
 {
     /**
      *  The {@link DistributionRole} for the constructed {@link InterClusterEventChannel}s.
@@ -65,9 +77,10 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
 
 
     /**
-     * Method description
+     * Sets the {@link DistributionRole} for the {@link com.oracle.coherence.patterns.eventdistribution.EventChannel}s
+     * realized by this {@link com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder}.
      *
-     * @param distributionRole
+     * @param distributionRole  the {@link DistributionRole}
      */
     @Property("distribution-role")
     public void setDistributionRole(DistributionRole distributionRole)
@@ -77,9 +90,10 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
 
 
     /**
-     * Method description
+     * Obtains the {@link DistributionRole} for the {@link com.oracle.coherence.patterns.eventdistribution.EventChannel}s
+     * realized by this {@link com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder}.
      *
-     * @return
+     * @return the {@link DistributionRole}
      */
     public DistributionRole getDistributionRole()
     {
@@ -90,6 +104,31 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
     /**
      * {@inheritDoc}
      */
+    @Override
+    public boolean accept(Event           event,
+                          ClusterMetaInfo source,
+                          ClusterMetaInfo local)
+    {
+        // determine if we should distribute
+        boolean isLocal = local.equals(source);
+
+        if (isLocal)
+        {
+            // we always accept local events for distribution
+            return true;
+        }
+        else
+        {
+            // we only accept non-local events for distribution when we're not a LEAF
+            return getDistributionRole() != InterClusterEventChannel.DistributionRole.LEAF;
+        }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void readExternal(DataInput in) throws IOException
     {
         super.readExternal(in);
@@ -100,6 +139,7 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void writeExternal(DataOutput out) throws IOException
     {
         super.writeExternal(out);
@@ -110,6 +150,7 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void readExternal(PofReader reader) throws IOException
     {
         super.readExternal(reader);
@@ -120,6 +161,7 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
     /**
      * {@inheritDoc}
      */
+    @Override
     public void writeExternal(PofWriter writer) throws IOException
     {
         super.writeExternal(writer);

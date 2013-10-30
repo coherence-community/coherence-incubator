@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -37,8 +36,9 @@ import com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStore
 import com.oracle.coherence.patterns.eventdistribution.channels.CacheStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.filters.ExampleEventFilter;
 
+import com.oracle.tools.deferred.Deferred;
+
 import com.oracle.tools.junit.AbstractCoherenceTest;
-import com.oracle.tools.junit.AbstractTest;
 
 import com.oracle.tools.runtime.Application;
 import com.oracle.tools.runtime.LifecycleEvent;
@@ -64,21 +64,15 @@ import com.tangosol.net.partition.PartitionSet;
 
 import com.tangosol.util.Filter;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+
+import static com.oracle.tools.deferred.DeferredAssert.assertThat;
+
+import static org.hamcrest.Matchers.is;
 
 import java.net.UnknownHostException;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 import javax.management.ObjectName;
 
@@ -306,6 +300,17 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             NamedCache namedCache = deferredNamedCache.getResource();
 
             Assert.assertNotNull(namedCache);
+
+            // assert that no events have been queued in London (from New York)
+            // (even though this is Active-Active, events from New York to London should not be
+            // re-queued in London for distribution back to New York).
+            Deferred<Integer> deferred =
+                londonServer
+                    .getDeferredMBeanAttribute(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
+                                               "EventsDistributedCount",
+                                               Integer.class);
+
+            assertThat(deferred, is(0));
 
             // update the london site
             randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 1000, 500, "LONDON");
@@ -1157,7 +1162,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             setPartitions.add(1);
             CacheFactory.getCache(cacheName).put("partitions", setPartitions);
 
-            // construct a deferred NamedCache provider that is only available the the merged partition set is available
+            // construct a deferred NamedCache provider that is only available the merged partition set is available
             ResourceProvider<NamedCache> deferredNamedCache =
                 new AbstractDeferredResourceProvider<NamedCache>("NEWYORK publishing-cache",
                                                                  200,
@@ -1588,12 +1593,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     public static interface Equivalence<T>
     {
         /**
-         * Method description
+         * Determine if two values are equal.
          *
          * @param x
          * @param y
          *
-         * @return
+         * @return <code>true</code> if x and y are equal
          */
         public boolean equals(T x,
                               T y);
