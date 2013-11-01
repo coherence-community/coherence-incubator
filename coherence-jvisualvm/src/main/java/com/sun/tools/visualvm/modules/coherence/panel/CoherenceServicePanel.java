@@ -141,6 +141,10 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
         // define renderers for the columns
         RenderHelper.setColumnRenderer(table, ServiceData.STATUS_HA, new RenderHelper.StatusHARenderer());
         RenderHelper.setIntegerRenderer(table, ServiceData.PARTITION_COUNT);
+        RenderHelper.setIntegerRenderer(table, ServiceData.PARTITIONS_ENDANGERED);
+        RenderHelper.setIntegerRenderer(table, ServiceData.PARTITIONS_VULNERABLE);
+        RenderHelper.setIntegerRenderer(table, ServiceData.PARTITIONS_UNBALANCED);
+        RenderHelper.setIntegerRenderer(table, ServiceData.PARTITIONS_PENDING);
 
         RenderHelper.setColumnRenderer(tableDetail,
                                        ServiceMemberData.REQUEST_AVERAGE_DURATION,
