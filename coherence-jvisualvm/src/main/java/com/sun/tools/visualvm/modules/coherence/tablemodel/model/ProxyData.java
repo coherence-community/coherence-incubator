@@ -131,31 +131,40 @@ public class ProxyData extends AbstractData
 
         try
         {
-            Set<ObjectName> proxyNamesSet = server.queryNames(new ObjectName("Coherence:type=ConnectionManager,*"), null);
+            Set<ObjectName> proxyNamesSet = server.queryNames(new ObjectName("Coherence:type=ConnectionManager,*"),
+                                                              null);
 
             for (Iterator<ObjectName> nodIter = proxyNamesSet.iterator(); nodIter.hasNext(); )
             {
                 ObjectName proxyNameObjName = (ObjectName) nodIter.next();
 
-                data = new ProxyData();
+                String     sServiceName     = proxyNameObjName.getKeyProperty("name");
 
-                data.setColumn(ProxyData.NODE_ID, Integer.valueOf(proxyNameObjName.getKeyProperty("nodeId")));
-                data.setColumn(ProxyData.SERVICE_NAME, proxyNameObjName.getKeyProperty("name"));
-                data.setColumn(ProxyData.HOST_PORT, (String) server.getAttribute(proxyNameObjName, "HostIP"));
-                data.setColumn(ProxyData.CONNECTION_COUNT,
-                               (Integer) server.getAttribute(proxyNameObjName, "ConnectionCount"));
-                data.setColumn(ProxyData.OUTGOING_MSG_BACKLOG,
-                               (Long) server.getAttribute(proxyNameObjName, "OutgoingMessageBacklog"));
-                data.setColumn(ProxyData.TOTAL_BYTES_RECEIVED,
-                               (Long) server.getAttribute(proxyNameObjName, "TotalBytesReceived"));
-                data.setColumn(ProxyData.TOTAL_BYTES_SENT,
-                               (Long) server.getAttribute(proxyNameObjName, "TotalBytesSent"));
-                data.setColumn(ProxyData.TOTAL_MSG_RECEIVED,
-                               (Long) server.getAttribute(proxyNameObjName, "TotalMessagesReceived"));
-                data.setColumn(ProxyData.TOTAL_MSG_SENT,
-                               (Long) server.getAttribute(proxyNameObjName, "TotalMessagesSent"));
+                // only include the NameService if the model tells us we should  and
+                // if its not the NameService, include anyway
+                if (("NameService".equals(sServiceName) && model.isIncludeNameService())
+                    || !"NameService".equals(sServiceName))
+                {
+                    data = new ProxyData();
 
-                mapData.put((String) server.getAttribute(proxyNameObjName, "HostIP"), data);
+                    data.setColumn(ProxyData.NODE_ID, Integer.valueOf(proxyNameObjName.getKeyProperty("nodeId")));
+                    data.setColumn(ProxyData.SERVICE_NAME, proxyNameObjName.getKeyProperty("name"));
+                    data.setColumn(ProxyData.HOST_PORT, (String) server.getAttribute(proxyNameObjName, "HostIP"));
+                    data.setColumn(ProxyData.CONNECTION_COUNT,
+                                   (Integer) server.getAttribute(proxyNameObjName, "ConnectionCount"));
+                    data.setColumn(ProxyData.OUTGOING_MSG_BACKLOG,
+                                   (Long) server.getAttribute(proxyNameObjName, "OutgoingMessageBacklog"));
+                    data.setColumn(ProxyData.TOTAL_BYTES_RECEIVED,
+                                   (Long) server.getAttribute(proxyNameObjName, "TotalBytesReceived"));
+                    data.setColumn(ProxyData.TOTAL_BYTES_SENT,
+                                   (Long) server.getAttribute(proxyNameObjName, "TotalBytesSent"));
+                    data.setColumn(ProxyData.TOTAL_MSG_RECEIVED,
+                                   (Long) server.getAttribute(proxyNameObjName, "TotalMessagesReceived"));
+                    data.setColumn(ProxyData.TOTAL_MSG_SENT,
+                                   (Long) server.getAttribute(proxyNameObjName, "TotalMessagesSent"));
+
+                    mapData.put((String) server.getAttribute(proxyNameObjName, "HostIP"), data);
+                }
 
             }
 

@@ -320,6 +320,11 @@ public class VisualVMModel
     private boolean fis1213AndAbove = true;
 
     /**
+     * Defines if we want to include the NameService in the list of proxy servers.
+     */
+    private boolean fIncludeNameService = false;
+
+    /**
      * Defines is proxy servers were present when we first collected stats.
      */
     private Boolean fIsCoherenceExtendConfigured = null;
@@ -732,6 +737,30 @@ public class VisualVMModel
 
 
     /**
+     * Sets if we want to include the NameService in the list of
+     * proxy servers.
+     *
+     * @param
+     */
+    public void setIncludeNameService(boolean fInclude)
+    {
+        fIncludeNameService = fInclude;
+    }
+
+
+    /**
+     * Returns if we want to include the NameService in the list of
+     * proxy servers.
+     *
+     * @return if we want to include the NameService
+     */
+    public boolean isIncludeNameService()
+    {
+        return fIncludeNameService;
+    }
+
+
+    /**
      * Sets the currently selected cache.
      *
      * @param selectedCache  the currently selected cache (service/cache name {@link Tuple}
@@ -760,8 +789,8 @@ public class VisualVMModel
      */
     public boolean isCoherenceExtendConfigured()
     {
-    	// if we have never set this flag, do it once only so that
-    	// the tab will always display and be updated
+        // if we have never set this flag, do it once only so that
+        // the tab will always display and be updated
         if (fIsCoherenceExtendConfigured == null)
         {
             fIsCoherenceExtendConfigured = mapCollectedData.get(DataType.PROXY) != null
