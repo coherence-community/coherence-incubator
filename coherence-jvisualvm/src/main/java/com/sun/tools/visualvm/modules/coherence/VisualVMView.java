@@ -130,16 +130,7 @@ public class VisualVMView extends DataSourceView
         final JTabbedPane pneCoherenceTabs = new JTabbedPane();
 
         pneCoherenceTabs.setOpaque(false);
-
-        final CoherenceClusterOverviewPanel pnlClusterOverview = new CoherenceClusterOverviewPanel(model);
-        final CoherenceMachinePanel         pnlMachine         = new CoherenceMachinePanel(model);
-        final CoherenceMemberPanel          pnlMember          = new CoherenceMemberPanel(model);
-        final CoherenceServicePanel         pnlService         = new CoherenceServicePanel(model);
-        final CoherenceCachePanel           pnlCache           = new CoherenceCachePanel(model);
-        final CoherenceProxyPanel           pnlProxy           = new CoherenceProxyPanel(model);
-        final CoherencePersistencePanel     pnlPersistence     = new CoherencePersistencePanel(model);
-        final CoherenceHttpSessionPanel     pnlHttpSession     = new CoherenceHttpSessionPanel(model);
-
+        
         if (application == null)
         {
             throw new RuntimeException("Application is null");
@@ -152,6 +143,18 @@ public class VisualVMView extends DataSourceView
         // do an initial refresh of the data so we can see if we need to display
         // the proxy server tab
         model.refreshJMXStatistics(server);
+
+        // we then construct the panels after the initial refresh so we can utilize
+        // any information we have gathered in the startup
+
+        final CoherenceClusterOverviewPanel pnlClusterOverview = new CoherenceClusterOverviewPanel(model);
+        final CoherenceMachinePanel         pnlMachine         = new CoherenceMachinePanel(model);
+        final CoherenceMemberPanel          pnlMember          = new CoherenceMemberPanel(model);
+        final CoherenceServicePanel         pnlService         = new CoherenceServicePanel(model);
+        final CoherenceCachePanel           pnlCache           = new CoherenceCachePanel(model);
+        final CoherenceProxyPanel           pnlProxy           = new CoherenceProxyPanel(model);
+        final CoherencePersistencePanel     pnlPersistence     = new CoherencePersistencePanel(model);
+        final CoherenceHttpSessionPanel     pnlHttpSession     = new CoherenceHttpSessionPanel(model);
 
         pneCoherenceTabs.addTab(Localization.getLocalText("LBL_cluster_overview"), pnlClusterOverview);
         pneCoherenceTabs.addTab(Localization.getLocalText("LBL_machines"), pnlMachine);

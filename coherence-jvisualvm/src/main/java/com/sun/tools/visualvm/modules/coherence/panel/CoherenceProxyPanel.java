@@ -25,22 +25,8 @@
 
 package com.sun.tools.visualvm.modules.coherence.panel;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.KeyEvent;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-
 import com.sun.tools.visualvm.charts.SimpleXYChartSupport;
+
 import com.sun.tools.visualvm.modules.coherence.Localization;
 import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
 import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
@@ -49,6 +35,24 @@ import com.sun.tools.visualvm.modules.coherence.panel.util.ExportableJTable;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.ProxyTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ProxyData;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+
+import java.awt.event.KeyEvent;
+
+import java.util.List;
+
+import java.util.Map.Entry;
+
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 
 /**
  * An implementation of an {@link AbstractCoherencePanel} to view
@@ -73,7 +77,7 @@ public class CoherenceProxyPanel extends AbstractCoherencePanel
     /**
      * A check-box to indicate if the NameService should be included in the list of proxy servers.
      */
-    private JCheckBox cbxIncludeNameService;
+    private JCheckBox cbxIncludeNameService = null;
 
     /**
      * The graph of proxy server connections.
@@ -115,12 +119,14 @@ public class CoherenceProxyPanel extends AbstractCoherencePanel
         txtTotalConnections = getTextField(5, JTextField.RIGHT);
         pnlHeader.add(getLocalizedLabel("LBL_total_connections", txtTotalConnections));
         pnlHeader.add(txtTotalConnections);
-        
-        cbxIncludeNameService = new JCheckBox(Localization.getLocalText("LBL_include_name_service"));
-        cbxIncludeNameService.setMnemonic(KeyEvent.VK_N); 
-        cbxIncludeNameService.setSelected(false);
 
-      	pnlHeader.add(cbxIncludeNameService);
+        if (model.is1213AndAbove())
+        {
+            cbxIncludeNameService = new JCheckBox(Localization.getLocalText("LBL_include_name_service"));
+            cbxIncludeNameService.setMnemonic(KeyEvent.VK_N);
+            cbxIncludeNameService.setSelected(false);
+            pnlHeader.add(cbxIncludeNameService);
+        }
 
         // create the table
         tmodel = new ProxyTableModel(VisualVMModel.DataType.PROXY.getMetadata());
@@ -204,9 +210,9 @@ public class CoherenceProxyPanel extends AbstractCoherencePanel
     @Override
     public void updateData()
     {
-    	// update the model to indicate if we are going to include the NameService
-    	model.setIncludeNameService(cbxIncludeNameService.isSelected());
-   
+        // update the model to indicate if we are going to include the NameService
+        model.setIncludeNameService(cbxIncludeNameService != null && cbxIncludeNameService.isSelected());
+
         proxyData = model.getData(VisualVMModel.DataType.PROXY);
 
         tmodel.setDataList(proxyData);

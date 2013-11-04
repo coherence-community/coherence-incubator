@@ -317,7 +317,7 @@ public class VisualVMModel
     /**
      * Defines if we are running Coherence 12.1.3 or above
      */
-    private boolean fis1213AndAbove = true;
+    private boolean fis1213AndAbove = false;
 
     /**
      * Defines if we want to include the NameService in the list of proxy servers.
@@ -462,7 +462,7 @@ public class VisualVMModel
                 catch (Exception e)
                 {
                     // we received an error running the report, so mark as
-                    // a fall back so it will be immeidatley run
+                    // a fall back so it will be immediately run
                     fFallBack = true;
                 }
             }
