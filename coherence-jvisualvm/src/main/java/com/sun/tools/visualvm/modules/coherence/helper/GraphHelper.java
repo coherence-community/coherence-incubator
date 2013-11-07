@@ -45,9 +45,11 @@ public class GraphHelper
     public static final int MB = 1024 * 1024;
 
     /**
-     * The number of values to hold for an individual graph.
+     * The number of values to hold for an individual graph. The default value of
+     * 50000 represents approximately 1 day of data (but may vary). Setting this 
+     * to a higher value will ultimately consume more memory for each graph.
      */
-    public static final int VALUES_LIMIT = 50000;
+    public static final int VALUES_LIMIT = Integer.getInteger("com.oracle.coherence.jvisualvm.values.limit", 50000);
 
 
     /**
