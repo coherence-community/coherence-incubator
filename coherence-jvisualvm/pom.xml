@@ -8,12 +8,16 @@
         <version>12.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
     <artifactId>coherence-jvisualvm</artifactId>
+
     <packaging>nbm</packaging>
+
     <name>Coherence Incubator JVisualVM Plugin</name>
 
     <description>
-            Developer JVisualVM Plugin to provide a view into a Coherence Cluster runtime JMX statistics.
+            Developer JVisualVM Plugin to provide a summarized view of 
+            Coherence Cluster runtime JMX statistics.
     </description>
 
     <dependencies>
@@ -69,7 +73,7 @@
         </dependency>
 
         <!-- JVisualVM Dependencies -->
-         <dependency>
+        <dependency>
             <groupId>com.sun.tools.visualvm.api</groupId>
             <artifactId>com-sun-tools-visualvm-charts</artifactId>
             <version>RELEASE135</version>
@@ -100,6 +104,7 @@
         </dependency>
 
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -111,7 +116,6 @@
                     <descriptor>src/main/nbm/module.xml</descriptor>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
