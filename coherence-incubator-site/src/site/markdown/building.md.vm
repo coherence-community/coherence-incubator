@@ -26,21 +26,16 @@ To build the JVisualVM plug-in (available coherence-jvisualvm directory) you wil
 following repository in your Maven settings.xml:
 
     <repository>
-        <id>netbeans</id>
-        <name>NetBeans</name>
-        <url>http://bits.netbeans.org/maven2/</url>
+        <id>jvisualvm</id>
+        <name>jvisualvm</name>
+        <url>http://bits.netbeans.org/nexus/content/groups/visualvm/</url>
     </repository>
 
 Once you have this software and correctly configured the Maven options,
 building the entire source tree is as simple as executing the following shell
 command (from the root of the source directory):
 
-    $ mvn clean
     $ mvn clean install
-
-Note: The initial `mvn clean` needs to be run the very first time to ensure that 
-the JVisualVM libraries are installed from your Java SE Development Kit home
-into your local Maven repository. Subsequent builds can then use `mvn clean install`
 
 **Important:** The fact that the Oracle Coherence Incubator depends on a commercial product,
 namely [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html) 

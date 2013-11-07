@@ -20,9 +20,9 @@ To build the plug-in you require the following additional repository in your
 Maven settings.xml:
 
     <repository>
-        <id>netbeans</id>
-        <name>NetBeans</name>
-        <url>http://bits.netbeans.org/maven2/</url>
+        <id>jvisualvm</id>
+        <name>jvisualvm</name>
+        <url>http://bits.netbeans.org/nexus/content/groups/visualvm/</url>
     </repository>
 
 As the plug-in runs on JVisualVM you must ensure you build the Incubator with 
@@ -53,12 +53,12 @@ Once connected you will see the 'Coherence Tab' show below:
 On selecting the 'Coherence Tab', the following sub-tabs are displayed:
 
 *   Overview 
-    
+ 
     Displays high-level information about the Coherence cluster including cluster name, 
     version, member count and 'Cluster StatusHA'. Summary graphs show total cluster 
     memory available and used, packet publisher and receiver success rates and load 
     averages for machines running Coherence.
-    
+ 
 *   Machines
 
     Displays a list of the physical machines that make up the Coherence cluster as well as 

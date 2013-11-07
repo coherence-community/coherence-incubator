@@ -740,7 +740,8 @@ public class VisualVMModel
      * Sets if we want to include the NameService in the list of
      * proxy servers.
      *
-     * @param
+     * @param fInclude if we want to include the NameService 
+     *                 in the list of proxy servers
      */
     public void setIncludeNameService(boolean fInclude)
     {
