@@ -4,7 +4,7 @@ Building
 To build the Oracle Coherence Incubator you need to have the following software
 installed:
 
-1.  Java SE Development Kit 7 or 8.
+1.  Java SE Development Kit 6, 7 or 8.
 
     Available from: [Oracle Java SE Downloads](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
