@@ -265,7 +265,7 @@ public class GraphHelper
      */
     public static SimpleXYChartSupport createThreadUtilizationGraph(String sServiceName)
     {
-        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.percent(true, VALUES_LIMIT);
+        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.percent(true, 5000);
 
         sxycd.addLineFillItems(getLocalText("GRPH_thread_util"));
         sxycd.setChartTitle(Localization.getLocalText("GRPH_thread_util_percent", new String[] {sServiceName}));
@@ -296,7 +296,7 @@ public class GraphHelper
      */
     public static SimpleXYChartSupport createTaskDurationGraph(String sServiceName)
     {
-        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(1, 0.0001, true, VALUES_LIMIT);
+        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(1, 0.0001, true, 5000);
 
         sxycd.setChartTitle(Localization.getLocalText("GRPH_task_average", new String[] {sServiceName}));
         sxycd.addLineFillItems(getLocalText("GRPH_current_maximum"), getLocalText("GRPH_current_average"));
@@ -330,7 +330,7 @@ public class GraphHelper
      */
     public static SimpleXYChartSupport createRequestDurationGraph(String sServiceName)
     {
-        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(1, 0.0001, true, VALUES_LIMIT);
+        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(1, 0.0001, true, 5000);
 
         sxycd.setChartTitle(Localization.getLocalText("GRPH_request_average", new String[] {sServiceName}));
         sxycd.addLineFillItems(getLocalText("GRPH_current_maximum"), getLocalText("GRPH_current_average"));
@@ -364,7 +364,7 @@ public class GraphHelper
      */
     public static SimpleXYChartSupport createTaskBacklogGraph(String sServiceName)
     {
-        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(0, 0.01, true, VALUES_LIMIT);
+        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(0, 0.01, true, 5000);
 
         sxycd.setChartTitle(Localization.getLocalText("GRPH_task_backlog", new String[] {sServiceName}));
         sxycd.addLineFillItems(getLocalText("GRPH_current_maximum"), getLocalText("GRPH_current_average"));
