@@ -445,7 +445,7 @@ public class VisualVMModel
         if (isReporterAvailable() != null && isReporterAvailable())
         {
             // retrieve the report for this class
-            String sReport = getDataRetriverInstance(clazz).getReporterReport();
+            String sReport = getDataRetrieverInstance(clazz).getReporterReport();
 
             if (sReport == null)
             {
@@ -481,7 +481,7 @@ public class VisualVMModel
                 // we may be able to use the reporter
                 if (clazz.equals(ClusterData.class))
                 {
-                    List<Entry<Object, Data>> clusterData = getDataRetriverInstance(clazz).getJMXData(server, this);
+                    List<Entry<Object, Data>> clusterData = getDataRetrieverInstance(clazz).getJMXData(server, this);
 
                     // if we have not yet evaluated if the reporter is available, e.g. value of null,
                     // then do it now
@@ -528,7 +528,7 @@ public class VisualVMModel
                 }
                 else
                 {
-                    return getDataRetriverInstance(clazz).getJMXData(server, this);
+                    return getDataRetrieverInstance(clazz).getJMXData(server, this);
                 }
             }
             catch (Exception e)
@@ -581,7 +581,7 @@ public class VisualVMModel
                 {
                     // now that we have output from the reporter, call the
                     // appropriate method in the class to populate
-                    mapCollectedData = getDataRetriverInstance(clazz).getReporterData(reportData, this);
+                    mapCollectedData = getDataRetrieverInstance(clazz).getReporterData(reportData, this);
                 }
             }
             catch (Exception e)
@@ -832,7 +832,7 @@ public class VisualVMModel
      *
      * @return an instance of the data retriever class for executing JMX calls on
      */
-    public DataRetriever getDataRetriverInstance(Class clazz)
+    public DataRetriever getDataRetrieverInstance(Class clazz)
     {
         DataRetriever retriever = mapDataRetrievers.get(clazz);
 
