@@ -208,9 +208,8 @@ public class CacheData extends AbstractData
                 mapData.put(key, data);
             }
 
-            List<Map.Entry<Object, Data>> list = new ArrayList<Map.Entry<Object, Data>>(mapData.entrySet());
+            return new ArrayList<Map.Entry<Object, Data>>(mapData.entrySet());
 
-            return list;
         }
         catch (Exception e)
         {

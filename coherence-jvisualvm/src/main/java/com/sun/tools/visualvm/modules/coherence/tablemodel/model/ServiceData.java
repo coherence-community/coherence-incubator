@@ -209,9 +209,7 @@ public class ServiceData extends AbstractData
                 }
             }
 
-            List<Map.Entry<Object, Data>> list = new ArrayList<Map.Entry<Object, Data>>(mapData.entrySet());
-
-            return list;
+            return new ArrayList<Map.Entry<Object, Data>>(mapData.entrySet());
         }
         catch (Exception e)
         {

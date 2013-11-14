@@ -164,9 +164,7 @@ public class CacheDetailData extends AbstractData
                     }
                 }
 
-                List<Map.Entry<Object, Data>> list = new ArrayList<Map.Entry<Object, Data>>(cacheMap.entrySet());
-
-                return list;
+                return new ArrayList<Map.Entry<Object, Data>>(cacheMap.entrySet());
             }
             catch (Exception e)
             {
