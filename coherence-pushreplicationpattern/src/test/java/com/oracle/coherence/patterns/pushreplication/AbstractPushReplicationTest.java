@@ -49,11 +49,13 @@ import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
 
+import com.oracle.tools.runtime.coherence.callables.IsServiceRunning;
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
 
 import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
 
+import com.oracle.tools.runtime.java.container.Container;
 import com.oracle.tools.runtime.network.AvailablePortIterator;
 
 import com.tangosol.net.CacheFactory;
@@ -68,6 +70,8 @@ import org.junit.*;
 
 import static com.oracle.tools.deferred.DeferredAssert.assertThat;
 
+import static com.oracle.tools.deferred.DeferredHelper.eventually;
+import static com.oracle.tools.deferred.DeferredHelper.invoking;
 import static org.hamcrest.Matchers.is;
 
 import java.net.UnknownHostException;
@@ -135,7 +139,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @BeforeClass
     public static void setupClass() throws UnknownHostException
     {
-        availablePortIterator = new AvailablePortIterator(30000);
+        availablePortIterator = Container.getAvailablePorts();
     }
 
 
@@ -417,15 +421,13 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // wait for passive cluster to start
             for (ClusterMember server : passiveServers)
             {
-                server.getClusterMBeanInfo();
-                server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
+                assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
             }
 
             // wait for active server cluster to start
             for (ClusterMember server : activeServers)
             {
-                server.getClusterMBeanInfo();
-                server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
+                assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
             }
 
             // turn off local clustering so we don't connect with the process just started
@@ -637,15 +639,13 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // wait for passive cluster to start
             for (ClusterMember server : passiveServers)
             {
-                server.getClusterMBeanInfo();
-                server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
+                assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
             }
 
             // wait for active server cluster to start
             for (ClusterMember server : activeServers)
             {
-                server.getClusterMBeanInfo();
-                server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
+                assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
             }
 
             // turn off local clustering so we don't connect with the process just started

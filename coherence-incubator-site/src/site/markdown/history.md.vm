@@ -11,6 +11,12 @@ reverse chronological order.
 
 *   Noah Arliss, Brian Oliver, Alexandru Serban
 
+<h4>Global and Cross-Module Changes</h4>
+
+*   Upgraded to use Oracle Tools 1.1.0-SNAPSHOT
+
+*   [COHINC-72](http://java.net/jira/browse/COHINC-72): Upgraded to use Oracle Coherence 3.7.1.10
+
 <h4>coherence-common</h4>
 
 *   [COHINC-69](http://java.net/jira/browse/COHINC-69): Resolved issue
@@ -28,6 +34,10 @@ reverse chronological order.
     Events.  Implemented filtering for InterClusterEventChannels
     in the AbstractInterClusterEventChannelBuilder class.
 
+*   [COHINC-71](http://java.net/jira/browse/COHINC-73): Resolves NullPointerException
+    that may occur when attempting to use EntryEventOptimizingTransformers
+    with Hub & Spoke or Centralized replication topologies.
+
 <h4>coherence-pushreplicationpattern</h4>
 
 *   [COHINC-65](http://java.net/jira/browse/COHINC-65): Resolved issue
@@ -40,6 +50,13 @@ reverse chronological order.
     Refactored PublishingCacheStore to consult the EventChannelEventFilters
     for each configured EventChannel(Builder) priority to distributing
     an Event.
+
+*   [COHINC-73](http://java.net/jira/browse/COHINC-73): Resolves NullPointerException
+    that may occur when attempting to use EntryEventOptimizingTransformers
+    with Hub & Spoke or Centralized replication topologies.
+
+*   Updated integration tests to take advantage of Oracle Tools 1.1.0
+    (no longer requiring JMX)
 
 --------------------------------------------------------------------------------
 

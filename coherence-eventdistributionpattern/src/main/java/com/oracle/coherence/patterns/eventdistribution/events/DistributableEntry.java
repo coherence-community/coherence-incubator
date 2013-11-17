@@ -618,10 +618,12 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
         }
         else
         {
-            Map decorations = (Map) context.getInternalValueDecoration(originalBinaryValue,
-                                                                       BackingMapManagerContext.DECO_CUSTOM);
+            Map decorations = originalBinaryValue == null
+                              ? null : (Map) context.getInternalValueDecoration(originalBinaryValue,
+                                                                                BackingMapManagerContext.DECO_CUSTOM);
 
-            return (ClusterMetaInfo) decorations.get(DistributableEntry.CLUSTER_META_INFO_DECORATION_KEY);
+            return decorations == null
+                   ? null : (ClusterMetaInfo) decorations.get(DistributableEntry.CLUSTER_META_INFO_DECORATION_KEY);
         }
     }
 
@@ -640,10 +642,12 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
         }
         else
         {
-            Map decorations = (Map) context.getInternalValueDecoration(binaryValue,
-                                                                       BackingMapManagerContext.DECO_CUSTOM);
+            Map decorations = binaryValue == null ? null : (Map) context.getInternalValueDecoration(binaryValue,
+                                                                                                    BackingMapManagerContext
+                                                                                                        .DECO_CUSTOM);
 
-            return (ClusterMetaInfo) decorations.get(DistributableEntry.CLUSTER_META_INFO_DECORATION_KEY);
+            return decorations == null
+                   ? null : (ClusterMetaInfo) decorations.get(DistributableEntry.CLUSTER_META_INFO_DECORATION_KEY);
         }
     }
 
