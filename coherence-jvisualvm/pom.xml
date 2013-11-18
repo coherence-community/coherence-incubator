@@ -22,56 +22,6 @@
 
     <dependencies>
 
-        <!-- required for testing -->
-        <dependency>
-            <groupId>com.oracle.coherence</groupId>
-            <artifactId>coherence</artifactId>
-            <version>${oracle.coherence.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-integration</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-coherence</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-testing-support</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-runtime</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- JVisualVM Dependencies -->
         <dependency>
             <groupId>com.sun.tools.visualvm.api</groupId>
