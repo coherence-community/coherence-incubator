@@ -26,9 +26,15 @@
 package com.oracle.coherence.patterns.pushreplication;
 
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
+
 import com.oracle.tools.runtime.network.Constants;
+
+import com.oracle.tools.util.Capture;
+
 import org.apache.activemq.broker.BrokerService;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -109,13 +115,13 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
      * {@inheritDoc}
      */
     @Override
-    protected ClusterMemberSchema newBaseClusterMemberSchema(int iPort)
+    protected ClusterMemberSchema newBaseClusterMemberSchema(Capture<Integer> clusterPort)
     {
-        return super.newBaseClusterMemberSchema(iPort).setSystemProperty("event.distributor.config",
-                                                                         "test-jms-based-distributor-config.xml")
-                                                                             .setSystemProperty("proxy.port",
-                                                                                                getAvailablePortIterator())
-                                                                                                .setSystemProperty("java.naming.provider.url", jndiProviderURL);
+        return super.newBaseClusterMemberSchema(clusterPort).setSystemProperty("event.distributor.config",
+                                                                               "test-jms-based-distributor-config.xml")
+                                                                                   .setSystemProperty("proxy.port",
+                                                                                                      getAvailablePortIterator())
+                                                                                                      .setSystemProperty("java.naming.provider.url", jndiProviderURL);
     }
 
 
@@ -123,9 +129,9 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
      * {@inheritDoc}
      */
     @Override
-    protected ClusterMemberSchema newPassiveClusterMemberSchema(int iPort)
+    protected ClusterMemberSchema newPassiveClusterMemberSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(iPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
+        return newBaseClusterMemberSchema(clusterPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
             .setClusterName("passive");
     }
 
@@ -134,9 +140,9 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
      * {@inheritDoc}
      */
     @Override
-    protected ClusterMemberSchema newActiveClusterMemberSchema(int iPort)
+    protected ClusterMemberSchema newActiveClusterMemberSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(iPort).setCacheConfigURI("test-remotecluster-eventchannel-cache-config.xml")
+        return newBaseClusterMemberSchema(clusterPort).setCacheConfigURI("test-remotecluster-eventchannel-cache-config.xml")
             .setClusterName("active");
     }
 }

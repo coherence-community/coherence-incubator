@@ -17,6 +17,10 @@ reverse chronological order.
 
 *   [COHINC-72](http://java.net/jira/browse/COHINC-72): Upgraded to use Oracle Coherence 3.7.1.10
 
+*   [COHINC-74](https://java.net/jira/browse/COHINC-74): Upgraded to use Oracle Tools 1.1.0
+    including a). refactoring the use of deprecated classes and b). removing the requirement
+    for JMX enabled Coherence cluster members.
+
 <h4>coherence-common</h4>
 
 *   [COHINC-69](http://java.net/jira/browse/COHINC-69): Resolved issue
@@ -54,9 +58,6 @@ reverse chronological order.
 *   [COHINC-73](http://java.net/jira/browse/COHINC-73): Resolves NullPointerException
     that may occur when attempting to use EntryEventOptimizingTransformers
     with Hub & Spoke or Centralized replication topologies.
-
-*   Updated integration tests to take advantage of Oracle Tools 1.1.0
-    (no longer requiring JMX)
 
 --------------------------------------------------------------------------------
 
