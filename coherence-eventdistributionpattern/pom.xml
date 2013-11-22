@@ -92,10 +92,5 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-      <dependency>
-        <artifactId>oracle-tools-core</artifactId>
-        <groupId>com.oracle.tools</groupId>
-        <version>${oracle.tools.version}</version>
-      </dependency>
     </dependencies>
 </project>
