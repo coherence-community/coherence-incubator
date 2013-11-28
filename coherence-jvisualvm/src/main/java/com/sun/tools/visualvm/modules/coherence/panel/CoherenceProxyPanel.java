@@ -133,7 +133,7 @@ public class CoherenceProxyPanel extends AbstractCoherencePanel
 
         ExportableJTable table = new ExportableJTable(tmodel);
 
-        table.setPreferredScrollableViewportSize(new Dimension(500, 300));
+        table.setPreferredScrollableViewportSize(new Dimension(500, 150));
 
         // define renderers for the columns
         RenderHelper.setColumnRenderer(table, ProxyData.TOTAL_BYTES_RECEIVED, new RenderHelper.IntegerRenderer());
