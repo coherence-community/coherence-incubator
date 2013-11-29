@@ -25,18 +25,12 @@
 
 package com.sun.tools.visualvm.modules.coherence.panel.util;
 
-import com.sun.tools.visualvm.modules.coherence.Localization;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.AbstractCoherenceTableModel;
-import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,11 +40,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-
+import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+
+import com.sun.tools.visualvm.modules.coherence.Localization;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.AbstractCoherenceTableModel;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
 
 /**
  * An implementation of a {@link JTable} that allows exporting table data as CSV.
@@ -90,7 +87,9 @@ public class ExportableJTable extends JTable implements ActionListener
     public ExportableJTable(TableModel model)
     {
         super(model);
-
+        
+        // ensure users can only ever select one row at a time
+        this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
 
