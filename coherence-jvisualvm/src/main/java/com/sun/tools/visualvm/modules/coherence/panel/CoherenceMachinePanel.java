@@ -116,7 +116,7 @@ public class CoherenceMachinePanel extends AbstractCoherencePanel
 
         ExportableJTable table = new ExportableJTable(tmodel);
 
-        table.setPreferredScrollableViewportSize(new Dimension(500, 200));
+        table.setPreferredScrollableViewportSize(new Dimension(500, 150));
 
         // define renderers for the columns
         RenderHelper.setColumnRenderer(table, MachineData.FREE_PHYSICAL_MEMORY, new RenderHelper.IntegerRenderer());

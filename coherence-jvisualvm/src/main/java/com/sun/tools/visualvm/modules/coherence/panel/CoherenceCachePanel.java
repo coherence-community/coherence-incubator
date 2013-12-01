@@ -122,6 +122,11 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
      */
     private List<Entry<Object, Data>> cacheStorageData = null;
 
+    /**
+     * The row selection listener.
+     */
+    private SelectRowListSelectionListener listener;
+
 
     /**
      * Create the layout for the {@link CoherenceCachePanel}.
@@ -252,7 +257,8 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
         // add a listener for the selected row
         ListSelectionModel rowSelectionModel = table.getSelectionModel();
 
-        rowSelectionModel.addListSelectionListener(new SelectRowListSelectionListener(table));
+        listener = new SelectRowListSelectionListener(table);
+        rowSelectionModel.addListSelectionListener(listener);
     }
 
 
@@ -332,6 +338,11 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
         tmodel.fireTableDataChanged();
         tmodelDetail.fireTableDataChanged();
         tmodelStorage.fireTableDataChanged();
+
+        if (model.getSelectedCache() != null)
+        {
+            listener.updateRowSelection();
+        }
     }
 
 
@@ -343,6 +354,11 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
     {
         private ExportableJTable table;
 
+        /**
+         * The currently selected row.
+         */
+        private int nSelectedRow;
+
 
         /**
          * Create a new listener to changes the detail table.
@@ -352,6 +368,15 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
         public SelectRowListSelectionListener(ExportableJTable table)
         {
             this.table = table;
+        }
+
+
+        /**
+         * Re-select the last selected row.
+         */
+        public void updateRowSelection()
+        {
+            table.addRowSelectionInterval(nSelectedRow, nSelectedRow);
         }
 
 
@@ -372,10 +397,10 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
 
             if (!selectionModel.isSelectionEmpty())
             {
-                int selectedRow = selectionModel.getMinSelectionIndex();
+                nSelectedRow = selectionModel.getMinSelectionIndex();
 
                 // get the service at the selected row, which is the first column
-                Pair<String, String> selectedCache = (Pair<String, String>) table.getValueAt(selectedRow, 0);
+                Pair<String, String> selectedCache = (Pair<String, String>) table.getValueAt(nSelectedRow, 0);
 
                 if (!selectedCache.equals(model.getSelectedCache()))
                 {

@@ -25,22 +25,8 @@
 
 package com.sun.tools.visualvm.modules.coherence.panel;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import com.sun.tools.visualvm.charts.SimpleXYChartSupport;
+
 import com.sun.tools.visualvm.modules.coherence.VisualVMModel;
 import com.sun.tools.visualvm.modules.coherence.helper.GraphHelper;
 import com.sun.tools.visualvm.modules.coherence.helper.RenderHelper;
@@ -50,6 +36,24 @@ import com.sun.tools.visualvm.modules.coherence.tablemodel.ServiceTableModel;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ServiceData;
 import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ServiceMemberData;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+import java.util.List;
+
+import java.util.Map.Entry;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * An implementation of an {@link AbstractCoherencePanel} to
@@ -121,6 +125,11 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
      */
     private SimpleXYChartSupport requestAverageGraph = null;
 
+    /**
+     * The row selection listener.
+     */
+    private SelectRowListSelectionListener listener;
+
 
     /**
      * Create the layout for the {@link AbstractCoherencePanel}.
@@ -156,8 +165,8 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
         RenderHelper.setHeaderAlignment(table, JLabel.CENTER);
         RenderHelper.setHeaderAlignment(tableDetail, JLabel.CENTER);
 
-        table.setPreferredScrollableViewportSize(new Dimension(500, 200));
-        tableDetail.setPreferredScrollableViewportSize(new Dimension(700, 200));
+        table.setPreferredScrollableViewportSize(new Dimension(500, 150));
+        tableDetail.setPreferredScrollableViewportSize(new Dimension(700, 150));
 
         // Add some space
         table.setIntercellSpacing(new Dimension(6, 3));
@@ -219,7 +228,8 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
         // add a listener for the selected row
         ListSelectionModel rowSelectionModel = table.getSelectionModel();
 
-        rowSelectionModel.addListSelectionListener(new SelectRowListSelectionListener(table, pneDetailTabs));
+        listener = new SelectRowListSelectionListener(table, pneDetailTabs);
+        rowSelectionModel.addListSelectionListener(listener);
     }
 
 
@@ -262,6 +272,11 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
     {
         tmodel.fireTableDataChanged();
         tmodelDetail.fireTableDataChanged();
+
+        if (model.getSelectedService() != null)
+        {
+            listener.updateRowSelection();
+        }
     }
 
 
@@ -419,8 +434,20 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
      */
     private class SelectRowListSelectionListener implements ListSelectionListener
     {
+    	/**
+    	 * The table for this listener.
+    	 */
         private ExportableJTable table;
+        
+        /**
+         * The panel that this listener belongs to.
+         */
         private JTabbedPane      pneDetailTabs;
+        
+        /**
+         * The currently selected row.
+         */
+        private int              nSelectedRow;
 
 
         /**
@@ -434,6 +461,15 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
         {
             this.table         = table;
             this.pneDetailTabs = pneDetailTabs;
+        }
+
+
+        /**
+         * Re-select the last selected row.
+         */
+        public void updateRowSelection()
+        {
+            table.addRowSelectionInterval(nSelectedRow, nSelectedRow);
         }
 
 
@@ -453,10 +489,10 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
 
             if (!selectionModel.isSelectionEmpty())
             {
-                int selectedRow = selectionModel.getMinSelectionIndex();
+                nSelectedRow = selectionModel.getMinSelectionIndex();
 
                 // get the service at the selected row, which is the first column
-                String sSelectedService = (String) table.getValueAt(selectedRow, 0);
+                String sSelectedService = (String) table.getValueAt(nSelectedRow, 0);
 
                 if (!sSelectedService.equals(model.getSelectedService()))
                 {
