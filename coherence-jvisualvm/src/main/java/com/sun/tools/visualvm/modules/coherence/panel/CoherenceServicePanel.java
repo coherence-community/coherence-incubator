@@ -166,7 +166,7 @@ public class CoherenceServicePanel extends AbstractCoherencePanel
         RenderHelper.setHeaderAlignment(tableDetail, JLabel.CENTER);
 
         table.setPreferredScrollableViewportSize(new Dimension(500, table.getRowHeight() * 5));
-        tableDetail.setPreferredScrollableViewportSize(new Dimension(700, 150));
+        tableDetail.setPreferredScrollableViewportSize(new Dimension(700, 125));
 
         // Add some space
         table.setIntercellSpacing(new Dimension(6, 3));
