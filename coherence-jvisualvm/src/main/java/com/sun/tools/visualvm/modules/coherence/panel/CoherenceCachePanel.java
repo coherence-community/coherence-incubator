@@ -165,9 +165,9 @@ public class CoherenceCachePanel extends AbstractCoherencePanel
         final ExportableJTable tableDetail  = new ExportableJTable(tmodelDetail);
         final ExportableJTable tableStorage = new ExportableJTable(tmodelStorage);
 
-        table.setPreferredScrollableViewportSize(new Dimension(500, 150));
-        tableDetail.setPreferredScrollableViewportSize(new Dimension(500, 150));
-        tableStorage.setPreferredScrollableViewportSize(new Dimension(500, 150));
+        table.setPreferredScrollableViewportSize(new Dimension(500, table.getRowHeight() * 5));       
+        tableDetail.setPreferredScrollableViewportSize(new Dimension(500, tableDetail.getRowHeight() * 3));
+        tableStorage.setPreferredScrollableViewportSize(new Dimension(500, tableStorage.getRowHeight() * 3));
 
         // define renderers for the columns
         RenderHelper.setColumnRenderer(table, CacheData.SIZE, new RenderHelper.IntegerRenderer());
