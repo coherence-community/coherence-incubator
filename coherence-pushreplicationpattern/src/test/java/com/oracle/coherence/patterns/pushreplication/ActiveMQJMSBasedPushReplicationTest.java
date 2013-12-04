@@ -119,7 +119,7 @@ public class ActiveMQJMSBasedPushReplicationTest
                                                                              .setSystemProperty("proxy.port",
                                                                                                 getAvailablePortIterator())
                                                                                                 .setSystemProperty("java.naming.provider.url", jndiProviderURL)
-                .setSystemProperty("proxy.address", Constants.getLocalHost());
+                .setSystemProperty("proxy.host", Constants.getLocalHost());
     }
 
 

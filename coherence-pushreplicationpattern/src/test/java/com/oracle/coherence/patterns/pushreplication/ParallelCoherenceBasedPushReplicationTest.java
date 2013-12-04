@@ -52,7 +52,7 @@ public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushRepli
                                                                          "test-coherence-based-distributor-config.xml")
                                                                              .setSystemProperty("proxy.port",
                                                                                                 getAvailablePortIterator())
-                                                                                                    .setPreferIPv4(true).setSystemProperty("proxy.address", Constants.getLocalHost());
+                                                                                                    .setPreferIPv4(true).setSystemProperty("proxy.host", Constants.getLocalHost());
     }
 
 

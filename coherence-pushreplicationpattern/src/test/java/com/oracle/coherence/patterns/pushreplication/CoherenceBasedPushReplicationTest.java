@@ -51,7 +51,7 @@ public class CoherenceBasedPushReplicationTest extends AbstractPushReplicationTe
                                                                          "test-coherence-based-distributor-config.xml")
                                                                              .setSystemProperty("proxy.port",
                                                                                                 getAvailablePortIterator())
-                .setSystemProperty("proxy.address", Constants.getLocalHost());
+                .setSystemProperty("proxy.host", Constants.getLocalHost());
     }
 
 

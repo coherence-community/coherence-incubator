@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,25 +25,32 @@
 
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
-
 import com.oracle.coherence.common.expression.SerializableExpressionHelper;
 import com.oracle.coherence.common.expression.SerializableParameter;
 import com.oracle.coherence.common.expression.SerializableParameterMacroExpression;
 import com.oracle.coherence.common.expression.SerializableScopedParameterResolver;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+
 import com.tangosol.coherence.config.ParameterList;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.config.annotation.Injectable;
+
 import com.tangosol.config.expression.Expression;
 import com.tangosol.config.expression.ParameterResolver;
+
 import com.tangosol.io.Serializer;
+
 import com.tangosol.net.GuardSupport;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -123,8 +129,7 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
     @Injectable
     public void setDistributorName(Expression expression)
     {
-        m_exprDistributorName = SerializableExpressionHelper.ensureSerializable(
-                expression);
+        m_exprDistributorName = SerializableExpressionHelper.ensureSerializable(expression);
     }
 
 
@@ -136,8 +141,7 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
     @Injectable
     public void setDistributorExternalName(Expression expression)
     {
-        m_exprDistributorExternalName = SerializableExpressionHelper.ensureSerializable(
-                expression);
+        m_exprDistributorExternalName = SerializableExpressionHelper.ensureSerializable(expression);
         ;
     }
 
@@ -156,7 +160,8 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
 
 
     /**
-     * Method description
+     * Set the {@link EventChannelControllerDependenciesTemplate}s that define
+     * distribution channels for the {@link EventDistributor}.
      *
      * @param templates
      */
@@ -164,6 +169,18 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
     public void setEventChannelControllerDependenciesTemplates(List<EventChannelControllerDependenciesTemplate> templates)
     {
         m_listChannelControllerDependenciesTemplates = templates;
+    }
+
+
+    /**
+     * Obtains the {@link EventChannelControllerDependenciesTemplate}s that define
+     * distribution channels for the {@link EventDistributor}.
+     *
+     * @return an {@link Iterable} over the {@link EventChannelControllerDependenciesTemplate}s
+     */
+    public Iterable<EventChannelControllerDependenciesTemplate> getEventChannelControllerDependenciesTemplates()
+    {
+        return m_listChannelControllerDependenciesTemplates;
     }
 
 

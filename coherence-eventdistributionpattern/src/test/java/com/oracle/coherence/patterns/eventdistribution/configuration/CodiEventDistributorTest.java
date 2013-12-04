@@ -96,7 +96,7 @@ public class CodiEventDistributorTest
                 "   <acceptor-config>" +
                 "    <tcp-acceptor>" +
                 "     <local-address>" +
-                "      <address system-property=\"proxy.address\">localhost</address>" +
+                "      <address system-property=\"proxy.host\">localhost</address>" +
                 "      <port system-property=\"proxy.port\">10000</port>" +
                 "     </local-address>" +
                 "    </tcp-acceptor>" +
@@ -202,7 +202,7 @@ public class CodiEventDistributorTest
                 "   <acceptor-config> " +
                 "    <tcp-acceptor> " +
                 "     <local-address> " +
-                "      <address system-property=\"proxy.address\">localhost</address> " +
+                "      <address system-property=\"proxy.host\">localhost</address> " +
                 "      <port system-property=\"proxy.port\">10000</port> " +
                 "     </local-address> " +
                 "    </tcp-acceptor> " +

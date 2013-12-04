@@ -41,9 +41,15 @@ import com.oracle.coherence.common.expression.SerializableScopedParameterResolve
 import com.oracle.coherence.common.resourcing.AbstractDeferredSingletonResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProvider;
 
+import com.oracle.coherence.common.tuples.Pair;
+
+import com.oracle.coherence.patterns.eventdistribution.EventChannel;
+import com.oracle.coherence.patterns.eventdistribution.EventChannelEventFilter;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+import com.oracle.coherence.patterns.eventdistribution.configuration.EventChannelControllerDependenciesTemplate;
 import com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributorTemplate;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
+import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryInsertedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryRemovedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryUpdatedEvent;
@@ -111,9 +117,10 @@ public class PublishingCacheStore implements BinaryEntryStore
     private final String cacheName;
 
     /**
-     * The {@link EventDistributor}s to which this {@link CacheStore} will send {@link Event}s.
+     * The {@link EventDistributor}s, together with their associated {@link EventDistributorTemplate}s, to
+     * which this {@link CacheStore} will send {@link Event}s.
      */
-    private ResourceProvider<ArrayList<EventDistributor>> eventDistributors;
+    private ResourceProvider<ArrayList<Pair<EventDistributor, EventDistributorTemplate>>> eventDistributors;
 
 
     /**
@@ -129,10 +136,10 @@ public class PublishingCacheStore implements BinaryEntryStore
         this.localClusterMetaInfo = LocalClusterMetaInfo.getInstance();
 
         // all of the event distributors should be initialized only when needed (lazily)
-        this.eventDistributors =
-            new AbstractDeferredSingletonResourceProvider<ArrayList<EventDistributor>>("Event Distributors")
+        this.eventDistributors = new AbstractDeferredSingletonResourceProvider<ArrayList<Pair<EventDistributor,
+            EventDistributorTemplate>>>("Event Distributors")
         {
-            protected ArrayList<EventDistributor> ensureResource()
+            protected ArrayList<Pair<EventDistributor, EventDistributorTemplate>> ensureResource()
             {
                 if (logger.isLoggable(Level.INFO))
                 {
@@ -170,33 +177,125 @@ public class PublishingCacheStore implements BinaryEntryStore
                     new SerializableNamedCacheSerializerBuilder(cacheName);
 
                 // create the EventDistributors for the Cache
-                ArrayList<EventDistributor> distributors = new ArrayList<EventDistributor>();
+                ArrayList<Pair<EventDistributor, EventDistributorTemplate>> distributors =
+                    new ArrayList<Pair<EventDistributor, EventDistributorTemplate>>();
 
-                EventDistributorTemplate templateEvent =
+                EventDistributorTemplate template =
                     cacheMapping.getResourceRegistry().getResource(EventDistributorTemplate.class);
 
-                if (templateEvent == null)
+                if (template == null)
                 {
-                    templateEvent = eccf.getResourceRegistry().getResource(EventDistributorTemplate.class);
+                    template = eccf.getResourceRegistry().getResource(EventDistributorTemplate.class);
                 }
 
-                if (templateEvent == null)
+                if (template == null)
                 {
                     throw new IllegalArgumentException("EventDistribution template cannot be found in the ResourceRegistry");
                 }
 
                 // set the serializer if one has not be specified
-                if (templateEvent.getSerializerBuilder() == null)
+                if (template.getSerializerBuilder() == null)
                 {
-                    templateEvent.setSerializerBuilder(serializerBuilder);
+                    template.setSerializerBuilder(serializerBuilder);
                 }
 
-                distributors.add(templateEvent.realize(resolver, null, new SerializableResolvableParameterList()));
+                EventDistributor distributor = template.realize(resolver,
+                                                                null,
+                                                                new SerializableResolvableParameterList());
+
+                distributors.add(new Pair<EventDistributor, EventDistributorTemplate>(distributor, template));
 
                 return distributors;
             }
         };
 
+    }
+
+
+    /**
+     * A helper method to extracts the {@link ClusterMetaInfo} of the {@link Cluster}
+     * from where the an {@link Event} originated.
+     *
+     * @param event  the {@link Event}
+     *
+     * @return {@link ClusterMetaInfo} or <code>null</code> if it could not be determined
+     */
+    private ClusterMetaInfo getSourceClusterMetaInfo(Event event)
+    {
+        if (event instanceof DistributableEntryEvent)
+        {
+            DistributableEntryEvent entryEvent = (DistributableEntryEvent) event;
+
+            Map decorations =
+                (Map) entryEvent.getEntry().getContext()
+                    .getInternalValueDecoration(entryEvent.getEntry().getBinaryValue(),
+                                                BackingMapManagerContext.DECO_CUSTOM);
+
+            if (decorations == null)
+            {
+                return null;
+            }
+            else
+            {
+                ClusterMetaInfo sourceClusterMetaInfo =
+                    (ClusterMetaInfo) decorations.get(DistributableEntry.CLUSTER_META_INFO_DECORATION_KEY);
+
+                return sourceClusterMetaInfo;
+            }
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+    /**
+     * Determine if an {@link Event} should be distributed by an {@link EventDistributor}.
+     *
+     * @param event        the {@link Event}
+     * @param distributor  the {@link EventDistributor} that would distribute the {@link Event}
+     * @param template     the {@link EventDistributorTemplate} for the {@link EventDistributor}
+     *
+     * @return <code>true</code> if the {@link Event} should be sent to the {@link EventDistributor}
+     */
+    protected boolean isDistributable(Event                    event,
+                                      EventDistributor         distributor,
+                                      EventDistributorTemplate template)
+    {
+        ClusterMetaInfo source = getSourceClusterMetaInfo(event);
+        ClusterMetaInfo local  = localClusterMetaInfo;
+
+        // assume a filter hasn't been applied to the event
+        boolean filtered = false;
+
+        // assume we shouldn't distribute the event
+        boolean shouldDistribute = false;
+
+        if (event != null && distributor != null && template != null)
+        {
+            for (EventChannelControllerDependenciesTemplate channelTemplate :
+                template.getEventChannelControllerDependenciesTemplates())
+            {
+                ParameterizedBuilder<EventChannel> eventChannelBuilder = channelTemplate.getEventChannelBuilder();
+
+                if (eventChannelBuilder instanceof EventChannelEventFilter)
+                {
+                    filtered = true;
+
+                    shouldDistribute = shouldDistribute
+                                       || ((EventChannelEventFilter) eventChannelBuilder).accept(event, source, local);
+
+                    // terminate the iteration as soon as one of the EventChannelEventFilter succeeds
+                    if (shouldDistribute)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return (filtered && shouldDistribute) ||!filtered;
     }
 
 
@@ -207,10 +306,17 @@ public class PublishingCacheStore implements BinaryEntryStore
      */
     protected void distribute(Event event)
     {
-        for (EventDistributor distributor : eventDistributors.getResource())
+        for (Pair<EventDistributor, EventDistributorTemplate> pair : eventDistributors.getResource())
         {
             GuardSupport.heartbeat();
-            distributor.distribute(event);
+
+            EventDistributor         distributor = pair.getX();
+            EventDistributorTemplate template    = pair.getY();
+
+            if (isDistributable(event, distributor, template))
+            {
+                distributor.distribute(event);
+            }
         }
 
         GuardSupport.heartbeat();
@@ -224,10 +330,24 @@ public class PublishingCacheStore implements BinaryEntryStore
      */
     protected void distribute(List<Event> events)
     {
-        for (EventDistributor distributor : eventDistributors.getResource())
+        for (Pair<EventDistributor, EventDistributorTemplate> pair : eventDistributors.getResource())
         {
             GuardSupport.heartbeat();
-            distributor.distribute(events);
+
+            ArrayList<Event>         eventsToDistribute = new ArrayList<Event>(events.size());
+
+            EventDistributor         distributor        = pair.getX();
+            EventDistributorTemplate template           = pair.getY();
+
+            for (Event event : events)
+            {
+                if (isDistributable(event, distributor, template))
+                {
+                    eventsToDistribute.add(event);
+                }
+            }
+
+            distributor.distribute(eventsToDistribute);
         }
 
         GuardSupport.heartbeat();

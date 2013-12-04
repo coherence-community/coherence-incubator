@@ -33,6 +33,9 @@ import com.tangosol.io.pof.PortableObject;
 /**
  * An {@link EventChannelBuilder} is a {@link ParameterizedBuilder} for {@link EventChannel}s.
  * <p>
+ * To support builder-based filtering of {@link EventChannel} events, implementations of this
+ * interface may optionally implement {@link EventChannelEventFilter}.
+ * <p>
  * Copyright (c) 2011. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *

@@ -56,11 +56,19 @@ reverse chronological order.
 
 <h4>coherence-eventdistributionpattern</h4>
 
-*   No Changes
+*   [COHINC-71](http://java.net/jira/browse/COHINC-74): Introduce the ability to
+    filter events  prior to queuing them for distribution.  This resolves
+    unnecessary queuing of events to be published when we know they will never
+    be published.  eg: when using certain HUB and SPOKE or CENTRALIZED
+    topologies.
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   No Changes
+*   [COHINC-71](http://java.net/jira/browse/COHINC-74): Introduce the ability to
+    filter events  prior to queuing them for distribution.  This resolves
+    unnecessary queuing of events to be published when we know they will never
+    be published.  eg: when using certain HUB and SPOKE or CENTRALIZED
+    topologies.
 
 <h4>coherence-pushreplicationpattern-examples</h4>
 

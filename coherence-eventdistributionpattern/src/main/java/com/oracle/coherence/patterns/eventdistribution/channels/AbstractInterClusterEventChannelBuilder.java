@@ -25,12 +25,21 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels;
 
+import com.oracle.coherence.common.cluster.ClusterMetaInfo;
+
+import com.oracle.coherence.common.events.Event;
+
+import com.oracle.coherence.patterns.eventdistribution.EventChannelEventFilter;
 import com.oracle.coherence.patterns.eventdistribution.channels.InterClusterEventChannel.DistributionRole;
+
 import com.tangosol.config.annotation.Injectable;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -48,6 +57,7 @@ import java.io.IOException;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEventChannelBuilder
+    implements EventChannelEventFilter
 {
     /**
      *  The {@link DistributionRole} for the constructed {@link InterClusterEventChannel}s.
@@ -84,6 +94,30 @@ public abstract class AbstractInterClusterEventChannelBuilder extends AbstractEv
     public DistributionRole getDistributionRole()
     {
         return distributionRole;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean accept(Event           event,
+                          ClusterMetaInfo source,
+                          ClusterMetaInfo local)
+    {
+        // determine if we should distribute
+        boolean isLocal = local.equals(source);
+
+        if (isLocal)
+        {
+            // we always accept local events for distribution
+            return true;
+        }
+        else
+        {
+            // we only accept non-local events for distribution when we're not a LEAF
+            return getDistributionRole() != InterClusterEventChannel.DistributionRole.LEAF;
+        }
     }
 
 
