@@ -26,6 +26,8 @@
 package com.oracle.coherence.patterns.pushreplication;
 
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
+import com.oracle.tools.runtime.network.Constants;
+import com.oracle.tools.util.Capture;
 import org.junit.Test;
 
 /**
@@ -44,13 +46,13 @@ public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushRepli
     /**
      * {@inheritDoc}
      */
-    protected ClusterMemberSchema newBaseClusterMemberSchema(int iPort)
+    protected ClusterMemberSchema newBaseClusterMemberSchema(Capture<Integer> clusterPort)
     {
-        return super.newBaseClusterMemberSchema(iPort).setSystemProperty("event.distributor.config",
+        return super.newBaseClusterMemberSchema(clusterPort).setSystemProperty("event.distributor.config",
                                                                          "test-coherence-based-distributor-config.xml")
                                                                              .setSystemProperty("proxy.port",
                                                                                                 getAvailablePortIterator())
-                                                                                                    .setPreferIPv4(true);
+                                                                                                    .setPreferIPv4(true).setSystemProperty("proxy.address", Constants.getLocalHost());
     }
 
 
@@ -58,9 +60,9 @@ public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushRepli
      * {@inheritDoc}
      */
     @Override
-    protected ClusterMemberSchema newPassiveClusterMemberSchema(int iPort)
+    protected ClusterMemberSchema newPassiveClusterMemberSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(iPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
+        return newBaseClusterMemberSchema(clusterPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
             .setClusterName("passive");
     }
 
@@ -69,9 +71,9 @@ public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushRepli
      * {@inheritDoc}
      */
     @Override
-    protected ClusterMemberSchema newActiveClusterMemberSchema(int iPort)
+    protected ClusterMemberSchema newActiveClusterMemberSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(iPort)
+        return newBaseClusterMemberSchema(clusterPort)
             .setCacheConfigURI("test-remotecluster-paralleleventchannel-cache-config.xml").setClusterName("active");
     }
 
