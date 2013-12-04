@@ -8,6 +8,76 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
+*   Brian Oliver
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   [COHINC-74](http://java.net/jira/browse/COHINC-74): Upgraded projects to use
+    Oracle Tools 1.1.0
+
+*   [COHINC-75](http://java.net/jira/browse/COHINC-75): Upgraded projects to use
+    Oracle Coherence 12.1.2-0-1
+
+<h4>coherence-incubator-site (Documentation)</h4>
+
+*   No Changes
+
+<h4>coherence-common</h4>
+
+*   No Changes
+
+<h4>coherence-commandpattern</h4>
+
+*   No Changes
+
+<h4>coherence-commandpattern-examples</h4>
+
+*   No Changes
+
+<h4>coherence-functorpattern</h4>
+
+*   No Changes
+
+<h4>coherence-functorpattern-examples</h4>
+
+*   No Changes
+
+<h4>coherence-processingpattern-examples</h4>
+
+*   No Changes
+
+<h4>coherence-processingpattern-examples</h4>
+
+*   No Changes
+
+<h4>coherence-messagingpattern</h4>
+
+*   No Changes
+
+<h4>coherence-eventdistributionpattern</h4>
+
+*   No Changes
+
+<h4>coherence-pushreplicationpattern</h4>
+
+*   No Changes
+
+<h4>coherence-pushreplicationpattern-examples</h4>
+
+*   No Changes
+
+<h4>coherence-pushreplicationpattern-web-example</h4>
+
+*   No Changes
+
+--------------------------------------------------------------------------------
+
+<h3>Version 12.0.0 @ 2013-09-09 08:54</h3>
+
+<h3>Version ${project.version} @ ${timestamp} </h3>
+
+<h4>Source and Documentation Contributors</h4>
+
 *   Noah Arliss, Brian Oliver, Paul Mackin, David Rowlands
 
 <h4>Global and Cross-Module Changes</h4>
