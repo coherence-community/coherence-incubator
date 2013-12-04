@@ -224,12 +224,13 @@ public class PublishingCacheStore implements BinaryEntryStore
     {
         if (event instanceof DistributableEntryEvent)
         {
-            DistributableEntryEvent entryEvent = (DistributableEntryEvent) event;
+            DistributableEntryEvent entryEvent  = (DistributableEntryEvent) event;
+            Binary                  binaryValue = entryEvent.getEntry().getBinaryValue();
 
-            Map decorations =
-                (Map) entryEvent.getEntry().getContext()
-                    .getInternalValueDecoration(entryEvent.getEntry().getBinaryValue(),
-                                                BackingMapManagerContext.DECO_CUSTOM);
+            Map decorations = binaryValue == null
+                              ? null : (Map) entryEvent.getEntry().getContext().getInternalValueDecoration(binaryValue,
+                                                                                                           BackingMapManagerContext
+                                                                                                               .DECO_CUSTOM);
 
             if (decorations == null)
             {
@@ -377,8 +378,9 @@ public class PublishingCacheStore implements BinaryEntryStore
     private boolean isMarkedForErase(BackingMapManagerContext context,
                                      Binary                   binaryValue)
     {
-        Map oldDecorations = (Map) context.getInternalValueDecoration(binaryValue,
-                                                                      BackingMapManagerContext.DECO_CUSTOM);
+        Map oldDecorations = binaryValue == null ? null : (Map) context.getInternalValueDecoration(binaryValue,
+                                                                                                   BackingMapManagerContext
+                                                                                                       .DECO_CUSTOM);
 
         if (oldDecorations == null)
         {
@@ -435,8 +437,9 @@ public class PublishingCacheStore implements BinaryEntryStore
                                   boolean                  force)
     {
         // get the current decorations
-        Map currentDecorations = (Map) context.getInternalValueDecoration(binaryValue,
-                                                                          BackingMapManagerContext.DECO_CUSTOM);
+        Map currentDecorations = binaryValue == null ? null : (Map) context.getInternalValueDecoration(binaryValue,
+                                                                                                       BackingMapManagerContext
+                                                                                                           .DECO_CUSTOM);
 
         // the new decorations are based on the current ones
         Map decorations = new HashMap();

@@ -27,29 +27,41 @@ package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.patterns.eventdistribution.channels.cache.ConflictResolution.Operation;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.config.expression.NullParameterResolver;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.BackingMapManagerContext;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.Converter;
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.InvocableMap.Entry;
 import com.tangosol.util.InvocableMap.EntryProcessor;
+
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import java.util.HashMap;
 import java.util.Map;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -144,7 +156,8 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
         ConflictResolver conflictResolver = conflictResolverBuilder == null
                                             ? new BruteForceConflictResolver()
                                             : conflictResolverBuilder.realize(new NullParameterResolver(),
-                Base.getContextClassLoader(), null);
+                                                                              Base.getContextClassLoader(),
+                                                                              null);
         ConflictResolution result = conflictResolver.resolve(entryEvent, targetEntry);
 
         if (logger.isLoggable(Level.FINEST))
@@ -207,9 +220,12 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
             }
 
             // simply add the "mark for erase decoration"
-            Map srcDecorations =
-                (Map<?, ?>) targetEntry.getContext().getInternalValueDecoration(entryEvent.getEntry().getBinaryValue(),
-                                                                                BackingMapManagerContext.DECO_CUSTOM);
+            Binary binaryValue = entryEvent.getEntry().getBinaryValue();
+            Map srcDecorations = binaryValue == null
+                                 ? new HashMap()
+                                 : (Map<?, ?>) targetEntry.getContext().getInternalValueDecoration(binaryValue,
+                                                                                                   BackingMapManagerContext
+                                                                                                       .DECO_CUSTOM);
 
             srcDecorations.put(DistributableEntry.MARKED_FOR_ERASE_DECORATION_KEY, new Boolean(true));
 

@@ -8,7 +8,7 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
-*   Brian Oliver
+*   Tim Middleton, Brian Oliver
 
 <h4>Global and Cross-Module Changes</h4>
 
@@ -56,19 +56,25 @@ reverse chronological order.
 
 <h4>coherence-eventdistributionpattern</h4>
 
-*   [COHINC-71](http://java.net/jira/browse/COHINC-74): Introduce the ability to
+*   [COHINC-71](http://java.net/jira/browse/COHINC-71): Introduce the ability to
     filter events  prior to queuing them for distribution.  This resolves
     unnecessary queuing of events to be published when we know they will never
     be published.  eg: when using certain HUB and SPOKE or CENTRALIZED
     topologies.
+
+*   [COHINC-73](http://java.net/jira/browse/COHINC-73): Resolves an issue where
+    the Event Optimizing Transformer may cause NPE with certain topologies.
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-71](http://java.net/jira/browse/COHINC-74): Introduce the ability to
+*   [COHINC-71](http://java.net/jira/browse/COHINC-71): Introduce the ability to
     filter events  prior to queuing them for distribution.  This resolves
     unnecessary queuing of events to be published when we know they will never
     be published.  eg: when using certain HUB and SPOKE or CENTRALIZED
     topologies.
+
+*   [COHINC-73](http://java.net/jira/browse/COHINC-73): Resolves an issue where
+    the Event Optimizing Transformer may cause NPE with certain topologies.
 
 <h4>coherence-pushreplicationpattern-examples</h4>
 
@@ -77,6 +83,11 @@ reverse chronological order.
 <h4>coherence-pushreplicationpattern-web-example</h4>
 
 *   No Changes
+
+<h4>coherence-jvisualvm</h4>
+
+*   Introduced the Coherence JVisualVm Plug-in.
+
 
 --------------------------------------------------------------------------------
 

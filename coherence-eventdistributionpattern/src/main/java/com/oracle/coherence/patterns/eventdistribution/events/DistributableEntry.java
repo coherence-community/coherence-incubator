@@ -435,7 +435,9 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
         Object oPrevious = getValue();
 
         // remember the existing custom decorations as we'll need to re-decorate them after we change the value
-        Object oDecorations = context.getInternalValueDecoration(binaryValue, BackingMapManagerContext.DECO_CUSTOM);
+        Object oDecorations = binaryValue == null ? null : context.getInternalValueDecoration(binaryValue,
+                                                                                              BackingMapManagerContext
+                                                                                                  .DECO_CUSTOM);
 
         if (context == null)
         {
@@ -446,10 +448,12 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
             // serialize/convert the new value to a binary
             binaryValue = (Binary) context.getValueToInternalConverter().convert(value);
 
-            // re-add the custom decorations
-            binaryValue = (Binary) context.addInternalValueDecoration(binaryValue,
-                                                                      BackingMapManagerContext.DECO_CUSTOM,
-                                                                      oDecorations);
+            // re-add the custom decorations (if we have any)
+            binaryValue = oDecorations == null
+                          ? binaryValue
+                          : (Binary) context.addInternalValueDecoration(binaryValue,
+                                                                        BackingMapManagerContext.DECO_CUSTOM,
+                                                                        oDecorations);
 
             return oPrevious;
         }
@@ -484,11 +488,13 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
         throw new UnsupportedOperationException("DistributableEntry doesn't support updateBinaryValue(Binary).");
     }
 
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void updateBinaryValue(Binary binary, boolean b)
+    public void updateBinaryValue(Binary  binary,
+                                  boolean b)
     {
         throw new UnsupportedOperationException("DistributableEntry doesn't support updateBinaryValue(Binary).");
     }
@@ -621,7 +627,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
      */
     public ClusterMetaInfo getOriginalClusterMetaInfo()
     {
-        if (context == null)
+        if (context == null || originalBinaryValue == null)
         {
             return null;
         }
@@ -643,7 +649,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
      */
     public ClusterMetaInfo getClusterMetaInfo()
     {
-        if (context == null)
+        if (context == null || binaryValue == null)
         {
             return null;
         }

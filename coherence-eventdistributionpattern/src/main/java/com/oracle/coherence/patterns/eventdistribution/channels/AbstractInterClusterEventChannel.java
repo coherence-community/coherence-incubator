@@ -27,11 +27,14 @@ package com.oracle.coherence.patterns.eventdistribution.channels;
 
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
 import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
+
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
+
 import com.tangosol.net.BackingMapManager;
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
@@ -39,10 +42,13 @@ import com.tangosol.net.CacheService;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.NamedCache;
 
+import com.tangosol.util.Binary;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -160,9 +166,12 @@ public abstract class AbstractInterClusterEventChannel implements InterClusterEv
     @SuppressWarnings({"rawtypes"})
     private ClusterMetaInfo getSourceClusterMetaInfo(DistributableEntryEvent entryEvent)
     {
-        Map decorations =
-            (Map) entryEvent.getEntry().getContext().getInternalValueDecoration(entryEvent.getEntry().getBinaryValue(),
-                                                                                BackingMapManagerContext.DECO_CUSTOM);
+        Binary binaryValue = entryEvent.getEntry().getBinaryValue();
+
+        Map decorations = binaryValue == null
+                          ? null : (Map) entryEvent.getEntry().getContext().getInternalValueDecoration(binaryValue,
+                                                                                                       BackingMapManagerContext
+                                                                                                           .DECO_CUSTOM);
 
         if (decorations == null)
         {
