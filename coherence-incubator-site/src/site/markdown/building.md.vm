@@ -4,11 +4,11 @@ Building
 To build the Oracle Coherence Incubator you need to have the following software
 installed:
 
-1.  Java SE Development Kit 6, 7 or 8.
+1.  Java SE Development Kit 6 or 7.  (experimental support for Java 8 is also available).
 
     Available from: [Oracle Java SE Downloads](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
-2.  [Apache Maven](http://maven.apache.org/) Version 3.0.4 (not 3.0.3)
+2.  [Apache Maven](http://maven.apache.org/) Version 3.0.4+ (not 3.0.3)
 
     Available here: [Apache Maven Downloads](http://maven.apache.org/download.cgi)
 
@@ -22,8 +22,8 @@ Additionally you should set your Maven Options as follows:
                 -XX:+CMSClassUnloadingEnabled
                 -XX:+CMSClassUnloadingEnabled"
 
-To build the JVisualVM plug-in (available coherence-jvisualvm directory) you will need to add the
-following repository in your Maven settings.xml:
+4.  In order to build the Coherence JVisualVM plug-in (available `coherence-jvisualvm` directory)
+    you will need to add the following repository in your Maven settings.xml:
 
     <repository>
         <id>jvisualvm</id>
@@ -31,7 +31,7 @@ following repository in your Maven settings.xml:
         <url>http://bits.netbeans.org/nexus/content/groups/visualvm/</url>
     </repository>
 
-Once you have this software and correctly configured the Maven options,
+Once you have this software and have correctly configured the above Maven options,
 building the entire source tree is as simple as executing the following shell
 command (from the root of the source directory):
 
@@ -42,7 +42,7 @@ namely [Oracle Coherence](http://www.oracle.com/technology/products/coherence/in
 that of which is not available in a public Maven Repository, probably means that your
 first build is likely to fail because of a missing dependency on `coherence.jar`.
 
-Should this problem occur and you aren't using the standard Coherence installed, you will
+Should this problem occur and you aren't using the standard Coherence installer, you will
 need to manually install the appropriate `coherence.jar` and `coherence-web.jar`s into your
 local repository or your organization's repository.
 
@@ -52,7 +52,7 @@ simply change to `$COHERENCE_HOME/lib` directory and run the following command:
     $ mvn install:install-file  \
           -DgroupId=com.oracle.coherence  \
           -DartifactId=coherence  \
-          -Dversion=12.1.2-0-0  \
+          -Dversion=12.1.2-0-1  \
           -Dfile=coherence.jar  \
           -Dpackaging=jar \
           -DgeneratePom=true
@@ -63,7 +63,7 @@ simply change to `$COHERENCE_HOME/lib` directory and run the following command:
     $ mvn install:install-file  \
           -DgroupId=com.oracle.coherence  \
           -DartifactId=coherence-web  \
-          -Dversion=12.1.2-0-0  \
+          -Dversion=12.1.2-0-1  \
           -Dfile=coherence-web.jar  \
           -Dpackaging=jar \
           -DgeneratePom=true
@@ -71,7 +71,7 @@ simply change to `$COHERENCE_HOME/lib` directory and run the following command:
 >   The `groupId`, `artifactId` and `version` properties are critically important.
 >   They must be as indicated above otherwise the Oracle Coherence Incubator won't build.
 
-Of course the above assumes that you are installing the Coherence 12.1.2-0-0 `jar`s
+Of course the above assumes that you are installing the Coherence 12.1.2-0-1 `jar`s
 If you want to install one of the more recent releases, change the version
 number in the command above accordingly.
 

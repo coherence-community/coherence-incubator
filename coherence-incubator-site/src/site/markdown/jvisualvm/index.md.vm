@@ -4,17 +4,20 @@ The JVisualVM Plug-In
 <h4>Overview</h4>
 
 Provides a JVisualVM Plug-in allowing developers to view summarized statistics 
-and information when connected to a JMX enabled Coherence cluster.
+and information when connected via JMX to a Coherence cluster.
 
-Note: This is a developer tool for viewing information about a single cluster at 
-a time. Other monitoring tools such as Oracle's Enterprise Manager or other 3rd party tools are 
-suited for enterprise level monitoring, management and alerting. 
+>   This is a developer-oriented tool for viewing information about a single Coherence
+>   cluster, typically during the development process. For monitoring, managing and
+>   alerting in production, large-scale or enterprise level environments we recommend
+>   using operations-oriented tools such as Oracle's Enterprise Manager, Fusion Middleware
+>   Control and/or other 3rd party tools.
 
 <h4>Distribution</h4>
 
 The JVisualVM Plug-In is distributed in the NetBeans Module (nbm) file
-called: `coherence-jvisualvm-${project.version}.nbm` in the target directory after
-a successful build.
+called: `coherence-jvisualvm-${project.version}.nbm`.   This is available from
+(maven.java.net)[https://maven.java.net] (or Maven Central).   It's also available in the
+standard Maven `target` directory after a successful build.
 
 To build the plug-in you require the following additional repository in your
 Maven settings.xml:
@@ -25,24 +28,20 @@ Maven settings.xml:
         <url>http://bits.netbeans.org/nexus/content/groups/visualvm/</url>
     </repository>
 
-As the plug-in runs on JVisualVM you must ensure you build the Incubator with 
-at least Java SE Development Kit 7 as there are dependent jars that are installed on running 
-an initial `mvn clean`.
-
 <h4>Installing the Plug-in in JVisualVM</h4>
 
-Once you have built the JVisualVM Plug-in, carry out the following to install into your
-JVisualVM environment:
+Once you have acquired or built the JVisualVM Plug-in, perform the following to install the plugin
+into your JVisualVM environment:
 
 1.  Start JVisualVM by running `jvisualvm` or `jvisualvm.exe` (for Windows) from the bin 
     directory under your Java home.
-2.  Choose Tools->Plugins.
+2.  Choose Tools -> Plugins.
 3.  Click on the 'Downloads' tab.
 4.  Click 'Add Plugin' and choose the file `coherence-jvisualvm-${project.version}.nbm` 
-    in your target directory under coherence-jvisualvm folder.
+    (perhaps from your target directory under coherence-jvisualvm folder).
 5.  Click 'Install' and follow the prompts to install.
 6.  Once installed, connect to either a remote or local JMX enabled Coherence cache 
-    server process. 
+    server process using JMX.
     
 Once connected you will see the 'Coherence Tab' show below:
     
@@ -176,5 +175,5 @@ To connect to the Domain Runtime MBean server via JVisualVM requires a few more 
 
 *    Information does not display on tabs
 
-     Navigate to 'About Java VisalVM' menu item and click on 'Logfile' to see if there are any 
+     Navigate to 'About Java VisualVM' menu item and click on 'Logfile' to see if there are any
      exceptions raised.  If you have found and issue please raise a bug.
