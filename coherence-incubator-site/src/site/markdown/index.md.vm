@@ -9,9 +9,10 @@
 
 <h4>Overview</h4>
 
-The Oracle Coherence Incubator project consists of a collection of examples, organized
-as [Apache Maven](http://maven.apache.org/) modules, demonstrating advanced uses 
-of [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html).
+The Oracle Coherence Incubator project consists of a collection of code examples,
+organized as [Apache Maven](http://maven.apache.org/) modules, demonstrating advanced
+uses of [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html)
+and integration with third-party projects.
 
 The modules themselves consist of a collection of common utilities, tools,
 traditional software pattern implementations, third-party integrations, and
@@ -21,20 +22,22 @@ learning, extension or for direct inclusion into Coherence-based applications.
 Complete source code together with documentation is provided to aid in adoption,
 use and understanding.
 
-<h4>Modules:</h4>
+<h4>Plug-Ins:</h4>
 
-The following [Apache Maven](http://maven.apache.org/) modules are defined
-by the Oracle Coherence Incubator.
-
-**The Complete Distribution Module:**
-
-Provides a distribution of all of the Oracle Coherence Incubator modules,
-without their third-party dependencies (like Coherence itself).
+The following [Apache Maven](http://maven.apache.org/) modules provide Coherence-based
+plug-ins and extensions to third-party products.
 
 [**The JVisualVM Plug-In:**](jvisualvm/index.html)
 
-Provides a JVisualVM Plug-In allowing developers to view summarized statistics 
-and information when connected to a JMX enabled Coherence cluster.
+Provides a [JVisualVM](http://visualvm.java.net/) Plug-In (ie: Dashboard) allowing
+developers to view summarized statistics and information when connected to a JMX
+enabled Coherence cluster.
+
+<h4>Libraries:</h4>
+
+The following [Apache Maven](http://maven.apache.org/) modules provide
+Coherence-based patterns, packages and additional libraries for inclusion in
+developer applications.
 
 [**The Common Package:**](common/index.html)
 
@@ -45,31 +48,13 @@ used to support the implementation of other Oracle Coherence Incubator modules.
 
 Provides a distributed implementation of the classic Command Pattern.
 
-[**The Command Pattern Examples:**](commandpattern/simple-example.html)
-
-Provides example uses of the Command Pattern.
-
 [**The Functor Pattern:**](functorpattern/index.html)
 
 Provides a distributed implementation of the classic Functor Pattern.
 
-[**The Functor Pattern Examples:**](functorpattern/simple-example.html)
-
-Provides example uses of the Functor Pattern.
-
 [**The Processing Pattern:**](processingpattern/index.html)
 
 Provides an mechanism to perform distributed, grid computing with Coherence.
-
-**The Processing Pattern Examples:**
-
-The following examples are provided for the Processing Pattern:
-
-1.  The [Simple Callable Example](processingpattern/simple-example.html)
-
-2.  The [Pi Calculation Example](processingpattern/pi-calculation-example.html)
-
-3.  The [Task Execution Example](processingpattern/task-execution-example.html)
 
 [**The Messaging Pattern:**](messagingpattern/index.html)
 
@@ -85,6 +70,30 @@ directly with in applications for local or global event distribution.
 
 Provides a mechanism to replicate cache entry events to other clusters and 
 devices (including other clusters separated by WANs).
+
+<h4>Examples:</h4>
+
+The following [Apache Maven](http://maven.apache.org/) modules provide
+Coherence-based examples, typically for the patterns and libraries included
+in the Coherence Incubator.
+
+[**The Command Pattern Examples:**](commandpattern/simple-example.html)
+
+Provides example uses of the Command Pattern.
+
+[**The Functor Pattern Examples:**](functorpattern/simple-example.html)
+
+Provides example uses of the Functor Pattern.
+
+**The Processing Pattern Examples:**
+
+The following examples are provided for the Processing Pattern:
+
+1.  The [Simple Callable Example](processingpattern/simple-example.html)
+
+2.  The [Pi Calculation Example](processingpattern/pi-calculation-example.html)
+
+3.  The [Task Execution Example](processingpattern/task-execution-example.html)
 
 **The Push Replication Pattern Examples:**
 

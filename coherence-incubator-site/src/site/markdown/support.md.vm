@@ -1,8 +1,8 @@
 Getting Help
 ------------
 
-There are many avenues to recieve help when using the Coherence Incubator.  Here are
-a few options.
+There are many options to receive help, guidance and support when using the Coherence Incubator.
+Here are but a few.
 
 <h4>Community Forums</h4>
 
@@ -10,9 +10,11 @@ The Discussion Forums for the Coherence Incubator are the best place to start
 asking questions - should you need to.   These forums are hosted by Oracle and
 are typically monitored by the community.
 
-They can be found here: [https://forums.oracle.com/forums/forum.jspa?forumID=558][FORUMS]
+The *new* java.net-based forums are hosted here:
+[https://java.net/projects/cohinc/forums](https://java.net/projects/cohinc/forums)
 
->   To participate in the discussion forums you will need an oracle.com account.
+The old Oracle-based forums (now defunct) were hosted here:
+[https://forums.oracle.com/forums/forum.jspa?forumID=558](https://forums.oracle.com/forums/forum.jspa?forumID=558)
 
 <h4>Source Code, Tests and Examples</h4>
 
@@ -24,6 +26,9 @@ The source code is located here:
 
 <h4>Issue Tracking System</h4>
 
+Defects and enhancement requests for the Coherence Community, including the Coherence Incubator
+are managed, prioritised and tracked using the java.net issue tracking system.
+
 If you find an issue with the Coherence Incubator or have an idea for a new feature
 the best place to start is with the Issue Tracking System.  All issues, both current and
 past are publicly viewable.
@@ -34,11 +39,18 @@ The Issue Tracking System can be found here: [http://java.net/jira/browse/COHINC
 
 <h4>Oracle Support</h4>
 
-Alternatively Oracle Coherence customers can file Support Requests (SR) against the
-Coherence Product, clearly specifying that requests are for a Coherence Community
-project.
+Oracle Coherence customers may raise Service Requests (SR) through My Oracle Support for
+Coherence Community projects, including the Coherence Incubator, against the Oracle Coherence
+product.  If a Coherence Community project is confirmed to be a contributing factor for an
+SR, Oracle will subsequently raise an issue (if one does not exist) on java.net for the
+appropriate project for it to be resolved by Oracle and/or the Coherence Community.  Afterwards
+a comment indicating as such will be made in the SR.
 
-[FORUMS]:       https://forums.oracle.com/forums/forum.jspa?forumID=558 "Forums"
+Should Oracle determine that the root cause of an SR is with Oracle Coherence itself, Oracle will
+raise a defect for Oracle Coherence.  Should Oracle determine that the root cause of an SR is
+a third-party product, Oracle will advise the customer to raise an issue with said product
+manufacturer and after which will work with both to resolve the said issue.
+
 [ISSUES]:       http://java.net/jira/browse/COHINC "Issue Tracking"
 [JAVANET]:      http://java.net "java.net"
 [SOURCE]:       https://github.com/coherence-community/coherence-incubator "Source Code"

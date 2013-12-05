@@ -3,8 +3,9 @@ The JVisualVM Plug-In
 
 <h4>Overview</h4>
 
-Provides a JVisualVM Plug-in allowing developers to view summarized statistics 
-and information when connected via JMX to a Coherence cluster.
+Provides a [JVisualVM](http://visualvm.java.net/) Plug-in allowing developers to view
+a dashboard of summarized statistics and information when connected via JMX to a
+Coherence cluster.
 
 >   This is a developer-oriented tool for viewing information about a single Coherence
 >   cluster, typically during the development process. For monitoring, managing and
@@ -27,6 +28,11 @@ Maven settings.xml:
         <name>jvisualvm</name>
         <url>http://bits.netbeans.org/nexus/content/groups/visualvm/</url>
     </repository>
+
+<h4>Compatibility</h4>
+
+While this plug-in is distributed as part of Coherence Incubator 12, it is routinely
+tested with Coherence 3.5.x, 3.6.x, 3.7.1.x and 12.1.2.0.x.
 
 <h4>Installing the Plug-in in JVisualVM</h4>
 
@@ -93,8 +99,6 @@ On selecting the 'Coherence Tab', the following sub-tabs are displayed:
      regarding session reaping.
      
 On any of the tables you are able to right-click and export the current data from that table as CSV.
-
-Note: The plug-in has been tested with Coherence 3.5.x, 3.6.x, 3.7.1.x and 12.1.2.0.x.
 
 <h4>JMX Monitoring Considerations</h4>
 

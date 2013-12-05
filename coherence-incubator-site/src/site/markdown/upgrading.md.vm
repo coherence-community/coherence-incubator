@@ -7,13 +7,13 @@ While Coherence Incubator 12 is considered a major release, most developers shou
 upgrading from Coherence Incubator 10 or 11 should be as simple as replacing the previous `jars`.
 
 >   In terms of branches, Coherence Incubator 12 was branched from Coherence Incubator 11.1.0
->   which means all of the latest fixes in Coherence 11.1.0 are also in Coherence Incubator 12.
+>   which means all of the latest and applicable fixes in Coherence Incubator 11.1.0+ are also
+>   in Coherence Incubator 12.
 
 There of course will be exceptions, especially for those developers that have customized internal
 implementation classes (as these may have changed, been refactored or removed), but for the
-most part challenged like this should be very isolated.   We've tried hard to ensure we didn't
-remove important interfaces, especially those that aren't now provided and supported directly
-by Coherence.
+most part challenges like this should be very isolated.   We've tried hard to ensure we didn't
+remove important interfaces, especially those that aren't provided by Coherence.
 
 If you're using Maven, all you should do is update the appropriate artifact version from the
 maven.java.net repository.
