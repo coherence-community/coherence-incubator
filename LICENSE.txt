@@ -1,4 +1,4 @@
-COHERENCE INCUBATOR 11 LICENSE
+COHERENCE INCUBATOR 12 LICENSE
 
 Oracle licenses the Coherence Incubator under the Common Development and 
 Distribution License v 1.0 ("CDDL").
