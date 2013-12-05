@@ -24,6 +24,18 @@
         <!-- JVisualVM Dependencies -->
         <dependency>
             <groupId>com.sun.tools.visualvm.api</groupId>
+            <artifactId>org-openide-util</artifactId>
+            <version>RELEASE135</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.tools.visualvm.api</groupId>
+            <artifactId>org-openide-modules</artifactId>
+            <version>RELEASE135</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.tools.visualvm.api</groupId>
             <artifactId>com-sun-tools-visualvm-charts</artifactId>
             <version>RELEASE135</version>
         </dependency>
@@ -51,21 +63,44 @@
             <artifactId>com-sun-tools-visualvm-tools</artifactId>
             <version>RELEASE135</version>
         </dependency>
-
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>nbm-maven-plugin</artifactId>
+                    <version>${maven.nbm.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
+                <configuration>
+                    <useDefaultManifestFile>true</useDefaultManifestFile>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
-                <version>2.6.2</version>
+                <version>${maven.nbm.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <descriptor>src/main/nbm/module.xml</descriptor>
+                    <sourceManifestFile>src/main/nbm/manifest.mf</sourceManifestFile>
+
+                    <homePageUrl>https://java.net/projects/cohinc/</homePageUrl>
+                    <licenseName>Common Development and Distribution License (CDDL), Version 1.0</licenseName>
+                    <licenseFile>license.txt</licenseFile>
+
+                    <useOSGiDependencies>false</useOSGiDependencies>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

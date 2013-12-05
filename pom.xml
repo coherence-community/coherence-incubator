@@ -114,6 +114,7 @@
         <maven.install.plugin.version>2.4</maven.install.plugin.version>
         <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
         <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
+        <maven.nbm.plugin.version>3.11.1</maven.nbm.plugin.version>
         <maven.release.plugin.version>2.2.1</maven.release.plugin.version>
         <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
         <maven.shade.plugin.version>2.1</maven.shade.plugin.version>
