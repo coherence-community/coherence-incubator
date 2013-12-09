@@ -403,7 +403,6 @@ installed:</p>
 
 <p>Available here: <a href="http://maven.apache.org/download.cgi">Apache Maven Downloads</a></p></li>
 <li><p>The <a href="source-code.html">source code</a>.</p></li>
-</ol>
 
 <p>Additionally you should set your Maven Options as follows:</p>
 
@@ -414,15 +413,16 @@ installed:</p>
             -XX:+CMSClassUnloadingEnabled"
 </code></pre>
 
-<ol>
 <li><p>In order to build the Coherence JVisualVM plug-in (available <code>coherence-jvisualvm</code> directory)
 you will need to add the following repository in your Maven settings.xml:</p>
 
-<p><repository>
-    <id>jvisualvm</id>
-    <name>jvisualvm</name>
-    <url>http://bits.netbeans.org/nexus/content/groups/visualvm/</url>
-</repository></p></li>
+<pre><code>&lt;repository&gt;
+    &lt;id&gt;jvisualvm&lt;/id&gt;
+    &lt;name&gt;jvisualvm&lt;/name&gt;
+    &lt;url&gt;http://bits.netbeans.org/nexus/content/groups/visualvm/&lt;/url&gt;
+&lt;/repository&gt;
+</code></pre>
+</li>
 </ol>
 
 <p>Once you have this software and have correctly configured the above Maven options,
