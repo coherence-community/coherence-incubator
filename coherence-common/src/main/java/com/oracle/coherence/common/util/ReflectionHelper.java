@@ -26,10 +26,7 @@
 
 package com.oracle.coherence.common.util;
 
-import net.sf.cglib.proxy.Callback;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -379,6 +376,62 @@ public class ReflectionHelper
         else
         {
             return false;
+        }
+    }
+
+    /**
+     * Determines if the signature of a {@link Method} is compatible
+     * with the specified parameters.
+     * If the method signature is not valid an exception will be thrown
+     * with a message describing the actual signature and the required
+     * signature.
+     *
+     * @param method          the {@link Method} to check against
+     * @param annotation      any annotation for the method
+     * @param modifiers       the desired modifiers of the {@link Method}
+     * @param returnType      the desired return type of the {@link Method}
+     * @param parameterTypes  the parameters to the {@link Method}
+     *
+     * @throws IllegalArgumentException if the method signature does not
+     *                                  match the required signature.
+     */
+    public static void assertCompatibleMethod(Method  method,
+                                              Annotation annotation,
+                                              int     modifiers,
+                                              Type    returnType,
+                                              Type... parameterTypes)
+    {
+        if (!isCompatibleMethod(method, modifiers, returnType, parameterTypes))
+        {
+            StringBuilder message = new StringBuilder("The method ")
+                                              .append(method)
+                                              .append(" defined in class")
+                                              .append(method.getDeclaringClass());
+
+            if (annotation != null)
+            {
+                message.append(" annotated with ").append(annotation);
+            }
+
+            message.append(" is not compatible with the required signature '")
+                   .append(returnType)
+                   .append(' ')
+                   .append(method.getName())
+                   .append('(');
+
+            for (int i=0; i<parameterTypes.length; i++)
+            {
+                if (i > 0)
+                {
+                    message.append(", ");
+                }
+                message.append(parameterTypes[i]);
+            }
+
+            message.append(");'.");
+
+            throw new IllegalArgumentException(message.toString());
+
         }
     }
 }

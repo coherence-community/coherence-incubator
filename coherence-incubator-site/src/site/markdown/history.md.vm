@@ -28,7 +28,8 @@ reverse chronological order.
 
 <h4>coherence-commandpattern</h4>
 
-*   No Changes
+*   [COHINC-80](http://java.net/jira/browse/COHINC-80): Fixed methods in CommandExecutor annotated for use
+    with the AnnotationDrivenModel so that they have the correct signature.
 
 <h4>coherence-commandpattern-examples</h4>
 
