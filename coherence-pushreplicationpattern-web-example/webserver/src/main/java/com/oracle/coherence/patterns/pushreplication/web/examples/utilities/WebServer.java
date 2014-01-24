@@ -27,34 +27,22 @@
 package com.oracle.coherence.patterns.pushreplication.web.examples.utilities;
 
 import com.oracle.tools.runtime.PropertiesBuilder;
-
 import com.oracle.tools.runtime.coherence.Cluster;
 import com.oracle.tools.runtime.coherence.ClusterBuilder;
 import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
-
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
-
 import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
-
-import com.oracle.tools.runtime.network.AvailablePortIterator;
-
 import org.eclipse.jetty.server.Server;
-
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.net.URL;
-
 import java.security.ProtectionDomain;
-
-import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 
 /**
  * The WebServer class is responsible for starting up the Coherence*Web Example for runtime. Using the functionality
@@ -165,7 +153,8 @@ public class WebServer
     {
         ClusterMemberSchema serverSchema =
             new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-                .setSystemProperties(propertiesBuilder).setRoleName("CacheServer");
+                .setSystemProperties(propertiesBuilder).setRoleName("CacheServer")
+                .useLocalHostMode();
 
         ClusterBuilder builder = new ClusterBuilder();
 

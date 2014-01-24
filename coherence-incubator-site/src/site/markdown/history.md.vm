@@ -49,7 +49,9 @@ reverse chronological order.
 
 <h4>coherence-processingpattern-examples</h4>
 
-*   No Changes
+*   [COHINC-82](http://java.net/jira/browse/COHINC-82): Resolved an issue in the Processing Pattern
+    Web Examples Tests where the FunctionalTest could fail due to the storage nodes and web server
+    failing to form a cluster.
 
 <h4>coherence-messagingpattern</h4>
 

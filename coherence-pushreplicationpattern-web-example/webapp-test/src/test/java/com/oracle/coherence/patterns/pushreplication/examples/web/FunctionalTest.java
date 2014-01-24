@@ -30,10 +30,13 @@ import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebTable;
-
 import com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer;
-
-import com.oracle.tools.deferred.*;
+import com.oracle.tools.deferred.Deferred;
+import com.oracle.tools.deferred.DeferredAssert;
+import com.oracle.tools.deferred.DeferredHelper;
+import com.oracle.tools.deferred.Eventually;
+import com.oracle.tools.deferred.InstanceUnavailableException;
+import com.oracle.tools.deferred.UnresolvableInstanceException;
 import com.oracle.tools.runtime.PropertiesBuilder;
 import com.oracle.tools.runtime.coherence.Cluster;
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
@@ -41,16 +44,17 @@ import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.SimpleJavaApplication;
 import com.oracle.tools.runtime.java.SimpleJavaApplicationSchema;
 import com.oracle.tools.runtime.network.AvailablePortIterator;
-
 import org.hamcrest.Matchers;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-
 import java.util.concurrent.TimeUnit;
+
+import static com.oracle.tools.deferred.DeferredHelper.eventually;
+import static com.oracle.tools.deferred.DeferredHelper.invoking;
+import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Test that the CoherenceWeb Examples Work
@@ -111,6 +115,7 @@ public class FunctionalTest
         site1schema.addArgument(String.valueOf(site1Port));
 
         cluster1 = WebServer.startCacheServer(cache1Props);
+        Eventually.assertThat(eventually(invoking(cluster1).getClusterSize()), is(1));
         site1    = appBuilder.realize(site1schema, "Site1-Web", console);
 
         // Startup Site2
@@ -123,6 +128,7 @@ public class FunctionalTest
         site2schema.addArgument(String.valueOf(site2Port));
 
         cluster2 = WebServer.startCacheServer(cache2Props);
+        Eventually.assertThat(eventually(invoking(cluster2).getClusterSize()), is(1));
         site2    = appBuilder.realize(site2schema, "Site2-Web", console);
         }
 
