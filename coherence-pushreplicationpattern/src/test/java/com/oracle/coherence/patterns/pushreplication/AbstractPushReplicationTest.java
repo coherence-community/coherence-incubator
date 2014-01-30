@@ -28,62 +28,51 @@ package com.oracle.coherence.patterns.pushreplication;
 import com.oracle.coherence.common.resourcing.AbstractDeferredResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.CacheStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.filters.ExampleEventFilter;
-
 import com.oracle.tools.deferred.Deferred;
 import com.oracle.tools.deferred.Eventually;
-
 import com.oracle.tools.junit.AbstractCoherenceTest;
-
 import com.oracle.tools.runtime.Application;
 import com.oracle.tools.runtime.LifecycleEvent;
 import com.oracle.tools.runtime.LifecycleEventInterceptor;
 import com.oracle.tools.runtime.PropertiesBuilder;
-
 import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
-import com.oracle.tools.runtime.coherence.callables.IsServiceRunning;
-
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
-
-import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
 import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.container.Container;
-
 import com.oracle.tools.runtime.network.AvailablePortIterator;
-
 import com.oracle.tools.util.Capture;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.net.partition.PartitionSet;
-
 import com.tangosol.util.Filter;
-
-import org.junit.*;
-
-import static com.oracle.tools.deferred.DeferredAssert.assertThat;
-
-import static com.oracle.tools.deferred.DeferredHelper.eventually;
-import static com.oracle.tools.deferred.DeferredHelper.invoking;
-
-import static org.hamcrest.Matchers.is;
-
-import java.net.UnknownHostException;
-
-import java.util.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.management.ObjectName;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
+
+import static com.oracle.tools.deferred.DeferredAssert.assertThat;
+import static com.oracle.tools.deferred.DeferredHelper.eventually;
+import static com.oracle.tools.deferred.DeferredHelper.invoking;
+import static org.hamcrest.Matchers.is;
 
 /**
  * The {@link AbstractPushReplicationTest} defines a set of standard tests
@@ -169,7 +158,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
         ClusterMemberSchema schema =
             new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
                 .useLocalHostMode().setClusterPort(clusterPort).setPofConfigURI("test-pof-config.xml")
-                .setJMXPort(getAvailablePortIterator()).setJMXManagementMode(JMXManagementMode.ALL);
+                .setJMXManagementMode(JMXManagementMode.ALL).setJMXPort(getAvailablePortIterator());
 
         schema.addLifecycleInterceptor(new LifecycleEventInterceptor<ClusterMember>()
         {
