@@ -35,6 +35,11 @@ reverse chronological order.
     "coalescing events", which can help reduce CPU when message subscriptions
     are updated as events arrive to be distributed.
 
+<h4>coherence-pushreplicationpattern-tests</h4>
+
+*   [COHINC-11](http://java.net/jira/browse/COHINC-11):  Refactored
+    Push Replication Functional Tests into their own module.
+
 
 --------------------------------------------------------------------------------
 
