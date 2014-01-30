@@ -29,10 +29,12 @@ import com.oracle.coherence.common.finitestatemachines.annotations.OnEnterState;
 import com.oracle.coherence.common.finitestatemachines.annotations.OnExitState;
 import com.oracle.coherence.common.finitestatemachines.annotations.OnTransition;
 import com.oracle.coherence.common.finitestatemachines.annotations.Transitions;
+
 import com.oracle.coherence.common.util.ReflectionHelper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -90,59 +92,67 @@ public class AnnotationDrivenModel<S extends Enum<S>> implements Model<S>
                 mapTransitionActions.put(state, new EnumMap<S, TransitionAction<S>>(clzState));
             }
 
-            // reflect out the defined transitions
-            Transitions annTransitions = clzInstance.getAnnotation(Transitions.class);
+            // determine all of the transitions defined by the class, and the parents.
+            Class<?> clz = clzInstance;
 
-            if (annTransitions != null)
+            while (clz != null)
             {
-                // determine the valid state transitions based on the
-                // @Transitions annotation in the specified class
-                for (com.oracle.coherence.common.finitestatemachines.annotations.Transition annTransition :
-                    annTransitions.value())
+                Transitions annTransitions = clz.getAnnotation(Transitions.class);
+
+                if (annTransitions != null)
                 {
-                    // determine the name of the transition
-                    String sProvidedTransitionName = annTransition.name();
-
-                    // ensure the transition name is null if it wasn't specified
-                    sProvidedTransitionName = sProvidedTransitionName == null
-                                              || sProvidedTransitionName.trim().isEmpty() ? null
-                                                                                          : sProvidedTransitionName;
-
-                    // determine the ending state for the transition
-                    String sStateToName = annTransition.toState();
-                    S      stateTo      = m_model.getState(sStateToName);
-
-                    if (stateTo == null)
+                    // determine the valid state transitions based on the
+                    // @Transitions annotation in the specified class
+                    for (com.oracle.coherence.common.finitestatemachines.annotations.Transition annTransition :
+                        annTransitions.value())
                     {
-                        throw new IllegalArgumentException(String
-                            .format("The %s defined on %s declares a to state %s that is not defined by %s.",
-                                    annTransition, clzInstance, sStateToName, clzState));
-                    }
+                        // determine the name of the transition
+                        String sProvidedTransitionName = annTransition.name();
 
-                    // determine the starting states for the transition
-                    for (String sStateFromName : annTransition.fromStates())
-                    {
-                        // determine the starting states for the transition
-                        S stateFrom = m_model.getState(sStateFromName);
+                        // ensure the transition name is null if it wasn't specified
+                        sProvidedTransitionName = sProvidedTransitionName == null
+                                                  || sProvidedTransitionName.trim().isEmpty() ? null
+                                                                                              : sProvidedTransitionName;
 
-                        if (stateFrom == null)
+                        // determine the ending state for the transition
+                        String sStateToName = annTransition.toState();
+                        S      stateTo      = m_model.getState(sStateToName);
+
+                        if (stateTo == null)
                         {
                             throw new IllegalArgumentException(String
-                                .format("The %s defined on %s declares a from state %s that is not defined by %s.",
-                                        annTransition, clzInstance, sStateFromName, clzState));
+                                .format("The %s defined on %s declares a to state %s that is not defined by %s.",
+                                        annTransition, clzInstance, sStateToName, clzState));
                         }
-                        else
-                        {
-                            // ensure we have a transition name
-                            String sTransitionName = sProvidedTransitionName == null ? String.format("%s to %s",
-                                                                                                     stateFrom.name(),
-                                                                                                     stateTo.name()) : sProvidedTransitionName;
 
-                            // define the transition
-                            mapTransitionNames.get(stateFrom).put(stateTo, sTransitionName);
+                        // determine the starting states for the transition
+                        for (String sStateFromName : annTransition.fromStates())
+                        {
+                            // determine the starting states for the transition
+                            S stateFrom = m_model.getState(sStateFromName);
+
+                            if (stateFrom == null)
+                            {
+                                throw new IllegalArgumentException(String
+                                    .format("The %s defined on %s declares a from state %s that is not defined by %s.",
+                                            annTransition, clzInstance, sStateFromName, clzState));
+                            }
+                            else
+                            {
+                                // ensure we have a transition name
+                                String sTransitionName = sProvidedTransitionName == null ? String.format("%s to %s",
+                                                                                                         stateFrom
+                                                                                                             .name(),
+                                                                                                         stateTo.name()) : sProvidedTransitionName;
+
+                                // define the transition
+                                mapTransitionNames.get(stateFrom).put(stateTo, sTransitionName);
+                            }
                         }
                     }
                 }
+
+                clz = clz.getSuperclass();
             }
 
             // reflect and add state entry, exit and transition actions from
