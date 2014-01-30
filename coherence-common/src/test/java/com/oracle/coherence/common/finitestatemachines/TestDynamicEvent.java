@@ -26,7 +26,9 @@
 package com.oracle.coherence.common.finitestatemachines;
 
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
+
 import junit.framework.Assert;
+
 import org.junit.Test;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,8 +44,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class TestDynamicEvent
 {
     /**
-     * A {@link LightEvent} captures the {@link Event}s that can happen to
-     * a {@link Light}.
+     * A {@link SwitchEvent} captures the {@link Event}s that can happen to a {@link Light}.
      */
     private enum SwitchEvent implements Event<Brightness>
     {
