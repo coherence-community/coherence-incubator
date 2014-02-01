@@ -25,9 +25,6 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
-import com.oracle.coherence.common.resourcing.AbstractDeferredResourceProvider;
-import com.oracle.coherence.common.resourcing.ResourceProvider;
-import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
@@ -36,7 +33,10 @@ import com.oracle.coherence.patterns.eventdistribution.channels.CacheStoreEventC
 import com.oracle.coherence.patterns.eventdistribution.filters.ExampleEventFilter;
 import com.oracle.tools.deferred.Deferred;
 import com.oracle.tools.deferred.Eventually;
+import com.oracle.tools.deferred.UnresolvableInstanceException;
 import com.oracle.tools.junit.AbstractCoherenceTest;
+import com.oracle.tools.matchers.Equivalence;
+import com.oracle.tools.matchers.PartitionSetMatcher;
 import com.oracle.tools.runtime.Application;
 import com.oracle.tools.runtime.LifecycleEvent;
 import com.oracle.tools.runtime.LifecycleEventInterceptor;
@@ -49,6 +49,7 @@ import com.oracle.tools.runtime.java.JavaApplicationBuilder;
 import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.container.Container;
 import com.oracle.tools.runtime.network.AvailablePortIterator;
+import com.oracle.tools.runtime.network.Constants;
 import com.oracle.tools.util.Capture;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
@@ -64,15 +65,17 @@ import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import static com.oracle.tools.deferred.DeferredAssert.assertThat;
 import static com.oracle.tools.deferred.DeferredHelper.eventually;
 import static com.oracle.tools.deferred.DeferredHelper.invoking;
+import static com.oracle.tools.matchers.MapMatcher.sameAs;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
 
 /**
  * The {@link AbstractPushReplicationTest} defines a set of standard tests
@@ -158,7 +161,10 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
         ClusterMemberSchema schema =
             new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
                 .useLocalHostMode().setClusterPort(clusterPort).setPofConfigURI("test-pof-config.xml")
-                .setJMXManagementMode(JMXManagementMode.ALL).setJMXPort(getAvailablePortIterator());
+                .setJMXManagementMode(JMXManagementMode.ALL).setJMXPort(getAvailablePortIterator())
+                .setSystemProperty("remote.address",
+                                   Constants.getLocalHost())
+                                       .setSystemProperty("proxy.address", Constants.getLocalHost());
 
         schema.addLifecycleInterceptor(new LifecycleEventInterceptor<ClusterMember>()
         {
@@ -216,9 +222,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             // establish the london server
             ClusterMemberSchema londonServerSchema =
-                newActiveClusterMemberSchema(londonClusterPort).setSiteName("london").setSystemProperty("proxy.port",
-                                                                                                        getAvailablePortIterator())
-                                                                                                            .setSystemProperty("remote.port", getAvailablePortIterator());
+                newActiveClusterMemberSchema(londonClusterPort).setSiteName("london").setSystemProperty("proxy.address",
+                                                                                                        Constants
+                                                                                                            .getLocalHost())
+                                                                                                                .setSystemProperty("proxy.port",
+                getAvailablePortIterator()).setSystemProperty("remote.port",
+                                                              getAvailablePortIterator());
 
             londonServer = builder.realize(londonServerSchema, "LONDON", console);
 
@@ -238,6 +247,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -253,34 +263,20 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             CacheFactory.shutdown();
 
             // connect to the london cluster
+            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
                 .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
-            // construct a deferred NamedCache provider that is only available when the caches are identical
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>("LONDON publishing-cache",
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-                    return sameMaps(newyorkCache, namedCache) ? namedCache : null;
-                }
-            };
-
             System.out.printf("\nWaiting for %d entries to synchronize between NEWYORK to LONDON.\n",
                               newyorkCache.size());
 
-            NamedCache namedCache = deferredNamedCache.getResource();
+            NamedCache namedCache = CacheFactory.getCache(cacheName);
 
-            Assert.assertNotNull(namedCache);
+            Eventually.assertThat(invoking(namedCache), sameAs(newyorkCache));
 
-            // assert that no events have been queued in London (from New York)
+            // assert that no been queued in London (from New York)
             // (even though this is Active-Active, events from New York to London should not be
             // re-queued in London for distribution back to New York).
             Deferred<Integer> deferred =
@@ -301,28 +297,17 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             CacheFactory.shutdown();
 
             // assert that the value is in the newyork cluster
+            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
             CacheFactory
                 .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
-            // construct a deferred NamedCache provider that is only available the marker is available
-            deferredNamedCache = new AbstractDeferredResourceProvider<NamedCache>("NEWYORK publishing-cache",
-                                                                                  200,
-                                                                                  TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-                    return sameMaps(londonCache, namedCache) ? namedCache : null;
-                }
-            };
-
             System.out.printf("\nWaiting for %d entries to synchronize between LONDON and NEWYORK.\n",
                               londonCache.size());
-            namedCache = deferredNamedCache.getResource();
-            Assert.assertNotNull(namedCache);
+
+            namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache), sameAs(londonCache));
         }
         catch (Exception exception)
         {
@@ -335,12 +320,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             if (londonServer != null)
             {
-                londonServer.destroy();
+                londonServer.close();
             }
 
             if (newyorkServer != null)
             {
-                newyorkServer.destroy();
+                newyorkServer.close();
             }
         }
     }
@@ -409,6 +394,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", activeServers.get(0).getSystemProperty("proxy.address"));
             System.setProperty("remote.port", activeServers.get(0).getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -425,29 +411,17 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             // assert that the values have arrived in the remote site
             System.out.printf("Connecting to PASSIVE site.\n");
+            System.setProperty("remote.address", passiveServers.get(0).getSystemProperty("proxy.address"));
             System.setProperty("remote.port", passiveServers.get(0).getSystemProperty("proxy.port"));
             CacheFactory
                 .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
-            // construct a deferred NamedCache provider that is only available when the caches are identical
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>("PASSIVE publishing-cache",
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-                    return sameMaps(activeCache, namedCache) ? namedCache : null;
-                }
-            };
-
             System.out.printf("\nWaiting for %d entries to synchronize between ACTIVE and PASSIVE site.\n",
                               activeCache.size());
 
-            NamedCache namedCache = deferredNamedCache.getResource();
+            NamedCache namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache), sameAs(activeCache));
 
             Assert.assertNotNull(namedCache);
         }
@@ -462,12 +436,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             for (ClusterMember server : passiveServers)
             {
-                server.destroy();
+                server.close();
             }
 
             for (ClusterMember server : activeServers)
             {
-                server.destroy();
+                server.close();
             }
         }
     }
@@ -478,7 +452,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
      *
      * @throws Exception
      */
-    @Test(expected = ResourceUnavailableException.class)
+    @Test
     public final void testActivePassiveDisabled() throws Exception
     {
         ClusterMember                                              passiveServer = null;
@@ -511,6 +485,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", activeServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", activeServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -523,32 +498,30 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             CacheFactory.shutdown();
 
             // assert that the value is in the passive site
+            System.setProperty("remote.address", passiveServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", passiveServer.getSystemProperty("proxy.port"));
             CacheFactory
                 .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
-            // construct a deferred NamedCache provider that is only available when it's of a certain size.
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>(String
-                    .format("PASSIVE publishing-cache with %d entries", 1),
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS / 40)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache namedCache = CacheFactory.getCache("publishing-cache");
+            System.out.printf("Ensuring ACTIVE and PASSIVE sites don't become synchronized.\n");
 
-                    return namedCache.size() == 1 ? namedCache : null;
-                }
-            };
+            NamedCache namedCache = CacheFactory.getCache("publishing-cache");
 
-            System.out.printf("Waiting for ACTIVE and PASSIVE sites to synchronize.\n");
-            deferredNamedCache.getResource();
+            // we only wait a little bit for this
+            Eventually.assertThat(eventually(invoking(namedCache).size()), is(1), 5, TimeUnit.SECONDS);
+
+            fail("The disabled site should not have received any values");
         }
-        catch (Exception exception)
+        catch (AssertionError error)
         {
-            throw exception;
+            if (error.getCause() instanceof UnresolvableInstanceException)
+            {
+                // this is actually ok as we should never assert that the disabled site receives information
+            }
+            else
+            {
+                throw error;
+            }
         }
         finally
         {
@@ -557,12 +530,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             if (passiveServer != null)
             {
-                passiveServer.destroy();
+                passiveServer.close();
             }
 
             if (activeServer != null)
             {
-                activeServer.destroy();
+                activeServer.close();
             }
         }
     }
@@ -632,6 +605,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", activeServers.get(0).getSystemProperty("proxy.address"));
             System.setProperty("remote.port", activeServers.get(0).getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -641,48 +615,24 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "ACTIVE");
 
             // grab a copy of the active site entries (we'll use this for comparison later)
-            final Map<Object, Object> activeCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
+            final Map<Object, String> activeCache = new HashMap<Object, String>(CacheFactory.getCache(cacheName));
 
             // shutdown our connection to the active site
             CacheFactory.shutdown();
 
             // assert that the values have arrived in the remote site
             System.out.printf("Connecting to PASSIVE site.\n");
+            System.setProperty("remote.address", passiveServers.get(0).getSystemProperty("proxy.address"));
             System.setProperty("remote.port", passiveServers.get(0).getSystemProperty("proxy.port"));
             CacheFactory
                 .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
-            // construct a deferred NamedCache provider that is only available when the caches are identical
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>("PASSIVE publishing-cache",
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache          namedCache = CacheFactory.getCache(cacheName);
-
-                    Equivalence<String> eq         = new Equivalence<String>()
-                    {
-                        @Override
-                        public boolean equals(String x,
-                                              String y)
-                        {
-                            return x.equalsIgnoreCase(y);
-                        }
-                    };
-
-                    return sameMaps(activeCache, namedCache, eq) ? namedCache : null;
-                }
-            };
-
             System.out.printf("\nWaiting for %d entries to synchronize between ACTIVE and PASSIVE site.\n",
                               activeCache.size());
 
-            NamedCache namedCache = deferredNamedCache.getResource();
+            NamedCache namedCache = CacheFactory.getCache(cacheName);
 
-            Assert.assertNotNull(namedCache);
+            Eventually.assertThat(invoking(namedCache), is(sameAs(activeCache, Equivalence.EQUALS_IGNORE_CASE)));
         }
         catch (Exception exception)
         {
@@ -695,12 +645,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             for (ClusterMember server : passiveServers)
             {
-                server.destroy();
+                server.close();
             }
 
             for (ClusterMember server : activeServers)
             {
-                server.destroy();
+                server.close();
             }
         }
     }
@@ -754,6 +704,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", activeServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", activeServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -793,39 +744,17 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             // assert that the values have arrived in the remote site
             System.out.printf("Connecting to PASSIVE site.\n");
+            System.setProperty("remote.address", passiveServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", passiveServer.getSystemProperty("proxy.port"));
             CacheFactory
                 .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
-            // construct a deferred NamedCache provider that is only available when the caches are identical
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>("PASSIVE publishing-cache",
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache          namedCache = CacheFactory.getCache(cacheName);
-
-                    Equivalence<String> eq         = new Equivalence<String>()
-                    {
-                        @Override
-                        public boolean equals(String x,
-                                              String y)
-                        {
-                            return x.equalsIgnoreCase(y);
-                        }
-                    };
-
-                    return sameMaps(activeCache, namedCache, eq) ? namedCache : null;
-                }
-            };
-
             System.out.printf("\nWaiting for %d entries to synchronize between ACTIVE and PASSIVE site.\n",
                               activeCache.size());
 
-            NamedCache namedCache = deferredNamedCache.getResource();
+            NamedCache namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache), is(sameAs(activeCache, Equivalence.EQUALS_IGNORE_CASE)));
 
             Assert.assertNotNull(namedCache);
         }
@@ -840,12 +769,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             if (passiveServer != null)
             {
-                passiveServer.destroy();
+                passiveServer.close();
             }
 
             if (activeServer != null)
             {
-                activeServer.destroy();
+                activeServer.close();
             }
         }
     }
@@ -880,6 +809,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -888,25 +818,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // populate the london site
             randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "LONDON");
 
-            // construct a deferred NamedCache provider that is only available the test cache and copy of the test cache
-            // are the same
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>(String.format("replication with %d updates", 500),
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache testCache  = CacheFactory.getCache(cacheName);
-                    NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
-
-                    return sameMaps(testCache, otherCache) ? testCache : null;
-                }
-            };
-
             System.out.printf("Waiting for Event Distribution to complete.\n");
-            deferredNamedCache.getResource();
+
+            NamedCache testCache  = CacheFactory.getCache(cacheName);
+            NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
+
+            Eventually.assertThat(invoking(testCache), is(sameAs(otherCache)));
 
             // shutdown our connection to the london cluster
             CacheFactory.shutdown();
@@ -922,7 +839,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             if (londonServer != null)
             {
-                londonServer.destroy();
+                londonServer.close();
             }
         }
     }
@@ -958,6 +875,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -966,25 +884,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // populate the london site
             randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "LONDON");
 
-            // construct a deferred NamedCache provider that is only available the test cache and copy of the test cache
-            // are the same
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>(String.format("replication with %d updates", 500),
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache testCache  = CacheFactory.getCache(cacheName);
-                    NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
-
-                    return sameMaps(testCache, otherCache) ? testCache : null;
-                }
-            };
-
             System.out.printf("Waiting for Event Distribution to complete.\n");
-            deferredNamedCache.getResource();
+
+            NamedCache testCache  = CacheFactory.getCache(cacheName);
+            NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
+
+            Eventually.assertThat(invoking(testCache), is(sameAs(otherCache)));
 
             // shutdown our connection to the london cluster
             CacheFactory.shutdown();
@@ -1000,7 +905,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             if (londonServer != null)
             {
-                londonServer.destroy();
+                londonServer.close();
             }
         }
     }
@@ -1036,6 +941,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -1045,25 +951,16 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             final int changes = randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "LONDON");
 
             // get the MBean for the EventChannel
-            final EventChannelControllerMBean mBean =
-                londonServer.getMBeanProxy(new ObjectName(String.format("Coherence:type=EventChannels,id=%s,nodeId=1",
-                                                                        cacheName + "-" + "Custom Event Channel")),
+            final Deferred<EventChannelControllerMBean> mBean =
+                londonServer
+                    .getDeferredMBeanProxy(new ObjectName(String
+                        .format("Coherence:type=EventChannels,id=%s,nodeId=1",
+                                cacheName + "-" + "Custom Event Channel")),
                                            EventChannelControllerMBean.class);
 
-            ResourceProvider<Integer> eventsDistributed =
-                new AbstractDeferredResourceProvider<Integer>("Event Distribution Count",
-                                                              200,
-                                                              TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected Integer ensureResource() throws ResourceUnavailableException
-                {
-                    return mBean.getEventsDistributedCount() == changes ? changes : null;
-                }
-            };
-
             System.out.printf("Waiting for Event Distribution to complete.\n");
-            eventsDistributed.getResource();
+
+            Eventually.assertThat(invoking(mBean).getEventsDistributedCount(), is(changes));
 
             // shutdown our connection to the london cluster
             CacheFactory.shutdown();
@@ -1079,7 +976,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             if (londonServer != null)
             {
-                londonServer.destroy();
+                londonServer.close();
             }
         }
     }
@@ -1131,6 +1028,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            // connect to the newyork cluster
+            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -1146,6 +1045,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             CacheFactory.shutdown();
 
             // connect to the london cluster
+            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -1156,28 +1056,26 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             setPartitions.add(1);
             CacheFactory.getCache(cacheName).put("partitions", setPartitions);
 
-            // construct a deferred NamedCache provider that is only available the merged partition set is available
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>("NEWYORK publishing-cache",
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache   namedCache    = CacheFactory.getCache(cacheName);
-                    PartitionSet setPartitions = (PartitionSet) namedCache.get("partitions");
+            NamedCache namedCache = CacheFactory.getCache(cacheName);
 
-                    return setPartitions.contains(0) && setPartitions.contains(1) ? namedCache : null;
-                }
-            };
-
-            Assert.assertNotNull(deferredNamedCache.getResource());
+            Eventually.assertThat(invoking(namedCache).get("partitions"), PartitionSetMatcher.contains(0, 1));
 
             // shutdown our connection to the london cluster
             CacheFactory.shutdown();
 
-            // TODO: assert that the newyork cluster has the same merged partition
+            // connect to the newyork cluster
+            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
+            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
+            CacheFactory
+                    .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache).get("partitions"), PartitionSetMatcher.contains(0, 1));
+
+            // shutdown our connection to the london cluster
+            CacheFactory.shutdown();
         }
         catch (Exception exception)
         {
@@ -1190,12 +1088,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             if (londonServer != null)
             {
-                londonServer.destroy();
+                londonServer.close();
             }
 
             if (newyorkServer != null)
             {
-                newyorkServer.destroy();
+                newyorkServer.close();
             }
         }
     }
@@ -1233,6 +1131,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -1243,26 +1142,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, ENTRY_COUNT, "LONDON");
 
-            // construct a deferred NamedCache provider that is only available when the test cache and copy of the test cache
-            // are the same
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>(String.format("replication with %d updates",
-                                                                               ENTRY_COUNT),
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache testCache  = CacheFactory.getCache(cacheName);
-                    NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
-
-                    return sameMaps(testCache, otherCache) ? testCache : null;
-                }
-            };
-
             System.out.printf("Waiting for Event Distribution to complete.\n");
-            deferredNamedCache.getResource();
+
+            NamedCache testCache  = CacheFactory.getCache(cacheName);
+            NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
+
+            Eventually.assertThat(invoking(testCache), is(sameAs(otherCache)));
 
             // shutdown our connection to the london cluster
             CacheFactory.shutdown();
@@ -1278,7 +1163,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             if (londonServer != null)
             {
-                londonServer.destroy();
+                londonServer.close();
             }
         }
     }
@@ -1316,6 +1201,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
 
+            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
             System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
@@ -1326,26 +1212,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, ENTRY_COUNT, "LONDON", true);
 
-            // construct a deferred NamedCache provider that is only available when the test cache and copy of the test cache
-            // are the same
-            ResourceProvider<NamedCache> deferredNamedCache =
-                new AbstractDeferredResourceProvider<NamedCache>(String.format("replication with %d updates",
-                                                                               ENTRY_COUNT),
-                                                                 200,
-                                                                 TEST_TIMEOUT_MS)
-            {
-                @Override
-                protected NamedCache ensureResource() throws ResourceUnavailableException
-                {
-                    NamedCache testCache  = CacheFactory.getCache(cacheName);
-                    NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
-
-                    return sameMaps(testCache, otherCache) ? testCache : null;
-                }
-            };
-
             System.out.printf("Waiting for Event Distribution to complete.\n");
-            deferredNamedCache.getResource();
+
+            NamedCache testCache  = CacheFactory.getCache(cacheName);
+            NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
+
+            Eventually.assertThat(invoking(testCache), is(sameAs(otherCache)));
 
             // shutdown our connection to the london cluster
             CacheFactory.shutdown();
@@ -1361,7 +1233,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             if (londonServer != null)
             {
-                londonServer.destroy();
+                londonServer.close();
             }
         }
     }
@@ -1493,114 +1365,5 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
         }
 
         return bldrRandomized.toString();
-    }
-
-
-    /**
-     * Compares two {@link Map}s for deep equality.
-     *
-     * @param map1 The first {@link Map} to compare
-     * @param map2 The second {@link Map} to compare
-     *
-     * @return <code>true</code> if both {@link Map}s contain exactly the same values.
-     */
-    @SuppressWarnings("rawtypes")
-    public boolean sameMaps(Map map1,
-                            Map map2)
-    {
-        if (map1.size() == map2.size())
-        {
-            boolean same = true;
-
-            for (Iterator i = map1.keySet().iterator(); same && i.hasNext(); )
-            {
-                Object key    = i.next();
-                Object value1 = map1.get(key);
-                Object value2 = map2.get(key);
-
-                same = (value1 == value2) || (value1 != null && value1.equals(value2));
-            }
-
-            for (Iterator i = map2.keySet().iterator(); same && i.hasNext(); )
-            {
-                Object key    = i.next();
-                Object value1 = map1.get(key);
-                Object value2 = map2.get(key);
-
-                same = (value1 == value2) || (value2 != null && value2.equals(value1));
-            }
-
-            return same;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-
-    /**
-     * Compares two {@link Map}s for equality based on a specified implementation of {@link Equivalence}.
-     *
-     * @param map1          The first {@link Map} to compare
-     * @param map2          The second {@link Map} to compare
-     * @param equivalence   The {@link Equivalence} implementation for comparison
-     *
-     * @return <code>true</code> if both {@link Map}s contain exactly the same values based on the {@link Equivalence} implementation
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public <T> boolean sameMaps(Map            map1,
-                                Map            map2,
-                                Equivalence<T> equivalence)
-    {
-        int cSize1 = map1.size();
-        int cSize2 = map2.size();
-
-        if (cSize1 == cSize2)
-        {
-            boolean same = true;
-
-            for (Iterator i = map1.keySet().iterator(); same && i.hasNext(); )
-            {
-                Object key    = i.next();
-                T      value1 = (T) map1.get(key);
-                T      value2 = (T) map2.get(key);
-
-                same = (value1 == value2) || (value1 != null && equivalence.equals(value1, value2));
-            }
-
-            for (Iterator i = map2.keySet().iterator(); same && i.hasNext(); )
-            {
-                Object key    = i.next();
-                T      value1 = (T) map1.get(key);
-                T      value2 = (T) map2.get(key);
-
-                same = (value1 == value2) || (value2 != null && equivalence.equals(value2, value1));
-            }
-
-            return same;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-
-    /**
-     * An abstraction of the equals method.
-     */
-    public static interface Equivalence<T>
-    {
-        /**
-         * Determine if two values are equal.
-         *
-         * @param x
-         * @param y
-         *
-         * @return <code>true</code> if x and y are equal
-         */
-        public boolean equals(T x,
-                              T y);
     }
 }
