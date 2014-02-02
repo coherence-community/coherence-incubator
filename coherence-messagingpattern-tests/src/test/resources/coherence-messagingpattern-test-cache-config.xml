@@ -40,7 +40,7 @@
             <acceptor-config>
                 <tcp-acceptor>
                     <local-address>
-                        <address system-property="proxy.host">localhost</address>
+                        <address system-property="proxy.host">127.0.0.1</address>
                         <port system-property="proxy.port">10000</port>
                     </local-address>
                 </tcp-acceptor>

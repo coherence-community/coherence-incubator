@@ -49,7 +49,6 @@ import javax.jms.TopicSubscriber;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -88,9 +87,9 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
     /**
      * The {@link TopicSubscriber} we'll use to read messages from JMS.
      */
-    private TopicSubscriber subscriber;
-
+    private TopicSubscriber  subscriber;
     private ResourceRegistry registry;
+
 
     /**
      * Standard Constructor.
@@ -103,12 +102,7 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
                                      ParameterizedBuilder<Serializer>        serializerBuilder,
                                      ParameterizedBuilder<ConnectionFactory> connectionFactoryBuilder)
     {
-        super(distributorIdentifier,
-              controllerIdentifier,
-              dependencies,
-              loader,
-              parameterProvider,
-              serializerBuilder);
+        super(distributorIdentifier, controllerIdentifier, dependencies, loader, parameterProvider, serializerBuilder);
 
         // initialize connection information
         this.connection = null;
@@ -288,19 +282,8 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
     @Override
     protected void internalDrain()
     {
-        try
-        {
-            internalDisable();
-        }
-        catch (RuntimeException runtimeException)
-        {
-            logger.log(Level.SEVERE,
-                       "Failed to drain the waiting events for EventChannelController {0} due to {1}. Suspending EventChannelController",
-                       new Object[] {controllerDependencies.getChannelName(), runtimeException.getCause()});
-
-            // suspend the service
-            setState(State.SUSPENDED);
-        }
+        // to "drain" using JMS all we have to do is unsubscribe (disable)
+        internalDisable();
     }
 
 
@@ -334,15 +317,8 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
             // ensure we've disconnected from JMS
             ensureDisconnected();
 
-            // schedule a restart (retry) after the restart delay
-            setState(State.PAUSED);
-            schedule(new Runnable()
-            {
-                public void run()
-                {
-                    start();
-                }
-            }, controllerDependencies.getRestartDelay(), TimeUnit.MILLISECONDS);
+            // signal that the EventChannel is not ready
+            throw new EventChannelNotReadyException(channel);
         }
     }
 

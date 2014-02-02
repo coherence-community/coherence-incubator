@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -39,6 +38,8 @@ import com.oracle.tools.runtime.PropertiesBuilder;
 import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
+
+import com.oracle.tools.runtime.java.container.Container;
 
 import com.oracle.tools.runtime.network.AvailablePortIterator;
 
@@ -108,7 +109,7 @@ public abstract class AbstractPartitionTest extends AbstractCoherenceTest
     @BeforeClass
     public static void setupClass() throws UnknownHostException
     {
-        availablePortIterator = new AvailablePortIterator(30000);
+        availablePortIterator = Container.getAvailablePorts();
     }
 
 
@@ -149,10 +150,10 @@ public abstract class AbstractPartitionTest extends AbstractCoherenceTest
     {
         ClusterMemberSchema schema =
             new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-                .setSingleServerMode()
+                .useLocalHostMode()
                 .setClusterPort(iClusterPort == 0 ? getAvailablePortIterator().next() : iClusterPort)
                 .setPofConfigURI("coherence-messagingpattern-test-pof-config.xml")
-                .setJMXPort(getAvailablePortIterator()).setJMXManagementMode(JMXManagementMode.ALL);
+                .setJMXManagementMode(JMXManagementMode.ALL).setJMXPort(getAvailablePortIterator());
 
         schema.addLifecycleInterceptor(new LifecycleEventInterceptor<ClusterMember>()
         {

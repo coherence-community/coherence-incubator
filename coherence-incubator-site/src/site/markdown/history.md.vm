@@ -12,7 +12,7 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   No Changes
+*   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded to use Oracle Tools 1.2.2-SNAPSHOT
 
 <h4>coherence-common</h4>
 
@@ -31,6 +31,26 @@ to its initial state.
 
 *   [COHINC-80](http://java.net/jira/browse/COHINC-80): Fixed methods in CommandExecutor
     annotated for use with the AnnotationDrivenModel so that they have the correct signature.
+
+<h4>coherence-messagingpattern-tests</h4>
+
+*   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded for Oracle Tools
+    improvements.
+
+<h4>coherence-eventdistributionpattern</h4>
+
+*   [COHINC-83](http://java.net/jira/browse/COHINC-83): Refactored
+    AbstractEventChannelController internals to use a Non-Blocking Finite State
+    Machine, instead of Java Synchronization and an ExecutorService.
+
+    Apart from simplifying the implementation, this enhancement permits the use of
+    "coalescing events", which can help reduce CPU when message subscriptions
+    are updated as events arrive to be distributed.
+
+<h4>coherence-pushreplicationpattern-tests</h4>
+
+*   [COHINC-11](http://java.net/jira/browse/COHINC-11):  Refactored
+    Push Replication Functional Tests into their own module.
 
 
 --------------------------------------------------------------------------------

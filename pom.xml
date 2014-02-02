@@ -83,6 +83,7 @@
         <module>coherence-eventdistributionpattern</module>
 
         <module>coherence-pushreplicationpattern</module>
+        <module>coherence-pushreplicationpattern-tests</module>
         <module>coherence-pushreplicationpattern-examples</module>
         <module>coherence-pushreplicationpattern-web-example</module>
 

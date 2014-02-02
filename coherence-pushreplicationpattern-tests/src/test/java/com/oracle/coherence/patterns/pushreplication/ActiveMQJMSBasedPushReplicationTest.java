@@ -26,15 +26,19 @@
 package com.oracle.coherence.patterns.pushreplication;
 
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
+
 import com.oracle.tools.runtime.network.Constants;
+
 import com.oracle.tools.util.Capture;
+
 import org.apache.activemq.broker.BrokerService;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import java.io.File;
-
 
 /**
  * The {@link ActiveMQJMSBasedPushReplicationTest} is an
@@ -46,8 +50,7 @@ import java.io.File;
  *
  * @author Brian Oliver
  */
-public class ActiveMQJMSBasedPushReplicationTest
-        extends AbstractPushReplicationTest
+public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplicationTest
 {
     /**
      * The JMS {@link BrokerService} for ActiveMQ.
@@ -115,11 +118,10 @@ public class ActiveMQJMSBasedPushReplicationTest
     protected ClusterMemberSchema newBaseClusterMemberSchema(Capture<Integer> clusterPort)
     {
         return super.newBaseClusterMemberSchema(clusterPort).setSystemProperty("event.distributor.config",
-                                                                         "test-jms-based-distributor-config.xml")
-                                                                             .setSystemProperty("proxy.port",
-                                                                                                getAvailablePortIterator())
-                                                                                                .setSystemProperty("java.naming.provider.url", jndiProviderURL)
-                .setSystemProperty("proxy.host", Constants.getLocalHost());
+                                                                               "test-jms-based-distributor-config.xml")
+                                                                                   .setSystemProperty("proxy.port",
+                                                                                                      getAvailablePortIterator())
+                                                                                                      .setSystemProperty("java.naming.provider.url", jndiProviderURL);
     }
 
 

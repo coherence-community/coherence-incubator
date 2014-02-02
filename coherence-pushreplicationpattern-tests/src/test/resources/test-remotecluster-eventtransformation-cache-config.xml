@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-    File: test-remotecluster-eventfiltering-cache-config.xml
+    File: test-remotecluster-eventtransformation-cache-config.xml
  
     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
     
@@ -33,7 +33,6 @@
     xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler"
     xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
 	xmlns:jndi="class://com.oracle.coherence.common.namespace.jndi.JndiNamespaceHandler"
-	xmlns:filter="class://com.oracle.coherence.common.namespace.filter.FilterNamespaceHandler"
     
     element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
 
@@ -77,17 +76,13 @@
 						</event:channel-scheme>
 						
 						<event:transformer-scheme>
-							<event:filtering-transformer-scheme>
-								<filter:any>
-									<filter:and>
-										<event:event-type-filter>INSERTED, UPDATED</event:event-type-filter>
-										<event:entry-filter>
-											<filter:where>value() like "%a%" or value() like "%e%" or value() like "%i%" or value() like "%o%" or value() like "%u%"</filter:where>								
-										</event:entry-filter>
-									</filter:and>								
-									<event:event-type-filter>REMOVED</event:event-type-filter>
-								</filter:any>
-							</event:filtering-transformer-scheme>
+							<event:mutating-transformer-scheme>
+								<event:event-transformer>
+									<instance>
+										<class-name>com.oracle.coherence.patterns.eventdistribution.transformers.UppercaseEntryEventTransformer</class-name>
+									</instance>
+								</event:event-transformer>
+							</event:mutating-transformer-scheme>
 						</event:transformer-scheme>
 					</event:distribution-channel>
 				</event:distribution-channels>
@@ -102,7 +97,7 @@
 				<tcp-initiator>
 					<remote-addresses>
 						<socket-address>
-							<address system-property="remote.host">localhost</address>
+							<address system-property="remote.address">127.0.0.1</address>
 							<port system-property="remote.port" />
 						</socket-address>
 					</remote-addresses>
@@ -119,7 +114,7 @@
 			<acceptor-config>
 				<tcp-acceptor>
 					<local-address>
-						<address system-property="proxy.host">localhost</address>
+						<address system-property="proxy.address">127.0.0.1</address>
 						<port system-property="proxy.port">10000</port>
 					</local-address>
 				</tcp-acceptor>

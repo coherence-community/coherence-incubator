@@ -27,22 +27,16 @@
 package com.oracle.coherence.patterns.messaging.test;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.MessagingSession;
 import com.oracle.coherence.patterns.messaging.Subscriber;
-
 import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
-
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
-
-import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
-
+import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
-
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -79,7 +73,7 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
         ArrayList<ClusterMember> servers   = new ArrayList<ClusterMember>(nrServers);
 
         JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder =
-            new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
+            new NativeJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
 
         try
         {
@@ -159,7 +153,7 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
         ArrayList<ClusterMember> servers   = new ArrayList<ClusterMember>(nrServers);
 
         JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder =
-            new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
+            new NativeJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
 
         try
         {

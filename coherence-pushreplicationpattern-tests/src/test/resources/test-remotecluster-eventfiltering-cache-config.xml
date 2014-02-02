@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    File: test-remotecluster-eventchannel-cache-config.xml
-
+<!-- 
+    File: test-remotecluster-eventfiltering-cache-config.xml
+ 
     DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
-
-    The contents of this file are subject to the terms and conditions of
+    
+    The contents of this file are subject to the terms and conditions of 
     the Common Development and Distribution License 1.0 (the "License").
 
     You may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
     If applicable, add the following below the License Header, with the fields
     enclosed by brackets [] replaced by your own identifying information:
     "Portions Copyright [year] [name of copyright owner]"
-
+    
     Copyright (c) 2010. All Rights Reserved. Oracle Corporation.
  -->
 <cache-config
@@ -33,7 +33,8 @@
     xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler"
     xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
 	xmlns:jndi="class://com.oracle.coherence.common.namespace.jndi.JndiNamespaceHandler"
-
+	xmlns:filter="class://com.oracle.coherence.common.namespace.filter.FilterNamespaceHandler"
+    
     element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
 
 	<defaults>
@@ -54,6 +55,7 @@
 				<event:distribution-channels>
 					<event:distribution-channel>
 						<event:channel-name>Remote Cluster Channel</event:channel-name>
+						
 						<event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
 
 						<event:channel-scheme>
@@ -73,6 +75,20 @@
 								</event:remote-channel-scheme>
 							</event:remote-cluster-channel-scheme>
 						</event:channel-scheme>
+						
+						<event:transformer-scheme>
+							<event:filtering-transformer-scheme>
+								<filter:any>
+									<filter:and>
+										<event:event-type-filter>INSERTED, UPDATED</event:event-type-filter>
+										<event:entry-filter>
+											<filter:where>value() like "%a%" or value() like "%e%" or value() like "%i%" or value() like "%o%" or value() like "%u%"</filter:where>								
+										</event:entry-filter>
+									</filter:and>								
+									<event:event-type-filter>REMOVED</event:event-type-filter>
+								</filter:any>
+							</event:filtering-transformer-scheme>
+						</event:transformer-scheme>
 					</event:distribution-channel>
 				</event:distribution-channels>
 			</event:distributor>
@@ -86,7 +102,7 @@
 				<tcp-initiator>
 					<remote-addresses>
 						<socket-address>
-							<address system-property="remote.host">localhost</address>
+							<address system-property="remote.address">127.0.0.1</address>
 							<port system-property="remote.port" />
 						</socket-address>
 					</remote-addresses>
@@ -103,7 +119,7 @@
 			<acceptor-config>
 				<tcp-acceptor>
 					<local-address>
-						<address system-property="proxy.host">localhost</address>
+						<address system-property="proxy.address">127.0.0.1</address>
 						<port system-property="proxy.port">10000</port>
 					</local-address>
 				</tcp-acceptor>
@@ -111,4 +127,4 @@
 			<autostart>true</autostart>
 		</proxy-scheme>
 	</caching-schemes>
-</cache-config>
+</cache-config>		

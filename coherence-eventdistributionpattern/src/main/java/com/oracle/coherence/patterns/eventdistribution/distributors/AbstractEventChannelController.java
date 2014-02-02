@@ -25,11 +25,21 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors;
 
-
 import com.oracle.coherence.common.events.Event;
+
+import com.oracle.coherence.common.finitestatemachines.AnnotationDrivenModel;
+import com.oracle.coherence.common.finitestatemachines.ExecutionContext;
+import com.oracle.coherence.common.finitestatemachines.Instruction;
+import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMachine;
+import com.oracle.coherence.common.finitestatemachines.annotations.OnEnterState;
+import com.oracle.coherence.common.finitestatemachines.annotations.Transition;
+import com.oracle.coherence.common.finitestatemachines.annotations.Transitions;
+
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
+
 import com.oracle.coherence.common.tuples.Pair;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
@@ -40,113 +50,220 @@ import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.EventTransformer;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
 import com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformer;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.config.expression.ParameterResolver;
+
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.Iterator;
 import java.util.List;
+
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * An {@link AbstractEventChannelController} is a based implementation of the {@link EventChannelController} interface.
+ * <p>
+ * Internally it uses a {@link NonBlockingFiniteStateMachine} to manage the state and transitions
+ * required to distribute events over an {@link EventChannel}.
+ * <p>
  * If you're planning on implementing your own {@link EventDistributorBuilder} and thus {@link EventChannelController},
  * extending this implementation will save you a bunch of time.
  * <p>
- * Copyright (c) 2011. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2011-2014. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
  */
+@Transitions(
+{
+    @Transition(
+        fromStates = {"STARTING", "WAITING"},
+        toState    = "DISTRIBUTING"
+    ) , @Transition(
+        fromStates = "DISTRIBUTING",
+        toState    = "WAITING"
+    ) , @Transition(
+        fromStates =
+        {
+            "DISTRIBUTING", "STARTING", "ERROR", "DISABLED", "DRAINING", "WAITING"
+        },
+        toState    = "SUSPENDED"
+    ) , @Transition(
+        fromStates = {"ERROR", "SUSPENDED", "DISABLED"},
+        toState    = "STARTING"
+    ) , @Transition(
+        fromStates = {"SUSPENDED"},
+        toState    = "DRAINING"
+    ) , @Transition(
+        fromStates = {"SUSPENDED", "WAITING", "ERROR"},
+        toState    = "DISABLED"
+    ) , @Transition(
+        fromStates = {"STARTING", "DISTRIBUTING"},
+        toState    = "ERROR"
+    ) , @Transition(
+        fromStates =
+        {
+            "STARTING", "SUSPENDED", "WAITING", "DISABLED", "ERROR"
+        },
+        toState    = "STOPPED"
+    )
+})
 public abstract class AbstractEventChannelController<T> implements EventChannelController, EventChannelControllerMBean
 {
     /**
-     * The {@link State} of the {@link EventChannelController}.
+     * The events that controll the internal {@link NonBlockingFiniteStateMachine}.
+     */
+    public static enum ControllerEvent implements com.oracle.coherence.common.finitestatemachines.Event<State>
+    {
+        /**
+         * The <code>{@link #START}</code> event signals that a connection should be made to the
+         * underlying channel.
+         */
+        START(State.STARTING),
+
+        /**
+         * The <code>{@link #STOP}</code> event signals that distribution should stop, never to
+         * be recommenced with this instance.
+         */
+        STOP(State.STOPPED),
+
+        /**
+         * The <code>{@link #DISABLE}</code> event signals that distribution should be disabled.
+         */
+        DISABLE(State.DISABLED),
+
+        /**
+         * The <code>{@link #SUSPEND}</code> event signals that distribution should be suspended.
+         */
+        SUSPEND(State.SUSPENDED),
+
+        /**
+         * The <code>{@link #DRAIN}</code> event signals that distribution queues should be drained.
+         */
+        DRAIN(State.DRAINING),
+
+        /**
+         * The <code>{@link #RETRY}</code> event signals that distribution should be retried (after a failure).
+         */
+        RETRY(State.ERROR),
+
+        /**
+         * The <code>{@link #DISTRIBUTE}</code> event signals that distribution should commence.
+         */
+        DISTRIBUTE(State.DISTRIBUTING);
+
+        /**
+         * The desired {@link State} when the {@link ControllerEvent} occurs.
+         */
+        private State desiredState;
+
+
+        /**
+         * Constructs a {@link ControllerEvent}.
+         *
+         * @param desiredState  the desired {@link State} of the {@link NonBlockingFiniteStateMachine}
+         *                      when the event occurs
+         */
+        ControllerEvent(State desiredState)
+        {
+            this.desiredState = desiredState;
+        }
+
+
+        @Override
+        public State getDesiredState(State            state,
+                                     ExecutionContext context)
+        {
+            return desiredState;
+        }
+    }
+
+
+    /**
+     * The {@link State} of the {@link EventChannelController} and internal {@link NonBlockingFiniteStateMachine}.
      */
     public static enum State
     {
         /**
-         * <code>DISABLING</code> indicates that the {@link EventChannelController} is in the process of
-         * being taken off-line.
-         */
-        DISABLING,
-
-        /**
-         * <code>DISABLED</code> indicates that the {@link EventChannelController} has been taken off-line.  Once in this
-         * state no distribution will occur for the {@link EventChannelController} until it is manually restarted
-         * (typically via JMX).  Further, <strong>no events</strong> will be queued for the distribution by the
-         * {@link EventChannelController}.
+         * <code>{@link #DISABLED}</code> indicates that the {@link EventChannelController} has been taken off-line.
+         * Once in this state no distribution will occur for the {@link EventChannelController} until it is
+         * manually restarted (typically via JMX).  Further, <strong>no {@link Event}s</strong> will be queued for
+         * the distribution by the {@link EventChannelController}.
          * <p>
-         * This is a starting state for a {@link EventChannelController}.
+         * This is a starting state for an {@link EventChannelController}.
          */
         DISABLED,
 
         /**
-         * <code>Suspended</code> indicates that the {@link EventChannelController} is not operational.  It typically means
-         * that the {@link EventChannelController} has either failed too many times (and thus was automatically suspended)
-         * or it has been has been manually suspended.  Once in this state no distribution will occur until it is
-         * manually restarted (typically via JMX).  Any events that are pending to be distributed, or new
-         * events arriving via in the associated {@link EventDistributor}, will be queued for later distribution
-         * when the {@link EventChannelController} returns to service.
+         * <code>{@link #SUSPENDED}</code> indicates that the {@link EventChannelController} is not operational.
+         * It typically means that the {@link EventChannelController} has either failed too many times (and thus was
+         * automatically suspended) or it has been has been manually suspended.  Once in this state no distribution
+         * will occur until it is manually restarted (typically via JMX).  Any {@link Event}s that are pending to be
+         * distributed, or new {@link Event}s arriving via in the associated {@link EventDistributor}, will be queued
+         * for later distribution when the {@link EventChannelController} returns to service.
          * <p>
-         * This is a starting state for a {@link EventChannelController}.
+         * This is a starting state for an {@link EventChannelController}.
          */
         SUSPENDED,
 
         /**
-         * <code>PAUSED</code> indicates that the {@link EventChannelController} has not been started but it has been
-         * scheduled to start at some time in the future.
+         * <code>{@link #STARTING}</code> indicates that the {@link EventChannelController} is in the process
+         * of starting. Typically this means connecting to the underlying {@link EventChannel}.
          * <p>
-         * This is a starting state for a {@link EventChannelController}.
-         */
-        PAUSED,
-
-        /**
-         * <code>STARTING</code> indicates that the {@link EventChannelController} is in the process of starting.
+         * This is a starting state for an {@link EventChannelController}.
          */
         STARTING,
 
         /**
-         * <code>SCHEDULED</code> indicates that the {@link EventChannelController} is scheduled to commence distribution
-         * of events.
-         */
-        SCHEDULED,
-
-        /**
-         * <code>DISTRIBUTING</code> indicates that the {@link EventChannelController} is currently in the process of
-         * distributing events using the {@link EventChannel}.
+         * <code>{@link #DISTRIBUTING}</code> indicates that the {@link EventChannelController} is currently in the
+         * process of distributing {@link Event}s using the {@link EventChannel}.
          */
         DISTRIBUTING,
 
         /**
-         * <code>WAITING</code> indicates that the {@link EventChannelController} is currently in the process of waiting
-         * for events to distribute using the {@link EventChannel}.
+         * <code>{@link #WAITING}</code> indicates that the {@link EventChannelController} is currently in the process
+         * of waiting for {@link Event}s to distribute using the {@link EventChannel}.
          */
         WAITING,
 
         /**
-         * <code>STOPPING</code> indicates that the {@link EventChannelController} is in the process of stopping
-         * the distribution of events, most likely because it is shutting down.
+         * <code>{@link #STOPPED}</code> indicates that the {@link EventChannelController} is stopped and can't be
+         * restarted.
          */
-        STOPPING,
+        STOPPED,
 
         /**
-         * <code>Stopped</code> indicates that the {@link EventChannelController} is stopped and can't be restarted.
+         * <code>{@link #ERROR}</code> indicates that a recoverable error has occurred with the
+         * {@link EventChannelController} and that an attempt to recover has been scheduled.
          */
-        STOPPED;
+        ERROR,
+
+        /**
+         * <code>{@link #DRAINING}</code> indicated that the {@link EventChannelController} is in the
+         * process of draining internal queues to prevent previously queued {@link DistributableEntryEvent}s from
+         * being distributed.
+         */
+        DRAINING;
     }
 
 
@@ -178,12 +295,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     protected EventChannelController.Dependencies controllerDependencies;
 
     /**
-     * The {@link EventChannel} that will be used to distribute events for this {@link EventChannelController}.
+     * The {@link EventChannel} that will be used to distribute {@link Event}s for this {@link EventChannelController}.
      */
     protected EventChannel channel;
 
     /**
-     * (optional) The {@link EventIteratorTransformer} that should be used to transform events prior to
+     * (optional) The {@link EventIteratorTransformer} that should be used to transform {@link Event}s prior to
      * distribution with an {@link EventChannel}.
      */
     protected EventIteratorTransformer transformer;
@@ -194,27 +311,27 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     protected ScheduledExecutorService executorService;
 
     /**
-     * The {@link Serializer} to use for (de)serializing events during distribution using this {@link EventChannelController}.
+     * The {@link Serializer} to use for (de)serializing {@link Event}s during distribution using this {@link EventChannelController}.
      */
     protected Serializer serializer;
 
     /**
-     * The time (in ms) the last batch of events took to distribute.
+     * The time (in ms) the last batch of {@link Event}s took to distribute.
      */
     protected long lastDistributionDurationMS;
 
     /**
-     * The minimum time (in ms) a batch of events has taken to distribute.
+     * The minimum time (in ms) a batch of {@link Event}s has taken to distribute.
      */
     protected long minimumDistributionDurationMS;
 
     /**
-     * The maximum time (in ms) a batch of events has taken to distribute.
+     * The maximum time (in ms) a batch of {@link Event}s has taken to distribute.
      */
     protected long maximumDistributionDurationMS;
 
     /**
-     * The total time (in ms) the distribution of all events has taken.
+     * The total time (in ms) the distribution of all {@link Event}s has taken.
      */
     protected long totalDistributionDurationMS;
 
@@ -224,26 +341,24 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     protected int consecutiveDistributionFailures;
 
     /**
-     * The number of batches of events distributed.
+     * The number of batches of {@link Event}s distributed.
      */
     protected int totalBatchesDistributed;
 
     /**
-     * The number of events that have been considered for distribution.
+     * The number of {@link Event}s that have been considered for distribution.
      */
     protected int totalCandidateEvents;
 
     /**
-     * The number events that have been distributed.
+     * The number {@link Event}s that have been distributed.
      */
     protected int totalEventsDistributed;
 
-    ;
-
     /**
-     * The current {@link State} of the {@link EventChannelController}.
+     * The {@link NonBlockingFiniteStateMachine} that controls the behavior of the {@link EventChannelController}.
      */
-    private State state;
+    protected NonBlockingFiniteStateMachine<State> machine;
 
 
     /**
@@ -266,30 +381,45 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
         // realize the events transformer (if we have one)
         this.transformer = dependencies.getEventsTransformerBuilder() != null
-                         ? dependencies.getEventsTransformerBuilder().realize(parameterResolver, null, null) : null;
+                           ? dependencies.getEventsTransformerBuilder().realize(parameterResolver, null, null) : null;
 
         // setup an executor service to perform background processing
-        this.executorService = ExecutorServiceFactory.newSingleThreadScheduledExecutor(ThreadFactories
+        this.executorService =
+            ExecutorServiceFactory
+                .newSingleThreadScheduledExecutor(ThreadFactories
                     .newThreadFactory(true, "EventChannelController", new ThreadGroup("EventChannelController")));
 
         // realize the serializer
         this.serializer = serializerBuilder.realize(parameterResolver, null, null);
 
-        // determine the controller starting state based on the specified starting mode
+        // determine the controller starting state based on the specified starting mode (assume STARTING if unknown)
+        State initialState = State.STARTING;
+
         switch (dependencies.getStartingMode())
         {
         case ENABLED :
-            this.state = State.PAUSED;
+            initialState = State.STARTING;
             break;
 
         case DISABLED :
-            this.state = State.DISABLED;
+            initialState = State.DISABLED;
             break;
 
         case SUSPENDED :
-            this.state = State.SUSPENDED;
+            initialState = State.SUSPENDED;
             break;
         }
+
+        // construct an annotation driven model for the finite state machine
+        AnnotationDrivenModel<State> model = new AnnotationDrivenModel<State>(State.class, this);
+
+        // establish the finite state machine for the controller
+        this.machine = new NonBlockingFiniteStateMachine<State>(getEventChannelControllerName(),
+                                                                model,
+                                                                initialState,
+                                                                executorService,
+                                                                true,
+                                                                false);
 
         // JMX and other management information
         this.lastDistributionDurationMS      = 0;
@@ -304,7 +434,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
     /**
-     * Determines the {@link Serializer} to use for (de)serializing events using this {@link EventChannelController}.
+     * Determines the {@link Serializer} to use for (de)serializing {@link Event}s using this {@link EventChannelController}.
      *
      * @return A {@link Serializer}
      */
@@ -314,29 +444,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     }
 
 
-    /**
-     * Sets the {@link State} of the {@link EventChannelController}.
-     *
-     * @param state
-     */
-    protected synchronized void setState(State state)
-    {
-        this.state = state;
-    }
-
-
-    /**
-     * Returns the current {@link State} of the {@link EventChannelController}.
-     */
-    protected synchronized State getState()
-    {
-        return state;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getEventDistributorName()
     {
         return String.format("%s (%s)",
@@ -345,518 +453,128 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getEventChannelControllerName()
     {
         return String.format("%s (%s)", controllerIdentifier.getSymbolicName(), controllerIdentifier.getExternalName());
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getEventChannelControllerState()
     {
-        return state.toString();
+        return machine.getState().toString();
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public long getLastBatchDistributionDuration()
     {
         return lastDistributionDurationMS;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public long getMaximumBatchDistributionDuration()
     {
         return maximumDistributionDurationMS == Long.MIN_VALUE ? 0 : maximumDistributionDurationMS;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public long getMinimumBatchDistributionDuration()
     {
         return minimumDistributionDurationMS == Long.MAX_VALUE ? 0 : minimumDistributionDurationMS;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public long getTotalDistributionDuration()
     {
         return totalDistributionDurationMS;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int getConsecutiveEventChannelFailures()
     {
         return consecutiveDistributionFailures;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-
+    @Override
     public int getEventBatchesDistributedCount()
     {
         return totalBatchesDistributed;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-
+    @Override
     public int getCandidateEventCount()
     {
         return totalCandidateEvents;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-
+    @Override
     public int getEventsDistributedCount()
     {
         return totalEventsDistributed;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void start()
     {
-        final State state = getState();
-
-        if (state == State.PAUSED || state == State.DISABLED || state == State.SUSPENDED)
+        // attempt to start the machine
+        if (machine.start())
         {
-            if (logger.isLoggable(Level.FINER))
-            {
-                logger.log(Level.FINER, "Scheduled EventChannelController {0} to start.", controllerIdentifier);
-            }
-
-            // schedule to start as soon as possible
-            setState(State.STARTING);
-            schedule(new Runnable()
-            {
-                public void run()
-                {
-                    onStart(state);
-                }
-            }, 0, TimeUnit.MILLISECONDS);
+            // as this was the first time the machine was started there's nothing more to do
+            // as the machine will transition to the required initial state
+        }
+        else
+        {
+            // when it's not the first time, we should attempt to transition to
+            // the starting state so we can start distribution
+            machine.process(ControllerEvent.START);
         }
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void stop()
     {
-        State currentState = getState();
-
-        if (currentState != State.STOPPING && currentState != State.STOPPED)
-        {
-            if (logger.isLoggable(Level.FINER))
-            {
-                logger.log(Level.FINER, "Scheduled EventChannelController {0} to stop.", controllerIdentifier);
-            }
-
-            // schedule to stop as soon as possible
-            setState(State.STOPPING);
-            schedule(new Runnable()
-            {
-                public void run()
-                {
-                    onStop();
-                }
-            }, 0, TimeUnit.MILLISECONDS);
-        }
+        machine.process(ControllerEvent.STOP);
     }
 
 
-    /**
-     * Preempting an {@link EventChannelController} forces it to immediately schedule distribution of events
-     * if it is in a {@link State#WAITING} state.  If the {@link EventChannelController} is not in a
-     * {@link State#WAITING}, the request is ignored and nothing happens.
-     */
+    @Override
     public void preempt()
     {
-        State currentState = getState();
-
-        if (currentState == State.WAITING)
-        {
-            if (logger.isLoggable(Level.FINER))
-            {
-                logger.log(Level.FINER,
-                           "Premptively scheduled EventChannelController {0} to commence event distribution.",
-                           controllerIdentifier);
-            }
-
-            setState(State.SCHEDULED);
-            schedule(new Runnable()
-            {
-                public void run()
-                {
-                    onDistribute();
-                }
-            }, 0, TimeUnit.MILLISECONDS);
-        }
+        // as there is no limit to the number of times preempt is called we must coalesce the events
+        // for the finite state machine to prevent a queue overrun
+        machine.process(new NonBlockingFiniteStateMachine.CoalescedEvent<State>(ControllerEvent.DISTRIBUTE));
     }
 
 
-    protected abstract void internalDisable();
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void disable()
     {
-        synchronized (this)
-        {
-            State currentState = getState();
-
-            if (currentState == State.SCHEDULED || currentState == State.WAITING || currentState == State.PAUSED
-                || currentState == State.DISTRIBUTING)
-            {
-                if (logger.isLoggable(Level.FINER))
-                {
-                    logger.log(Level.FINER,
-                               "Scheduled EventChannelController {0} to become disabled.",
-                               controllerIdentifier);
-                }
-
-                setState(State.DISABLING);
-
-                schedule(new Runnable()
-                {
-                    public void run()
-                    {
-                        onDisable();
-                    }
-                }, 0, TimeUnit.MILLISECONDS);
-            }
-        }
+        machine.process(ControllerEvent.DISABLE);
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void suspend()
     {
-        synchronized (this)
-        {
-            State currentState = getState();
-
-            if (currentState == State.DISTRIBUTING || currentState == State.SCHEDULED || currentState == State.PAUSED
-                || currentState == State.DISABLED || currentState == State.WAITING)
-            {
-                if (logger.isLoggable(Level.FINER))
-                {
-                    logger.log(Level.FINER, "Suspended EventChannelController {0}.", controllerIdentifier);
-                }
-
-                setState(State.SUSPENDED);
-
-                if (currentState == State.DISABLED)
-                {
-                    // re-enable the EventChannelController internals
-                    internalEnable();
-                }
-            }
-        }
+        machine.process(ControllerEvent.SUSPEND);
     }
 
 
-    protected abstract void internalDrain();
-
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void drain()
     {
-        synchronized (this)
-        {
-            if (getState() == State.SUSPENDED)
-            {
-                if (logger.isLoggable(Level.FINER))
-                {
-                    logger.log(Level.FINE,
-                               "Commenced Draining events for EventChannelController {0}",
-                               controllerIdentifier);
-                }
-
-                internalDrain();
-
-                if (logger.isLoggable(Level.FINER))
-                {
-                    logger.log(Level.FINE,
-                               "Completed Draining events for EventChannelController {0}",
-                               controllerIdentifier);
-                }
-
-            }
-            else
-            {
-                if (logger.isLoggable(Level.WARNING))
-                {
-                    logger.log(Level.WARNING,
-                               "Can't drain events for {0} as it is not Suspended. "
-                               + "Please suspend first before attempting to drain.",
-                               controllerIdentifier);
-                }
-
-            }
-        }
-    }
-
-
-    /**
-     * Schedules a {@link Runnable} to be executed by the {@link EventChannelController}.
-     * This is typically used to schedule starting and stopping of the said {@link EventChannelController}.
-     *
-     * @param runnable The runnable to schedule.
-     * @param delay    The amount of time to wait before running the runnable.
-     * @param timeUnit The time unit for the delay.
-     */
-    protected void schedule(Runnable runnable,
-                            long     delay,
-                            TimeUnit timeUnit)
-    {
-        if (getState() != State.STOPPED)
-        {
-            executorService.schedule(runnable, delay, timeUnit);
-        }
-    }
-
-
-    protected abstract void internalEnable();
-
-
-    protected abstract void internalStart() throws EventChannelNotReadyException;
-
-
-    /**
-     * Starts the {@link EventChannelController} by attempting to start the {@link EventChannel}
-     * and place the said {@link EventChannelController} into {@link State#SCHEDULED} mode, after which
-     * it schedules to start event distribution.
-     */
-    private void onStart(final State previousState)
-    {
-        if (getState() == State.STARTING)
-        {
-            if (logger.isLoggable(Level.FINER))
-            {
-                logger.log(Level.FINER, "Starting EventChannelController {0}", controllerIdentifier);
-            }
-
-            try
-            {
-                if (previousState == State.DISABLED)
-                {
-                    // enable the EventChannelController internals
-                    internalEnable();
-                }
-
-                // start the EventChannelController internals
-                internalStart();
-
-                // we've successfully started so reset the distribution failure count
-                consecutiveDistributionFailures = 0;
-
-                // schedule distribution to commence immediately
-                if (logger.isLoggable(Level.FINER))
-                {
-                    logger.log(Level.FINER,
-                               "Scheduled EventChannelController {0} to commence event distribution.",
-                               controllerIdentifier);
-                }
-
-                setState(State.SCHEDULED);
-                schedule(new Runnable()
-                {
-                    public void run()
-                    {
-                        onDistribute();
-                    }
-                }, 0, TimeUnit.MILLISECONDS);
-            }
-            catch (EventChannelNotReadyException notReadyException)
-            {
-                if (logger.isLoggable(Level.FINER))
-                {
-                    logger.log(Level.FINER,
-                               "The {0} is not ready to start.  Deferring (re)start for {1} ms",
-                               new Object[] {controllerIdentifier, controllerDependencies.getRestartDelay()});
-                }
-
-                // schedule a restart (retry) after the restart delay
-                setState(State.PAUSED);
-                schedule(new Runnable()
-                {
-                    public void run()
-                    {
-                        setState(State.STARTING);
-                        onStart(previousState);
-                    }
-                }, controllerDependencies.getRestartDelay(), TimeUnit.MILLISECONDS);
-            }
-            catch (RuntimeException runtimeException)
-            {
-                if (logger.isLoggable(Level.WARNING))
-                {
-                    logger.log(Level.WARNING, "Failed while attempting to start {0}", controllerIdentifier);
-                }
-
-                if (logger.isLoggable(Level.INFO))
-                {
-                    logger.log(Level.INFO, "EventChannel Exception was as follows", runtimeException);
-                }
-
-                // we've had a failure!
-                consecutiveDistributionFailures++;
-
-                // schedule a retry?
-                if (controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending() < 0
-                    || consecutiveDistributionFailures
-                       < controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending())
-                {
-                    if (logger.isLoggable(Level.FINER))
-                    {
-                        logger.log(Level.FINER,
-                                   "Scheduled another attempt to start EventChannelController {0}.",
-                                   controllerIdentifier);
-                    }
-
-                    // when an error occurs, we go back to the paused state, and
-                    // schedule a restart (retry) after the restart delay
-                    setState(State.PAUSED);
-                    schedule(new Runnable()
-                    {
-                        public void run()
-                        {
-                            setState(State.STARTING);
-                            onStart(previousState);
-                        }
-                    }, controllerDependencies.getRestartDelay(), TimeUnit.MILLISECONDS);
-
-                }
-                else
-                {
-                    // suspend distribution as we've had too many consecutive failures
-                    if (logger.isLoggable(Level.WARNING))
-                    {
-                        logger.log(Level.WARNING,
-                                   "Suspending {0} as there have been too " + "many (%d) consecutive failures ",
-                                   controllerIdentifier);
-                    }
-
-                    setState(State.SUSPENDED);
-                }
-            }
-        }
-    }
-
-
-    protected abstract void internalStop();
-
-
-    /**
-     * Stops the {@link EventChannelController}.  Once stopped, it should not be started again.
-     */
-    private void onStop()
-    {
-        if (getState() == State.STOPPING)
-        {
-            if (logger.isLoggable(Level.FINER))
-            {
-                logger.log(Level.FINER, "Stopping EventChannelController {0}", controllerIdentifier);
-            }
-
-            try
-            {
-                internalStop();
-            }
-            catch (RuntimeException runtimeException)
-            {
-                if (logger.isLoggable(Level.WARNING))
-                {
-                    logger.log(Level.WARNING, "Failed while attempting to stop {0}", controllerIdentifier);
-                }
-
-                if (logger.isLoggable(Level.INFO))
-                {
-                    logger.log(Level.INFO, "EventChannel Exception was as follows", runtimeException);
-                }
-
-            }
-            finally
-            {
-                setState(State.STOPPED);
-            }
-        }
-    }
-
-
-    private void onDisable()
-    {
-        if (getState() == State.DISABLING)
-        {
-            if (logger.isLoggable(Level.FINER))
-            {
-                logger.log(Level.FINER, "Disabling EventChannelController {0}", controllerIdentifier);
-            }
-
-            try
-            {
-                internalDisable();
-            }
-            catch (RuntimeException runtimeException)
-            {
-                if (logger.isLoggable(Level.WARNING))
-                {
-                    logger.log(Level.WARNING,
-                               "Failed while attempting to disable EventChannelController {0}",
-                               controllerIdentifier);
-                }
-
-                if (logger.isLoggable(Level.INFO))
-                {
-                    logger.log(Level.INFO, "EventChannelController Exception was as follows", runtimeException);
-                }
-
-            }
-            finally
-            {
-                setState(State.DISABLED);
-
-                if (logger.isLoggable(Level.FINER))
-                {
-                    logger.log(Level.FINER, "Disabled EventChannelController {0}", controllerIdentifier);
-                }
-            }
-        }
+        machine.process(ControllerEvent.DRAIN);
     }
 
 
@@ -867,29 +585,302 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                                                          T           ack);
 
 
+    protected abstract void internalDrain();
+
+
+    protected abstract void internalEnable();
+
+
+    protected abstract void internalDisable();
+
+
+    protected abstract void internalStart() throws EventChannelNotReadyException;
+
+
+    protected abstract void internalStop();
+
+
     /**
-     * Starts the {@link EventChannelController} to distribute events
+     * Attempts to connect and start the {@link EventChannel}.
      */
-    private void onDistribute()
+    @OnEnterState("STARTING")
+    public Instruction onStarting(State                                                        previousState,
+                                  State                                                        newState,
+                                  com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                                  ExecutionContext                                             context)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "Starting EventChannelController {0}", controllerIdentifier);
+        }
+
+        try
+        {
+            if (previousState == State.DISABLED)
+            {
+                // enable the EventChannelController internals
+                internalEnable();
+            }
+
+            // start the EventChannelController internals
+            internalStart();
+
+            // we've successfully started so reset the distribution failure count
+            consecutiveDistributionFailures = 0;
+
+            // schedule distribution to commence immediately
+            if (logger.isLoggable(Level.FINER))
+            {
+                logger.log(Level.FINER,
+                           "Scheduled EventChannelController {0} to commence event distribution.",
+                           controllerIdentifier);
+            }
+
+            return new Instruction.TransitionTo<State>(State.DISTRIBUTING);
+        }
+        catch (EventChannelNotReadyException notReadyException)
+        {
+            if (logger.isLoggable(Level.FINER))
+            {
+                logger.log(Level.FINER,
+                           "The {0} is not ready to start.  Deferring (re)start for {1} ms",
+                           new Object[] {controllerIdentifier, controllerDependencies.getRestartDelay()});
+            }
+
+            // schedule a restart (retry) after the restart delay
+            return new Instruction.TransitionTo<State>(State.ERROR);
+        }
+        catch (RuntimeException runtimeException)
+        {
+            if (logger.isLoggable(Level.WARNING))
+            {
+                logger.log(Level.WARNING, "Failed while attempting to start {0}", controllerIdentifier);
+            }
+
+            if (logger.isLoggable(Level.INFO))
+            {
+                logger.log(Level.INFO, "EventChannel Exception was as follows", runtimeException);
+            }
+
+            // we've had a failure!
+            consecutiveDistributionFailures++;
+
+            // schedule a retry?
+            if (controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending() < 0
+                || consecutiveDistributionFailures
+                   < controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending())
+            {
+                if (logger.isLoggable(Level.FINER))
+                {
+                    logger.log(Level.FINER,
+                               "Scheduled another attempt to start EventChannelController {0}.",
+                               controllerIdentifier);
+                }
+
+                return new Instruction.TransitionTo<State>(State.ERROR);
+            }
+            else
+            {
+                // suspend distribution as we've had too many consecutive failures
+                if (logger.isLoggable(Level.WARNING))
+                {
+                    logger.log(Level.WARNING,
+                               "Suspending {0} as there have been too " + "many (%d) consecutive failures ",
+                               controllerIdentifier);
+                }
+
+                return new Instruction.TransitionTo<State>(State.SUSPENDED);
+            }
+        }
+    }
+
+
+    /**
+     * Stops the {@link EventChannelController}.  Once stopped, it should not be started again.
+     */
+    @OnEnterState("STOPPED")
+    public Instruction onStopped(State                                                        previousState,
+                                 State                                                        newState,
+                                 com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                                 ExecutionContext                                             context)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "Stopping EventChannelController {0}", controllerIdentifier);
+        }
+
+        try
+        {
+            internalStop();
+        }
+        catch (RuntimeException runtimeException)
+        {
+            if (logger.isLoggable(Level.WARNING))
+            {
+                logger.log(Level.WARNING, "Failed while attempting to stop {0}", controllerIdentifier);
+            }
+
+            if (logger.isLoggable(Level.INFO))
+            {
+                logger.log(Level.INFO, "EventChannel Exception was as follows", runtimeException);
+            }
+
+        }
+
+        return Instruction.STOP;
+    }
+
+
+    @OnEnterState("DISABLED")
+    public Instruction onDisabled(State                                                        previousState,
+                                  State                                                        newState,
+                                  com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                                  ExecutionContext                                             context)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "Disabling EventChannelController {0}", controllerIdentifier);
+        }
+
+        try
+        {
+            internalDisable();
+        }
+        catch (RuntimeException runtimeException)
+        {
+            if (logger.isLoggable(Level.WARNING))
+            {
+                logger.log(Level.WARNING,
+                           "Failed while attempting to disable EventChannelController {0}",
+                           controllerIdentifier);
+            }
+        }
+
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "Disabled EventChannelController {0}", controllerIdentifier);
+        }
+
+        return Instruction.NOTHING;
+    }
+
+
+    /**
+     * Suspends an {@link EventChannel}.
+     */
+    @OnEnterState("SUSPENDED")
+    public Instruction onSuspended(State                                                        previousState,
+                                   State                                                        newState,
+                                   com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                                   ExecutionContext                                             context)
+    {
+        // when transitioning from DISABLED state we must call internalEnable()
+        if (previousState == State.DISABLED)
+        {
+            try
+            {
+                internalEnable();
+            }
+            catch (RuntimeException e)
+            {
+                if (logger.isLoggable(Level.WARNING))
+                {
+                    logger.log(Level.WARNING,
+                               "Failed to enable EventChannelController {0}, moving back to disabled state",
+                               controllerIdentifier);
+                }
+
+                return new Instruction.TransitionTo<State>(State.DISABLED);
+            }
+        }
+
+        return Instruction.NOTHING;
+    }
+
+
+    /**
+     * Handle when an error occurs on an {@link EventChannel} (by scheduling a restart)
+     */
+    @OnEnterState("ERROR")
+    public Instruction onError(State                                                        previousState,
+                               State                                                        newState,
+                               com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                               ExecutionContext                                             context)
+    {
+        return new NonBlockingFiniteStateMachine
+            .ProcessEventLater<State>(new NonBlockingFiniteStateMachine.SubsequentEvent<State>(ControllerEvent.START),
+                                      controllerDependencies.getRestartDelay(),
+                                      TimeUnit.MILLISECONDS);
+    }
+
+
+    /**
+     * Handle an {@link EventChannel} must wait between distribution cycles.
+     */
+    @OnEnterState("WAITING")
+    public Instruction onWaiting(State                                                        previousState,
+                                 State                                                        newState,
+                                 com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                                 ExecutionContext                                             context)
+    {
+        return new NonBlockingFiniteStateMachine
+            .ProcessEventLater<State>(new NonBlockingFiniteStateMachine
+                .SubsequentEvent<State>(ControllerEvent.DISTRIBUTE),
+                                      controllerDependencies.getBatchDistributionDelay(),
+                                      TimeUnit.MILLISECONDS);
+    }
+
+
+    /**
+     * Drains an {@link EventChannel} of {@link Event}s that may be distributed to it.
+     */
+    @OnEnterState("DRAINING")
+    public Instruction onDraining(State                                                        previousState,
+                                  State                                                        newState,
+                                  com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                                  ExecutionContext                                             context)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER, "Draining EventChannelController {0}", controllerIdentifier);
+        }
+
+        try
+        {
+            internalDrain();
+        }
+        catch (RuntimeException runtimeException)
+        {
+            if (logger.isLoggable(Level.WARNING))
+            {
+                logger.log(Level.WARNING,
+                           "Failed to drain the waiting events for EventChannelController {0} due to {1}. Suspending EventChannelController",
+                           new Object[] {controllerDependencies.getChannelName(), runtimeException.getCause()});
+
+                logger.log(Level.WARNING, "EventChannel Exception was as follows", runtimeException);
+            }
+        }
+
+        return new Instruction.TransitionTo<State>(State.SUSPENDED);
+    }
+
+
+    /**
+     * Starts the {@link EventChannelController} to distribute {@link Event}s
+     */
+    @OnEnterState("DISTRIBUTING")
+    public Instruction onDistributing(State                                                        previousState,
+                                      State                                                        newState,
+                                      com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                                      ExecutionContext                                             context)
     {
         if (logger.isLoggable(Level.FINER))
         {
             logger.log(Level.FINER, "Commenced distribution with EventChannel {0}", controllerIdentifier);
         }
 
-        // we can only move to the DISTRIBUTING state if we've been SCHEDULED or are WAITING
-        synchronized (this)
-        {
-            State currentState = getState();
-
-            if (currentState == State.SCHEDULED || currentState == State.WAITING)
-            {
-                setState(State.DISTRIBUTING);
-            }
-        }
-
-        // only attempt to distribute if we're in the DISTRIBUTING state
-        while (getState() == State.DISTRIBUTING)
+        // we continue to distribute while there a no other pending events on the machine
+        do
         {
             try
             {
@@ -903,21 +894,8 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                 // any events to distribute?
                 if (eventList.isEmpty())
                 {
-                    // nothing to distribute so move back to the waiting state (if we're still in the DISTRIBUTING)
-                    synchronized (this)
-                    {
-                        if (getState() == State.DISTRIBUTING)
-                        {
-                            setState(State.WAITING);
-                            schedule(new Runnable()
-                            {
-                                public void run()
-                                {
-                                    onDistribute();
-                                }
-                            }, controllerDependencies.getBatchDistributionDelay(), TimeUnit.MILLISECONDS);
-                        }
-                    }
+                    // nothing to distribute so move back to the waiting state
+                    return new Instruction.TransitionTo<State>(State.WAITING);
                 }
                 else
                 {
@@ -974,7 +952,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                     minimumDistributionDurationMS = Math.min(minimumDistributionDurationMS, distributionDurationMS);
                     totalDistributionDurationMS   += distributionDurationMS;
 
-
                     if (logger.isLoggable(Level.FINER))
                     {
                         logger.log(Level.FINER,
@@ -990,21 +967,9 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
                     // now schedule for the next batch
                     // (only if we're still in the DISTRIBUTING state)
-                    synchronized (this)
+                    if (controllerDependencies.getBatchDistributionDelay() > 0)
                     {
-                        if (getState() == State.DISTRIBUTING && controllerDependencies.getBatchDistributionDelay() > 0)
-                        {
-                            setState(State.SCHEDULED);
-
-                            // schedule the next time we'll attempt to distribute a batch
-                            schedule(new Runnable()
-                            {
-                                public void run()
-                                {
-                                    onDistribute();
-                                }
-                            }, controllerDependencies.getBatchDistributionDelay(), TimeUnit.MILLISECONDS);
-                        }
+                        return new Instruction.TransitionTo<State>(State.WAITING);
                     }
                 }
 
@@ -1013,13 +978,10 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
             {
                 if (logger.isLoggable(Level.WARNING))
                 {
-                    logger.log(Level.SEVERE,
+                    logger.log(Level.WARNING,
                                "EventChannelController {0} failed to distribute events",
                                controllerIdentifier);
-                }
 
-                if (logger.isLoggable(Level.WARNING))
-                {
                     logger.log(Level.INFO, "Exception was as follows:", runtimeException);
                 }
 
@@ -1031,16 +993,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                     || consecutiveDistributionFailures
                        < controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending())
                 {
-                    // we immediately go back to the PAUSED state and schedule an attempt to restart
-                    setState(State.PAUSED);
-                    schedule(new Runnable()
-                    {
-                        public void run()
-                        {
-                            setState(State.STARTING);
-                            onStart(State.DISTRIBUTING);
-                        }
-                    }, controllerDependencies.getRestartDelay(), TimeUnit.MILLISECONDS);
+                    return new Instruction.TransitionTo<State>(State.ERROR);
                 }
                 else
                 {
@@ -1053,15 +1006,18 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                                    new Object[] {controllerIdentifier, consecutiveDistributionFailures});
                     }
 
-                    setState(State.SUSPENDED);
+                    return new Instruction.TransitionTo<State>(State.SUSPENDED);
                 }
             }
         }
+        while (!context.hasPendingEvents());
 
         if (logger.isLoggable(Level.FINER))
         {
             logger.log(Level.FINER, "Completed distribution with {0}", controllerIdentifier);
         }
+
+        return new Instruction.TransitionTo<State>(State.WAITING);
     }
 
 
@@ -1079,12 +1035,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
         /**
          * By default a {@link EventChannelController} will wait 1000 milliseconds between attempts to distribute batches
-         * of events.
+         * of {@link Event}s.
          */
         public final static long BATCH_DISTRIBUTION_DELAY_DEFAULT = 1000;
 
         /**
-         * By default a maximum of 100 events will be in a batch when distributed.
+         * By default a maximum of 100 {@link Event}s will be in a batch when distributed.
          */
         public final static int BATCH_SIZE_DEFAULT = 100;
 
@@ -1128,12 +1084,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         private Mode startingMode;
 
         /**
-         * The number of milliseconds to wait between attempts to distribute events.
+         * The number of milliseconds to wait between attempts to distribute {@link Event}s.
          */
         private long batchDistributionDelayMS;
 
         /**
-         * The maximum number of events that may be "batched" together in a single batch.
+         * The maximum number of {@link Event}s that may be "batched" together in a single batch.
          */
         private int batchSize;
 
@@ -1144,7 +1100,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
         /**
          * The number of consecutive failures that may occur with an {@link EventChannel} before it is suspended from
-         * distributing events.
+         * distributing {@link Event}s.
          */
         private int totalConsecutiveFailuresBeforeSuspending;
 
@@ -1159,11 +1115,11 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
         /**
-         * Standard Constructor.
+         * Constructs a {@link DefaultDependencies}.
          */
         public DefaultDependencies(String                                         channelName,
                                    String                                         externalName,
-                                   ParameterizedBuilder<EventChannel> eventChannelBuilder,
+                                   ParameterizedBuilder<EventChannel>             eventChannelBuilder,
                                    ParameterizedBuilder<EventIteratorTransformer> transformerBuilder,
                                    Mode                                           startingMode,
                                    long                                           batchDistributionDelayMS,
@@ -1183,9 +1139,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String getChannelName()
         {
@@ -1193,9 +1146,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String getExternalName()
         {
@@ -1203,9 +1153,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public ParameterizedBuilder<EventChannel> getEventChannelBuilder()
         {
@@ -1213,9 +1160,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public ParameterizedBuilder<EventIteratorTransformer> getEventsTransformerBuilder()
         {
@@ -1223,9 +1167,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public Mode getStartingMode()
         {
@@ -1233,9 +1174,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public long getBatchDistributionDelay()
         {
@@ -1243,9 +1181,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int getBatchSize()
         {
@@ -1253,9 +1188,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public long getRestartDelay()
         {
@@ -1263,9 +1195,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int getTotalConsecutiveFailuresBeforeSuspending()
         {
@@ -1273,10 +1202,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
-        @SuppressWarnings("unchecked")
         @Override
         public void readExternal(DataInput in) throws IOException
         {
@@ -1293,9 +1218,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void writeExternal(DataOutput out) throws IOException
         {
@@ -1311,10 +1233,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
-        @SuppressWarnings("unchecked")
         @Override
         public void readExternal(PofReader reader) throws IOException
         {
@@ -1330,9 +1248,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void writeExternal(PofWriter writer) throws IOException
         {
@@ -1348,9 +1263,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString()
         {
