@@ -67,32 +67,42 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
     /**
      * The name of the {@link NonBlockingFiniteStateMachine}.
      */
-    private String m_name;
+    private String name;
 
     /**
      * The state of the {@link FiniteStateMachine}.
      */
-    private volatile S m_state;
+    private volatile S state;
+
+    /**
+     * The initial state of the {@link FiniteStateMachine}.
+     */
+    private final S initialState;
 
     /**
      * The {@link Transition} table (by starting and ending states).
      */
-    private EnumMap<S, EnumMap<S, Transition<S>>> m_transitions;
+    private EnumMap<S, EnumMap<S, Transition<S>>> transitions;
 
     /**
      * The {@link StateEntryAction} table (by state)
      */
-    private EnumMap<S, StateEntryAction<S>> m_stateEntryActions;
+    private EnumMap<S, StateEntryAction<S>> stateEntryActions;
 
     /**
      * The {@link StateExitAction} table (by state)
      */
-    private EnumMap<S, StateExitAction<S>> m_stateExitActions;
+    private EnumMap<S, StateExitAction<S>> stateExitActions;
+
+    /**
+     * Has the {@link FiniteStateMachine} been started?
+     */
+    private AtomicBoolean isStarted;
 
     /**
      * The number of transitions that have occurred in the {@link FiniteStateMachine}.
      */
-    private AtomicLong m_transitionCount;
+    private AtomicLong transitionCount;
 
     /**
      * Is the {@link FiniteStateMachine} accepting {@link Event}s to
@@ -103,7 +113,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
      * {@link FiniteStateMachine} to continue processing previously accepted
      * {@link Event}s.
      */
-    private AtomicBoolean m_isAcceptingEvents;
+    private AtomicBoolean isAcceptingEvents;
 
     /**
      * Is the {@link FiniteStateMachine} allowed to perform {@link Transition}s?
@@ -112,12 +122,12 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
      * Once it can no longer perform {@link Transition}s, the
      * {@link FiniteStateMachine} is "dead" and can no longer be used.
      */
-    private AtomicBoolean m_canPerformTransitions;
+    private AtomicBoolean allowTransitions;
 
     /**
      * The number of pending, ie: queued, {@link Event}s to be processed.
      */
-    private AtomicInteger m_pendingEventCount;
+    private AtomicInteger pendingEventCount;
 
     /**
      * A {@link ScheduledExecutorService} that will be used to schedule
@@ -126,7 +136,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
      * Note: Only threads on this {@link ScheduledExecutorService} may apply a
      * {@link Transition}.
      */
-    private ScheduledExecutorService m_executorService;
+    private ScheduledExecutorService executorService;
 
     /**
      * When <code>true</code> {@link RuntimeException}s be ignored
@@ -135,11 +145,11 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
      * When <code>false</code> {@link RuntimeException}s be will immediately stop
      * the {@link FiniteStateMachine}.
      */
-    private boolean m_ignoreRuntimeExceptions;
+    private boolean ignoreRuntimeExceptions;
 
 
     /**
-     * Construct an {@link NonBlockingFiniteStateMachine} given a {@link Model}
+     * Construct and autostart {@link NonBlockingFiniteStateMachine} given a {@link Model}.
      *
      * @param name                     the name of the {@link NonBlockingFiniteStateMachine}
      * @param model                    the {@link Model} of the {@link NonBlockingFiniteStateMachine}
@@ -155,36 +165,59 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                          ScheduledExecutorService executorService,
                                          boolean                  ignoreRuntimeExceptions)
     {
+        this(name, model, initialState, executorService, ignoreRuntimeExceptions, true);
+    }
+
+
+    /**
+     * Construct an {@link NonBlockingFiniteStateMachine} given a {@link Model}
+     *
+     * @param name                     the name of the {@link NonBlockingFiniteStateMachine}
+     * @param model                    the {@link Model} of the {@link NonBlockingFiniteStateMachine}
+     * @param initialState             the initial state
+     * @param executorService          the {@link ScheduledExecutorService} to use for scheduling {@link Transition}s
+     * @param ignoreRuntimeExceptions  when <code>true</code> {@link RuntimeException}s will be ignored,
+     *                                 when <code>false</code> {@link RuntimeException}s will immediately stop
+     *                                 the {@link NonBlockingFiniteStateMachine}
+     * @param autostart                should the {@link NonBlockingFiniteStateMachine} automatically
+     *                                 start (transition to the initial state on the current thread)?
+     */
+    public NonBlockingFiniteStateMachine(String                   name,
+                                         Model<S>                 model,
+                                         S                        initialState,
+                                         ScheduledExecutorService executorService,
+                                         boolean                  ignoreRuntimeExceptions,
+                                         boolean                  autostart)
+    {
         if (LOGGER.isLoggable(Level.FINER))
         {
             LOGGER.entering(getClass().getName(),
                             "Constructor",
-                            new Object[] {name, model, executorService, ignoreRuntimeExceptions});
+                            new Object[] {name, model, initialState, executorService, ignoreRuntimeExceptions});
         }
 
-        // TODO: we should prove that the model is valid
+        // FUTURE: we should prove that the model is valid
         // ie: no isolated/unreachable states
         // ie: no multiple paths from one state to another state, ensuring that two or more transitions from A to B are not defined
         // ie: that there are no cycles formed by potential "synchronous" state transitions,
         // ensuring that A and B don't have any cycles formed by synchronous state transitions between them,
         // and thus deadlocks in the finite state machine can't occur.
 
-        m_name                    = name;
-        m_isAcceptingEvents       = new AtomicBoolean(true);
-        m_canPerformTransitions   = new AtomicBoolean(true);
-        m_pendingEventCount       = new AtomicInteger(0);
-        m_executorService         = executorService;
-        m_ignoreRuntimeExceptions = ignoreRuntimeExceptions;
-        m_transitionCount         = new AtomicLong(0);
+        this.name                    = name;
+        this.allowTransitions        = new AtomicBoolean(true);
+        this.executorService         = executorService;
+        this.ignoreRuntimeExceptions = ignoreRuntimeExceptions;
+        this.transitionCount         = new AtomicLong(0);
+        this.initialState            = initialState;
 
         // build the transitions table based on the model
         S[] states = model.getStates();
 
-        m_transitions = new EnumMap<S, EnumMap<S, Transition<S>>>(model.getStateClass());
+        transitions = new EnumMap<S, EnumMap<S, Transition<S>>>(model.getStateClass());
 
         for (S stateFrom : states)
         {
-            m_transitions.put(stateFrom, new EnumMap<S, Transition<S>>(model.getStateClass()));
+            transitions.put(stateFrom, new EnumMap<S, Transition<S>>(model.getStateClass()));
         }
 
         for (Transition<S> transition : model.getTransitions())
@@ -193,24 +226,39 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             {
                 if (transition.isStartingState(fromStates))
                 {
-                    m_transitions.get(fromStates).put(transition.getEndingState(), transition);
+                    transitions.get(fromStates).put(transition.getEndingState(), transition);
                 }
             }
         }
 
         // create the state entry and exit action tables based on the model
-        m_stateEntryActions = new EnumMap<S, StateEntryAction<S>>(model.getStateClass());
-        m_stateExitActions  = new EnumMap<S, StateExitAction<S>>(model.getStateClass());
+        stateEntryActions = new EnumMap<S, StateEntryAction<S>>(model.getStateClass());
+        stateExitActions  = new EnumMap<S, StateExitAction<S>>(model.getStateClass());
 
         for (S state : states)
         {
-            m_stateEntryActions.put(state, model.getStateEntryActions().get(state));
-            m_stateExitActions.put(state, model.getStateExitActions().get(state));
+            stateEntryActions.put(state, model.getStateEntryActions().get(state));
+            stateExitActions.put(state, model.getStateExitActions().get(state));
         }
 
-        // set the initial state
-        m_state = null;
-        processEvent(new TransitionTo<S>(initialState));
+        // there is no state until the machine is started
+        state = null;
+
+        // should we automatically start?
+        if (autostart)
+        {
+            this.isStarted         = new AtomicBoolean(true);
+            this.isAcceptingEvents = new AtomicBoolean(true);
+            this.pendingEventCount = new AtomicInteger(1);
+
+            processEvent(new TransitionTo<S>(initialState));
+        }
+        else
+        {
+            this.isStarted         = new AtomicBoolean(false);
+            this.isAcceptingEvents = new AtomicBoolean(false);
+            this.pendingEventCount = new AtomicInteger(0);
+        }
 
         if (LOGGER.isLoggable(Level.FINER))
         {
@@ -219,39 +267,64 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName()
     {
-        return m_name;
+        return name;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public S getState()
     {
-        return m_state;
+        return state;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getTransitionCount()
     {
-        return m_transitionCount.get();
+        return transitionCount.get();
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public boolean start()
+    {
+        if (LOGGER.isLoggable(Level.FINER))
+        {
+            LOGGER.entering(getClass().getName(), String.format("[%s]: start", getName()));
+        }
+
+        boolean wasStarted;
+
+        if (!allowTransitions.get())
+        {
+            throw new IllegalStateException("The FiniteStateMachine cannot be started because it was stopped");
+        }
+        else if (isStarted.compareAndSet(false, true))
+        {
+            isAcceptingEvents.set(true);
+
+            // schedule the transition to the initial state
+            process(new TransitionTo<S>(initialState));
+
+            wasStarted = true;
+        }
+        else
+        {
+            wasStarted = false;
+        }
+
+        if (LOGGER.isLoggable(Level.FINER))
+        {
+            LOGGER.exiting(getClass().getName(), String.format("[%s]: start", getName()));
+        }
+
+        return wasStarted;
+    }
+
+
     @Override
     public boolean stop()
     {
@@ -260,17 +333,17 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             LOGGER.entering(getClass().getName(), String.format("[%s]: stop", getName()));
         }
 
-        boolean isStopped;
+        boolean wasStopped;
 
-        if (m_isAcceptingEvents.compareAndSet(true, false))
+        if (isAcceptingEvents.compareAndSet(true, false))
         {
-            m_canPerformTransitions.set(false);
+            allowTransitions.set(false);
 
-            isStopped = true;
+            wasStopped = true;
         }
         else
         {
-            isStopped = false;
+            wasStopped = false;
         }
 
         if (LOGGER.isLoggable(Level.FINER))
@@ -278,7 +351,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             LOGGER.exiting(getClass().getName(), String.format("[%s]: stop", getName()));
         }
 
-        return isStopped;
+        return wasStopped;
     }
 
 
@@ -300,17 +373,17 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             LOGGER.entering(getClass().getName(), String.format("[%s]: quiesceThenStop", getName()));
         }
 
-        boolean isStopped;
+        boolean wasStopped;
 
-        if (m_isAcceptingEvents.compareAndSet(true, false))
+        if (isAcceptingEvents.compareAndSet(true, false))
         {
             synchronized (this)
             {
-                while (m_pendingEventCount.get() > 0)
+                while (pendingEventCount.get() > 0)
                 {
                     try
                     {
-                        // wait for half a second to see if there are no more pending transitions
+                        // wait for half a second to see if there are any more pending transitions
                         // (this non-infinite wait is to protect us against the possibility that we miss being notified)
                         wait(500);
                     }
@@ -319,7 +392,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                         if (LOGGER.isLoggable(Level.FINER))
                         {
                             LOGGER.finer(String
-                                .format("[%s]: Thread interrupted while quiescing.  Will stop immediately.", m_name));
+                                .format("[%s]: Thread interrupted while quiescing.  Will stop immediately.", name));
                         }
 
                         break;
@@ -327,13 +400,13 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                 }
             }
 
-            m_canPerformTransitions.set(false);
+            allowTransitions.set(false);
 
-            isStopped = m_pendingEventCount.get() == 0;
+            wasStopped = pendingEventCount.get() == 0;
         }
         else
         {
-            isStopped = false;
+            wasStopped = false;
         }
 
         if (LOGGER.isLoggable(Level.FINER))
@@ -341,13 +414,10 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             LOGGER.exiting(getClass().getName(), String.format("[%s]: quiesceThenStop", getName()));
         }
 
-        return isStopped;
+        return wasStopped;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(Event<S> event)
     {
@@ -399,7 +469,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                             new Object[] {event, duration, timeUnit});
         }
 
-        if (m_isAcceptingEvents.get())
+        if (isAcceptingEvents.get())
         {
             final Event<S> preparedEvent = prepareEvent(event);
 
@@ -407,12 +477,12 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             {
                 if (LOGGER.isLoggable(Level.FINER))
                 {
-                    LOGGER.finer(String.format("[%s]: Ignoring event %s as it vetoed being prepared", m_name, event));
+                    LOGGER.finer(String.format("[%s]: Ignoring event %s as it vetoed being prepared", name, event));
                 }
             }
             else
             {
-                m_executorService.schedule(new Runnable()
+                executorService.schedule(new Runnable()
                 {
                     @Override
                     public void run()
@@ -429,7 +499,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             {
                 LOGGER.finer(String
                     .format("[%s]: Ignoring request to process the event %s in %d %s as the machine is no longer accepting new transitions",
-                            m_name, event, duration, timeUnit));
+                            name, event, duration, timeUnit));
             }
         }
 
@@ -452,7 +522,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
         // assume the worst - no event is prepared
         Event<S> prepared = null;
 
-        if (m_isAcceptingEvents.get())
+        if (isAcceptingEvents.get())
         {
             // ensure lifecycle aware events are notified
             if (event instanceof LifecycleAwareEvent)
@@ -470,26 +540,17 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
         if (prepared != null)
         {
             // increase the number of events that are now pending
-            m_pendingEventCount.incrementAndGet();
+            pendingEventCount.incrementAndGet();
         }
 
         return prepared;
     }
 
 
-    /**
-     * Determines if there are any pending {@link Event}s for the
-     * {@link FiniteStateMachine} to process.
-     * <p>
-     * Note: If the {@link FiniteStateMachine} can no longer process {@link Event}s
-     * false will be returned.
-     *
-     * @return  <code>true</code> if there are pending {@link Event}s and
-     *          {@link Event}s can be processed, <code>false</code> otherwise
-     */
+    @Override
     public boolean hasPendingEvents()
     {
-        return m_canPerformTransitions.get() && m_pendingEventCount.get() > 0;
+        return allowTransitions.get() && pendingEventCount.get() > 0;
     }
 
 
@@ -512,7 +573,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
         synchronized (this)
         {
             // we keep processing events on this thread until we run out of events
-            while (event != null && m_canPerformTransitions.get())
+            while (event != null && allowTransitions.get())
             {
                 // determine the desired state from the event
                 S stateCurrent = getState();
@@ -526,14 +587,10 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                     lifecycleAwareEvent.onProcessing(stateCurrent, this);
                 }
 
-                boolean fIsInitialState = stateCurrent == null;
+                boolean isInitialTransition = stateCurrent == null;
 
-                // as we're processing an event, decrease the counter of
-                // pending events
-                if (!fIsInitialState)
-                {
-                    m_pendingEventCount.decrementAndGet();
-                }
+                // as we're processing an event, decrease the counter of pending events
+                pendingEventCount.decrementAndGet();
 
                 // if there's no desired state, we do nothing
                 if (stateDesired == null)
@@ -542,7 +599,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                     if (LOGGER.isLoggable(Level.FINER))
                     {
                         LOGGER.finer(String.format("[%s]: Ignoring event %s as it produced a null desired state.",
-                                                   m_name, event));
+                                                   name, event));
                     }
 
                     // notify the a lifecycle aware event of the failure
@@ -561,13 +618,12 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                     // assume no transition will be made
                     Transition<S> transition = null;
 
-                    // when we have a current and desired state, we can
-                    // perform a transition
-                    if (!fIsInitialState)
+                    // when we have a current and desired state, we can perform a transition
+                    if (!isInitialTransition)
                     {
                         // determine the appropriate transition from the
                         // current state to the desired state (using the transition table)
-                        transition = m_transitions.get(stateCurrent).get(stateDesired);
+                        transition = transitions.get(stateCurrent).get(stateDesired);
 
                         if (transition == null)
                         {
@@ -577,7 +633,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                             {
                                 LOGGER.finer(String
                                     .format("[%s]: Can't find a valid transition from %s to %s.  Ignoring event %s.",
-                                            m_name, stateCurrent, stateDesired, event));
+                                            name, stateCurrent, stateDesired, event));
                             }
 
                             // notify the a lifecycle aware event of the failure
@@ -614,7 +670,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                     {
                                         LOGGER.finer(String
                                             .format("[%s]: Transition for event %s from %s to %s has been rolledback due to:\n%s",
-                                                    m_name, event, stateCurrent, stateDesired, e));
+                                                    name, event, stateCurrent, stateDesired, e));
                                     }
 
                                     // notify the a lifecycle aware event of the failure
@@ -629,20 +685,19 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                 }
                                 catch (RuntimeException e)
                                 {
-                                    if (m_ignoreRuntimeExceptions)
+                                    if (ignoreRuntimeExceptions)
                                     {
                                         if (LOGGER.isLoggable(Level.FINER))
                                         {
                                             LOGGER.finer(String
                                                 .format("[%s]: Transition Action %s for event %s from %s to %s raised runtime exception (continuing with transition and ignoring the exception):\n%s",
-                                                        m_name, actionTransition, event, stateCurrent, stateDesired,
-                                                        e));
+                                                        name, actionTransition, event, stateCurrent, stateDesired, e));
                                         }
                                     }
                                     else
                                     {
-                                        m_isAcceptingEvents.set(false);
-                                        m_canPerformTransitions.set(false);
+                                        isAcceptingEvents.set(false);
+                                        allowTransitions.set(false);
 
                                         if (LOGGER.isLoggable(Level.WARNING))
                                         {
@@ -654,7 +709,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
 
                                             LOGGER.warning(String
                                                 .format("[%s]: Stopping the machine as the Transition Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
-                                                        m_name, actionTransition, event, stateCurrent, stateDesired, e,
+                                                        name, actionTransition, event, stateCurrent, stateDesired, e,
                                                         writerString.toString()));
                                         }
 
@@ -678,9 +733,9 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                     if (event != null)
                     {
                         // perform the exit action
-                        if (!fIsInitialState)
+                        if (!isInitialTransition)
                         {
-                            StateExitAction<S> actionExit = m_stateExitActions.get(stateCurrent);
+                            StateExitAction<S> actionExit = stateExitActions.get(stateCurrent);
 
                             if (actionExit != null)
                             {
@@ -690,19 +745,19 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                 }
                                 catch (RuntimeException e)
                                 {
-                                    if (m_ignoreRuntimeExceptions)
+                                    if (ignoreRuntimeExceptions)
                                     {
                                         if (LOGGER.isLoggable(Level.FINER))
                                         {
                                             LOGGER.finer(String
                                                 .format("[%s]: State Exit Action %s for event %s from %s to %s raised runtime exception (continuing with transition and ignoring the exception):\n%s",
-                                                        m_name, actionExit, event, stateCurrent, stateDesired, e));
+                                                        name, actionExit, event, stateCurrent, stateDesired, e));
                                         }
                                     }
                                     else
                                     {
-                                        m_isAcceptingEvents.set(false);
-                                        m_canPerformTransitions.set(false);
+                                        isAcceptingEvents.set(false);
+                                        allowTransitions.set(false);
 
                                         if (LOGGER.isLoggable(Level.WARNING))
                                         {
@@ -714,7 +769,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
 
                                             LOGGER.warning(String
                                                 .format("[%s]: Stopping the machine as the State Exit Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
-                                                        m_name, actionExit, event, stateCurrent, stateDesired, e,
+                                                        name, actionExit, event, stateCurrent, stateDesired, e,
                                                         writerString.toString()));
                                         }
 
@@ -735,26 +790,26 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                             {
                                 if (LOGGER.isLoggable(Level.FINER))
                                 {
-                                    LOGGER.finer(String.format("[%s]: No Exit Action defined for %s", m_name,
+                                    LOGGER.finer(String.format("[%s]: No Exit Action defined for %s", name,
                                                                stateCurrent));
                                 }
                             }
                         }
 
                         // we're now in the desired state so set it
-                        m_state = stateDesired;
+                        state = stateDesired;
 
                         // as we've made a transition, count it
-                        if (!fIsInitialState)
+                        if (!isInitialTransition)
                         {
-                            m_transitionCount.incrementAndGet();
+                            transitionCount.incrementAndGet();
                         }
 
                         // the instruction to perform after setting the state
                         Instruction instruction = Instruction.NOTHING;
 
                         // perform the entry action
-                        StateEntryAction<S> actionEntry = m_stateEntryActions.get(stateDesired);
+                        StateEntryAction<S> actionEntry = stateEntryActions.get(stateDesired);
 
                         if (actionEntry != null)
                         {
@@ -765,19 +820,19 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                             }
                             catch (RuntimeException e)
                             {
-                                if (m_ignoreRuntimeExceptions)
+                                if (ignoreRuntimeExceptions)
                                 {
                                     if (LOGGER.isLoggable(Level.FINER))
                                     {
                                         LOGGER.finer(String
                                             .format("[%s]: State Entry Action %s for event %s from %s to %s raised runtime exception (continuing and ignoring the exception):\n%s",
-                                                    m_name, actionEntry, event, stateCurrent, stateDesired, e));
+                                                    name, actionEntry, event, stateCurrent, stateDesired, e));
                                     }
                                 }
                                 else
                                 {
-                                    m_isAcceptingEvents.set(false);
-                                    m_canPerformTransitions.set(false);
+                                    isAcceptingEvents.set(false);
+                                    allowTransitions.set(false);
 
                                     if (LOGGER.isLoggable(Level.WARNING))
                                     {
@@ -789,7 +844,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
 
                                         LOGGER.warning(String
                                             .format("[%s]: Stopping the machine as the State Entry Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
-                                                    m_name, actionEntry, event, stateCurrent, stateDesired, e,
+                                                    name, actionEntry, event, stateCurrent, stateDesired, e,
                                                     writerString.toString()));
                                     }
 
@@ -811,16 +866,15 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                         {
                             if (LOGGER.isLoggable(Level.FINER))
                             {
-                                LOGGER.finer(String.format("[%s]: No Entry Action defined for %s", m_name,
-                                                           stateDesired));
+                                LOGGER.finer(String.format("[%s]: No Entry Action defined for %s", name, stateDesired));
                             }
                         }
 
                         if (LOGGER.isLoggable(Level.FINER))
                         {
                             LOGGER.finer(String
-                                .format("[%s]: State changed to %s. There are %d remaining events to process", m_name,
-                                        stateDesired, m_pendingEventCount.get()));
+                                .format("[%s]: State changed to %s. There are %d remaining events to process", name,
+                                        stateDesired, pendingEventCount.get()));
                         }
 
                         // notify the a lifecycle aware event of the completion of the transition
@@ -887,7 +941,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                             {
                                 LOGGER.finer(String
                                     .format("[%s]: Ignoring Instruction [%s] returned as part of transition to %s as it an unknown type for this Finite State Machine.",
-                                            m_name, instruction, stateDesired));
+                                            name, instruction, stateDesired));
                             }
                         }
                     }
@@ -896,11 +950,11 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
 
             // when this is the last pending transition and we're not accepting any more,
             // notify waiting threads that we're done
-            if (!m_isAcceptingEvents.get() && m_pendingEventCount.get() == 0)
+            if (!isAcceptingEvents.get() && pendingEventCount.get() == 0)
             {
                 if (LOGGER.isLoggable(Level.FINER))
                 {
-                    LOGGER.finer(String.format("[%s]: Completed processing events", m_name));
+                    LOGGER.finer(String.format("[%s]: Completed processing events", name));
                 }
 
                 notifyAll();
@@ -972,23 +1026,23 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          * The discriminator/identifier that is used to coalesce {@link Event}s
          * of the same "type".
          */
-        private Object m_discriminator;
+        private Object discriminator;
 
         /**
          * The {@link Event} to be coalesed.
          */
-        private Event<S> m_event;
+        private Event<S> event;
 
         /**
          * The mode of coalescing to use for the {@link Event}.
          */
-        private Process m_mode;
+        private Process mode;
 
         /**
          * The {@link Event} that is eventually chosen to process
          * (from all of those submitted and coalesced)
          */
-        private Event<S> m_eventChosen;
+        private Event<S> eventChosen;
 
 
         /**
@@ -1029,27 +1083,23 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                               Process  mode,
                               Object   discriminator)
         {
-            m_discriminator = discriminator == null ? Void.class : discriminator;
-            m_event         = event;
-            m_mode          = mode;
-            m_eventChosen   = null;
+            this.discriminator = discriminator == null ? Void.class : discriminator;
+            this.event         = event;
+            this.mode          = mode;
+            this.eventChosen   = null;
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        @SuppressWarnings("unchecked")
         public S getDesiredState(S                state,
                                  ExecutionContext context)
         {
             // remove the actual event to be processed for the discriminator
             // (we do this because this event that we're processing may have
             // been replace ie: coalesced by another event)
-            m_eventChosen = (Event<S>) s_eventsByDiscriminator.remove(m_discriminator);
+            eventChosen = (Event<S>) s_eventsByDiscriminator.remove(discriminator);
 
-            if (m_eventChosen == null)
+            if (eventChosen == null)
             {
                 // when there's no event to chose, we know that this event was
                 // coalesced ie: already executed, hence there's nothing to do now
@@ -1057,15 +1107,11 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             }
             else
             {
-                return m_eventChosen.getDesiredState(state, context);
+                return eventChosen.getDesiredState(state, context);
             }
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
-        @SuppressWarnings("rawtypes")
         @Override
         public boolean onAccept(ExecutionContext context)
         {
@@ -1076,9 +1122,9 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
 
                 // ensure that the actual event is accepted
                 // (there's no reason to accept unacceptable events)
-                if (m_event instanceof LifecycleAwareEvent)
+                if (event instanceof LifecycleAwareEvent)
                 {
-                    fIsAccepted = ((LifecycleAwareEvent<S>) m_event).onAccept(context);
+                    fIsAccepted = ((LifecycleAwareEvent<S>) event).onAccept(context);
                 }
                 else
                 {
@@ -1088,19 +1134,19 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                 // replace the provided discriminator with one that is scoped
                 // by the NonBlockingFiniteStateMachine;
                 Discriminator discriminator = new Discriminator((NonBlockingFiniteStateMachine) context,
-                                                                m_discriminator);
+                                                                this.discriminator);
 
-                m_discriminator = discriminator;
+                this.discriminator = discriminator;
 
                 if (fIsAccepted)
                 {
-                    if (m_mode == Process.FIRST)
+                    if (mode == Process.FIRST)
                     {
-                        fIsAccepted = s_eventsByDiscriminator.putIfAbsent(discriminator, m_event) == null;
+                        fIsAccepted = s_eventsByDiscriminator.putIfAbsent(discriminator, event) == null;
                     }
                     else
                     {
-                        fIsAccepted = s_eventsByDiscriminator.put(discriminator, m_event) == null;
+                        fIsAccepted = s_eventsByDiscriminator.put(discriminator, event) == null;
                     }
                 }
 
@@ -1115,56 +1161,44 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void onProcessed(S                enteredState,
                                 ExecutionContext context)
         {
-            if (m_eventChosen instanceof LifecycleAwareEvent)
+            if (eventChosen instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_eventChosen).onProcessed(enteredState, context);
+                ((LifecycleAwareEvent<S>) eventChosen).onProcessed(enteredState, context);
             }
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void onProcessing(S                exitingState,
                                  ExecutionContext context)
         {
-            if (m_eventChosen instanceof LifecycleAwareEvent)
+            if (eventChosen instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_eventChosen).onProcessing(exitingState, context);
+                ((LifecycleAwareEvent<S>) eventChosen).onProcessing(exitingState, context);
             }
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void onFailure(S                currentState,
                               ExecutionContext context,
                               Exception        exception)
         {
-            if (m_eventChosen instanceof LifecycleAwareEvent)
+            if (eventChosen instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_eventChosen).onFailure(currentState, context, exception);
+                ((LifecycleAwareEvent<S>) eventChosen).onFailure(currentState, context, exception);
             }
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString()
         {
-            return String.format("CoalescedEvent{%s, discriminator=%s, mode=%s}", m_event, m_discriminator, m_mode);
+            return String.format("CoalescedEvent{%s, discriminator=%s, mode=%s}", event, discriminator, mode);
         }
 
 
@@ -1179,12 +1213,12 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
              * The {@link NonBlockingFiniteStateMachine} to which the
              * discriminator applies.
              */
-            private NonBlockingFiniteStateMachine<?> m_machine;
+            private NonBlockingFiniteStateMachine<?> machine;
 
             /**
              * The actual discriminator (not null).
              */
-            private Object m_discriminator;
+            private Object discriminator;
 
 
             /**
@@ -1197,30 +1231,24 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             public Discriminator(NonBlockingFiniteStateMachine<?> machine,
                                  Object                           discriminator)
             {
-                m_machine       = machine;
-                m_discriminator = discriminator;
+                this.machine       = machine;
+                this.discriminator = discriminator;
             }
 
 
-            /**
-             * {@inheritDoc}
-             */
             @Override
             public int hashCode()
             {
                 final int prime  = 31;
                 int       result = 1;
 
-                result = prime * result + ((m_discriminator == null) ? 0 : m_discriminator.hashCode());
-                result = prime * result + ((m_machine == null) ? 0 : m_machine.hashCode());
+                result = prime * result + ((discriminator == null) ? 0 : discriminator.hashCode());
+                result = prime * result + ((machine == null) ? 0 : machine.hashCode());
 
                 return result;
             }
 
 
-            /**
-             * {@inheritDoc}
-             */
             @Override
             public boolean equals(Object obj)
             {
@@ -1241,26 +1269,26 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
 
                 Discriminator other = (Discriminator) obj;
 
-                if (m_discriminator == null)
+                if (discriminator == null)
                 {
-                    if (other.m_discriminator != null)
+                    if (other.discriminator != null)
                     {
                         return false;
                     }
                 }
-                else if (!m_discriminator.equals(other.m_discriminator))
+                else if (!discriminator.equals(other.discriminator))
                 {
                     return false;
                 }
 
-                if (m_machine == null)
+                if (machine == null)
                 {
-                    if (other.m_machine != null)
+                    if (other.machine != null)
                     {
                         return false;
                     }
                 }
-                else if (!m_machine.equals(other.m_machine))
+                else if (!machine.equals(other.machine))
                 {
                     return false;
                 }
@@ -1293,17 +1321,17 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
         /**
          * The desired state.
          */
-        private S m_desiredState;
+        private S desiredState;
 
         /**
          * The amount of time to wait before the transition should occur.
          */
-        private long m_duration;
+        private long duration;
 
         /**
          * The {@link TimeUnit} for the delay time.
          */
-        private TimeUnit m_timeUnit;
+        private TimeUnit timeUnit;
 
 
         /**
@@ -1328,19 +1356,17 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                    long     duration,
                                    TimeUnit timeUnit)
         {
-            m_desiredState = desiredState;
-            m_duration     = duration;
-            m_timeUnit     = timeUnit;
+            this.desiredState = desiredState;
+            this.duration     = duration;
+            this.timeUnit     = timeUnit;
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public S getDesiredState(S                currentState,
                                  ExecutionContext context)
         {
-            return m_desiredState;
+            return desiredState;
         }
 
 
@@ -1351,7 +1377,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          */
         public long getDuration()
         {
-            return m_duration;
+            return duration;
         }
 
 
@@ -1362,7 +1388,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          */
         public TimeUnit getTimeUnit()
         {
-            return m_timeUnit;
+            return timeUnit;
         }
     }
 
@@ -1381,17 +1407,17 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
         /**
          * The {@link Event} to process later.
          */
-        private Event<S> m_event;
+        private Event<S> event;
 
         /**
          * The amount of time to wait before the processing the {@link Event}.
          */
-        private long m_duration;
+        private long duration;
 
         /**
          * The {@link TimeUnit} for the delay time.
          */
-        private TimeUnit m_timeUnit;
+        private TimeUnit timeUnit;
 
 
         /**
@@ -1417,9 +1443,9 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                  long     duration,
                                  TimeUnit timeUnit)
         {
-            m_event    = event;
-            m_duration = duration;
-            m_timeUnit = timeUnit;
+            this.event    = event;
+            this.duration = duration;
+            this.timeUnit = timeUnit;
         }
 
 
@@ -1430,7 +1456,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          */
         public Event<S> getEvent()
         {
-            return m_event;
+            return event;
         }
 
 
@@ -1441,7 +1467,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          */
         public long getDuration()
         {
-            return m_duration;
+            return duration;
         }
 
 
@@ -1452,7 +1478,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          */
         public TimeUnit getTimeUnit()
         {
-            return m_timeUnit;
+            return timeUnit;
         }
     }
 
@@ -1481,12 +1507,12 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          * The transition count that the {@link FiniteStateMachine}
          * must be at in order for the wrapped {@link Event} to be processed.
          */
-        private long m_transitionCount;
+        private long transitionCount;
 
         /**
          * The actual {@link Event}
          */
-        private Event<S> m_event;
+        private Event<S> event;
 
 
         /**
@@ -1496,80 +1522,65 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
          */
         public SubsequentEvent(Event<S> event)
         {
-            m_transitionCount = -1;
-            m_event           = event;
+            this.transitionCount = -1;
+            this.event           = event;
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean onAccept(ExecutionContext context)
         {
             // when being accepted use context to determine the transition count
             // at which the event should be processed
-            m_transitionCount = context.getTransitionCount();
+            transitionCount = context.getTransitionCount();
 
             // ensure the event can be accepted (if it's a lifecycle aware event)
             // otherwise always accept it
-            return m_event instanceof LifecycleAwareEvent ? ((LifecycleAwareEvent<S>) m_event).onAccept(context) : true;
+            return event instanceof LifecycleAwareEvent ? ((LifecycleAwareEvent<S>) event).onAccept(context) : true;
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void onProcessed(S                enteredState,
                                 ExecutionContext context)
         {
-            if (m_event instanceof LifecycleAwareEvent)
+            if (event instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_event).onProcessed(enteredState, context);
+                ((LifecycleAwareEvent<S>) event).onProcessed(enteredState, context);
             }
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void onProcessing(S                exitingState,
                                  ExecutionContext context)
         {
-            if (m_event instanceof LifecycleAwareEvent)
+            if (event instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_event).onProcessing(exitingState, context);
+                ((LifecycleAwareEvent<S>) event).onProcessing(exitingState, context);
             }
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void onFailure(S                currentState,
                               ExecutionContext context,
                               Exception        exception)
         {
-            if (m_event instanceof LifecycleAwareEvent)
+            if (event instanceof LifecycleAwareEvent)
             {
-                ((LifecycleAwareEvent<S>) m_event).onFailure(currentState, context, exception);
+                ((LifecycleAwareEvent<S>) event).onFailure(currentState, context, exception);
             }
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public S getDesiredState(S                currentState,
                                  ExecutionContext context)
         {
-            if (context.getTransitionCount() == m_transitionCount)
+            if (context.getTransitionCount() == transitionCount)
             {
-                return m_event.getDesiredState(currentState, context);
+                return event.getDesiredState(currentState, context);
             }
             else
             {
@@ -1586,13 +1597,10 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString()
         {
-            return String.format("SubsequentEvent{%s, @Transition #%d}", m_event, m_transitionCount + 1);
+            return String.format("SubsequentEvent{%s, @Transition #%d}", event, transitionCount + 1);
         }
     }
 }

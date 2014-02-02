@@ -52,15 +52,14 @@ public interface FiniteStateMachine<S extends Enum<S>>
     /**
      * Request the {@link FiniteStateMachine} to process the specified {@link Event}.
      * <p>
-     * Note: There's no guarantee that the {@link Event} will processed because:
+     * There's no guarantee that the {@link Event} will processed because:
      * <ol>
      *    <li>the {@link Transition} to be performed for the {@link Event}
-     *        is invalid as the {@link FiniteStateMachine} is not the required
-     *        starting state.
+     *        is invalid as the {@link FiniteStateMachine} is not the required state.
      *    <li>the {@link FiniteStateMachine} may have been stopped.
+     * </ol>
      *
-     * @param event  the {@link Event} for the {@link FiniteStateMachine} to
-     *               process
+     * @param event  the {@link Event} for the {@link FiniteStateMachine} to process
      */
     public void process(Event<S> event);
 
@@ -68,8 +67,9 @@ public interface FiniteStateMachine<S extends Enum<S>>
     /**
      * Obtains the current state of the {@link FiniteStateMachine}.
      * <p>
-     * Note: After returning the current state there's no guaranteed that the state will be the same, simply
-     * because a {@link Transition} may be executing asynchronously in the background on another thread.
+     * After returning the current state there's no guaranteed that the state will be
+     * the same should another request be made, simply because a {@link Transition}
+     * may be executing asynchronously in the background on another thread.
      *
      * @return  the current state of the {@link FiniteStateMachine}
      */
@@ -79,8 +79,9 @@ public interface FiniteStateMachine<S extends Enum<S>>
     /**
      * Obtains the number of transitions that have occurred in the {@link FiniteStateMachine}.
      * <p>
-     * Note: After returning the count there's no guaranteed that the count will be the same on next request,
-     * simply because a {@link Transition} may be executing asynchronously in the background on another thread.
+     * After returning the count there's no guaranteed that the count will be the same
+     * should another request be made, simply because a {@link Transition} may be
+     * executing asynchronously in the background on another thread.
      *
      * @return  the number of transitions that have occurred in the {@link FiniteStateMachine}
      */
@@ -88,12 +89,27 @@ public interface FiniteStateMachine<S extends Enum<S>>
 
 
     /**
+     * Start the {@link FiniteStateMachine} and enter the initial state.
+     * <p>
+     * Once stopped a {@link FiniteStateMachine} can't be restarted; instead a
+     * new {@link FiniteStateMachine} should be created.
+     *
+     * @return <code>true</code> if the {@link FiniteStateMachine} was started
+     * for the first time, <code>false</code> if it was already started.
+     *
+     * @throws IllegalStateException  if the {@link FiniteStateMachine} has been stopped
+     */
+    public boolean start();
+
+
+    /**
      * Stops the {@link FiniteStateMachine} as soon as possible.
      * <p>
-     * Note: Once stopped a {@link FiniteStateMachine} can't be restarted.  Instead a new {@link FiniteStateMachine}
-     * should be created.
+     * Once stopped a {@link FiniteStateMachine} can't be restarted.
+     * Instead a new {@link FiniteStateMachine} should be created.
      *
-     * @return <code>true</code> if the stop was successful, <code>false</code> it's already stopped.
+     * @return <code>true</code> if the stop was successful, <code>false</code> it's already
+     * stopped or was never started.
      */
     public boolean stop();
 }

@@ -29,10 +29,12 @@ import com.oracle.coherence.common.finitestatemachines.annotations.OnEnterState;
 import com.oracle.coherence.common.finitestatemachines.annotations.OnExitState;
 import com.oracle.coherence.common.finitestatemachines.annotations.OnTransition;
 import com.oracle.coherence.common.finitestatemachines.annotations.Transitions;
+
 import com.oracle.coherence.common.util.ReflectionHelper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -44,6 +46,7 @@ import java.util.Map;
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @param <S>  the type of the state for the {@link AnnotationDrivenModel}
+ * @param <f>  the type of {@link Transitions}
  *
  * @author Brian Oliver
  */
@@ -89,59 +92,67 @@ public class AnnotationDrivenModel<S extends Enum<S>> implements Model<S>
                 mapTransitionActions.put(state, new EnumMap<S, TransitionAction<S>>(clzState));
             }
 
-            // reflect out the defined transitions
-            Transitions annTransitions = clzInstance.getAnnotation(Transitions.class);
+            // determine all of the transitions defined by the class, and the parents.
+            Class<?> clz = clzInstance;
 
-            if (annTransitions != null)
+            while (clz != null)
             {
-                // determine the valid state transitions based on the
-                // @Transitions annotation in the specified class
-                for (com.oracle.coherence.common.finitestatemachines.annotations.Transition annTransition :
-                    annTransitions.value())
+                Transitions annTransitions = clz.getAnnotation(Transitions.class);
+
+                if (annTransitions != null)
                 {
-                    // determine the name of the transition
-                    String sProvidedTransitionName = annTransition.name();
-
-                    // ensure the transition name is null if it wasn't specified
-                    sProvidedTransitionName = sProvidedTransitionName == null
-                                              || sProvidedTransitionName.trim().isEmpty() ? null
-                                                                                          : sProvidedTransitionName;
-
-                    // determine the ending state for the transition
-                    String sStateToName = annTransition.toState();
-                    S      stateTo      = m_model.getState(sStateToName);
-
-                    if (stateTo == null)
+                    // determine the valid state transitions based on the
+                    // @Transitions annotation in the specified class
+                    for (com.oracle.coherence.common.finitestatemachines.annotations.Transition annTransition :
+                        annTransitions.value())
                     {
-                        throw new IllegalArgumentException(String
-                            .format("The %s defined on %s declares a to state %s that is not defined by %s.",
-                                    annTransition, clzInstance, sStateToName, clzState));
-                    }
+                        // determine the name of the transition
+                        String sProvidedTransitionName = annTransition.name();
 
-                    // determine the starting states for the transition
-                    for (String sStateFromName : annTransition.fromStates())
-                    {
-                        // determine the starting states for the transition
-                        S stateFrom = m_model.getState(sStateFromName);
+                        // ensure the transition name is null if it wasn't specified
+                        sProvidedTransitionName = sProvidedTransitionName == null
+                                                  || sProvidedTransitionName.trim().isEmpty() ? null
+                                                                                              : sProvidedTransitionName;
 
-                        if (stateFrom == null)
+                        // determine the ending state for the transition
+                        String sStateToName = annTransition.toState();
+                        S      stateTo      = m_model.getState(sStateToName);
+
+                        if (stateTo == null)
                         {
                             throw new IllegalArgumentException(String
-                                .format("The %s defined on %s declares a from state %s that is not defined by %s.",
-                                        annTransition, clzInstance, sStateFromName, clzState));
+                                .format("The %s defined on %s declares a to state %s that is not defined by %s.",
+                                        annTransition, clzInstance, sStateToName, clzState));
                         }
-                        else
-                        {
-                            // ensure we have a transition name
-                            String sTransitionName = sProvidedTransitionName == null ? String.format("%s to %s",
-                                                                                                     stateFrom.name(),
-                                                                                                     stateTo.name()) : sProvidedTransitionName;
 
-                            // define the transition
-                            mapTransitionNames.get(stateFrom).put(stateTo, sTransitionName);
+                        // determine the starting states for the transition
+                        for (String sStateFromName : annTransition.fromStates())
+                        {
+                            // determine the starting states for the transition
+                            S stateFrom = m_model.getState(sStateFromName);
+
+                            if (stateFrom == null)
+                            {
+                                throw new IllegalArgumentException(String
+                                    .format("The %s defined on %s declares a from state %s that is not defined by %s.",
+                                            annTransition, clzInstance, sStateFromName, clzState));
+                            }
+                            else
+                            {
+                                // ensure we have a transition name
+                                String sTransitionName = sProvidedTransitionName == null ? String.format("%s to %s",
+                                                                                                         stateFrom
+                                                                                                             .name(),
+                                                                                                         stateTo.name()) : sProvidedTransitionName;
+
+                                // define the transition
+                                mapTransitionNames.get(stateFrom).put(stateTo, sTransitionName);
+                            }
                         }
                     }
                 }
+
+                clz = clz.getSuperclass();
             }
 
             // reflect and add state entry, exit and transition actions from
@@ -164,10 +175,18 @@ public class AnnotationDrivenModel<S extends Enum<S>> implements Model<S>
                     }
 
                     // ensure the method has the correct signature for the
-                    ReflectionHelper.assertCompatibleMethod(method, annOnEnterState, Modifier.PUBLIC, Instruction.class, clzState,
-                                                            clzState, Event.class, ExecutionContext.class);
-                    // register the StateEntryAction
-                    m_model.addStateEntryAction(state, new StateEntryActionMethod<S>(instance, method));
+                    if (ReflectionHelper.isCompatibleMethod(method, Modifier.PUBLIC, Instruction.class, clzState,
+                                                            clzState, Event.class, ExecutionContext.class))
+                    {
+                        // register the StateEntryAction
+                        m_model.addStateEntryAction(state, new StateEntryActionMethod<S>(instance, method));
+                    }
+                    else
+                    {
+                        throw new IllegalArgumentException(String
+                            .format("The method %s defined in class %s annotated with %s is not compatible with the required method signature 'Instruction method(State, State, Context<State>);'.",
+                                    method, clzInstance, annOnEnterState));
+                    }
                 }
 
                 // add the StateEntryAction for the method (if annotated)
@@ -186,10 +205,18 @@ public class AnnotationDrivenModel<S extends Enum<S>> implements Model<S>
                     }
 
                     // ensure the method has the correct signature for the
-                    ReflectionHelper.assertCompatibleMethod(method, annOnExitState, Modifier.PUBLIC, Void.TYPE,
-                                                            clzState, Event.class, ExecutionContext.class);
-                    // register the StateExitAction
-                    m_model.addStateExitAction(state, new StateExitActionMethod<S>(instance, method));
+                    if (ReflectionHelper.isCompatibleMethod(method, Modifier.PUBLIC, Void.TYPE, clzState, Event.class,
+                                                            ExecutionContext.class))
+                    {
+                        // register the StateExitAction
+                        m_model.addStateExitAction(state, new StateExitActionMethod<S>(instance, method));
+                    }
+                    else
+                    {
+                        throw new IllegalArgumentException(String
+                            .format("The method %s defined in class %s annotated with %s is not compatible with the required method signature 'void method(State, Context<State>);'.",
+                                    method, clzInstance, annOnExitState));
+                    }
                 }
 
                 // add the TransitionAction for the method (if annotated)
@@ -198,49 +225,57 @@ public class AnnotationDrivenModel<S extends Enum<S>> implements Model<S>
                 if (annOnTransition != null)
                 {
                     // ensure that the method has the correct signature
-                    ReflectionHelper.assertCompatibleMethod(method, annOnTransition, Modifier.PUBLIC, Void.TYPE, String.class, clzState,
-                                                            clzState, Event.class, ExecutionContext.class);
-
-                    TransitionAction<S> action = new TransitionActionMethod<S>(instance, method);
-
-                    // add the action for each of the transitions
-                    for (String sStateFromName : annOnTransition.fromStates())
+                    if (ReflectionHelper.isCompatibleMethod(method, Modifier.PUBLIC, Void.TYPE, String.class, clzState,
+                                                            clzState, Event.class, ExecutionContext.class))
                     {
-                        // determine the starting state for the transition
-                        S stateFrom = m_model.getState(sStateFromName);
+                        TransitionAction<S> action = new TransitionActionMethod<S>(instance, method);
 
-                        if (stateFrom == null)
+                        // add the action for each of the transitions
+                        for (String sStateFromName : annOnTransition.fromStates())
                         {
-                            throw new IllegalArgumentException(String
-                                .format("The %s defined on method %s in %s declares a from state %s that is not defined by %s.",
-                                        annOnTransition, method, clzInstance, sStateFromName, clzState));
-                        }
-                        else
-                        {
-                            for (String sStateToName : annOnTransition.toStates())
+                            // determine the starting state for the transition
+                            S stateFrom = m_model.getState(sStateFromName);
+
+                            if (stateFrom == null)
                             {
-                                // determine the ending state for the transition
-                                S stateTo = m_model.getState(sStateToName);
+                                throw new IllegalArgumentException(String
+                                    .format("The %s defined on method %s in %s declares a from state %s that is not defined by %s.",
+                                            annOnTransition, method, clzInstance, sStateFromName, clzState));
+                            }
+                            else
+                            {
+                                for (String sStateToName : annOnTransition.toStates())
+                                {
+                                    // determine the ending state for the transition
+                                    S stateTo = m_model.getState(sStateToName);
 
-                                if (stateTo == null)
-                                {
-                                    throw new IllegalArgumentException(String
-                                        .format("The %s defined on method %s in %s declares a from state %s that is not defined by %s.",
-                                                annOnTransition, method, clzInstance, sStateToName, clzState));
-                                }
-                                else if (mapTransitionNames.get(stateFrom).containsKey(stateTo))
-                                {
-                                    // add the transition action to the transition
-                                    mapTransitionActions.get(stateFrom).put(stateTo, action);
-                                }
-                                else
-                                {
-                                    throw new IllegalArgumentException(String
-                                        .format("The %s defined on method %s in %s specifies a transition from %s to %s that is not defined by the Finite State Machine.",
-                                                annOnTransition, method, clzInstance, stateFrom, stateTo));
+                                    if (stateTo == null)
+                                    {
+                                        throw new IllegalArgumentException(String
+                                            .format("The %s defined on method %s in %s declares a from state %s that is not defined by %s.",
+                                                    annOnTransition, method, clzInstance, sStateToName, clzState));
+                                    }
+                                    else if (mapTransitionNames.get(stateFrom).containsKey(stateTo))
+                                    {
+                                        // add the transition action to the transition
+                                        mapTransitionActions.get(stateFrom).put(stateTo, action);
+                                    }
+                                    else
+                                    {
+                                        throw new IllegalArgumentException(String
+                                            .format("The %s defined on method %s in %s specifies a transition from %s to %s that is not defined by the Finite State Machine.",
+                                                    annOnTransition, method, clzInstance, stateFrom, stateTo));
+                                    }
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                        throw new IllegalArgumentException(String
+                            .format("The method %s defined in class %s annotated with %s is not compatible with the required method signature 'void method(String, State, State, Event<State>, Context<State>);'.",
+                                    method, clzInstance, annOnTransition));
+
                     }
                 }
             }

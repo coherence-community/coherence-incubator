@@ -55,4 +55,17 @@ public interface ExecutionContext
      *          {@link FiniteStateMachine}
      */
     public long getTransitionCount();
+
+
+    /**
+     * Determines if there is a potential backlog of pending events
+     * (or waiting threads) for the {@link FiniteStateMachine} that
+     * may cause transitions.
+     *
+     * @return  <code>true</code> if there is a backlog of pending events
+     *          (of threads) that may cause transitions, <code>false</code>
+     *          if there are no pending events (or if the {@link FiniteStateMachine}
+     *          is stopped).
+     */
+    public boolean hasPendingEvents();
 }

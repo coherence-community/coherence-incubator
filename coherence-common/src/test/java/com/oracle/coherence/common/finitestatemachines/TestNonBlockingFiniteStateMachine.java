@@ -53,7 +53,7 @@ import static org.hamcrest.core.Is.is;
 public class TestNonBlockingFiniteStateMachine
 {
     /**
-     * A simple test of transitions for a {@link LightSwitch}.
+     * A simple test of transitions for a {@link Light}.
      */
     @Test
     public void testSimpleLightSwitchMachine()

@@ -8,6 +8,32 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
+*   Jonathan Knight, Brian Oliver
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   No Changes
+
+<h4>coherence-common</h4>
+
+*   [COHINC-85](http://java.net/jira/browse/COHINC-85): Improved Annotation-based
+FiniteStateMachine Models to allow for @Transitions defined by super-classes.
+
+*   [COHINC-87](http://java.net/jira/browse/COHINC-87): Introduced the ability to
+control whether a NonBlockingFiniteStateMachine autostarts (aka: transitions)
+to its initial state.
+
+*   [COHINC-89](http://java.net/jira/browse/COHINC-89): Refactored to use
+    new Coherence 12.1.2-0-1 serializable configuration classes and removed
+    internally defined classes.
+
+
+--------------------------------------------------------------------------------
+
+<h3>Version: 12.1.0 @ 2013-12-05 15:16</h3>
+
+<h4>Source and Documentation Contributors</h4>
+
 *   Tim Middleton, Brian Oliver
 
 <h4>Global and Cross-Module Changes</h4>
