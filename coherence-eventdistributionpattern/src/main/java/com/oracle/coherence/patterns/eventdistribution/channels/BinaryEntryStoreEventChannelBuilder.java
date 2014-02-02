@@ -26,11 +26,10 @@
 package com.oracle.coherence.patterns.eventdistribution.channels;
 
 
-import com.oracle.coherence.common.expression.SerializableExpressionHelper;
-import com.oracle.coherence.common.expression.SerializableParameterMacroExpression;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.ParameterMacroExpression;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.config.annotation.Injectable;
 import com.tangosol.config.expression.Expression;
@@ -73,7 +72,7 @@ public class BinaryEntryStoreEventChannelBuilder extends AbstractEventChannelBui
      */
     public BinaryEntryStoreEventChannelBuilder()
     {
-        this.contextCacheName = new SerializableParameterMacroExpression<String>("{cache-name}", String.class);
+        this.contextCacheName = new ParameterMacroExpression<String>("{cache-name}", String.class);
         this.builder          = null;
     }
 
@@ -98,7 +97,7 @@ public class BinaryEntryStoreEventChannelBuilder extends AbstractEventChannelBui
     @Injectable
     public void setContextCacheName(Expression contextCacheName)
     {
-        this.contextCacheName = SerializableExpressionHelper.ensureSerializable(contextCacheName);
+        this.contextCacheName = contextCacheName;
     }
 
 
@@ -112,7 +111,6 @@ public class BinaryEntryStoreEventChannelBuilder extends AbstractEventChannelBui
     {
         this.builder = builder;
     }
-
 
 
     /**

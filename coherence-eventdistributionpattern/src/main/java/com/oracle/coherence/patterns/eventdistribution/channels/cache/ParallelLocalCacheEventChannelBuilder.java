@@ -25,14 +25,13 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
-import com.oracle.coherence.common.expression.SerializableExpressionHelper;
-import com.oracle.coherence.common.expression.SerializableLiteralExpression;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.AbstractEventChannelBuilder;
 import com.tangosol.coherence.config.ParameterList;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.config.annotation.Injectable;
 import com.tangosol.config.expression.Expression;
+import com.tangosol.config.expression.LiteralExpression;
 import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
@@ -84,7 +83,7 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
     {
         super();
 
-        invocationServiceName = new SerializableLiteralExpression<String>(INVOCATION_SVC);
+        invocationServiceName = new LiteralExpression<String>(INVOCATION_SVC);
     }
 
 
@@ -132,7 +131,7 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
     @Injectable
     public void setTargetCacheName(Expression targetCacheName)
     {
-        this.targetCacheName = SerializableExpressionHelper.ensureSerializable(targetCacheName);
+        this.targetCacheName = targetCacheName;
     }
 
 
@@ -178,8 +177,7 @@ public class ParallelLocalCacheEventChannelBuilder extends AbstractEventChannelB
     @Injectable("remote-invocation-service-scheme")
     public void setInvocationServiceName(Expression serviceName)
     {
-        invocationServiceName = SerializableExpressionHelper
-                .ensureSerializable(serviceName);
+        invocationServiceName = serviceName;
     }
 
 

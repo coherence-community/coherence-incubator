@@ -25,9 +25,6 @@
 
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
-import com.oracle.coherence.common.expression.SerializableExpressionHelper;
-import com.oracle.coherence.common.expression.SerializableParameter;
-
 import com.tangosol.coherence.config.CacheConfig;
 import com.tangosol.coherence.config.CacheMapping;
 import com.tangosol.coherence.config.CacheMappingRegistry;
@@ -78,13 +75,13 @@ import java.util.Map;
  * @author Brian Oliver
  */
 @XmlSimpleName("init-param")
-public class InitParamProcessor implements ElementProcessor<SerializableParameter>
+public class InitParamProcessor implements ElementProcessor<Parameter>
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    public SerializableParameter process(ProcessingContext context,
+    public Parameter process(ProcessingContext context,
                                          XmlElement        element) throws ConfigurationException
     {
         // when param-name is undefined, use a newly generated UUID
@@ -132,7 +129,7 @@ public class InitParamProcessor implements ElementProcessor<SerializableParamete
             }
         }
 
-        return new SerializableParameter(sName, clzType, SerializableExpressionHelper.ensureSerializable(exprValue));
+        return new Parameter(sName, clzType, exprValue);
     }
 
 

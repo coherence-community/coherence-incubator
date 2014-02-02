@@ -25,7 +25,7 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
-import com.oracle.coherence.common.builders.SerializableNamedCacheSerializerBuilder;
+import com.oracle.coherence.common.builders.NamedCacheSerializerBuilder;
 
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
 import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
@@ -33,10 +33,6 @@ import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
 import com.oracle.coherence.common.events.CacheEvent;
 import com.oracle.coherence.common.events.EntryRemovedEvent;
 import com.oracle.coherence.common.events.Event;
-
-import com.oracle.coherence.common.expression.SerializableParameter;
-import com.oracle.coherence.common.expression.SerializableResolvableParameterList;
-import com.oracle.coherence.common.expression.SerializableScopedParameterResolver;
 
 import com.oracle.coherence.common.resourcing.AbstractDeferredSingletonResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProvider;
@@ -58,6 +54,9 @@ import com.tangosol.coherence.config.CacheMapping;
 import com.tangosol.coherence.config.ResolvableParameterList;
 
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
+import com.tangosol.config.expression.Parameter;
+import com.tangosol.config.expression.ScopedParameterResolver;
 
 import com.tangosol.io.Serializer;
 
@@ -158,23 +157,20 @@ public class PublishingCacheStore implements BinaryEntryStore
                 CacheMapping cacheMapping = eccf.getCacheConfig().getCacheMappingRegistry().findCacheMapping(cacheName);
 
                 // NOTE: This temporary code until the core Coherence resolver/builder classes are serializable
-                ResolvableParameterList resolvableParams =
-                    (ResolvableParameterList) cacheMapping.getParameterResolver();
-                SerializableResolvableParameterList serializableParams =
-                    new SerializableResolvableParameterList(resolvableParams);
+                com.tangosol.coherence.config.ResolvableParameterList resolvableParams =
+                    (com.tangosol.coherence.config.ResolvableParameterList) cacheMapping.getParameterResolver();
+                ResolvableParameterList serializableParams = new ResolvableParameterList(resolvableParams);
 
                 // construct the new parameter provider for the cache
-                final SerializableScopedParameterResolver resolver =
-                    new SerializableScopedParameterResolver(serializableParams);
+                final ScopedParameterResolver resolver = new ScopedParameterResolver(serializableParams);
 
                 // add the standard coherence parameters to the parameter provider
-                resolver.add(new SerializableParameter("cache-name", cacheName));
-                resolver.add(new SerializableParameter("site-name", localClusterMetaInfo.getSiteName()));
-                resolver.add(new SerializableParameter("cluster-name", localClusterMetaInfo.getClusterName()));
+                resolver.add(new Parameter("cache-name", cacheName));
+                resolver.add(new Parameter("site-name", localClusterMetaInfo.getSiteName()));
+                resolver.add(new Parameter("cluster-name", localClusterMetaInfo.getClusterName()));
 
                 // create a serializer builder for the cache that we can use when distributing events
-                final ParameterizedBuilder<Serializer> serializerBuilder =
-                    new SerializableNamedCacheSerializerBuilder(cacheName);
+                final ParameterizedBuilder<Serializer> serializerBuilder = new NamedCacheSerializerBuilder(cacheName);
 
                 // create the EventDistributors for the Cache
                 ArrayList<Pair<EventDistributor, EventDistributorTemplate>> distributors =
@@ -199,9 +195,7 @@ public class PublishingCacheStore implements BinaryEntryStore
                     template.setSerializerBuilder(serializerBuilder);
                 }
 
-                EventDistributor distributor = template.realize(resolver,
-                                                                null,
-                                                                new SerializableResolvableParameterList());
+                EventDistributor distributor = template.realize(resolver, null, new ResolvableParameterList());
 
                 distributors.add(new Pair<EventDistributor, EventDistributorTemplate>(distributor, template));
 

@@ -25,23 +25,21 @@
 
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
-import com.oracle.coherence.common.expression.SerializableExpressionHelper;
-import com.oracle.coherence.common.expression.SerializableParameter;
-import com.oracle.coherence.common.expression.SerializableParameterMacroExpression;
-import com.oracle.coherence.common.expression.SerializableScopedParameterResolver;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 
 import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.ParameterMacroExpression;
 
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 
 import com.tangosol.config.annotation.Injectable;
 
 import com.tangosol.config.expression.Expression;
+import com.tangosol.config.expression.Parameter;
 import com.tangosol.config.expression.ParameterResolver;
+import com.tangosol.config.expression.ScopedParameterResolver;
 
 import com.tangosol.io.Serializer;
 
@@ -102,8 +100,8 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
      */
     public EventDistributorTemplate()
     {
-        m_exprDistributorName = new SerializableParameterMacroExpression<String>("{cache-name}", String.class);
-        m_exprDistributorExternalName = new SerializableParameterMacroExpression<String>("{cache-name}", String.class);
+        m_exprDistributorName = new ParameterMacroExpression<String>("{cache-name}", String.class);
+        m_exprDistributorExternalName = new ParameterMacroExpression<String>("{cache-name}", String.class);
         m_listChannelControllerDependenciesTemplates = new ArrayList<EventChannelControllerDependenciesTemplate>();
         m_bldrSerializer                             = null;
     }
@@ -129,7 +127,7 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
     @Injectable
     public void setDistributorName(Expression expression)
     {
-        m_exprDistributorName = SerializableExpressionHelper.ensureSerializable(expression);
+        m_exprDistributorName = expression;
     }
 
 
@@ -141,8 +139,7 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
     @Injectable
     public void setDistributorExternalName(Expression expression)
     {
-        m_exprDistributorExternalName = SerializableExpressionHelper.ensureSerializable(expression);
-        ;
+        m_exprDistributorExternalName = expression;
     }
 
 
@@ -245,12 +242,10 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
         GuardSupport.heartbeat();
 
         // establish the event channels for the event distributor using the event channel controller dependencies
-        SerializableScopedParameterResolver scopedResolver = new SerializableScopedParameterResolver(parameterResolver);
+        ScopedParameterResolver scopedResolver = new ScopedParameterResolver(parameterResolver);
 
-        scopedResolver.add(new SerializableParameter("distributor-name",
-                                                     distributor.getIdentifier().getSymbolicName()));
-        scopedResolver.add(new SerializableParameter("distributor-external-name",
-                                                     distributor.getIdentifier().getExternalName()));
+        scopedResolver.add(new Parameter("distributor-name", distributor.getIdentifier().getSymbolicName()));
+        scopedResolver.add(new Parameter("distributor-external-name", distributor.getIdentifier().getExternalName()));
 
         for (EventChannelControllerDependenciesTemplate template : m_listChannelControllerDependenciesTemplates)
         {

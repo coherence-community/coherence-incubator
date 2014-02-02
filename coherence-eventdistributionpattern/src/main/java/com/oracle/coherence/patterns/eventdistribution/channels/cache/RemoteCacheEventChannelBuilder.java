@@ -28,7 +28,6 @@ package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
 
 import com.oracle.coherence.common.events.EntryEvent;
-import com.oracle.coherence.common.expression.SerializableExpressionHelper;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.channels.AbstractInterClusterEventChannelBuilder;
@@ -101,7 +100,7 @@ public class RemoteCacheEventChannelBuilder extends AbstractInterClusterEventCha
     @Injectable
     public void setTargetCacheName(Expression<String> targetCacheName)
     {
-        this.targetCacheName = SerializableExpressionHelper.ensureSerializable(targetCacheName);
+        this.targetCacheName = targetCacheName;
     }
 
 

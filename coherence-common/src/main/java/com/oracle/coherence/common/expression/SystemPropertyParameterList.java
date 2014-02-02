@@ -132,7 +132,7 @@ public class SystemPropertyParameterList implements ParameterList, Externalizabl
             {
                 String propertyName = propertyNames.nextElement();
 
-                return new SerializableParameter(propertyName, System.getProperty(propertyName));
+                return new Parameter(propertyName, System.getProperty(propertyName));
             }
 
             /**

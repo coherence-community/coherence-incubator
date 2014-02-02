@@ -27,10 +27,6 @@
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
 
-import com.oracle.coherence.common.expression.SerializableExpressionHelper;
-import com.oracle.coherence.common.expression.SerializableParameter;
-import com.oracle.coherence.common.expression.SerializableParameterMacroExpression;
-import com.oracle.coherence.common.expression.SerializableScopedParameterResolver;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
@@ -41,10 +37,13 @@ import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController.DefaultDependencies;
 import com.tangosol.coherence.config.ParameterList;
+import com.tangosol.coherence.config.ParameterMacroExpression;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.config.annotation.Injectable;
 import com.tangosol.config.expression.Expression;
+import com.tangosol.config.expression.Parameter;
 import com.tangosol.config.expression.ParameterResolver;
+import com.tangosol.config.expression.ScopedParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PortableObject;
 
@@ -114,8 +113,7 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
      */
     public EventChannelControllerDependenciesTemplate()
     {
-        this.externalNameExpression =
-            new SerializableParameterMacroExpression("{site-name}:{cluster-name}:{distributor-name}:{channel-name}",
+        this.externalNameExpression = new ParameterMacroExpression("{site-name}:{cluster-name}:{distributor-name}:{channel-name}",
                                                      String.class);
         this.startingMode = AbstractEventChannelController.DefaultDependencies.STARTING_MODE_DEFAULT;
         this.batchDistributionDelayMS =
@@ -146,8 +144,7 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
     @Injectable("channel-name")
     public void setEventChannelNameExpression(Expression channelNameExpression)
     {
-        this.eventChannelNameExpression = SerializableExpressionHelper.ensureSerializable(
-                channelNameExpression);
+        this.eventChannelNameExpression = channelNameExpression;
     }
 
 
@@ -170,8 +167,7 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
     @Injectable("channel-external-name")
     public void setExternalNameExpression(Expression externalName)
     {
-        this.externalNameExpression = SerializableExpressionHelper.ensureSerializable(
-                externalName);
+        this.externalNameExpression = externalName;
     }
 
 
@@ -364,13 +360,13 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
     {
         String                              channelName    = getChannelNameExpression().evaluate(parameterResolver);
 
-        SerializableScopedParameterResolver scopedResolver = new SerializableScopedParameterResolver(parameterResolver);
+        ScopedParameterResolver scopedResolver = new ScopedParameterResolver(parameterResolver);
 
-        scopedResolver.add(new SerializableParameter("channel-name", channelName));
+        scopedResolver.add(new Parameter("channel-name", channelName));
 
         String externalName = getExternalNameExpression().evaluate(scopedResolver);
 
-        scopedResolver.add(new SerializableParameter("channel-external-name", externalName));
+        scopedResolver.add(new Parameter("channel-external-name", externalName));
 
         return new DefaultDependencies(channelName,
                                        externalName,

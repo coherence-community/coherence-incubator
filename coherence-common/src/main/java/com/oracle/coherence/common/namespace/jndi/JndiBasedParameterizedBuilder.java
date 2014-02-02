@@ -27,13 +27,12 @@
 package com.oracle.coherence.common.namespace.jndi;
 
 
-import com.oracle.coherence.common.expression.SerializableExpressionHelper;
-import com.oracle.coherence.common.expression.SerializableLiteralExpression;
 import com.tangosol.coherence.config.ParameterList;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder.ReflectionSupport;
 import com.tangosol.config.annotation.Injectable;
 import com.tangosol.config.expression.Expression;
+import com.tangosol.config.expression.LiteralExpression;
 import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
@@ -83,15 +82,14 @@ public class JndiBasedParameterizedBuilder
      */
     public JndiBasedParameterizedBuilder()
     {
-        exprResourceName = new SerializableLiteralExpression<String>("");
+        exprResourceName = new LiteralExpression<String>("");
         params = new Hashtable<String, Object>();
     }
 
     @Injectable
     public void setResourceName(Expression exprResourceName)
     {
-        this.exprResourceName = SerializableExpressionHelper
-                .ensureSerializable(exprResourceName);
+        this.exprResourceName = exprResourceName;
     }
 
     public void setParams(Hashtable<String, Object> params)

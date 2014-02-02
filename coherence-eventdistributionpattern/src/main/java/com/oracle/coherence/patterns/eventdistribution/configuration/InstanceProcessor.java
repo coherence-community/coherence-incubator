@@ -27,7 +27,7 @@
 package com.oracle.coherence.patterns.eventdistribution.configuration;
 
 
-import com.oracle.coherence.common.builders.SerializableInstanceBuilder;
+import com.tangosol.coherence.config.builder.InstanceBuilder;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.coherence.config.builder.StaticFactoryInstanceBuilder;
 import com.tangosol.config.ConfigurationException;
@@ -100,7 +100,7 @@ public class InstanceProcessor implements ElementProcessor<ParameterizedBuilder<
                                                      "class-factory-name").getName()) == null)
             {
                 // configure a regular InstanceBuilder based on the <instance> declaration
-                builder = context.inject(new SerializableInstanceBuilder<Object>(), element);
+                builder = context.inject(new InstanceBuilder<Object>(), element);
             }
             else
             {
