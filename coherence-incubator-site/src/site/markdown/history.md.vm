@@ -27,6 +27,11 @@ to its initial state.
     new Coherence 12.1.2-0-1 serializable configuration classes and removed
     internally defined classes.
 
+<h4>coherence-commandpattern</h4>
+
+*   [COHINC-80](http://java.net/jira/browse/COHINC-80): Fixed methods in CommandExecutor
+    annotated for use with the AnnotationDrivenModel so that they have the correct signature.
+
 
 --------------------------------------------------------------------------------
 
@@ -51,11 +56,6 @@ to its initial state.
 <h4>coherence-common</h4>
 
 *   No Changes
-
-<h4>coherence-commandpattern</h4>
-
-*   [COHINC-80](http://java.net/jira/browse/COHINC-80): Fixed methods in CommandExecutor annotated for use
-    with the AnnotationDrivenModel so that they have the correct signature.
 
 <h4>coherence-commandpattern-examples</h4>
 
