@@ -12,16 +12,16 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded to use Oracle Tools 1.2.2-SNAPSHOT
+*   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded to use Oracle Tools 1.2.2
 
 <h4>coherence-common</h4>
 
 *   [COHINC-85](http://java.net/jira/browse/COHINC-85): Improved Annotation-based
-FiniteStateMachine Models to allow for @Transitions defined by super-classes.
+    FiniteStateMachine Models to allow for @Transitions defined by super-classes.
 
 *   [COHINC-87](http://java.net/jira/browse/COHINC-87): Introduced the ability to
-control whether a NonBlockingFiniteStateMachine autostarts (aka: transitions)
-to its initial state.
+    control whether a NonBlockingFiniteStateMachine autostarts (aka: transitions)
+    to its initial state.
 
 *   [COHINC-89](http://java.net/jira/browse/COHINC-89): Refactored to use
     new Coherence 12.1.2-0-1 serializable configuration classes and removed
