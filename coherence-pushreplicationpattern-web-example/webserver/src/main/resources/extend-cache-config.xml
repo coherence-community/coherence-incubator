@@ -16,7 +16,7 @@
         <tcp-initiator>
           <remote-addresses>
             <socket-address>
-              <address>localhost</address>
+              <address>127.0.0.1</address>
               <port system-property="client.port">-1</port>
             </socket-address>
           </remote-addresses>
@@ -34,7 +34,7 @@
         <tcp-acceptor>
           <reuse-address>true</reuse-address>
           <local-address>
-            <address>localhost</address>
+            <address>127.0.0.1</address>
             <port system-property="bind.port">-1</port>
           </local-address>
         </tcp-acceptor>

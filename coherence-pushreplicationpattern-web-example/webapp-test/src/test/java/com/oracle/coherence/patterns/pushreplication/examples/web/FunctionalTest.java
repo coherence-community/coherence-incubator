@@ -3,14 +3,13 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,10 +29,12 @@ import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebTable;
-
 import com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer;
-
-import com.oracle.tools.deferred.*;
+import com.oracle.tools.deferred.Deferred;
+import com.oracle.tools.deferred.DeferredAssert;
+import com.oracle.tools.deferred.DeferredHelper;
+import com.oracle.tools.deferred.InstanceUnavailableException;
+import com.oracle.tools.deferred.UnresolvableInstanceException;
 import com.oracle.tools.runtime.PropertiesBuilder;
 import com.oracle.tools.runtime.coherence.Cluster;
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
@@ -41,29 +42,34 @@ import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.SimpleJavaApplication;
 import com.oracle.tools.runtime.java.SimpleJavaApplicationSchema;
 import com.oracle.tools.runtime.network.AvailablePortIterator;
-
 import org.hamcrest.Matchers;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-
 import java.util.concurrent.TimeUnit;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Test that the CoherenceWeb Examples Work
  */
 public class FunctionalTest
-    {
+{
+    private static Cluster               cluster1;
+    private static Cluster               cluster2;
+    private static SimpleJavaApplication site1;
+    private static int                   site1Port;
+    private static SimpleJavaApplication site2;
+    private static int                   site2Port;
+
+
     /**
      * Setup the test including cache and web servers
      */
     @BeforeClass
-    public static void setup()
-            throws Exception
-        {
+    public static void setup() throws Exception
+    {
         // Staring a process with oracle tools from within an oracle tools process appears to be problematic
         // we'll parse the config and start the processes here.
         AvailablePortIterator portIter      = new AvailablePortIterator();
@@ -124,19 +130,21 @@ public class FunctionalTest
 
         cluster2 = WebServer.startCacheServer(cache2Props);
         site2    = appBuilder.realize(site2schema, "Site2-Web", console);
-        }
+    }
+
 
     /**
      * Shutdown the cache and web servers
      */
     @AfterClass
     public static void tearDown()
-        {
+    {
         cluster1.destroy();
         cluster2.destroy();
         site1.destroy();
         site2.destroy();
-        }
+    }
+
 
     /**
      * Test Session Replication by connecting to each of the web servers and validating that session data stored in
@@ -145,15 +153,14 @@ public class FunctionalTest
      * @throws Exception
      */
     @Test
-    public void testSessionReplication()
-            throws Exception
-        {
+    public void testSessionReplication() throws Exception
+    {
         try
-            {
-            final WebConversation wc       = new WebConversation();
-
-            final String          site1url = "http://localhost:" + site1Port + "/sessionAccess.jsp";
-            final String          site2url = "http://localhost:" + site2Port + "/sessionAccess.jsp";
+        {
+            final WebConversation wc        = new WebConversation();
+            final String          localhost = com.oracle.tools.runtime.network.Constants.getLocalHost();
+            final String          site1url  = "http://" + localhost + ":" + site1Port + "/sessionAccess.jsp";
+            final String          site2url  = "http://" + localhost + ":" + site2Port + "/sessionAccess.jsp";
 
             // Make initial request to siteA and add a value to the session
             WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc, site1url), 60, TimeUnit.SECONDS);
@@ -171,8 +178,11 @@ public class FunctionalTest
             assertEquals("value", "B", table.getCellAsText(1, 1));
 
             // Now make a request to the siteB, validate our session data is there and add another value
-            DeferredAssert.assertThat("First set of session variables", new DeferredRowCount(wc, site2url),
-                                      Matchers.equalTo(2), 60, TimeUnit.SECONDS);
+            DeferredAssert.assertThat("First set of session variables",
+                                      new DeferredRowCount(wc, site2url),
+                                      Matchers.equalTo(2),
+                                      60,
+                                      TimeUnit.SECONDS);
 
             response = wc.getResponse(site2url);
             table    = response.getTableWithID("HttpSessionAttributes");
@@ -195,8 +205,11 @@ public class FunctionalTest
             assertEquals("value2", "D", table.getCellAsText(2, 1));
 
             // Now go back to the original site and make sure everything replicated properly
-            DeferredAssert.assertThat("First set of session variables", new DeferredRowCount(wc, site1url),
-                                      Matchers.equalTo(3), 60, TimeUnit.SECONDS);
+            DeferredAssert.assertThat("First set of session variables",
+                                      new DeferredRowCount(wc, site1url),
+                                      Matchers.equalTo(3),
+                                      60,
+                                      TimeUnit.SECONDS);
 
             response = wc.getResponse(site1url);
             table    = response.getTableWithID("HttpSessionAttributes");
@@ -207,22 +220,26 @@ public class FunctionalTest
             assertEquals("value2", "D", table.getCellAsText(2, 1));
 
             System.out.println("*** Asserted both sites have the same session data shutting down the cluster!");
-            }
+        }
         catch (Exception e)
-            {
+        {
             e.printStackTrace();
 
             throw e;
-            }
         }
+    }
+
 
     /**
      * Note that the DeferredRowCount is necessary to take into account that there will be some lag required for the
      * session data to replicate between sites
      */
-    private class DeferredRowCount
-            implements Deferred<Integer>
-        {
+    private class DeferredRowCount implements Deferred<Integer>
+    {
+        private WebConversation wc;
+        private String          request;
+
+
         /**
          * Constructs a Deferred RowCount
          *
@@ -230,11 +247,13 @@ public class FunctionalTest
          * @param wc      Handle to the web conversation
          * @param request request to make over the conversation
          */
-        public DeferredRowCount(WebConversation wc, String request)
-            {
+        public DeferredRowCount(WebConversation wc,
+                                String          request)
+        {
             this.wc      = wc;
             this.request = request;
-            }
+        }
+
 
         /**
          * Return the deferred row count value.
@@ -244,45 +263,46 @@ public class FunctionalTest
          * @throws UnresolvableInstanceException, InstanceUnavailableException
          */
         @Override
-        public Integer get()
-                throws UnresolvableInstanceException, InstanceUnavailableException
-            {
+        public Integer get() throws UnresolvableInstanceException, InstanceUnavailableException
+        {
             try
-                {
+            {
                 WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc, request));
                 WebTable    table    = response.getTableWithID("HttpSessionAttributes");
 
                 return table.getRowCount();
-                }
+            }
             catch (Exception e)
-                {
+            {
                 System.out.println("Error getting rowcount for " + request + " - " + "HttpSessionAttributes");
                 e.printStackTrace();
 
                 throw new InstanceUnavailableException(this, e);
-                }
             }
+        }
+
 
         /**
          * {@inheritDoc}
          */
         @Override
         public Class<Integer> getDeferredClass()
-            {
+        {
             return Integer.class;
-            }
-
-        private WebConversation wc;
-        private String          request;
         }
+    }
+
 
     /**
      * Deferred WebResponse is useful for getting resources from a test environment where it may take time for the
      * resources to be available
      */
-    private class DeferredWebResponse
-            implements Deferred<WebResponse>
-        {
+    private class DeferredWebResponse implements Deferred<WebResponse>
+    {
+        private WebConversation wc;
+        private String          request;
+
+
         /**
          * Construct a DeferredWebResponse
          *
@@ -290,11 +310,13 @@ public class FunctionalTest
          * @param wc      Handle to the web conversation
          * @param request Request to make over the web conversation
          */
-        public DeferredWebResponse(WebConversation wc, String request)
-            {
+        public DeferredWebResponse(WebConversation wc,
+                                   String          request)
+        {
             this.wc      = wc;
             this.request = request;
-            }
+        }
+
 
         /**
          * Return the WebResponse from the Deferred.
@@ -302,18 +324,18 @@ public class FunctionalTest
          * @return WebResponse from the Deferred.
          */
         @Override
-        public WebResponse get()
-                throws UnresolvableInstanceException, InstanceUnavailableException
-            {
+        public WebResponse get() throws UnresolvableInstanceException, InstanceUnavailableException
+        {
             try
-                {
+            {
                 return wc.getResponse(request);
-                }
-            catch (Exception e)
-                {
-                throw new InstanceUnavailableException(this, e);
-                }
             }
+            catch (Exception e)
+            {
+                throw new InstanceUnavailableException(this, e);
+            }
+        }
+
 
         /**
          * Method description
@@ -322,18 +344,8 @@ public class FunctionalTest
          */
         @Override
         public Class<WebResponse> getDeferredClass()
-            {
+        {
             return WebResponse.class;
-            }
-
-        private WebConversation wc;
-        private String          request;
         }
-
-    private static Cluster               cluster1;
-    private static Cluster               cluster2;
-    private static SimpleJavaApplication site1;
-    private static int                   site1Port;
-    private static SimpleJavaApplication site2;
-    private static int                   site2Port;
     }
+}
