@@ -28,7 +28,7 @@
         <dependency>
             <groupId>com.oracle.coherence.incubator</groupId>
             <artifactId>coherence-common</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
