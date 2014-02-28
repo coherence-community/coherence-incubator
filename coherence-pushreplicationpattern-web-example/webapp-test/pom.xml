@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.oracle.coherence.incubator</groupId>
             <artifactId>webserver</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 

@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.oracle.coherence.incubator</groupId>
             <artifactId>webserver</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
@@ -67,7 +67,7 @@
                                 <artifactItem>
                                     <groupId>com.oracle.coherence.incubator</groupId>
                                     <artifactId>webapp</artifactId>
-                                    <version>${project.parent.version}</version>
+                                    <version>${project.version}</version>
                                     <type>war</type>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                     <destFileName>${project.artifactId}-${project.version}.jar</destFileName>
@@ -88,7 +88,7 @@
                             <mainClass>com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer</mainClass>
                         </manifest>
                         <manifestEntries>
-                            <Version>${project.parent.version}</Version>
+                            <Version>${project.version}</Version>
                         </manifestEntries>
                     </archive>
                 </configuration>

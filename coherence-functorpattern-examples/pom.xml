@@ -26,19 +26,19 @@
         <dependency>
             <groupId>com.oracle.coherence.incubator</groupId>
             <artifactId>coherence-functorpattern</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.oracle.coherence.incubator</groupId>
             <artifactId>coherence-commandpattern</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.oracle.coherence.incubator</groupId>
             <artifactId>coherence-common</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
@@ -98,7 +98,7 @@
                             <mainClass>com.oracle.coherence.common.applications.Runner</mainClass>
                         </manifest>
                         <manifestEntries>
-                            <Version>${project.parent.version}</Version>
+                            <Version>${project.version}</Version>
                         </manifestEntries>
                     </archive>
                 </configuration>

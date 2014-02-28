@@ -14,6 +14,13 @@ reverse chronological order.
 
 *   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded to use Oracle Tools 1.2.2
 
+*   [COHINC-92](http://java.net/jira/browse/COHINC-92): Upgraded Maven Plugins.
+
+<h4>coherence-incubator-all</h4>
+
+*   [COHINC-90](http://java.net/jira/browse/COHINC-90): (re)Introduced coherence-incubator-all
+    distribution that contains all of the Incubator projects, as a single artifact.
+
 <h4>coherence-common</h4>
 
 *   [COHINC-85](http://java.net/jira/browse/COHINC-85): Improved Annotation-based
