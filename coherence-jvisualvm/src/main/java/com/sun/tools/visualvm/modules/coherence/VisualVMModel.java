@@ -259,8 +259,8 @@ public class VisualVMModel
     private static final String[] HTTP_SESSION_LABELS = new String[] {Localization.getLocalText("LBL_application_id"),
                                                                       Localization.getLocalText("LBL_platform"),
                                                                       Localization.getLocalText("LBL_session_timeout"),
-                                                                      Localization.getLocalText("LBL_session_count"),
-                                                                      Localization.getLocalText("LBL_overflow_count"),
+                                                                      Localization.getLocalText("LBL_session_cache_name"),
+                                                                      Localization.getLocalText("LBL_overflow_cache_name"),
                                                                       Localization
                                                                           .getLocalText("LBL_avge_session_size"),
                                                                       Localization
@@ -496,8 +496,8 @@ public class VisualVMModel
                             {
                                 // there will only be one cluster entry
                                 String sCoherenceVersion =
-                                    entry.getValue().getColumn(ClusterData.VERSION).toString().replaceFirst(" .*$",
-                                                                                                            "");
+                                        entry.getValue().getColumn(ClusterData.VERSION).toString().replaceFirst(" .*$", "")
+                                                .replaceFirst("-SNAPSHOT.*$","").replaceAll("-",".");
                                 int nVersion = 0;
 
                                 if (sCoherenceVersion.startsWith("3.5"))

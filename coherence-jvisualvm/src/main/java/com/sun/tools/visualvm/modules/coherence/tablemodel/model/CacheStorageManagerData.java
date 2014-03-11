@@ -148,14 +148,22 @@ public class CacheStorageManagerData extends AbstractData
                                    (Integer) server.getAttribute(objName, "LocksPending"));
                     data.setColumn(CacheStorageManagerData.LISTENER_REGISTRATIONS,
                                    (Long) server.getAttribute(objName, "ListenerRegistrations"));
-                    data.setColumn(CacheStorageManagerData.MAX_QUERY_DURATION,
-                                   (Long) server.getAttribute(objName, "MaxQueryDurationMillis"));
-                    data.setColumn(CacheStorageManagerData.MAX_QUERY_DESCRIPTION,
-                                   (String) server.getAttribute(objName, "MaxQueryDescription"));
-                    data.setColumn(CacheStorageManagerData.NON_OPTIMIZED_QUERY_AVG,
-                                   (Long) server.getAttribute(objName, "NonOptimizedQueryAverageMillis"));
-                    data.setColumn(CacheStorageManagerData.OPTIMIZED_QUERY_AVG,
-                                   (Long) server.getAttribute(objName, "OptimizedQueryAverageMillis"));
+                    try
+                    {
+                        data.setColumn(CacheStorageManagerData.MAX_QUERY_DURATION,
+                                       (Long) server.getAttribute(objName, "MaxQueryDurationMillis"));
+                        data.setColumn(CacheStorageManagerData.MAX_QUERY_DESCRIPTION,
+                                       (String) server.getAttribute(objName, "MaxQueryDescription"));
+                        data.setColumn(CacheStorageManagerData.NON_OPTIMIZED_QUERY_AVG,
+                                       (Long) server.getAttribute(objName, "NonOptimizedQueryAverageMillis"));
+                        data.setColumn(CacheStorageManagerData.OPTIMIZED_QUERY_AVG,
+                                       (Long) server.getAttribute(objName, "OptimizedQueryAverageMillis"));
+                    }
+                    catch (Exception e)
+                    {
+                        // ignore errors as these attributes are not available until 3.7.
+                        // refer: https://java.net/jira/browse/COHINC-79
+                    }
 
                     mapData.put(data.getColumn(0), data);
                 }

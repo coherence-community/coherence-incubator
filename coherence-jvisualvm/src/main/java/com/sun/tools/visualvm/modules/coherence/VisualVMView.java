@@ -127,6 +127,7 @@ public class VisualVMView extends DataSourceView
 
         // Data area for master view
         JEditorPane       generalDataArea  = new JEditorPane();
+        generalDataArea.setEditable(false);
         final JTabbedPane pneCoherenceTabs = new JTabbedPane();
 
         pneCoherenceTabs.setOpaque(false);

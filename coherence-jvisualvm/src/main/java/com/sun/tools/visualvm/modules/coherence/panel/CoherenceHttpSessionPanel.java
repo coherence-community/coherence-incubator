@@ -28,8 +28,10 @@ package com.sun.tools.visualvm.modules.coherence.panel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -174,6 +176,8 @@ public class CoherenceHttpSessionPanel extends AbstractCoherencePanel
         int          c                   = 0;
         long         cMaxMaxLatency      = 0L;
         long         cCurrentAverage     = 0L;
+        Set<String>  setSessionCaches    = new HashSet<String>();
+        Set<String>  setOverflowCaches   = new HashSet<String>();
 
         final String FORMAT              = "%5d";
 
@@ -182,8 +186,13 @@ public class CoherenceHttpSessionPanel extends AbstractCoherencePanel
             for (Map.Entry<Object, Data> entry : httpSessionData)
             {
                 c++;
-                cTotalSessionCount  += (Integer) entry.getValue().getColumn(HttpSessionData.SESSION_COUNT);
-                cTotalOverflowCount += (Integer) entry.getValue().getColumn(HttpSessionData.OVERFLOW_COUNT);
+                // add to the list of session and overflow caches so we can
+                // find out the total count of these later
+                String sSessionCache  = entry.getValue().getColumn(HttpSessionData.SESSION_CACHE_NAME).toString();
+                String sOverflowCache = entry.getValue().getColumn(HttpSessionData.OVERFLOW_CACHE_NAME).toString();
+
+                setSessionCaches.add(sSessionCache);
+                setOverflowCaches.add(sOverflowCache);
 
                 long nDuration = (Long) entry.getValue().getColumn(HttpSessionData.LAST_REAP_DURATION_MAX);
 
@@ -199,6 +208,16 @@ public class CoherenceHttpSessionPanel extends AbstractCoherencePanel
 
             txtTotalApplications.setText(String.format(FORMAT, c));
 
+            // go through each of the caches and total up the session and overflow counts
+            for (String sCache : setSessionCaches)
+            {
+                cTotalSessionCount += HttpSessionData.getCacheCount(model, sCache);
+            }
+
+            for (String sCache : setOverflowCaches)
+            {
+                cTotalOverflowCount += HttpSessionData.getCacheCount(model, sCache);
+            }
         }
         else
         {

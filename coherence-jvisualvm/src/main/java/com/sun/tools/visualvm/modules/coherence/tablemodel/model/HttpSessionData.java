@@ -71,12 +71,12 @@ public class HttpSessionData extends AbstractData
     /**
      * Array index for session count.
      */
-    public static final int SESSION_COUNT = 3;
+    public static final int SESSION_CACHE_NAME = 3;
 
     /**
      * Array index for overflow count.
      */
-    public static final int OVERFLOW_COUNT = 4;
+    public static final int OVERFLOW_CACHE_NAME = 4;
 
     /**
      * Array index for average session size.
@@ -177,13 +177,10 @@ public class HttpSessionData extends AbstractData
                 data.setColumn(HttpSessionData.AVG_REAPED_SESSIONS, new Long(0L));
                 data.setColumn(HttpSessionData.TOTAL_REAPED_SESSIONS, new Long(0L));
 
-                // populate the session sizes by obtaining the "SessionCacheName" and querying this
-                // from the already collected data
-                String sSessionCacheName  = (String) server.getAttribute(objName, "SessionCacheName");
-                String sOverflowCacheName = (String) server.getAttribute(objName, "OverflowCacheName");
-
-                data.setColumn(HttpSessionData.SESSION_COUNT, getCacheCount(model, sSessionCacheName));
-                data.setColumn(HttpSessionData.OVERFLOW_COUNT, getCacheCount(model, sOverflowCacheName));
+                data.setColumn(HttpSessionData.SESSION_CACHE_NAME,
+                        server.getAttribute(objName, "SessionCacheName").toString());
+                data.setColumn(HttpSessionData.OVERFLOW_CACHE_NAME,
+                        server.getAttribute(objName, "OverflowCacheName").toString());
 
                 mapData.put(sAppId, data);
             }
@@ -278,8 +275,8 @@ public class HttpSessionData extends AbstractData
      * @return he count of objects in the given cache name
      */
     @SuppressWarnings("unchecked")
-    private static int getCacheCount(VisualVMModel model,
-                                     String        sCacheName)
+    public static int getCacheCount(VisualVMModel model,
+                                    String        sCacheName)
     {
         List<Entry<Object, Data>> cacheData = model.getData(VisualVMModel.DataType.CACHE);
 
