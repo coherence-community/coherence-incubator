@@ -8,7 +8,7 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
-*   Jonathan Knight, Brian Oliver
+*   Jonathan Knight, Brian Oliver, Tim Middleton
 
 <h4>Global and Cross-Module Changes</h4>
 
@@ -59,6 +59,16 @@ reverse chronological order.
 *   [COHINC-11](http://java.net/jira/browse/COHINC-11):  Refactored
     Push Replication Functional Tests into their own module.
 
+<h4>coherence-jvisualvm</h4>
+
+*   [COHINC-91](http://java.net/jira/browse/COHINC-91): Jvisualvm Plugin
+    Incorrectly Reports Session Counts for Multiple Coh*web Apps.
+
+*   [COHINC-84](http://java.net/jira/browse/COHINC-84): VisualVMModel
+    generalDataArea should not be editable.
+
+*   [COHINC-79](http://java.net/jira/browse/COHINC-79): JVisualVM Plugin
+    Does not Report Cache Storage Details when connected to 3.6 and earlier cluster.
 
 --------------------------------------------------------------------------------
 
