@@ -541,7 +541,20 @@ The following elements are permitted as child elements of this element:
 
     The number of milliseconds to wait between distributing batches of events,
     the default value being `1000` milliseconds (ie: 1 second).
-    
+
+    Setting this to `0` means no delay will occur between batches of events
+    being distributed.
+
+*   &lt;event:polling-delay&gt; (optional)
+
+    The number of milliseconds to wait between attempts to find new events
+    to distribute, the default value being `1000` milliseconds (ie: 1 second).
+
+    Setting this to a small value, like `0` is undesirable as it may lead
+    to high-CPU utilization.   Typically for Coherence-based Event Distributors
+    this value can be large, like `5000` or beyond as the Coherence-based
+    implementations don't require polling.
+
 *   &lt;event:batch-size&gt; (optional)
 
     The maximum number of events in each batch distributed using the `EventChannel`,

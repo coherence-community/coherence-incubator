@@ -111,6 +111,12 @@ public class EventChannelControllerDependenciesTemplate
      */
     private int totalConsecutiveFailuresBeforeSuspending;
 
+    /**
+     * The number of milliseconds to wait between attempts to determine if there are new {@link Event}s
+     * to distribute.
+     */
+    private long eventPollingDelayMS;
+
 
     /**
      * Standard Constructor.
@@ -128,6 +134,7 @@ public class EventChannelControllerDependenciesTemplate
         this.restartDelay = AbstractEventChannelController.DefaultDependencies.RESTART_DELAY_DEFAULT;
         this.totalConsecutiveFailuresBeforeSuspending =
             AbstractEventChannelController.DefaultDependencies.TOTAL_CONSECUTIVE_FAILURES_BEFORE_SUSPENDING;
+        this.eventPollingDelayMS = DefaultDependencies.EVENT_POLLING_DELAY_DEFAULT;
     }
 
 
@@ -311,6 +318,29 @@ public class EventChannelControllerDependenciesTemplate
 
 
     /**
+     * Sets the number of milliseconds to wait before attempting to find new {@link Event}s to distribute.
+     *
+     * @param eventPollingDelayMS The delay in milliseconds
+     */
+    @Property("polling-delay")
+    public void setEventPollingDelay(long eventPollingDelayMS)
+    {
+        this.eventPollingDelayMS = eventPollingDelayMS;
+    }
+
+
+    /**
+     * Returns the number of milliseconds to wait before attempting to find new {@link Event}s to distribute.
+     *
+     * @return number of milliseconds
+     */
+    public long getEventPollingDelay()
+    {
+        return eventPollingDelayMS;
+    }
+
+
+    /**
      * Returns the {@link ParameterizedBuilder} to create {@link EventChannel}s for
      * the {@link EventChannelControllerDependenciesTemplate}.
      *
@@ -396,6 +426,7 @@ public class EventChannelControllerDependenciesTemplate
                                        batchDistributionDelayMS,
                                        batchSize,
                                        restartDelay,
-                                       totalConsecutiveFailuresBeforeSuspending);
+                                       totalConsecutiveFailuresBeforeSuspending,
+                                       eventPollingDelayMS);
     }
 }

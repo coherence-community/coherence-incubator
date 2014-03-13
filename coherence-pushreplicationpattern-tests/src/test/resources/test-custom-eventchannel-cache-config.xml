@@ -56,7 +56,7 @@
                         <event:channel-name>Custom Event Channel</event:channel-name>
                         
                         <event:starting-mode system-property="channel.starting.mode">enabled</event:starting-mode>
-        
+
                         <event:channel-scheme>
                             <class-scheme>
                                 <class-name>com.oracle.coherence.patterns.eventdistribution.channels.NullEventChannel</class-name>

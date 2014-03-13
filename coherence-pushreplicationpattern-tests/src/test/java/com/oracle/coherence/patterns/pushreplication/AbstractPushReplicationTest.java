@@ -56,9 +56,7 @@ import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.partition.PartitionSet;
 import com.tangosol.util.Filter;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.management.ObjectName;
@@ -66,7 +64,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -89,40 +86,6 @@ import static org.junit.Assert.fail;
  */
 public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 {
-    /**
-     * The maximum amount of time we should ever what for a test/assertion to complete.
-     */
-    private static final long TEST_TIMEOUT_MS = 120000;    // two minutes
-
-    /**
-     * The System {@link Properties} used to start the test.
-     */
-    private Properties systemProperties;
-
-
-    /**
-     * Before each test run we take a copy of the System {@link Properties} so we can restore
-     * the prior to running other tests.
-     */
-    @Before
-    public void beforeEachTest()
-    {
-        // take a copy of the system properties (as we're going to change them)
-        systemProperties = System.getProperties();
-    }
-
-
-    /**
-     * After each test we restore the System {@link Properties}.
-     */
-    @After
-    public void afterEachTest()
-    {
-        // reset the system properties
-        System.setProperties(systemProperties);
-    }
-
-
     /**
      * A simple method to wait a specified amount of time, with a message to stdout.
      *
@@ -948,7 +911,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
                 .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
             // populate the london site
-            final int changes = randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "LONDON");
+            final int changes = randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 1000, "LONDON");
 
             // get the MBean for the EventChannel
             final Deferred<EventChannelControllerMBean> mBean =
@@ -1068,7 +1031,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
             CacheFactory
-                    .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
             namedCache = CacheFactory.getCache(cacheName);
 
