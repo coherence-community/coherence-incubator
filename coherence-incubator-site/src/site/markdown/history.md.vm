@@ -52,7 +52,12 @@ reverse chronological order.
 
     Apart from simplifying the implementation, this enhancement permits the use of
     "coalescing events", which can help reduce CPU when message subscriptions
-    are updated as events arrive to be distributed.
+    are updated, causing numerous events triggering extraneous distribution requests.
+
+*   [COHINC-93](https://java.net/jira/browse/COHINC-93): Introduced new DELAYED
+    state for the AbstractEventChannelController, together with a new "polling-delay"
+    configuration for Event Channels.   This allows separate control of
+    polling and inter-batch delays.
 
 <h4>coherence-pushreplicationpattern-tests</h4>
 
