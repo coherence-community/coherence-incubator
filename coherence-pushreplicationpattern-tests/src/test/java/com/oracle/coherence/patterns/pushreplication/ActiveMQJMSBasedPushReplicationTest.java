@@ -35,9 +35,6 @@ import com.oracle.tools.util.Capture;
 
 import org.apache.activemq.broker.BrokerService;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-
 import java.io.File;
 
 /**
@@ -55,22 +52,21 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
     /**
      * The JMS {@link BrokerService} for ActiveMQ.
      */
-    private static BrokerService brokerService;
+    private BrokerService brokerService;
 
     /**
      * The JNDI Provider URL for ActiveMQ.
      */
-    private static String jndiProviderURL;
+    private String jndiProviderURL;
 
 
-    /**
-     * Sets up the ActiveMQ {@link BrokerService} for the tests.
-     *
-     * @throws Exception Should an error occur trying to setup the ActiveMQ {@link BrokerService}.
-     */
-    @BeforeClass
-    public static void setupActiveMQBroker() throws Exception
+    @Override
+    public void onBeforeEachTest()
     {
+        super.onBeforeEachTest();
+
+        // setup the ActiveMQ Broker
+
         // determine the port for connections
         int port = getAvailablePortIterator().next();
 
@@ -87,6 +83,9 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
         activeMQDir.mkdirs();
 
         brokerService = new BrokerService();
+
+        try
+        {
         brokerService.setDataDirectoryFile(activeMQDir);
         brokerService.setPersistent(false);
         brokerService.addConnector(jndiProviderURL);
@@ -96,18 +95,28 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
         brokerService.start(true);
         brokerService.waitUntilStarted();
     }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Failed to start JMS", e);
+        }
+    }
 
 
-    /**
-     * Tears down the ActiveMQ {@link BrokerService}.
-     *
-     * @throws Exception Should an error occur trying to setup the ActiveMQ {@link BrokerService}.
-     */
-    @AfterClass
-    public static void teardownActiveMQBroker() throws Exception
+    @Override
+    public void onAfterEachTest()
+    {
+        super.onAfterEachTest();
+
+        // tear down the ActiveMQ broker
+        try
     {
         brokerService.stop();
         brokerService.waitUntilStopped();
+    }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Failed to stop JMS", e);
+        }
     }
 
 
@@ -142,7 +151,7 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
     @Override
     protected ClusterMemberSchema newActiveClusterMemberSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(clusterPort).setCacheConfigURI("test-remotecluster-eventchannel-cache-config.xml")
-            .setClusterName("active");
+        return newBaseClusterMemberSchema(clusterPort)
+            .setCacheConfigURI("test-remotecluster-eventchannel-cache-config.xml").setClusterName("active");
     }
 }

@@ -97,41 +97,47 @@ import java.util.logging.Logger;
 @Transitions(
 {
     @Transition(
-        fromStates = {"STARTING", "WAITING"},
-        toState    = "DISTRIBUTING"
+        toState    = "DISTRIBUTING",
+        fromStates = {"STARTING", "WAITING", "DELAYING"}
     ) , @Transition(
-        fromStates = "DISTRIBUTING",
-        toState    = "WAITING"
+        toState    = "WAITING",
+        fromStates = "DISTRIBUTING"
     ) , @Transition(
+        toState    = "DELAYING",
+        fromStates = "DISTRIBUTING"
+    ) , @Transition(
+        toState    = "SUSPENDED",
         fromStates =
         {
-            "DISTRIBUTING", "STARTING", "ERROR", "DISABLED", "DRAINING", "WAITING"
-        },
-        toState    = "SUSPENDED"
+            "DISTRIBUTING", "STARTING", "ERROR", "DISABLED", "DRAINING", "WAITING", "DELAYING"
+        }
     ) , @Transition(
-        fromStates = {"ERROR", "SUSPENDED", "DISABLED"},
-        toState    = "STARTING"
+        toState    = "STARTING",
+        fromStates = {"ERROR", "SUSPENDED", "DISABLED"}
     ) , @Transition(
-        fromStates = {"SUSPENDED"},
-        toState    = "DRAINING"
+        toState    = "DRAINING",
+        fromStates = {"SUSPENDED"}
     ) , @Transition(
-        fromStates = {"SUSPENDED", "WAITING", "ERROR"},
-        toState    = "DISABLED"
-    ) , @Transition(
-        fromStates = {"STARTING", "DISTRIBUTING"},
-        toState    = "ERROR"
-    ) , @Transition(
+        toState    = "DISABLED",
         fromStates =
         {
-            "STARTING", "SUSPENDED", "WAITING", "DISABLED", "ERROR"
-        },
-        toState    = "STOPPED"
+            "SUSPENDED", "WAITING", "DELAYING", "ERROR"
+        }
+    ) , @Transition(
+        toState    = "ERROR",
+        fromStates = {"STARTING", "DISTRIBUTING"}
+    ) , @Transition(
+        toState    = "STOPPED",
+        fromStates =
+        {
+            "STARTING", "SUSPENDED", "WAITING", "DISABLED", "ERROR", "DELAYING"
+        }
     )
 })
 public abstract class AbstractEventChannelController<T> implements EventChannelController, EventChannelControllerMBean
 {
     /**
-     * The events that controll the internal {@link NonBlockingFiniteStateMachine}.
+     * The events that control the internal {@link NonBlockingFiniteStateMachine}.
      */
     public static enum ControllerEvent implements com.oracle.coherence.common.finitestatemachines.Event<State>
     {
@@ -235,16 +241,23 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         STARTING,
 
         /**
-         * <code>{@link #DISTRIBUTING}</code> indicates that the {@link EventChannelController} is currently in the
+         * <code>{@link #DISTRIBUTING}</code> indicates that the {@link EventChannelController} is in the
          * process of distributing {@link Event}s using the {@link EventChannel}.
          */
         DISTRIBUTING,
 
         /**
-         * <code>{@link #WAITING}</code> indicates that the {@link EventChannelController} is currently in the process
+         * <code>{@link #WAITING}</code> indicates that the {@link EventChannelController} is in the process
          * of waiting for {@link Event}s to distribute using the {@link EventChannel}.
          */
         WAITING,
+
+        /**
+         * <code>{@link #DELAYING}</code> indicates that the {@link EventChannelController} is in the process of
+         * delaying distribution between batches.  This occurs when there is more than enough events to distribute
+         * in a single batch.  The delay will be {@link Dependencies#getBatchDistributionDelay()} milliseconds.
+         */
+        DELAYING,
 
         /**
          * <code>{@link #STOPPED}</code> indicates that the {@link EventChannelController} is stopped and can't be
@@ -815,7 +828,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
     /**
-     * Handle an {@link EventChannel} must wait between distribution cycles.
+     * Handle when an {@link EventChannel} must wait for new events to arrive for distribution.
      */
     @OnEnterState("WAITING")
     public Instruction onWaiting(State                                                        previousState,
@@ -825,7 +838,26 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     {
         return new NonBlockingFiniteStateMachine
             .ProcessEventLater<State>(new NonBlockingFiniteStateMachine
-                .SubsequentEvent<State>(ControllerEvent.DISTRIBUTE),
+                .SubsequentEvent<State>(new NonBlockingFiniteStateMachine
+                    .CoalescedEvent<State>(ControllerEvent.DISTRIBUTE)),
+                                      controllerDependencies.getEventPollingDelay(),
+                                      TimeUnit.MILLISECONDS);
+    }
+
+
+    /**
+     * Handle when an {@link EventChannel} must wait between distributing batches.
+     */
+    @OnEnterState("DELAYING")
+    public Instruction onDelaying(State                                                        previousState,
+                                  State                                                        newState,
+                                  com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                                  ExecutionContext                                             context)
+    {
+        return new NonBlockingFiniteStateMachine
+            .ProcessEventLater<State>(new NonBlockingFiniteStateMachine
+                .SubsequentEvent<State>(new NonBlockingFiniteStateMachine
+                    .CoalescedEvent<State>(ControllerEvent.DISTRIBUTE)),
                                       controllerDependencies.getBatchDistributionDelay(),
                                       TimeUnit.MILLISECONDS);
     }
@@ -879,9 +911,9 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
             logger.log(Level.FINER, "Commenced distribution with EventChannel {0}", controllerIdentifier);
         }
 
-        // we continue to distribute while there a no other pending events on the machine
-        do
-        {
+        // the resulting instruction to the Finite State Machine
+        Instruction instruction;
+
             try
             {
                 // get the events we need to distribute together with the implementation specific
@@ -895,7 +927,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                 if (eventList.isEmpty())
                 {
                     // nothing to distribute so move back to the waiting state
-                    return new Instruction.TransitionTo<State>(State.WAITING);
+                instruction = new Instruction.TransitionTo<State>(State.WAITING);
                 }
                 else
                 {
@@ -965,14 +997,8 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                     // reset the number of consecutive failures as we've had success!
                     consecutiveDistributionFailures = 0;
 
-                    // now schedule for the next batch
-                    // (only if we're still in the DISTRIBUTING state)
-                    if (controllerDependencies.getBatchDistributionDelay() > 0)
-                    {
-                        return new Instruction.TransitionTo<State>(State.WAITING);
-                    }
+                instruction                     = new Instruction.TransitionTo<State>(State.DELAYING);
                 }
-
             }
             catch (RuntimeException runtimeException)
             {
@@ -993,7 +1019,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                     || consecutiveDistributionFailures
                        < controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending())
                 {
-                    return new Instruction.TransitionTo<State>(State.ERROR);
+                instruction = new Instruction.TransitionTo<State>(State.ERROR);
                 }
                 else
                 {
@@ -1006,18 +1032,18 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                                    new Object[] {controllerIdentifier, consecutiveDistributionFailures});
                     }
 
-                    return new Instruction.TransitionTo<State>(State.SUSPENDED);
-                }
+                instruction = new Instruction.TransitionTo<State>(State.SUSPENDED);
             }
         }
-        while (!context.hasPendingEvents());
 
         if (logger.isLoggable(Level.FINER))
         {
-            logger.log(Level.FINER, "Completed distribution with {0}", controllerIdentifier);
+            logger.log(Level.FINER,
+                       "Completed distribution with {0}.  Next Instruction {1}",
+                       new Object[] {controllerIdentifier, instruction});
         }
 
-        return new Instruction.TransitionTo<State>(State.WAITING);
+        return instruction;
     }
 
 
@@ -1034,8 +1060,8 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         public final static Mode STARTING_MODE_DEFAULT = Mode.ENABLED;
 
         /**
-         * By default a {@link EventChannelController} will wait 1000 milliseconds between attempts to distribute batches
-         * of {@link Event}s.
+         * By default a {@link EventChannelController} will wait 1000 milliseconds between attempts to
+         * distribute batches of {@link Event}s (when there are batches).
          */
         public final static long BATCH_DISTRIBUTION_DELAY_DEFAULT = 1000;
 
@@ -1043,6 +1069,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
          * By default a maximum of 100 {@link Event}s will be in a batch when distributed.
          */
         public final static int BATCH_SIZE_DEFAULT = 100;
+
+        /**
+         * By default a {@link EventChannelController} will wait 1000 milliseconds between attempts determine
+         * if there are new {@link Event}s to distribute.
+         */
+        public final static long EVENT_POLLING_DELAY_DEFAULT = 1000;
 
         /**
          * By default a {@link EventChannelController} will be halted and then retried after a delay of 10000
@@ -1104,6 +1136,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
          */
         private int totalConsecutiveFailuresBeforeSuspending;
 
+        /**
+         * The number of milliseconds an {@link EventChannel} will wait before attempting to determine if there
+         * are new {@link Event}s to distribute.
+         */
+        private long eventPollingDelay;
+
 
         /**
          * Required for {@link ExternalizableLite} and {@link PortableObject}.
@@ -1125,7 +1163,8 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                                    long                                           batchDistributionDelayMS,
                                    int                                            batchSize,
                                    long                                           restartDelay,
-                                   int                                            totalConsecutiveFailuresBeforeSuspending)
+                                   int                                            totalConsecutiveFailuresBeforeSuspending,
+                                   long                                           eventPollingDelay)
         {
             this.channelName                              = channelName;
             this.externalName                             = externalName;
@@ -1136,6 +1175,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
             this.batchSize                                = batchSize;
             this.restartDelay                             = restartDelay;
             this.totalConsecutiveFailuresBeforeSuspending = totalConsecutiveFailuresBeforeSuspending;
+            this.eventPollingDelay                        = eventPollingDelay;
         }
 
 
@@ -1203,6 +1243,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
         @Override
+        public long getEventPollingDelay()
+        {
+            return eventPollingDelay;
+        }
+
+
+        @Override
         public void readExternal(DataInput in) throws IOException
         {
             this.channelName         = ExternalizableHelper.readSafeUTF(in);
@@ -1215,6 +1262,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
             this.batchSize                                = ExternalizableHelper.readInt(in);
             this.restartDelay                             = ExternalizableHelper.readLong(in);
             this.totalConsecutiveFailuresBeforeSuspending = ExternalizableHelper.readInt(in);
+            this.eventPollingDelay                        = ExternalizableHelper.readLong(in);
         }
 
 
@@ -1230,6 +1278,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
             ExternalizableHelper.writeInt(out, batchSize);
             ExternalizableHelper.writeLong(out, restartDelay);
             ExternalizableHelper.writeInt(out, totalConsecutiveFailuresBeforeSuspending);
+            ExternalizableHelper.writeLong(out, eventPollingDelay);
         }
 
 
@@ -1245,6 +1294,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
             this.batchSize                                = reader.readInt(7);
             this.restartDelay                             = reader.readLong(8);
             this.totalConsecutiveFailuresBeforeSuspending = reader.readInt(9);
+            this.eventPollingDelay                        = reader.readLong(10);
         }
 
 
@@ -1260,6 +1310,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
             writer.writeInt(7, batchSize);
             writer.writeLong(8, restartDelay);
             writer.writeInt(9, totalConsecutiveFailuresBeforeSuspending);
+            writer.writeLong(10, eventPollingDelay);
         }
 
 
@@ -1268,7 +1319,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         {
             return String.format("AbstractEventChannelController.Dependencies{channelName=%s, externalName=%s, "
                 + "eventChannelBuilder=%s, transformerBuilder=%s, startingMode=%s, batchDistributionDelayMS=%d, "
-                + "batchSize=%d, restartDelay=%d, totalConsecutiveFailuresBeforeSuspended=%d}",
+                + "batchSize=%d, restartDelay=%d, totalConsecutiveFailuresBeforeSuspended=%d, eventPollingDelay=%d}",
                                  channelName,
                                  externalName,
                                  eventChannelBuilder,
@@ -1277,7 +1328,8 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                                  batchDistributionDelayMS,
                                  batchSize,
                                  restartDelay,
-                                 totalConsecutiveFailuresBeforeSuspending);
+                                 totalConsecutiveFailuresBeforeSuspending,
+                                 eventPollingDelay);
         }
     }
 }

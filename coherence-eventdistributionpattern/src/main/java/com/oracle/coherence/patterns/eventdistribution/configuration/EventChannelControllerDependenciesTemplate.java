@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -85,12 +84,12 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
     private Mode startingMode;
 
     /**
-     * The number of milliseconds to wait between attempts to distribute events.
+     * The number of milliseconds to wait between attempts to distribute {@link Event}s.
      */
     private long batchDistributionDelayMS;
 
     /**
-     * The maximum number of events that may be "batched" together in a single batch.
+     * The maximum number of {@link Event}s that may be "batched" together in a single batch.
      */
     private int batchSize;
 
@@ -104,6 +103,12 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
      * distribution.
      */
     private int totalConsecutiveFailuresBeforeSuspending;
+
+    /**
+     * The number of milliseconds to wait between attempts to determine if there are new {@link Event}s
+     * to distribute.
+     */
+    private long eventPollingDelayMS;
 
 
     /**
@@ -122,6 +127,7 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
         this.restartDelay = AbstractEventChannelController.DefaultDependencies.RESTART_DELAY_DEFAULT;
         this.totalConsecutiveFailuresBeforeSuspending =
             AbstractEventChannelController.DefaultDependencies.TOTAL_CONSECUTIVE_FAILURES_BEFORE_SUSPENDING;
+        this.eventPollingDelayMS = DefaultDependencies.EVENT_POLLING_DELAY_DEFAULT;
     }
 
 
@@ -209,7 +215,7 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
 
 
     /**
-     * Sets the number of milliseconds to wait between attempts to distribute batches of events.
+     * Sets the number of milliseconds to wait between attempts to distribute batches of {@link Event}s.
      * <p>
      * NOTE: This value should be greater than zero.  If the value is close to zero, very little batching may occur.
      *
@@ -234,7 +240,7 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
 
 
     /**
-     * Sets the maximum number of events that may be "batched" together in an individual batch.
+     * Sets the maximum number of {@link Event}s that may be "batched" together in an individual batch.
      * <p>
      * NOTE: This value should be greater than one.  If the value is one no batching will occur.
      *
@@ -299,6 +305,29 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
     public void setTotalConsecutiveFailuresBeforeSuspending(int totalConsecutiveFailuresBeforeSuspending)
     {
         this.totalConsecutiveFailuresBeforeSuspending = totalConsecutiveFailuresBeforeSuspending;
+    }
+
+
+    /**
+     * Sets the number of milliseconds to wait before attempting to find new {@link Event}s to distribute.
+     *
+     * @param eventPollingDelayMS The delay in milliseconds
+     */
+    @Injectable("polling-delay")
+    public void setEventPollingDelay(long eventPollingDelayMS)
+    {
+        this.eventPollingDelayMS = eventPollingDelayMS;
+    }
+
+
+    /**
+     * Returns the number of milliseconds to wait before attempting to find new {@link Event}s to distribute.
+     *
+     * @return number of milliseconds
+     */
+    public long getEventPollingDelay()
+    {
+        return eventPollingDelayMS;
     }
 
 
@@ -376,6 +405,7 @@ public class EventChannelControllerDependenciesTemplate implements Parameterized
                                        batchDistributionDelayMS,
                                        batchSize,
                                        restartDelay,
-                                       totalConsecutiveFailuresBeforeSuspending);
+                                       totalConsecutiveFailuresBeforeSuspending,
+                                       eventPollingDelayMS);
     }
 }

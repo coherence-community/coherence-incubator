@@ -37,7 +37,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-
 /**
  * A {@link EventChannelController} is responsible for managing the infrastructure to enable an {@link EventChannel}
  * to send {@link Event}s.
@@ -187,12 +186,31 @@ public interface EventChannelController
 
 
         /**
-         * Determines the number of milliseconds the {@link EventChannelController} should wait when checking for
-         * new {@link Event}s to distribute.
+         * Determines the number of milliseconds an {@link EventChannelController} must wait between distributing
+         * {@link Event}s when there are more events than the configured {@link #getBatchSize()}.
          *
          * @return time (in milliseconds).
          */
         public long getBatchDistributionDelay();
+
+
+        /**
+         * Determines the number of milliseconds an {@link EventChannelController} should wait before checking
+         * with the {@link EventDistributor} for new {@link Event}s to distribute.
+         * <p>
+         * For event-driven {@link EventDistributor}s (like the Coherence-based implementation), this delay may be
+         * large (many seconds) as when new {@link Event}s arrive for distribution, the {@link EventChannelController}
+         * will automatically be {@link #preempt()}ed.
+         * <p>
+         * For non-event-driven {@link EventDistributor}s (like the JMS-based implementation), this delay should be
+         * small (around a second) to ensure new {@link Event}s are detected and distributed in that time frame.
+         * <p>
+         * WARNING: Setting this delay to something very small (milliseconds) may cause unnecessarily high-CPU
+         * utilization an {@link EventChannelController} will "spin" attempting to find new messages.
+         *
+         * @return time (in milliseconds).
+         */
+        public long getEventPollingDelay();
 
 
         /**
@@ -205,7 +223,8 @@ public interface EventChannelController
 
         /**
          * Determines the number of milliseconds the {@link EventChannelController} should delay between distribution
-         * failures.
+         * failures or attempts to determine if there are pending {@link Event}s that did not notify the
+         * {@link EventChannelController} to commence distribution.
          *
          * @return time (in milliseconds)
          */
