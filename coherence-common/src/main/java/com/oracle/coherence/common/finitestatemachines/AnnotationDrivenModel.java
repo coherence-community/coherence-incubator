@@ -184,7 +184,7 @@ public class AnnotationDrivenModel<S extends Enum<S>> implements Model<S>
                     else
                     {
                         throw new IllegalArgumentException(String
-                            .format("The method %s defined in class %s annotated with %s is not compatible with the required method signature 'Instruction method(State, State, Context<State>);'.",
+                            .format("The method %s defined in class %s annotated with %s is not compatible with the required method signature 'Instruction method(State, State, Event, ExecutionContext);'.",
                                     method, clzInstance, annOnEnterState));
                     }
                 }
@@ -214,7 +214,7 @@ public class AnnotationDrivenModel<S extends Enum<S>> implements Model<S>
                     else
                     {
                         throw new IllegalArgumentException(String
-                            .format("The method %s defined in class %s annotated with %s is not compatible with the required method signature 'void method(State, Context<State>);'.",
+                            .format("The method %s defined in class %s annotated with %s is not compatible with the required method signature 'void method(State, Event, ExecutionContext);'.",
                                     method, clzInstance, annOnExitState));
                     }
                 }
