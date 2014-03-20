@@ -75,6 +75,12 @@ reverse chronological order.
 *   [COHINC-79](http://java.net/jira/browse/COHINC-79): JVisualVM Plugin
     Does not Report Cache Storage Details when connected to 3.6 and earlier cluster.
 
+*   [COHINC-96](https://java.net/jira/browse/COHINC-96): abel on Packet Publisher and
+    Receiver Graphs are incorrect
+
+*   [COHINC-97](https://java.net/jira/browse/COHINC-97): When Calculating Cache Size,
+    we Should Take Into Account the unit-calculator
+
 --------------------------------------------------------------------------------
 
 <h3>Version: 12.1.0 @ 2013-12-05 15:16</h3>

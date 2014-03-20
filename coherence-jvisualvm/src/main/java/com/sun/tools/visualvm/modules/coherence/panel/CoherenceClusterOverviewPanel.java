@@ -217,9 +217,7 @@ public class CoherenceClusterOverviewPanel extends AbstractCoherencePanel
         int   cTotalMemoryUsed    = 0;
         float cTotalPublisherRate = 0.0f;
         float cTotalReceiverRate  = 0.0f;
-        float cMaxPublisherRate   = -1;
         float cMinPublisherRate   = -1;
-        float cMaxReceiverRate    = -1;
         float cMinReceiverRate    = -1;
 
         // get the min /max values for publisher and receiver success rates
@@ -237,11 +235,6 @@ public class CoherenceClusterOverviewPanel extends AbstractCoherencePanel
                 cRate               = (Float) entry.getValue().getColumn(MemberData.PUBLISHER_SUCCESS);
                 cTotalPublisherRate += cRate;
 
-                if (cMaxPublisherRate == -1 || cRate > cMaxPublisherRate)
-                {
-                    cMaxPublisherRate = cRate;
-                }
-
                 if (cMinPublisherRate == -1 || cRate < cMinPublisherRate)
                 {
                     cMinPublisherRate = cRate;
@@ -249,11 +242,6 @@ public class CoherenceClusterOverviewPanel extends AbstractCoherencePanel
 
                 cRate              = (Float) entry.getValue().getColumn(MemberData.RECEIVER_SUCCESS);
                 cTotalReceiverRate += cRate;
-
-                if (cMaxReceiverRate == -1 || cRate > cMaxReceiverRate)
-                {
-                    cMaxReceiverRate = cRate;
-                }
 
                 if (cMinReceiverRate == -1 || cRate < cMinReceiverRate)
                 {
@@ -264,13 +252,11 @@ public class CoherenceClusterOverviewPanel extends AbstractCoherencePanel
             // update the publisher graph
             GraphHelper.addValuesToPublisherGraph(publisherGraph,
                                                   cMinPublisherRate,
-                                                  count == 0 ? 0 : cTotalPublisherRate / count,
-                                                  cMaxPublisherRate);
+                                                  count == 0 ? 0 : cTotalPublisherRate / count);
 
             GraphHelper.addValuesToReceiverGraph(receiverGraph,
                                                  cMinReceiverRate,
-                                                 count == 0 ? 0 : cTotalReceiverRate / count,
-                                                 cMaxReceiverRate);
+                                                 count == 0 ? 0 : cTotalReceiverRate / count);
         }
 
         // update the memory graph

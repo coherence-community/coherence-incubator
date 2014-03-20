@@ -179,12 +179,14 @@ public class CacheData extends AbstractData
 
                         // memory is always going to be counted, even for replicated caches
                         data.setColumn(CacheData.MEMORY_USAGE_MB,
-                                       (Integer) data.getColumn(CacheData.MEMORY_USAGE_MB)
-                                       + (Integer) server.getAttribute(objectName, "Units"));
+                                       (Integer) data.getColumn(CacheData.MEMORY_USAGE_MB) *
+                                       + ((Integer) server.getAttribute(objectName, "Units") *
+                                          (Integer) server.getAttribute(objectName, "UnitFactor")));
 
                         data.setColumn(CacheData.MEMORY_USAGE_BYTES,
                                        (Long) data.getColumn(CacheData.MEMORY_USAGE_BYTES)
-                                       + (Integer) server.getAttribute(objectName, "Units"));
+                                       + ((Integer) server.getAttribute(objectName, "Units") *
+                                          (Integer) server.getAttribute(objectName, "UnitFactor")));
 
                         mapData.put(key, data);
 

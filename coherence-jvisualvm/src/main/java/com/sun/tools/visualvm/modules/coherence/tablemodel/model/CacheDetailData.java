@@ -151,7 +151,8 @@ public class CacheDetailData extends AbstractData
                         data = new CacheDetailData();
                         data.setColumn(CacheDetailData.NODE_ID, new Integer(sNodeId));
                         data.setColumn(CacheDetailData.SIZE, (Integer) server.getAttribute(objName, "Size"));
-                        data.setColumn(CacheDetailData.MEMORY_BYTES, (Integer) server.getAttribute(objName, "Units"));
+                        data.setColumn(CacheDetailData.MEMORY_BYTES, (Integer) server.getAttribute(objName, "Units") *
+                                                                     (Integer) server.getAttribute(objName, "UnitFactor"));
                         data.setColumn(CacheDetailData.CACHE_HITS, (Long) server.getAttribute(objName, "CacheHits"));
                         data.setColumn(CacheDetailData.CACHE_MISSES,
                                        (Long) server.getAttribute(objName, "CacheMisses"));

@@ -100,7 +100,7 @@ public class GraphHelper
         SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(1, 0.0001, true, VALUES_LIMIT);
 
         sxycd.setChartTitle(getLocalText("GRPH_packet_publisher"));
-        sxycd.addLineFillItems(getLocalText("GRPH_current_average"), getLocalText("GRPH_current_maximum"));
+        sxycd.addLineFillItems(getLocalText("GRPH_current_average"), getLocalText("GRPH_current_minimum"));
 
         SimpleXYChartSupport factory = ChartFactory.createSimpleXYChart(sxycd);
 
@@ -114,12 +114,10 @@ public class GraphHelper
      * @param graph            {@link SimpleXYChartSupport} to add values to
      * @param cMinValue        current minimum value
      * @param cAverageValue    current average value
-     * @param cMaxValue        current maximum value
      */
     public static void addValuesToPublisherGraph(SimpleXYChartSupport graph,
                                                  float                cMinValue,
-                                                 float                cAverageValue,
-                                                 float                cMaxValue)
+                                                 float                cAverageValue)
     {
         graph.addValues(System.currentTimeMillis(),
                         new long[] {(long) (cAverageValue * 10000), (long) (cMinValue * 10000)});
@@ -136,7 +134,7 @@ public class GraphHelper
         SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(1, 0.0001, true, VALUES_LIMIT);
 
         sxycd.setChartTitle(getLocalText("GRPH_packet_receiver"));
-        sxycd.addLineFillItems(getLocalText("GRPH_current_average"), getLocalText("GRPH_current_maximum"));
+        sxycd.addLineFillItems(getLocalText("GRPH_current_average"), getLocalText("GRPH_current_minimum"));
 
         SimpleXYChartSupport factory = ChartFactory.createSimpleXYChart(sxycd);
 
@@ -150,12 +148,10 @@ public class GraphHelper
      * @param graph            {@link SimpleXYChartSupport} to add values to
      * @param cMinValue        current minimum value
      * @param cAverageValue    current average value
-     * @param cMaxValue        current maximum value
      */
     public static void addValuesToReceiverGraph(SimpleXYChartSupport graph,
                                                 float                cMinValue,
-                                                float                cAverageValue,
-                                                float                cMaxValue)
+                                                float                cAverageValue)
     {
         graph.addValues(System.currentTimeMillis(),
                         new long[] {(long) (cAverageValue * 10000), (long) (cMinValue * 10000)});
