@@ -44,6 +44,12 @@ reverse chronological order.
 *   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded for Oracle Tools
     improvements.
 
+*   [COHINC-98](http://java.net/jira/browse/COHINC-98): Removed unnecessary code
+    to clean up MessageEngine instances for Destinations upon successful Message
+    delivery.   This could cause unnecessary creation of MessageEngines for the
+    next Message on the Destination, including the allocation of a new
+    Finite State Machine and associated Thread.
+
 <h4>coherence-eventdistributionpattern</h4>
 
 *   [COHINC-83](http://java.net/jira/browse/COHINC-83): Refactored
@@ -75,11 +81,11 @@ reverse chronological order.
 *   [COHINC-79](http://java.net/jira/browse/COHINC-79): JVisualVM Plugin
     Does not Report Cache Storage Details when connected to 3.6 and earlier cluster.
 
-*   [COHINC-96](https://java.net/jira/browse/COHINC-96): abel on Packet Publisher and
-    Receiver Graphs are incorrect
+*   [COHINC-96](https://java.net/jira/browse/COHINC-96): Corrected labels on the
+    Packet Publisher and Receiver Graphs.
 
-*   [COHINC-97](https://java.net/jira/browse/COHINC-97): When Calculating Cache Size,
-    we Should Take Into Account the unit-calculator
+*   [COHINC-97](https://java.net/jira/browse/COHINC-97): Corrected Cache Size
+    metrics that failed to take the configured unit-calculator into account.
 
 --------------------------------------------------------------------------------
 

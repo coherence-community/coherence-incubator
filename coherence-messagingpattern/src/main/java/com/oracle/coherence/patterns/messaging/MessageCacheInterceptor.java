@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -32,6 +31,7 @@ import com.oracle.coherence.common.ranges.Range;
 import com.oracle.coherence.common.ranges.Ranges;
 
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.ConfigurableCacheFactory;
 
 import com.tangosol.net.events.Event;
 import com.tangosol.net.events.EventInterceptor;
@@ -43,8 +43,8 @@ import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ResourceRegistry;
 
 import java.util.Iterator;
-
 import java.util.Set;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -143,11 +143,12 @@ public class MessageCacheInterceptor implements EventInterceptor
                 // Add to the set of messages to be exposed.
                 MessagesToExpose.getInstance().add(message);
 
-                Identifier id = message.getDestinationIdentifier();
+                Identifier               id                       = message.getDestinationIdentifier();
 
-                MessageEngine mEngine =
-                    CacheFactory.getConfigurableCacheFactory().getResourceRegistry().getResource(MessageEngine.class,
-                                                                                                 id.toString());
+                ConfigurableCacheFactory configurableCacheFactory = CacheFactory.getConfigurableCacheFactory();
+                ResourceRegistry         resourceRegistry         = configurableCacheFactory.getResourceRegistry();
+
+                MessageEngine            mEngine = resourceRegistry.getResource(MessageEngine.class, id.toString());
 
                 if (mEngine == null)
                 {
@@ -203,11 +204,10 @@ public class MessageCacheInterceptor implements EventInterceptor
                     // the event queue backs up eventually causing an out of memory error.
                     MessageEngine mEngine = new MessageEngine(publisher.getDestinationIdentifier());
 
-                    CacheFactory.getConfigurableCacheFactory().getResourceRegistry().registerResource(MessageEngine.class,
-                                                                                                      message
-                                                                                                      .getDestinationIdentifier()
-                                                                                                          .toString(),
-                                                                                                      mEngine);
+                    CacheFactory.getConfigurableCacheFactory().getResourceRegistry()
+                        .registerResource(MessageEngine.class,
+                                          message.getDestinationIdentifier().toString(),
+                                          mEngine);
 
                     mEngine.processRunEvent(publisher);
 
@@ -258,30 +258,14 @@ public class MessageCacheInterceptor implements EventInterceptor
      */
     private void onRemoved(BinaryEntry binaryEntry)
     {
-        Message message = (Message) binaryEntry.getOriginalValue();
-
-        if (message == null)
-        {
-            return;
-        }
-
-        if (logger.isLoggable(Level.FINER))
-        {
-            logger.log(Level.FINER,
-                       "MessageCacheInterceptor:onRemoved identifier: {0}",
-                       message.getDestinationIdentifier());
-        }
-
-        // Shutdown the Engine which contains the finite state machine, used to coalesce queue event processing.
-        ResourceRegistry registry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
-        MessageEngine mEngine = registry.getResource(MessageEngine.class,
-                                                     message.getDestinationIdentifier().toString());
-
-        if (mEngine != null)
-        {
-            registry.unregisterResource(MessageEngine.class, message.getDestinationIdentifier().toString());
-            mEngine.dispose();
-        }
+        /**
+         * The previous code incorrectly removed the MessageEngine when a Message is removed.
+         *
+         * This cleanup only needs to be performed when the Destination is removed, which is
+         * currently not supported.
+         *
+         * We're leaving this method in place to ensure backwards compatibility.
+         */
     }
 
 

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -106,8 +105,8 @@ public class LeaseExpiryCoordinator
      * @param lease               The {@link Lease} to register
      * @param leaseExpiryListener The {@link LeaseListener} listening for the {@link Lease} to expire
      */
-    public void registerLease(Object leaseOwner,
-                              Lease lease,
+    public void registerLease(Object        leaseOwner,
+                              Lease         lease,
                               LeaseListener leaseExpiryListener)
     {
         leases.put(leaseOwner, new Pair<Lease, LeaseListener>(lease, leaseExpiryListener));

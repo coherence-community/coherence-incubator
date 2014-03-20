@@ -1,5 +1,5 @@
 /*
- * File: MessageFSM.java
+ * File: MessageEngine.java
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -34,6 +33,9 @@ import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMac
 
 import com.oracle.coherence.common.identifiers.Identifier;
 
+import com.oracle.coherence.common.threading.ExecutorServiceFactory;
+import com.oracle.coherence.common.threading.ThreadFactories;
+
 import com.oracle.coherence.patterns.messaging.entryprocessors.ExposeMessageToQueueProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.RegisterSubscriptionsWithMessageProcessor;
 
@@ -56,16 +58,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * The finite state machine for coalescing of message event processing.
- *
  * <p>
  * Copyright (c) 2013. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
- *
  *
  * @author David Rowlands
  */
@@ -85,14 +84,17 @@ public class MessageEngine extends AbstractEngine
     {
         super(destinationIdentifier);
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService executor =
+            ExecutorServiceFactory.newSingleThreadScheduledExecutor(ThreadFactories.newThreadFactory(true,
+                                                                                                     "MessagingEngine",
+                                                                                                     null));
 
         m_fsm = new NonBlockingFiniteStateMachine<State>("Message",
-                                                       new AnnotationDrivenModel<State>(State.class,
-                                                                                        new Model()),
-                                                       State.IDLE,
-                                                       executor,
-                                                       false);
+                                                         new AnnotationDrivenModel<State>(State.class,
+                                                                                          new Model()),
+                                                         State.IDLE,
+                                                         executor,
+                                                         false);
 
     }
 
@@ -260,7 +262,7 @@ public class MessageEngine extends AbstractEngine
          * @param mode           which {@link CoalescedEvent}s to process
          * @param discriminator  the descriminator used to uniquely coalesce the {@link Event}
          * @param publisher      the message publisher which is stored in the event is used in the event processing
-          */
+         */
         public MessageEvent(Event<S>         event,
                             Process          mode,
                             Object           discriminator,
