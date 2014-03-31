@@ -39,6 +39,13 @@ reverse chronological order.
 *   [COHINC-80](http://java.net/jira/browse/COHINC-80): Fixed methods in CommandExecutor
     annotated for use with the AnnotationDrivenModel so that they have the correct signature.
 
+*   [COHINC-100](http://java.net/jira/browse/COHINC-100): Resolved issue where
+    Commands may not be executed after adding/removing cluster members.
+
+<h4>coherence-commandpattern-tests</h4>
+
+*   Introduced new functional tests module for the coherence-commandpattern.
+
 <h4>coherence-messagingpattern-tests</h4>
 
 *   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded for Oracle Tools
@@ -72,14 +79,14 @@ reverse chronological order.
 
 <h4>coherence-jvisualvm</h4>
 
-*   [COHINC-91](http://java.net/jira/browse/COHINC-91): Jvisualvm Plugin
-    Incorrectly Reports Session Counts for Multiple Coh*web Apps.
+*   [COHINC-79](http://java.net/jira/browse/COHINC-79): JVisualVM Plugin
+    Does not Report Cache Storage Details when connected to 3.6 and earlier cluster.
 
 *   [COHINC-84](http://java.net/jira/browse/COHINC-84): VisualVMModel
     generalDataArea should not be editable.
 
-*   [COHINC-79](http://java.net/jira/browse/COHINC-79): JVisualVM Plugin
-    Does not Report Cache Storage Details when connected to 3.6 and earlier cluster.
+*   [COHINC-91](http://java.net/jira/browse/COHINC-91): Jvisualvm Plugin
+    Incorrectly Reports Session Counts for Multiple Coh*web Apps.
 
 *   [COHINC-96](https://java.net/jira/browse/COHINC-96): Corrected labels on the
     Packet Publisher and Receiver Graphs.

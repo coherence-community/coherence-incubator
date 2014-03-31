@@ -68,6 +68,7 @@
 
         <module>coherence-commandpattern</module>
         <module>coherence-commandpattern-examples</module>
+        <module>coherence-commandpattern-tests</module>
 
         <module>coherence-functorpattern</module>
         <module>coherence-functorpattern-examples</module>

@@ -48,6 +48,14 @@
 		<cache-mapping>
 			<cache-name>coherence.commandpattern.contexts</cache-name>
 			<scheme-name>distributed-scheme-for-command-contexts</scheme-name>
+
+            <interceptors>
+                <interceptor>
+                    <instance>
+                        <class-name>com.oracle.coherence.patterns.command.internal.ContextEventInterceptor</class-name>
+                    </instance>
+                </interceptor>
+            </interceptors>
 		</cache-mapping>
 	</caching-scheme-mapping>
 
@@ -67,14 +75,6 @@
 			<scheme-name>distributed-scheme-for-command-contexts</scheme-name>
 			<scheme-ref>distributed-scheme-for-command-pattern</scheme-ref>
 			<service-name>DistributedCacheForCommandPattern</service-name>
-									
-			<interceptors>
-				<interceptor>
-					<instance>
-						<class-name>com.oracle.coherence.patterns.command.internal.ContextEventInterceptor</class-name>
-					</instance>
-				</interceptor>
-			</interceptors>
 		</distributed-scheme>
 
 		<distributed-scheme>
