@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,6 +25,7 @@
 
 package com.oracle.coherence.common.liveobjects;
 
+import com.oracle.tools.junit.AbstractCoherenceTest;
 import com.oracle.tools.junit.AbstractTest;
 
 import com.tangosol.net.CacheFactory;
@@ -66,7 +66,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Brian Oliver
  */
-public class LiveObjectTest extends AbstractTest
+public class LiveObjectTest extends AbstractCoherenceTest
 {
     private static final String INSERTS = "INSERTS";
     private static final String UPDATES = "UPDATES";
@@ -80,15 +80,11 @@ public class LiveObjectTest extends AbstractTest
     private ResourceRegistry                   m_resourceRegistry;
 
 
-    /**
-     * Setup for each test.
-     */
     @Before
-    public void setup()
+    @Override
+    public void onBeforeEachTest()
     {
-        // we only want to run locally
-        System.setProperty("tangosol.coherence.localhost", "127.0.0.1");
-        System.setProperty("tangosol.coherence.ttl", "0");
+        super.onBeforeEachTest();
 
         // establish the CCF for the test
         m_ccf =
@@ -106,13 +102,11 @@ public class LiveObjectTest extends AbstractTest
     }
 
 
-    /**
-     * Cleanup after each test.
-     */
     @After
-    public void cleanup()
+    @Override
+    public void onAfterEachTest()
     {
-        CacheFactory.shutdown();
+        super.onAfterEachTest();
     }
 
 

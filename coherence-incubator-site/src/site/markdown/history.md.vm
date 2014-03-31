@@ -34,6 +34,9 @@ reverse chronological order.
     new Coherence 12.1.2-0-1 serializable configuration classes and removed
     internally defined classes.
 
+*   [COHINC-101](http://java.net/jira/browse/COHINC-101): Improved LiveObject test
+    isolation.
+
 <h4>coherence-commandpattern</h4>
 
 *   [COHINC-80](http://java.net/jira/browse/COHINC-80): Fixed methods in CommandExecutor
