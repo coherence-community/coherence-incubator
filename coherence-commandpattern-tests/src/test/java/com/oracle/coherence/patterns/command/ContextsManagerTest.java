@@ -33,6 +33,7 @@ import com.oracle.tools.deferred.InstanceUnavailableException;
 import com.oracle.tools.deferred.UnresolvableInstanceException;
 
 import com.oracle.tools.junit.AbstractCoherenceTest;
+import com.oracle.tools.junit.AbstractTest;
 
 import com.oracle.tools.runtime.ApplicationConsole;
 
@@ -70,6 +71,8 @@ import static com.oracle.tools.deferred.DeferredHelper.invoking;
 
 import static com.oracle.tools.deferred.Eventually.assertThat;
 
+import static com.oracle.tools.runtime.java.JavaApplication.JAVA_NET_PREFER_IPV4_STACK;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -97,7 +100,8 @@ public class ContextsManagerTest extends AbstractCoherenceTest
                 .setPofConfigURI("coherence-commandpattern-test-pof-config.xml")
                 .setCacheConfigURI("coherence-commandpattern-test-cache-config.xml").setJMXSupport(true)
                 .setJMXPort(Container.getAvailablePorts())
-                .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.ALL).setLogLevel(9);
+                .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.ALL)
+                .setRMIServerHostName(Constants.getLocalHost()).setLogLevel(9).setPreferIPv4(true);
 
         JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> memberBuilder =
             new NativeJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
@@ -112,13 +116,14 @@ public class ContextsManagerTest extends AbstractCoherenceTest
 
         assertThat(invoking(cluster).getClusterSize(), is(2));
 
-        System.setProperty(ClusterMemberSchema.PROPERTY_POF_ENABLED, "true");
-        System.setProperty(ClusterMemberSchema.PROPERTY_POF_CONFIG, "coherence-commandpattern-test-pof-config.xml");
         System.setProperty(ClusterMemberSchema.PROPERTY_CACHECONFIG, "coherence-commandpattern-test-cache-config.xml");
+        System.setProperty(ClusterMemberSchema.PROPERTY_LOCALHOST_ADDRESS, "127.0.0.1");
         System.setProperty(ClusterMemberSchema.PROPERTY_CLUSTER_PORT, Integer.toString(clusterPort.get()));
         System.setProperty(ClusterMemberSchema.PROPERTY_MULTICAST_TTL, "0");
-        System.setProperty(ClusterMemberSchema.PROPERTY_LOCALHOST_ADDRESS, Constants.getLocalHost());
-        System.setProperty(ClusterMemberSchema.PROPERTY_DISTRIBUTED_LOCALSTORAGE, "false");
+        System.setProperty(ClusterMemberSchema.PROPERTY_DISTRIBUTED_LOCALSTORAGE, "true");
+        System.setProperty(ClusterMemberSchema.PROPERTY_POF_ENABLED, "true");
+        System.setProperty(ClusterMemberSchema.PROPERTY_POF_CONFIG, "coherence-commandpattern-test-pof-config.xml");
+        System.setProperty(JAVA_NET_PREFER_IPV4_STACK, "true");
 
         ConfigurableCacheFactory configurableCacheFactory =
             new ExtensibleConfigurableCacheFactory(ExtensibleConfigurableCacheFactory.DependenciesHelper
