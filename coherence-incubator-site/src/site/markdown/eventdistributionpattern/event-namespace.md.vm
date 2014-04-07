@@ -183,11 +183,24 @@ When processed this element will produce an `EventChannelBuilder`.
 
 The following element is required as a child of this element:
 
-*   [&lt;cachestore-scheme&gt;](http://download.oracle.com/docs/cd/E18686_01/coh.37/e18677/appendix_cacheconfig.htm#BABGFCCB)
+*   [&lt;event:cachestore-scheme&gt;]
 
-    A standard Oracle Coherence `<cachestore-scheme>` element, defining a `ParameterizedBuilder`
-    to be used for instantiating a custom `CacheStore` implementation.
+    A `<cachestore-scheme>` element that defines a Cache Store.
 
+*Example:*
+
+<event:cachestore-channel-scheme>
+    <event:cachestore-scheme>
+        <instance>
+            <class-name>MyCacheStore</class-name>
+            <init-params>
+                <init-param>
+                    <param-value>{cache-name}</param-value>
+                </init-param>
+            </init-params>
+        </instance>
+    </event:cachestore-scheme>
+</event:cachestore-channel-scheme>
 
 ------------------------------------------------------------------------------
 

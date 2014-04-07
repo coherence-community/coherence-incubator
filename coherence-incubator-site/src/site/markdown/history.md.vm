@@ -75,6 +75,11 @@ reverse chronological order.
     configuration for Event Channels.   This allows separate control of
     polling and inter-batch delays.
 
+*   [COHINC-102](https://java.net/jira/browse/COHINC-102): Corrected
+    &lt;cachestore-scheme&gt; documentation (and implementation).  Such schemes
+    must use the namespace.  Standard Coherence cachestore-scheme xml elements are
+    not supported directly.
+
 <h4>coherence-pushreplicationpattern-tests</h4>
 
 *   [COHINC-11](http://java.net/jira/browse/COHINC-11):  Refactored

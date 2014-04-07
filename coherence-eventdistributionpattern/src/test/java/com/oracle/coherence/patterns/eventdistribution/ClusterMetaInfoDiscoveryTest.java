@@ -44,6 +44,7 @@ import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
 
 import com.oracle.tools.runtime.network.AvailablePortIterator;
+import com.oracle.tools.runtime.network.Constants;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
@@ -135,7 +136,9 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
             .setSingleServerMode().setClusterPort(portIterator).setSystemProperty("proxy.port",
                                                                                   portIterator).setJMXPort(portIterator)
                                                                                   .setJMXManagementMode(JMXManagementMode
-                                                                                      .LOCAL_ONLY);
+                                                                                      .LOCAL_ONLY)
+                                                                                          .setSystemProperty("proxy.host",
+            Constants.getLocalHost());
     }
 
 
@@ -167,6 +170,7 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
 
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+            System.setProperty("remote.address", Constants.getLocalHost());
             System.setProperty("remote.port", server.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
 
@@ -229,6 +233,7 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
 
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+            System.setProperty("remote.address", Constants.getLocalHost());
             System.setProperty("remote.port", server.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
 
@@ -290,6 +295,7 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
 
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+            System.setProperty("remote.address", Constants.getLocalHost());
             System.setProperty("remote.port", server.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
 
@@ -347,6 +353,7 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
 
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+            System.setProperty("remote.address", Constants.getLocalHost());
             System.setProperty("remote.port", server.getSystemProperty("proxy.port"));
             System.setProperty("tangosol.pof.config", "test-pof-config.xml");
 
