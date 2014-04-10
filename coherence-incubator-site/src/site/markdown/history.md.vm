@@ -80,6 +80,9 @@ reverse chronological order.
     must use the namespace.  Standard Coherence cachestore-scheme xml elements are
     not supported directly.
 
+*   [COHINC-103](https://java.net/jira/browse/COHINC-103): Corrected the resolution
+    of target/destinations caches when using a LocalCacheEventChannel.
+
 <h4>coherence-pushreplicationpattern-tests</h4>
 
 *   [COHINC-11](http://java.net/jira/browse/COHINC-11):  Refactored

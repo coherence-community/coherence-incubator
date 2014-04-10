@@ -27,14 +27,20 @@ package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
+
+import com.tangosol.util.Base;
 import com.tangosol.util.NullImplementation;
 
 import java.util.Iterator;
@@ -137,13 +143,18 @@ public class LocalCacheEventChannel implements CacheEventChannel
     @Override
     public NamedCache getTargetNamedCache()
     {
+        ClassLoader classLoader = Base.getContextClassLoader();
+        ConfigurableCacheFactory cacheFactory =
+            CacheFactory.getCacheFactoryBuilder().getConfigurableCacheFactory(classLoader);
+
         if (getTargetCacheName() == null || getTargetCacheName().isEmpty())
         {
-            return CacheFactory.getCache(distributorIdentifier.getSymbolicName(), NullImplementation.getClassLoader());
+            return cacheFactory.ensureCache(distributorIdentifier.getSymbolicName(),
+                                            NullImplementation.getClassLoader());
         }
         else
         {
-            return CacheFactory.getCache(getTargetCacheName(), NullImplementation.getClassLoader());
+            return cacheFactory.ensureCache(getTargetCacheName(), NullImplementation.getClassLoader());
         }
     }
 
