@@ -120,7 +120,7 @@ public class ContextsManagerTest extends AbstractCoherenceTest
         System.setProperty(ClusterMemberSchema.PROPERTY_LOCALHOST_ADDRESS, "127.0.0.1");
         System.setProperty(ClusterMemberSchema.PROPERTY_CLUSTER_PORT, Integer.toString(clusterPort.get()));
         System.setProperty(ClusterMemberSchema.PROPERTY_MULTICAST_TTL, "0");
-        System.setProperty(ClusterMemberSchema.PROPERTY_DISTRIBUTED_LOCALSTORAGE, "true");
+        System.setProperty(ClusterMemberSchema.PROPERTY_DISTRIBUTED_LOCALSTORAGE, "false");
         System.setProperty(ClusterMemberSchema.PROPERTY_POF_ENABLED, "true");
         System.setProperty(ClusterMemberSchema.PROPERTY_POF_CONFIG, "coherence-commandpattern-test-pof-config.xml");
         System.setProperty(JAVA_NET_PREFER_IPV4_STACK, "true");
