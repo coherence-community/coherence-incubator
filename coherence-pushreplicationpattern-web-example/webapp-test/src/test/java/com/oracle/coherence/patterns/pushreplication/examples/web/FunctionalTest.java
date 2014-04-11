@@ -29,27 +29,40 @@ import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebTable;
+
 import com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer;
+
 import com.oracle.tools.deferred.Deferred;
 import com.oracle.tools.deferred.DeferredAssert;
 import com.oracle.tools.deferred.DeferredHelper;
+import com.oracle.tools.deferred.Eventually;
 import com.oracle.tools.deferred.InstanceUnavailableException;
 import com.oracle.tools.deferred.UnresolvableInstanceException;
+
 import com.oracle.tools.runtime.PropertiesBuilder;
+
 import com.oracle.tools.runtime.coherence.Cluster;
+
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
+
 import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.SimpleJavaApplication;
 import com.oracle.tools.runtime.java.SimpleJavaApplicationSchema;
+
 import com.oracle.tools.runtime.network.AvailablePortIterator;
+
 import org.hamcrest.Matchers;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
+import static com.oracle.tools.deferred.DeferredHelper.invoking;
 import static junit.framework.Assert.assertEquals;
+
+import static org.hamcrest.Matchers.is;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Test that the CoherenceWeb Examples Work
@@ -163,7 +176,7 @@ public class FunctionalTest
             final String          site2url  = "http://" + localhost + ":" + site2Port + "/sessionAccess.jsp";
 
             // Make initial request to siteA and add a value to the session
-            WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc, site1url), 60, TimeUnit.SECONDS);
+            WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc, site1url));
 
             WebForm     form     = response.getFormWithID("HttpSessionAttributesForm");
 
@@ -178,11 +191,7 @@ public class FunctionalTest
             assertEquals("value", "B", table.getCellAsText(1, 1));
 
             // Now make a request to the siteB, validate our session data is there and add another value
-            DeferredAssert.assertThat("First set of session variables",
-                                      new DeferredRowCount(wc, site2url),
-                                      Matchers.equalTo(2),
-                                      60,
-                                      TimeUnit.SECONDS);
+            Eventually.assertThat(invoking(wc).getResponse(site2url).getTableWithID("HttpSessionAttributes").getRowCount(), is(2));
 
             response = wc.getResponse(site2url);
             table    = response.getTableWithID("HttpSessionAttributes");
@@ -205,11 +214,7 @@ public class FunctionalTest
             assertEquals("value2", "D", table.getCellAsText(2, 1));
 
             // Now go back to the original site and make sure everything replicated properly
-            DeferredAssert.assertThat("First set of session variables",
-                                      new DeferredRowCount(wc, site1url),
-                                      Matchers.equalTo(3),
-                                      60,
-                                      TimeUnit.SECONDS);
+            Eventually.assertThat(invoking(wc).getResponse(site1url).getTableWithID("HttpSessionAttributes").getRowCount(), is(3));
 
             response = wc.getResponse(site1url);
             table    = response.getTableWithID("HttpSessionAttributes");
@@ -226,69 +231,6 @@ public class FunctionalTest
             e.printStackTrace();
 
             throw e;
-        }
-    }
-
-
-    /**
-     * Note that the DeferredRowCount is necessary to take into account that there will be some lag required for the
-     * session data to replicate between sites
-     */
-    private class DeferredRowCount implements Deferred<Integer>
-    {
-        private WebConversation wc;
-        private String          request;
-
-
-        /**
-         * Constructs a Deferred RowCount
-         *
-         *
-         * @param wc      Handle to the web conversation
-         * @param request request to make over the conversation
-         */
-        public DeferredRowCount(WebConversation wc,
-                                String          request)
-        {
-            this.wc      = wc;
-            this.request = request;
-        }
-
-
-        /**
-         * Return the deferred row count value.
-         *
-         * @return the deferred row count value
-         *
-         * @throws UnresolvableInstanceException, InstanceUnavailableException
-         */
-        @Override
-        public Integer get() throws UnresolvableInstanceException, InstanceUnavailableException
-        {
-            try
-            {
-                WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc, request));
-                WebTable    table    = response.getTableWithID("HttpSessionAttributes");
-
-                return table.getRowCount();
-            }
-            catch (Exception e)
-            {
-                System.out.println("Error getting rowcount for " + request + " - " + "HttpSessionAttributes");
-                e.printStackTrace();
-
-                throw new InstanceUnavailableException(this, e);
-            }
-        }
-
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Class<Integer> getDeferredClass()
-        {
-            return Integer.class;
         }
     }
 
