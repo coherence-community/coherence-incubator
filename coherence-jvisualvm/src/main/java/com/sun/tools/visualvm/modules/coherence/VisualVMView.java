@@ -25,6 +25,8 @@
 
 package com.sun.tools.visualvm.modules.coherence;
 
+import com.sun.tools.visualvm.modules.coherence.tablemodel.model.ClusterData;
+import com.sun.tools.visualvm.modules.coherence.tablemodel.model.Data;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
 
@@ -51,6 +53,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.management.MBeanServerConnection;
@@ -184,10 +188,22 @@ public class VisualVMView extends DataSourceView
         panel.add(pneCoherenceTabs);
 
         // Master view:
+
+        String sClusterVersion = null;
+        String sClusterName    = null;
+
+        List<Map.Entry<Object, Data>> clusterData = model.getData(VisualVMModel.DataType.CLUSTER);
+        for (Map.Entry <Object, Data > entry : clusterData)
+        {
+            sClusterName    = entry.getValue().getColumn(ClusterData.CLUSTER_NAME).toString();
+            sClusterVersion = entry.getValue().getColumn(ClusterData.VERSION).toString().replaceFirst(" .*$", "");
+            break;
+        }
+
         DataViewComponent.MasterView masterView =
-            new DataViewComponent.MasterView(Localization.getLocalText("LBL_cluster_information"),
-                                             null,
-                                             generalDataArea);
+                new DataViewComponent.MasterView(Localization.getLocalText("LBL_cluster_information",
+                        new String[] {sClusterName, sClusterVersion } ), null,
+                        generalDataArea);
 
         // Configuration of master view:
         DataViewComponent.MasterViewConfiguration masterConfiguration =

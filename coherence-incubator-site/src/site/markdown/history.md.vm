@@ -105,6 +105,9 @@ reverse chronological order.
 *   [COHINC-97](https://java.net/jira/browse/COHINC-97): Corrected Cache Size
     metrics that failed to take the configured unit-calculator into account.
 
+*   [COHINC-105](https://java.net/jira/browse/COHINC-105): Add Cluster Name and
+    Version to "Cluster Information" Header
+
 --------------------------------------------------------------------------------
 
 <h3>Version: 12.1.0 @ 2013-12-05 15:16</h3>
