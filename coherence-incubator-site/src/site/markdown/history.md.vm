@@ -10,6 +10,14 @@ reverse chronological order.
 
 *   Brian Oliver
 
+--------------------------------------------------------------------------------
+
+<h3>Version 11.3.0 @ 2014-04-12 06:57</h3>
+
+<h4>Source and Documentation Contributors</h4>
+
+*   Brian Oliver
+
 <h4>Global and Cross-Module Changes</h4>
 
 *   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded to use Oracle Tools 1.2.2
