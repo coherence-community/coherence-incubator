@@ -26,30 +26,43 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.coherence;
 
 import com.oracle.coherence.common.builders.NamedCacheSerializerBuilder;
+
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
+
 import com.oracle.coherence.common.liveobjects.LiveObject;
+import com.oracle.coherence.common.liveobjects.OnArrived;
+import com.oracle.coherence.common.liveobjects.OnDeparting;
 import com.oracle.coherence.common.liveobjects.OnInserted;
 import com.oracle.coherence.common.liveobjects.OnRemoved;
 import com.oracle.coherence.common.liveobjects.OnUpdated;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.distributors.EventChannelControllerManager;
+
 import com.oracle.coherence.patterns.messaging.MessageIdentifier;
 import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.config.expression.Parameter;
 import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.config.expression.ScopedParameterResolver;
+
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
+
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.ResourceRegistry;
@@ -57,6 +70,7 @@ import com.tangosol.util.ResourceRegistry;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -115,6 +129,7 @@ public class CoherenceEventChannelSubscription extends Subscription
      * The ParameterResolver.
      */
     private ParameterResolver resolver = null;
+
 
     /**
      * Required for {@link ExternalizableLite} and {@link PortableObject}.
@@ -192,11 +207,12 @@ public class CoherenceEventChannelSubscription extends Subscription
 
 
     /**
-     * An entry has been inserted.
+     * An entry has been inserted or has arrived.
      *
      * @param entry the BinaryEntry
      */
     @OnInserted
+    @OnArrived
     public void onEntryInserted(BinaryEntry entry)
     {
         if (logger.isLoggable(Level.FINE))
@@ -204,35 +220,35 @@ public class CoherenceEventChannelSubscription extends Subscription
             logger.log(Level.FINE, "Establishing the EventChannelController for {0}.", new Object[] {this});
         }
 
-        ResourceRegistry registry  = entry.getContext().getManager().getCacheFactory().getResourceRegistry();
+        ResourceRegistry              registry =
+            entry.getContext().getManager().getCacheFactory().getResourceRegistry();
 
-        EventChannelControllerManager manager = registry.getResource(EventChannelControllerManager.class);
+        EventChannelControllerManager manager        = registry.getResource(EventChannelControllerManager.class);
 
         final ScopedParameterResolver scopedResolver = new ScopedParameterResolver(resolver);
 
         // create a serializer builder for the cache that we can use when distributing events
-        final ParameterizedBuilder<Serializer> serializerBuilder =
-                new NamedCacheSerializerBuilder(cacheName);
+        final ParameterizedBuilder<Serializer> serializerBuilder = new NamedCacheSerializerBuilder(cacheName);
 
         // for newly created subscriptions, schedule the start of an associated EventChannelController
         EventChannelController controller = manager.registerEventChannelController(distributorIdentifier,
                                                                                    controllerIdentifier,
                                                                                    controllerDependencies,
                                                                                    new EventChannelControllerBuilder()
+        {
+            @Override
+            public EventChannelController realize(EventDistributor.Identifier       distributorIdentifier,
+                                                  EventChannelController.Identifier controllerIdentifier,
+                                                  Dependencies                      dependencies)
             {
-                @Override
-                public EventChannelController realize(EventDistributor.Identifier       distributorIdentifier,
-                                                      EventChannelController.Identifier controllerIdentifier,
-                                                      Dependencies                      dependencies)
-                {
-                    return new CoherenceEventChannelController(distributorIdentifier,
-                                                               controllerIdentifier,
-                                                               dependencies,
-                                                               CoherenceEventChannelSubscription.class.getClassLoader(),
-                                                               scopedResolver,
-                                                               serializerBuilder);
-                }
-            });
+                return new CoherenceEventChannelController(distributorIdentifier,
+                                                           controllerIdentifier,
+                                                           dependencies,
+                                                           CoherenceEventChannelSubscription.class.getClassLoader(),
+                                                           scopedResolver,
+                                                           serializerBuilder);
+            }
+        });
 
         if (controllerDependencies.getStartingMode() == EventChannelController.Mode.ENABLED)
         {
@@ -252,17 +268,18 @@ public class CoherenceEventChannelSubscription extends Subscription
         if (logger.isLoggable(Level.FINER))
         {
             logger.log(Level.FINER,
-                    "Scheduling the EventChannelController for {0} to distribute available events.",
-                    new Object[] {this});
+                       "Scheduling the EventChannelController for {0} to distribute available events.",
+                       new Object[] {this});
         }
 
-        ResourceRegistry registry  = entry.getContext().getManager().getCacheFactory().getResourceRegistry();
+        ResourceRegistry              registry =
+            entry.getContext().getManager().getCacheFactory().getResourceRegistry();
 
-        EventChannelControllerManager manager = registry.getResource(EventChannelControllerManager.class);
+        EventChannelControllerManager manager  = registry.getResource(EventChannelControllerManager.class);
 
         // when a subscription is update we assume we need to schedule distribution
         final EventChannelController controller = manager.getEventChannelController(distributorIdentifier,
-                controllerIdentifier);
+                                                                                    controllerIdentifier);
 
         if (hasVisibleMessages())
         {
@@ -270,12 +287,14 @@ public class CoherenceEventChannelSubscription extends Subscription
         }
     }
 
+
     /**
-     * An entry has been removed.
+     * An entry has been removed or is departing.
      *
      * @param entry the BinaryEntry
      */
     @OnRemoved
+    @OnDeparting
     public void onEntryRemoved(BinaryEntry entry)
     {
         // for deleted subscriptions, schedule the stopping of the associated EventChannelController
@@ -284,12 +303,13 @@ public class CoherenceEventChannelSubscription extends Subscription
             logger.log(Level.FINE, "Scheduling the EventChannelController for {0} to stop.", new Object[] {this});
         }
 
-        ResourceRegistry registry  = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
+        ResourceRegistry              registry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
 
-        EventChannelControllerManager manager = registry.getResource(EventChannelControllerManager.class);
+        EventChannelControllerManager manager  = registry.getResource(EventChannelControllerManager.class);
 
         // remove registered service
-        EventChannelController controller =  manager.unregisterEventChannelController(distributorIdentifier, controllerIdentifier);
+        EventChannelController controller = manager.unregisterEventChannelController(distributorIdentifier,
+                                                                                     controllerIdentifier);
 
         controller.stop();
     }

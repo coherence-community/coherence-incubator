@@ -45,6 +45,8 @@ import com.tangosol.net.BackingMapContext;
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.Cluster;
 
+import com.tangosol.net.cache.CacheMap;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
@@ -293,6 +295,15 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     public void expire(long durationMS)
     {
         // SKIP: deliberately empty
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getExpiry()
+    {
+        return CacheMap.EXPIRY_NEVER;
     }
 
 

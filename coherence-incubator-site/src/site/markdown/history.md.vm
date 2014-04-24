@@ -8,6 +8,27 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
+*   Brian Oliver, Tim Middleton
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   [COHINC-109](http://java.net/jira/browse/COHINC-109): Prepared and certified
+    with Coherence 12.1.3.
+
+<h4>coherence-eventdistributionpattern</h4>
+
+*   [COHINC-106](http://java.net/jira/browse/COHINC-106): Added missing @OnArrived
+    and @OnDeparting annotations to the CoherenceEventChannelSubscription and
+    JMSEventChannelControllerConfiguration LiveObjects to ensure correct event distribution
+    and push replication recovery during fail-over/fail-back/scale-out/scale-down.
+
+
+--------------------------------------------------------------------------------
+
+<h3>Version 12.2.0 @ 2014-04-12 08:57</h3>
+
+<h4>Source and Documentation Contributors</h4>
+
 *   Jonathan Knight, Brian Oliver, Tim Middleton
 
 <h4>Global and Cross-Module Changes</h4>
@@ -107,6 +128,7 @@ reverse chronological order.
 
 *   [COHINC-105](https://java.net/jira/browse/COHINC-105): Add Cluster Name and
     Version to "Cluster Information" Header
+
 
 --------------------------------------------------------------------------------
 

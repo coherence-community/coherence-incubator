@@ -29,8 +29,11 @@ import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+
 import com.tangosol.net.CacheFactory;
+
 import com.tangosol.net.management.Registry;
+
 import com.tangosol.util.ResourceRegistry;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,8 +55,7 @@ public class EventChannelControllerManager
     /**
      * The collection of {@link EventChannelController}s being managed.
      */
-    private ConcurrentHashMap<EventDistributor.Identifier,
-            ConcurrentHashMap<EventChannelController.Identifier, EventChannelController>> controllersByDistributor;
+    private ConcurrentHashMap<EventDistributor.Identifier, ConcurrentHashMap<EventChannelController.Identifier, EventChannelController>> controllersByDistributor;
 
 
     /**
@@ -147,7 +149,8 @@ public class EventChannelControllerManager
      *                                for the {@link EventChannelController}.
      */
     public EventChannelController unregisterEventChannelController(EventDistributor.Identifier distributorIdentifier,
-                                                                   EventChannelController.Identifier controllerIdentifier)
+                                                                   EventChannelController
+                                                                       .Identifier             controllerIdentifier)
     {
         EventChannelController controller = null;
 

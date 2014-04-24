@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -31,6 +30,8 @@ import com.tangosol.io.Serializer;
 
 import com.tangosol.net.BackingMapContext;
 import com.tangosol.net.BackingMapManagerContext;
+
+import com.tangosol.net.cache.CacheMap;
 
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
@@ -245,6 +246,15 @@ public class SimpleBinaryEntry implements BinaryEntry
     public void expire(long durationMS)
     {
         // SKIP: nothing to do here
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getExpiry()
+    {
+        return CacheMap.EXPIRY_NEVER;
     }
 
 

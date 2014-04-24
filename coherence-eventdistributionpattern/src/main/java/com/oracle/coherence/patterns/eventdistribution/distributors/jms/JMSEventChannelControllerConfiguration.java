@@ -28,6 +28,8 @@ package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.liveobjects.LiveObject;
+import com.oracle.coherence.common.liveobjects.OnArrived;
+import com.oracle.coherence.common.liveobjects.OnDeparting;
 import com.oracle.coherence.common.liveobjects.OnInserted;
 import com.oracle.coherence.common.liveobjects.OnRemoved;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
@@ -198,6 +200,7 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
      * {@inheritDoc}
      */
     @OnInserted
+    @OnArrived
     public void onEntryInserted(BinaryEntry entry)
     {
         if (logger.isLoggable(Level.FINE))
@@ -242,6 +245,7 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
      * {@inheritDoc}
      */
     @OnRemoved
+    @OnDeparting
     public void onEntryRemoved(BinaryEntry entry)
     {
         // for deleted subscriptions, schedule the stopping of the associated EventChannelController
