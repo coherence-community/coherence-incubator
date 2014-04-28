@@ -66,7 +66,7 @@ public class RenderHelper
     /**
      * Format for integer renderer.
      */
-    public static NumberFormat INTEGER_FORMAT = new DecimalFormat("###,###,###,###");
+    public static NumberFormat INTEGER_FORMAT = new DecimalFormat("##,###,###,###,###");
 
     /**
      * Node safe tool tip.

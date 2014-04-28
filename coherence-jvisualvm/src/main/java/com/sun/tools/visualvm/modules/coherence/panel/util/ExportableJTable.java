@@ -25,6 +25,7 @@
 
 package com.sun.tools.visualvm.modules.coherence.panel.util;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -34,13 +35,7 @@ import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
@@ -90,6 +85,17 @@ public class ExportableJTable extends JTable implements ActionListener
         
         // ensure users can only ever select one row at a time
         this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        setShowGrid(true);
+        String sOS = System.getProperty("os.name").toLowerCase();
+        if (sOS.indexOf("windows") != -1)
+        {
+            setGridColor(UIManager.getColor("controlHighlight"));
+        }
+        else if (sOS.indexOf("mac") != -1)
+        {
+            setGridColor(Color.LIGHT_GRAY);
+        }
     }
 
 

@@ -2,4 +2,4 @@ Manifest-Version: 1.0
 OpenIDE-Module: com.sun.tools.visualvm.modules.coherence
 OpenIDE-Module-Install: com/sun/tools/visualvm/modules/coherence/VisualVMInstaller.class
 OpenIDE-Module-Localizing-Bundle: com/sun/tools/visualvm/modules/coherence/Bundle.properties
-OpenIDE-Module-Specification-Version: 12.1.1
+OpenIDE-Module-Specification-Version: 12.2.1

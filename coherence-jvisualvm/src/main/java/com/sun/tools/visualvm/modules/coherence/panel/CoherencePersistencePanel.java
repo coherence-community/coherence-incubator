@@ -213,7 +213,7 @@ public class CoherencePersistencePanel extends AbstractCoherencePanel
             txtTotalActiveSpaceUsed.setText(String.format(MEM_FORMAT, 0));
         }
 
-        GraphHelper.addValuesToPersistenceActiveTotalGraph(persistenceTotalSpaceGraph, cTotalMemory / GraphHelper.MB);
+        GraphHelper.addValuesToPersistenceActiveTotalGraph(persistenceTotalSpaceGraph, cTotalMemory);
         GraphHelper.addValuesToPersistenceLatencyGraph(persistenceLatencyGraph, cLatencyAverage * 1000.0f);
 
         txtMaxLatency.setText(Long.toString(cMaxMaxLatency));

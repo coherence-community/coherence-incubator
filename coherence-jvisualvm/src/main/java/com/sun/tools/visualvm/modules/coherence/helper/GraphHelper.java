@@ -59,10 +59,10 @@ public class GraphHelper
      */
     public static SimpleXYChartSupport createClusterMemoryGraph()
     {
-        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(0, true, VALUES_LIMIT);
+        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.bytes(0, true, VALUES_LIMIT);
 
         sxycd.setChartTitle(getLocalText("GRPH_cluster_memory_details"));
-        sxycd.addLineFillItems(getLocalText("GRPH_total_cluster_memory"), getLocalText("GRPH_used_clsuter_memory"));
+        sxycd.addLineFillItems(getLocalText("GRPH_total_cluster_memory"), getLocalText("GRPH_used_cluster_memory"));
 
         SimpleXYChartSupport factory = ChartFactory.createSimpleXYChart(sxycd);
 
@@ -81,7 +81,7 @@ public class GraphHelper
                                                      int                  cTotalMemory,
                                                      int                  cTotalMemoryUsed)
     {
-        graph.addValues(System.currentTimeMillis(), new long[] {cTotalMemory, cTotalMemoryUsed});
+        graph.addValues(System.currentTimeMillis(), new long[] {1L * cTotalMemory * MB, 1L * cTotalMemoryUsed * MB});
     }
 
 
@@ -156,38 +156,6 @@ public class GraphHelper
         graph.addValues(System.currentTimeMillis(),
                         new long[] {(long) (cAverageValue * 10000), (long) (cMinValue * 10000)});
     }
-
-
-    /**
-     * Create a graph representing the total cache size.
-     *
-     * @return        a {@link SimpleXYChartSupport} representing the graph
-     */
-    public static SimpleXYChartSupport createTotalCacheSizeGraph()
-    {
-        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(0, true, VALUES_LIMIT);
-
-        sxycd.setChartTitle(getLocalText("GRPH_total_cache"));
-        sxycd.addLineItems(getLocalText("GRPH_total_memory"));
-
-        SimpleXYChartSupport factory = ChartFactory.createSimpleXYChart(sxycd);
-
-        return factory;
-    }
-
-
-    /**
-     * Add values to the total cache size graph.
-     *
-     * @param graph            {@link SimpleXYChartSupport} to add values to
-     * @param cTotalCacheSize  total size of all caches
-     */
-    public static void addValuesToTotalCacheSizeGraph(SimpleXYChartSupport graph,
-                                                      float                cTotalCacheSize)
-    {
-        graph.addValues(System.currentTimeMillis(), new long[] {(long) cTotalCacheSize});
-    }
-
 
     /**
      * Create a graph representing the total proxy connections.
@@ -426,7 +394,7 @@ public class GraphHelper
      */
     public static SimpleXYChartSupport createPersistenceActiveTotalGraph()
     {
-        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.decimal(0, true, VALUES_LIMIT);
+        SimpleXYChartDescriptor sxycd = SimpleXYChartDescriptor.bytes(0, true, VALUES_LIMIT);
 
         sxycd.setChartTitle(getLocalText("GRPH_total_active_space"));
         sxycd.addLineFillItems(getLocalText("GRPH_total_space"));
@@ -441,12 +409,12 @@ public class GraphHelper
      * Add values to the total active persistence space used.
      *
      * @param graph                   {@link SimpleXYChartSupport} to add values to
-     * @param cTotalPersistenceSpace  total size of all caches
+     * @param cTotalPersistenceSpace  total persistence size of all caches
      */
     public static void addValuesToPersistenceActiveTotalGraph(SimpleXYChartSupport graph,
-                                                              float                cTotalPersistenceSpace)
+                                                              long                cTotalPersistenceSpace)
     {
-        graph.addValues(System.currentTimeMillis(), new long[] {(long) cTotalPersistenceSpace});
+        graph.addValues(System.currentTimeMillis(), new long[] {cTotalPersistenceSpace});
     }
 
 

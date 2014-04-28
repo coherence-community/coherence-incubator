@@ -22,6 +22,12 @@ reverse chronological order.
     JMSEventChannelControllerConfiguration LiveObjects to ensure correct event distribution
     and push replication recovery during fail-over/fail-back/scale-out/scale-down.
 
+<h4>coherence-jvisualvm</h4>
+
+*   [COHINC-107](https://java.net/jira/browse/COHINC-107):  Memory Based Charts Should
+    use bytes method.
+
+*   Minor UI tweaks for Windows platforms.
 
 --------------------------------------------------------------------------------
 
