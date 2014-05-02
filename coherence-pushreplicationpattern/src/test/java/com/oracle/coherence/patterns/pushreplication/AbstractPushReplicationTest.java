@@ -527,8 +527,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             CacheFactory
                 .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
-            // put a value in the active site
-            CacheFactory.getCache("publishing-cache").put("message", "hello world");
+            // populate the active site
+            randomlyPopulateNamedCache(CacheFactory.getCache("publishing-cache"), 0, 500, "sydney");
 
             // shutdown our connection to the active site
             CacheFactory.shutdown();
@@ -580,13 +580,109 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
 
     /**
+     * Performs Active-Passive topology tests (but with the channels suspended)
+     *
+     * @throws Exception
+     */
+    @Test(expected = ResourceUnavailableException.class)
+    public final void testActivePassiveSuspended() throws Exception
+    {
+        ClusterMember                                              passiveServer = null;
+        ClusterMember                                              activeServer  = null;
+
+        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder       = newClusterMemberBuilder();
+        SystemApplicationConsole                                   console       = new SystemApplicationConsole();
+
+        try
+        {
+            // establish the passive cluster
+            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            ClusterMemberSchema passiveServerSchema =
+                    newPassiveClusterMemberSchema(passiveClusterPort).setSiteName("sydney");
+
+            passiveServer = builder.realize(passiveServerSchema, "PASSIVE", console);
+
+            // establish the active cluster
+            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            ClusterMemberSchema activeServerSchema =
+                    newActiveClusterMemberSchema(activeClusterPort).setSiteName("sydney").setSystemProperty("remote.port",
+                            passiveServer
+                                    .getSystemProperty("proxy.port"))
+                            .setSystemProperty("channel.starting.mode", "suspended");
+
+            activeServer = builder.realize(activeServerSchema, "ACTIVE", console);
+
+            // turn off local clustering so we don't connect with the process just started
+            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+
+            System.setProperty("remote.port", activeServer.getSystemProperty("proxy.port"));
+            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
+            CacheFactory
+                    .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            // populate the active site
+            randomlyPopulateNamedCache(CacheFactory.getCache("publishing-cache"), 0, 20000, "sydney");
+
+            // shutdown our connection to the active site
+            CacheFactory.shutdown();
+
+            // assert that the value is in the passive site
+            System.setProperty("remote.port", passiveServer.getSystemProperty("proxy.port"));
+            CacheFactory
+                    .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            // construct a deferred NamedCache provider that is only available when it's of a certain size.
+            ResourceProvider<NamedCache> deferredNamedCache =
+                    new AbstractDeferredResourceProvider<NamedCache>(String
+                            .format("PASSIVE publishing-cache with %d entries", 1),
+                            200,
+                            TEST_TIMEOUT_MS / 40)
+                    {
+                        @Override
+                        protected NamedCache ensureResource() throws ResourceUnavailableException
+                        {
+                            NamedCache namedCache = CacheFactory.getCache("publishing-cache");
+
+                            return namedCache.size() == 1 ? namedCache : null;
+                        }
+                    };
+
+            System.out.printf("Waiting for ACTIVE and PASSIVE sites to synchronize.\n");
+
+            deferredNamedCache.getResource();
+        }
+        catch (Exception exception)
+        {
+            throw exception;
+        }
+        finally
+        {
+            // shutdown our local use of coherence
+            CacheFactory.shutdown();
+
+            if (passiveServer != null)
+            {
+                passiveServer.destroy();
+            }
+
+            if (activeServer != null)
+            {
+                activeServer.destroy();
+            }
+        }
+    }
+
+
+    /**
      * Performs Active-Passive topology tests with Event transformation
      *
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void testActivePassiveEventTranformation() throws Exception
+    public void testActivePassiveEventTransformation() throws Exception
     {
         String                                                     siteName         = "testActivePassive";
         final String                                               cacheName        = "publishing-cache";
