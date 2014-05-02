@@ -11,6 +11,11 @@ reverse chronological order.
 
 *   Brian Oliver
 
+<h4>coherence-incubator-site</h4>
+
+*   [COHINC-119](http://java.net/jira/browse/COHINC-119): Modifed pom.xml
+    to produce and deploy the documentation to github in the "deploy" phase.
+
 <h4>coherence-messagingpattern</h4>
 
 *   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduce the
