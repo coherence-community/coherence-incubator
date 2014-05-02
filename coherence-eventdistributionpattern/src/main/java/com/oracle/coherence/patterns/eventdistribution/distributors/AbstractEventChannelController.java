@@ -26,15 +26,21 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
+
 import com.oracle.coherence.common.tuples.Pair;
+
 import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
+
 import com.oracle.coherence.environment.Environment;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
@@ -45,22 +51,29 @@ import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.EventTransformer;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
 import com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformer;
+
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.Iterator;
 import java.util.List;
+
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -178,7 +191,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     /**
      * The {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies} of the {@link EventChannel}.
      */
-    protected EventChannelController.Dependencies controllerDependencies;
+    protected volatile EventChannelController.Dependencies controllerDependencies;
 
     /**
      * The {@link EventChannel} that will be used to distribute {@link Event}s for this {@link EventChannelController}.
@@ -240,8 +253,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
      * The number {@link Event}s that have been distributed.
      */
     protected int totalEventsDistributed;
-
-    ;
 
     /**
      * The current {@link State} of the {@link EventChannelController}.
@@ -473,6 +484,48 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                 }
             }, 0, TimeUnit.MILLISECONDS);
         }
+    }
+
+
+    @Override
+    public long getBatchDistributionDelay()
+    {
+        return controllerDependencies.getBatchDistributionDelay();
+    }
+
+
+    @Override
+    public void setBatchDistributionDelay(long delayMS)
+    {
+        controllerDependencies.setBatchDistributionDelay(delayMS);
+    }
+
+
+    @Override
+    public int getBatchSize()
+    {
+        return controllerDependencies.getBatchSize();
+    }
+
+
+    @Override
+    public void setBatchSize(int batchSize)
+    {
+        controllerDependencies.setBatchSize(batchSize);
+    }
+
+
+    @Override
+    public long getRestartDelay()
+    {
+        return controllerDependencies.getRestartDelay();
+    }
+
+
+    @Override
+    public void setRestartDelay(long delayMS)
+    {
+        controllerDependencies.setRestartDelay(delayMS);
     }
 
 
@@ -1135,28 +1188,28 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
          * The desired starting {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode}
          * of the {@link EventChannelController}.
          */
-        private Mode startingMode;
+        private volatile Mode startingMode;
 
         /**
          * The number of milliseconds to wait between attempts to distribute {@link Event}s.
          */
-        private long batchDistributionDelayMS;
+        private volatile long batchDistributionDelayMS;
 
         /**
          * The maximum number of {@link Event}s that may be "batched" together in a single batch.
          */
-        private int batchSize;
+        private volatile int batchSize;
 
         /**
          * The number of milliseconds a {@link EventChannel} waits before retrying after an error has occurred.
          */
-        private long restartDelay;
+        private volatile long restartDelay;
 
         /**
          * The number of consecutive failures that may occur with an {@link EventChannel} before it is suspended from
          * distributing {@link Event}s.
          */
-        private int totalConsecutiveFailuresBeforeSuspending;
+        private volatile int totalConsecutiveFailuresBeforeSuspending;
 
 
         /**
@@ -1253,6 +1306,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
+        @Override
+        public void setBatchDistributionDelay(long delayMS)
+        {
+            batchDistributionDelayMS = delayMS;
+        }
+
+
         /**
          * {@inheritDoc}
          */
@@ -1263,6 +1323,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
 
+        @Override
+        public void setBatchSize(int batchSize)
+        {
+            this.batchSize = batchSize;
+        }
+
+
         /**
          * {@inheritDoc}
          */
@@ -1270,6 +1337,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         public long getRestartDelay()
         {
             return restartDelay;
+        }
+
+
+        @Override
+        public void setRestartDelay(long delayMS)
+        {
+            restartDelay = delayMS;
         }
 
 

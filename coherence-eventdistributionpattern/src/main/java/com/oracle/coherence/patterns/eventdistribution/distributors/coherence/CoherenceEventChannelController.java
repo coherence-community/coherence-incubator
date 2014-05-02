@@ -26,17 +26,25 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.coherence;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
+
 import com.oracle.coherence.common.processors.InvokeMethodProcessor;
+
 import com.oracle.coherence.common.tuples.Pair;
+
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
+
 import com.oracle.coherence.environment.Environment;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController;
+
 import com.oracle.coherence.patterns.messaging.DefaultMessageTracker;
 import com.oracle.coherence.patterns.messaging.Message;
 import com.oracle.coherence.patterns.messaging.MessageIdentifier;
@@ -47,16 +55,24 @@ import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeMessageProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.AcknowledgeSubscriptionMessagesProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.DrainSubscriptionMessagesProcessor;
+
 import com.tangosol.io.Serializer;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
+import com.tangosol.util.extractor.ReflectionUpdater;
+
 import com.tangosol.util.processor.ExtractorProcessor;
+import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -138,8 +154,8 @@ public class CoherenceEventChannelController extends AbstractEventChannelControl
                 if (logger.isLoggable(Level.SEVERE))
                 {
                     logger.log(Level.SEVERE,
-                               "Message sequence number out of order.  Prev = {0} New = {1}",
-                               new Object[] {prevSequenceNumber, newSequenceNumber});
+                               "Recovery in process. Previously at message {0}, now at message: {1}.",
+                               new Object[] {prevSequenceNumber, prevSequenceNumber});
                 }
 
                 return false;
@@ -202,18 +218,77 @@ public class CoherenceEventChannelController extends AbstractEventChannelControl
         // (we should fix this by having the messaging layer do it for us)
 
         // determine the MessageTracker of messages to delete
-        NamedCache subscriptionsCache = CacheFactory.getCache(Subscription.CACHENAME);
-        MessageTracker messageTracker = (MessageTracker) subscriptionsCache.invoke(subscriptionIdentifier,
-                                                                                   new DrainSubscriptionMessagesProcessor());
+        final NamedCache subscriptionsCache = CacheFactory.getCache(Subscription.CACHENAME);
+        final MessageTracker messageTracker = (MessageTracker) subscriptionsCache.invoke(subscriptionIdentifier,
+                                                                                         new DrainSubscriptionMessagesProcessor());
 
-        if ((messageTracker != null) &&!messageTracker.isEmpty())
+        // perform the draining of messages in the background
+        new Thread(new Runnable()
         {
-            // remove the messages that fall in the range
-            NamedCache messagesCache = CacheFactory.getCache(Message.CACHENAME);
+            @Override
+            public void run()
+            {
+                if ((messageTracker != null) &&!messageTracker.isEmpty())
+                {
+                    long size = messageTracker.size();
 
-            messagesCache.invokeAll(messageTracker.getMessageKeys(subscriptionIdentifier.getDestinationIdentifier()),
-                                    new AcknowledgeMessageProcessor(subscriptionIdentifier));
-        }
+                    if (logger.isLoggable(Level.INFO))
+                    {
+                        logger.log(Level.INFO,
+                                   "Commenced draining {0} messages from {1} (in the background using batches of {2} with an inter-batch delay of {3} ms)",
+                                   new Object[] {size, subscriptionIdentifier, getBatchSize(),
+                                                 getBatchDistributionDelay()});
+                    }
+
+                    NamedCache                  messagesCache      = CacheFactory.getCache(Message.CACHENAME);
+                    Iterator<MessageIdentifier> messageIdentifiers = messageTracker.iterator();
+
+                    while (messageIdentifiers.hasNext() &&!Thread.currentThread().isInterrupted())
+                    {
+                        // create a batch of messages to acknowledge
+                        ArrayList<MessageKey> messageKeys = new ArrayList<MessageKey>(getBatchSize());
+
+                        while (messageIdentifiers.hasNext() && messageKeys.size() < getBatchSize())
+                        {
+                            MessageIdentifier messageIdentifier = messageIdentifiers.next();
+                            MessageKey messageKey = Message.getKey(subscriptionIdentifier.getDestinationIdentifier(),
+                                                                   messageIdentifier);
+
+                            messageKeys.add(messageKey);
+                        }
+
+                        // acknowledge the batch of messages
+                        messagesCache.invokeAll(messageKeys, new AcknowledgeMessageProcessor(subscriptionIdentifier));
+
+                        // now wait the inter-batch delay
+                        if (getBatchDistributionDelay() > 0)
+                        {
+                            try
+                            {
+                                Thread.currentThread().sleep(getBatchDistributionDelay());
+                            }
+                            catch (InterruptedException e)
+                            {
+                                if (logger.isLoggable(Level.INFO))
+                                {
+                                    logger.log(Level.INFO,
+                                               "Draining {0} was interrupted.",
+                                               new Object[] {subscriptionIdentifier});
+                                }
+                            }
+                        }
+                    }
+
+                    if (logger.isLoggable(Level.INFO))
+                    {
+                        logger.log(Level.INFO,
+                                   "Completed draining {0} messages from {1} (in the background)",
+                                   new Object[] {size, subscriptionIdentifier});
+                    }
+                }
+
+            }
+        }).start();
     }
 
 
@@ -234,6 +309,71 @@ public class CoherenceEventChannelController extends AbstractEventChannelControl
     protected void internalStop()
     {
         channel.disconnect();
+    }
+
+
+    @Override
+    public void setBatchDistributionDelay(long delayMS)
+    {
+        if (logger.isLoggable(Level.INFO))
+        {
+            logger.log(Level.INFO,
+                       "Changing Batch Distribution Delay from {0} ms to {1} ms",
+                       new Object[] {controllerDependencies.getBatchDistributionDelay(), delayMS});
+        }
+
+        super.setBatchDistributionDelay(delayMS);
+
+        // now update the subscription itself so we don't lose the value on rolling restart
+        NamedCache subscriptionsCache = CacheFactory.getCache(Subscription.CACHENAME);
+
+        subscriptionsCache.invoke(subscriptionIdentifier,
+                                  new UpdaterProcessor("getEventControllerDependencies.setBatchDistributionDelay",
+                                                       Long.valueOf(delayMS)));
+    }
+
+
+    @Override
+    public void setBatchSize(int batchSize)
+    {
+        batchSize = batchSize <= 0 ? 1 : batchSize;
+
+        if (logger.isLoggable(Level.INFO))
+        {
+            logger.log(Level.INFO,
+                       "Changing Batch Size from {0} to {1}",
+                       new Object[] {controllerDependencies.getBatchSize(), batchSize});
+        }
+
+        super.setBatchSize(batchSize);
+
+        // now update the subscription itself so we don't lose the value on rolling restart
+        NamedCache subscriptionsCache = CacheFactory.getCache(Subscription.CACHENAME);
+
+        subscriptionsCache.invoke(subscriptionIdentifier,
+                                  new UpdaterProcessor("getEventControllerDependencies.setBatchSize",
+                                                       Integer.valueOf(batchSize)));
+    }
+
+
+    @Override
+    public void setRestartDelay(long delayMS)
+    {
+        if (logger.isLoggable(Level.INFO))
+        {
+            logger.log(Level.INFO,
+                       "Changing Restart Delay from {0} ms to {1} ms",
+                       new Object[] {controllerDependencies.getBatchDistributionDelay(), delayMS});
+        }
+
+        super.setRestartDelay(delayMS);
+
+        // now update the subscription itself so we don't lose the value on rolling restart
+        NamedCache subscriptionsCache = CacheFactory.getCache(Subscription.CACHENAME);
+
+        subscriptionsCache.invoke(subscriptionIdentifier,
+                                  new UpdaterProcessor("getEventControllerDependencies.setRestartDelay",
+                                                       Long.valueOf(delayMS)));
     }
 
 
