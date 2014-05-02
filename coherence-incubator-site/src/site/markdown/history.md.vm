@@ -9,11 +9,24 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
+*   Brian Oliver
+
+<h4>coherence-messagingpattern</h4>
+
+*   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduce the
+    JMX-based diagnostics for Susbcriptions.  This includes the ability to
+    display the internal state of a Subscription.
+
+
+--------------------------------------------------------------------------------
+
+<h3>Version: 11.2.0 @ 2013-11-21 19:20</h3>
+
+<h4>Source and Documentation Contributors</h4>
+
 *   Noah Arliss, Brian Oliver, Alexandru Serban
 
 <h4>Global and Cross-Module Changes</h4>
-
-*   Upgraded to use Oracle Tools 1.1.0-SNAPSHOT
 
 *   [COHINC-72](http://java.net/jira/browse/COHINC-72): Upgraded to use Oracle Coherence 3.7.1.10
 

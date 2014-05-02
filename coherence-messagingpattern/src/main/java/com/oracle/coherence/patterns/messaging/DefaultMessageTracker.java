@@ -26,21 +26,27 @@
 package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.common.ranges.Range;
 import com.oracle.coherence.common.ranges.Ranges;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  * A {@link DefaultMessageTracker} implements the {@link MessageTracker}
@@ -53,8 +59,6 @@ import java.util.Iterator;
  * <p>
  * Copyright (c) 2010. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
- *
- * @param <C> subscription configuration
  *
  * @author Paul Mackin
  */
@@ -406,19 +410,44 @@ public class DefaultMessageTracker implements MessageTracker
      */
     public String toString()
     {
-        StringBuffer                buf  = new StringBuffer("MessageTracker{");
-        Iterator<MessageIdentifier> iter = iterator();
+        StringBuilder builder = new StringBuilder();
 
-        while (iter.hasNext())
+        builder.append("DefaultMessageTracker{");
+
+        builder.append("name=");
+        builder.append(name);
+
+        builder.append(", lastPartitionId=");
+        builder.append(lastPartitionId);
+
+        builder.append(", ranges{");
+
+        // display the ranges by partition
+        TreeSet<Integer> partitionIds = new TreeSet<Integer>(rangeWrapperMap.keySet());
+
+        boolean          isFirst      = true;
+
+        for (Integer partitionId : partitionIds)
         {
-            MessageIdentifier id = iter.next();
+            if (!isFirst)
+            {
+                builder.append(", ");
+            }
+            else
+            {
+                isFirst = false;
+            }
 
-            buf.append(id.toString() + " ");
+            builder.append(partitionId);
+            builder.append("=");
+            builder.append(rangeWrapperMap.get(partitionId));
         }
 
-        buf.append("}");
+        builder.append("}");
 
-        return buf.toString();
+        builder.append("}");
+
+        return builder.toString();
     }
 
 
@@ -612,6 +641,28 @@ public class DefaultMessageTracker implements MessageTracker
             writer.writeObject(0, range);
             writer.writeInt(1, partitionId);
             writer.writeLong(2, maxSequenceNumber);
+        }
+
+
+        @Override
+        public String toString()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.append("RangeWrapper{");
+
+            builder.append("partitionId=");
+            builder.append(partitionId);
+
+            builder.append(", range=");
+            builder.append(range);
+
+            builder.append("maxSequenceNumber=");
+            builder.append(maxSequenceNumber);
+
+            builder.append("}");
+
+            return builder.toString();
         }
     }
 }
