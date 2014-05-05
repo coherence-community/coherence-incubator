@@ -530,7 +530,9 @@ public abstract class Subscription implements ExternalizableLite, PortableObject
      */
     public String toString()
     {
-        return String.format("Subscription{subscriptionIdentifier=%s, status=%s}", subscriptionIdentifier, status);
-
+        return String.format("Subscription{subscriptionIdentifier=%s, status=%s, visibleMessageTracker=%s}",
+                subscriptionIdentifier,
+                status,
+                visibleMessageTracker);
     }
 }

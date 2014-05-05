@@ -26,11 +26,15 @@
 package com.oracle.coherence.patterns.eventdistribution;
 
 import com.oracle.coherence.common.events.Event;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -186,12 +190,55 @@ public interface EventChannelController
 
 
         /**
-         * Determines the number of milliseconds an {@link EventChannelController} must wait between distributing
-         * {@link Event}s when there are more events than the configured {@link #getBatchSize()}.
+         * Determines the number of milliseconds an {@link EventChannelController} should wait when checking for
+         * new {@link Event}s to distribute.
          *
          * @return time (in milliseconds).
          */
         public long getBatchDistributionDelay();
+
+
+        /**
+         * Sets the number of milliseconds an {@link EventChannelController} should wait when checking for
+         * new {@link Event}s to distribute.
+         *
+         * @param delayMS  time in milliseconds
+         */
+        public void setBatchDistributionDelay(long delayMS);
+
+
+        /**
+         * Determines the maximum number of {@link Event}s to distribute in a single batch using an {@link EventChannel}.
+         *
+         * @return An {@link Integer}.
+         */
+        public int getBatchSize();
+
+
+        /**
+         * Sets the maximum number of {@link Event}s to distribute in a single batch using an {@link EventChannel}.
+         *
+         * @param batchSize  the maximum number of {@link Event}s to distribute in a batch
+         */
+        public void setBatchSize(int batchSize);
+
+
+        /**
+         * Determines the number of milliseconds an {@link EventChannelController} should delay between distribution
+         * failures.
+         *
+         * @return time (in milliseconds)
+         */
+        public long getRestartDelay();
+
+
+        /**
+         * Sets the number of milliseconds an {@link EventChannelController} should delay between distribution
+         * failures. (0 means no delay)
+         *
+         * @param delayMS  time in milliseconds
+         */
+        public void setRestartDelay(long delayMS);
 
 
         /**
@@ -211,24 +258,6 @@ public interface EventChannelController
          * @return time (in milliseconds).
          */
         public long getEventPollingDelay();
-
-
-        /**
-         * Determines the maximum number of {@link Event}s to distribute in a single batch using an {@link EventChannel}.
-         *
-         * @return An {@link Integer}.
-         */
-        public int getBatchSize();
-
-
-        /**
-         * Determines the number of milliseconds the {@link EventChannelController} should delay between distribution
-         * failures or attempts to determine if there are pending {@link Event}s that did not notify the
-         * {@link EventChannelController} to commence distribution.
-         *
-         * @return time (in milliseconds)
-         */
-        public long getRestartDelay();
 
 
         /**

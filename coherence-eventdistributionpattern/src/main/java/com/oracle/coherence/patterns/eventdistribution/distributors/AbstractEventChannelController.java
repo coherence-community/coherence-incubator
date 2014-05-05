@@ -305,7 +305,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     /**
      * The {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies} of the {@link EventChannel}.
      */
-    protected EventChannelController.Dependencies controllerDependencies;
+    protected volatile EventChannelController.Dependencies controllerDependencies;
 
     /**
      * The {@link EventChannel} that will be used to distribute {@link Event}s for this {@link EventChannelController}.
@@ -533,6 +533,48 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     public int getEventsDistributedCount()
     {
         return totalEventsDistributed;
+    }
+
+
+    @Override
+    public long getBatchDistributionDelay()
+    {
+        return controllerDependencies.getBatchDistributionDelay();
+    }
+
+
+    @Override
+    public void setBatchDistributionDelay(long delayMS)
+    {
+        controllerDependencies.setBatchDistributionDelay(delayMS);
+    }
+
+
+    @Override
+    public int getBatchSize()
+    {
+        return controllerDependencies.getBatchSize();
+    }
+
+
+    @Override
+    public void setBatchSize(int batchSize)
+    {
+        controllerDependencies.setBatchSize(batchSize);
+    }
+
+
+    @Override
+    public long getRestartDelay()
+    {
+        return controllerDependencies.getRestartDelay();
+    }
+
+
+    @Override
+    public void setRestartDelay(long delayMS)
+    {
+        controllerDependencies.setRestartDelay(delayMS);
     }
 
 
@@ -914,123 +956,123 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         // the resulting instruction to the Finite State Machine
         Instruction instruction;
 
-            try
+        try
+        {
+            // get the events we need to distribute together with the implementation specific
+            // information on how to acknowledge the events once they are distributed
+            Pair<List<Event>, T> etp       = getEventsToDistribute();
+
+            List<Event>          eventList = etp.getX();
+            T                    ack       = etp.getY();
+
+            // any events to distribute?
+            if (eventList.isEmpty())
             {
-                // get the events we need to distribute together with the implementation specific
-                // information on how to acknowledge the events once they are distributed
-                Pair<List<Event>, T> etp       = getEventsToDistribute();
-
-                List<Event>          eventList = etp.getX();
-                T                    ack       = etp.getY();
-
-                // any events to distribute?
-                if (eventList.isEmpty())
-                {
-                    // nothing to distribute so move back to the waiting state
+                // nothing to distribute so move back to the waiting state
                 instruction = new Instruction.TransitionTo<State>(State.WAITING);
-                }
-                else
+            }
+            else
+            {
+                int candidateEvents = eventList.size();    // Keep a running track of candidate events
+
+                if (logger.isLoggable(Level.FINER))
                 {
-                    int candidateEvents = eventList.size();    // Keep a running track of candidate events
+                    logger.log(Level.FINER,
+                               "Commencing distributing {1} event(s) with EventChannel {0}",
+                               new Object[] {controllerIdentifier, eventList.size()});
+                }
 
-                    if (logger.isLoggable(Level.FINER))
+                long startTime = System.currentTimeMillis();
+
+                // transform the current batch of events
+
+                // (ensure each of the EntryEvents have a correct context)
+                Iterator<Event> events = new MutatingEventIteratorTransformer(new EventTransformer()
+                {
+                    @Override
+                    public Event transform(Event event)
                     {
-                        logger.log(Level.FINER,
-                                   "Commencing distributing {1} event(s) with EventChannel {0}",
-                                   new Object[] {controllerIdentifier, eventList.size()});
-                    }
-
-                    long startTime = System.currentTimeMillis();
-
-                    // transform the current batch of events
-
-                    // (ensure each of the EntryEvents have a correct context)
-                    Iterator<Event> events = new MutatingEventIteratorTransformer(new EventTransformer()
-                    {
-                        @Override
-                        public Event transform(Event event)
+                        if (event instanceof DistributableEntryEvent)
                         {
-                            if (event instanceof DistributableEntryEvent)
-                            {
-                                DistributableEntryEvent distributableEntryEvent = (DistributableEntryEvent) event;
-                                NamedCache namedCache = CacheFactory.getCache(distributableEntryEvent.getCacheName());
+                            DistributableEntryEvent distributableEntryEvent = (DistributableEntryEvent) event;
+                            NamedCache namedCache = CacheFactory.getCache(distributableEntryEvent.getCacheName());
 
-                                distributableEntryEvent.getEntry()
-                                    .setContext(namedCache.getCacheService().getBackingMapManager().getContext());
+                            distributableEntryEvent.getEntry()
+                                .setContext(namedCache.getCacheService().getBackingMapManager().getContext());
 
-                                return distributableEntryEvent;
-                            }
-                            else
-                            {
-                                return event;
-                            }
+                            return distributableEntryEvent;
                         }
-                    }).transform(eventList.iterator());
-
-                    events = transformer == null ? events : transformer.transform(events);
-
-                    // send the events
-                    int eventsDistributed = channel.send(events);
-
-                    // calculate JMX statistics
-                    this.totalBatchesDistributed++;
-                    this.totalCandidateEvents   = this.totalCandidateEvents + candidateEvents;
-                    this.totalEventsDistributed = this.totalEventsDistributed + eventsDistributed;
-
-                    long distributionDurationMS = System.currentTimeMillis() - startTime;
-
-                    lastDistributionDurationMS    = distributionDurationMS;
-                    maximumDistributionDurationMS = Math.max(maximumDistributionDurationMS, distributionDurationMS);
-                    minimumDistributionDurationMS = Math.min(minimumDistributionDurationMS, distributionDurationMS);
-                    totalDistributionDurationMS   += distributionDurationMS;
-
-                    if (logger.isLoggable(Level.FINER))
-                    {
-                        logger.log(Level.FINER,
-                                   "Completed distributing {1} Event(s) with EventChannel {0}",
-                                   new Object[] {controllerIdentifier, eventList.size()});
+                        else
+                        {
+                            return event;
+                        }
                     }
+                }).transform(eventList.iterator());
 
-                    // acknowledge the events we've seen
-                    acknowledgeDistributedEvents(eventList, ack);
+                events = transformer == null ? events : transformer.transform(events);
 
-                    // reset the number of consecutive failures as we've had success!
-                    consecutiveDistributionFailures = 0;
+                // send the events
+                int eventsDistributed = channel.send(events);
+
+                // calculate JMX statistics
+                this.totalBatchesDistributed++;
+                this.totalCandidateEvents   = this.totalCandidateEvents + candidateEvents;
+                this.totalEventsDistributed = this.totalEventsDistributed + eventsDistributed;
+
+                long distributionDurationMS = System.currentTimeMillis() - startTime;
+
+                lastDistributionDurationMS    = distributionDurationMS;
+                maximumDistributionDurationMS = Math.max(maximumDistributionDurationMS, distributionDurationMS);
+                minimumDistributionDurationMS = Math.min(minimumDistributionDurationMS, distributionDurationMS);
+                totalDistributionDurationMS   += distributionDurationMS;
+
+                if (logger.isLoggable(Level.FINER))
+                {
+                    logger.log(Level.FINER,
+                               "Completed distributing {1} Event(s) with EventChannel {0}",
+                               new Object[] {controllerIdentifier, eventList.size()});
+                }
+
+                // acknowledge the events we've seen
+                acknowledgeDistributedEvents(eventList, ack);
+
+                // reset the number of consecutive failures as we've had success!
+                consecutiveDistributionFailures = 0;
 
                 instruction                     = new Instruction.TransitionTo<State>(State.DELAYING);
-                }
             }
-            catch (RuntimeException runtimeException)
+        }
+        catch (RuntimeException runtimeException)
+        {
+            if (logger.isLoggable(Level.WARNING))
             {
+                logger.log(Level.WARNING,
+                           "EventChannelController {0} failed to distribute events",
+                           controllerIdentifier);
+
+                logger.log(Level.INFO, "Exception was as follows:", runtimeException);
+            }
+
+            // we've now had a failure!
+            consecutiveDistributionFailures++;
+
+            // schedule a retry?
+            if (controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending() < 0
+                || consecutiveDistributionFailures
+                   < controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending())
+            {
+                instruction = new Instruction.TransitionTo<State>(State.ERROR);
+            }
+            else
+            {
+                // suspend distribution as we've had too many consecutive failures
                 if (logger.isLoggable(Level.WARNING))
                 {
                     logger.log(Level.WARNING,
-                               "EventChannelController {0} failed to distribute events",
-                               controllerIdentifier);
-
-                    logger.log(Level.INFO, "Exception was as follows:", runtimeException);
+                               "Suspending distribution for {0} as there have been too many ({1}) "
+                               + "consecutive failures ",
+                               new Object[] {controllerIdentifier, consecutiveDistributionFailures});
                 }
-
-                // we've now had a failure!
-                consecutiveDistributionFailures++;
-
-                // schedule a retry?
-                if (controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending() < 0
-                    || consecutiveDistributionFailures
-                       < controllerDependencies.getTotalConsecutiveFailuresBeforeSuspending())
-                {
-                instruction = new Instruction.TransitionTo<State>(State.ERROR);
-                }
-                else
-                {
-                    // suspend distribution as we've had too many consecutive failures
-                    if (logger.isLoggable(Level.WARNING))
-                    {
-                        logger.log(Level.WARNING,
-                                   "Suspending distribution for {0} as there have been too many ({1}) "
-                                   + "consecutive failures ",
-                                   new Object[] {controllerIdentifier, consecutiveDistributionFailures});
-                    }
 
                 instruction = new Instruction.TransitionTo<State>(State.SUSPENDED);
             }
@@ -1222,9 +1264,23 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
         @Override
+        public void setBatchDistributionDelay(long delayMS)
+        {
+            batchDistributionDelayMS = delayMS;
+        }
+
+
+        @Override
         public int getBatchSize()
         {
             return batchSize;
+        }
+
+
+        @Override
+        public void setBatchSize(int batchSize)
+        {
+            this.batchSize = batchSize;
         }
 
 
@@ -1236,9 +1292,9 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
         @Override
-        public int getTotalConsecutiveFailuresBeforeSuspending()
+        public void setRestartDelay(long delayMS)
         {
-            return totalConsecutiveFailuresBeforeSuspending;
+            restartDelay = delayMS;
         }
 
 
@@ -1246,6 +1302,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         public long getEventPollingDelay()
         {
             return eventPollingDelay;
+        }
+
+
+        @Override
+        public int getTotalConsecutiveFailuresBeforeSuspending()
+        {
+            return totalConsecutiveFailuresBeforeSuspending;
         }
 
 

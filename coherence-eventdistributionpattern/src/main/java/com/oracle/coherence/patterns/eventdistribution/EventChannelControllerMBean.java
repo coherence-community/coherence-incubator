@@ -27,7 +27,6 @@ package com.oracle.coherence.patterns.eventdistribution;
 
 import com.oracle.coherence.common.events.Event;
 
-
 /**
  * The {@link EventChannelControllerMBean} specifies the JMX interface for {@link EventChannelController}s.
  * <p>
@@ -109,6 +108,58 @@ public interface EventChannelControllerMBean
      */
 
     public int getEventsDistributedCount();
+
+
+    /**
+     * Determines the number of milliseconds the {@link EventChannelController} should wait when checking for
+     * new {@link Event}s to distribute.
+     *
+     * @return time (in milliseconds).
+     */
+    public long getBatchDistributionDelay();
+
+
+    /**
+     * Sets the number of milliseconds the {@link EventChannelController} should wait when checking for
+     * new {@link Event}s to distribute.
+     *
+     * @param delayMS  time in milliseconds
+     */
+    public void setBatchDistributionDelay(long delayMS);
+
+
+    /**
+     * Determines the maximum number of {@link Event}s to distribute in a single batch using an {@link EventChannel}.
+     *
+     * @return An {@link Integer}.
+     */
+    public int getBatchSize();
+
+
+    /**
+     * Sets the maximum number of {@link Event}s to distribute in a single batch using an {@link EventChannel}.
+     *
+     * @param batchSize  the maximum number of {@link Event}s to distribute in a batch
+     */
+    public void setBatchSize(int batchSize);
+
+
+    /**
+     * Determines the number of milliseconds the {@link EventChannelController} should delay between distribution
+     * failures.
+     *
+     * @return time (in milliseconds)
+     */
+    public long getRestartDelay();
+
+
+    /**
+     * Sets the number of milliseconds the {@link EventChannelController} should delay between distribution
+     * failures. (0 means no delay)
+     *
+     * @param delayMS  time in milliseconds
+     */
+    public void setRestartDelay(long delayMS);
 
 
     /**
