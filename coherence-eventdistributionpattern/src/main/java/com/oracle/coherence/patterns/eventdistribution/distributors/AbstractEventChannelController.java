@@ -310,7 +310,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     /**
      * The {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies} of the {@link EventChannel}.
      */
-    protected EventChannelController.Dependencies controllerDependencies;
+    protected volatile EventChannelController.Dependencies controllerDependencies;
 
     /**
      * The {@link EventChannel} that will be used to distribute {@link Event}s for this {@link EventChannelController}.
@@ -544,6 +544,48 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     public int getEventsDistributedCount()
     {
         return totalEventsDistributed;
+    }
+
+
+    @Override
+    public long getBatchDistributionDelay()
+    {
+        return controllerDependencies.getBatchDistributionDelay();
+    }
+
+
+    @Override
+    public void setBatchDistributionDelay(long delayMS)
+    {
+        controllerDependencies.setBatchDistributionDelay(delayMS);
+    }
+
+
+    @Override
+    public int getBatchSize()
+    {
+        return controllerDependencies.getBatchSize();
+    }
+
+
+    @Override
+    public void setBatchSize(int batchSize)
+    {
+        controllerDependencies.setBatchSize(batchSize);
+    }
+
+
+    @Override
+    public long getRestartDelay()
+    {
+        return controllerDependencies.getRestartDelay();
+    }
+
+
+    @Override
+    public void setRestartDelay(long delayMS)
+    {
+        controllerDependencies.setRestartDelay(delayMS);
     }
 
 
@@ -1233,6 +1275,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
         @Override
+        public void setBatchDistributionDelay(long delayMS)
+        {
+            batchDistributionDelayMS = delayMS;
+        }
+
+
+        @Override
         public int getBatchSize()
         {
             return batchSize;
@@ -1240,9 +1289,23 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
         @Override
+        public void setBatchSize(int batchSize)
+        {
+            this.batchSize = batchSize;
+        }
+
+
+        @Override
         public long getRestartDelay()
         {
             return restartDelay;
+        }
+
+
+        @Override
+        public void setRestartDelay(long delayMS)
+        {
+            restartDelay = delayMS;
         }
 
 

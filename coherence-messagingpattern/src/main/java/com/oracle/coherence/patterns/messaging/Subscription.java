@@ -27,20 +27,26 @@ package com.oracle.coherence.patterns.messaging;
 
 import com.oracle.coherence.common.backingmaplisteners.Cause;
 import com.oracle.coherence.common.backingmaplisteners.LifecycleAwareCacheEntry;
+
 import com.oracle.coherence.common.ranges.Ranges;
+
 import com.oracle.coherence.patterns.messaging.management.MessagingMBeanManager;
 import com.oracle.coherence.patterns.messaging.management.QueueSubscriptionProxy;
 import com.oracle.coherence.patterns.messaging.management.SubscriptionProxy;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.MapEvent;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -583,7 +589,9 @@ public abstract class Subscription implements ExternalizableLite, PortableObject
      */
     public String toString()
     {
-        return String.format("Subscription{subscriptionIdentifier=%s, status=%s}", subscriptionIdentifier, status);
-
+        return String.format("Subscription{subscriptionIdentifier=%s, status=%s, visibleMessageTracker=%s}",
+                             subscriptionIdentifier,
+                             status,
+                             visibleMessageTracker);
     }
 }

@@ -71,4 +71,11 @@ public class SubscriptionProxy extends MessagingMBeanProxy implements Subscripti
     {
         return getObject().getNumMessagesAcknowledged();
     }
+
+
+    @Override
+    public String getState()
+    {
+        return getObject().toString();
+    }
 }

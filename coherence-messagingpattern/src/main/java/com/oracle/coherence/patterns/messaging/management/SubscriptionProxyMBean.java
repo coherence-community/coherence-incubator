@@ -59,4 +59,12 @@ public interface SubscriptionProxyMBean
      * @return number of messages acknowledged
      */
     public long getNumMessagesAcknowledged();
+
+
+    /**
+     * Obtains a representation of the internal state of a {@link Subscription}.
+     *
+     * @return  a string representation of a {@link Subscription}
+     */
+    public String getState();
 }

@@ -190,12 +190,21 @@ public interface EventChannelController
 
 
         /**
-         * Determines the number of milliseconds an {@link EventChannelController} must wait between distributing
-         * {@link Event}s when there are more events than the configured {@link #getBatchSize()}.
+         * Determines the number of milliseconds the {@link EventChannelController} should wait when checking for
+         * new {@link Event}s to distribute.
          *
          * @return time (in milliseconds).
          */
         public long getBatchDistributionDelay();
+
+
+        /**
+         * Sets the number of milliseconds the {@link EventChannelController} should wait when checking for
+         * new {@link Event}s to distribute.
+         *
+         * @param delayMS  time in milliseconds
+         */
+        public void setBatchDistributionDelay(long delayMS);
 
 
         /**
@@ -226,13 +235,29 @@ public interface EventChannelController
 
 
         /**
+         * Sets the maximum number of {@link Event}s to distribute in a single batch using an {@link EventChannel}.
+         *
+         * @param batchSize  the maximum number of {@link Event}s to distribute in a batch
+         */
+        public void setBatchSize(int batchSize);
+
+
+        /**
          * Determines the number of milliseconds the {@link EventChannelController} should delay between distribution
-         * failures or attempts to determine if there are pending {@link Event}s that did not notify the
-         * {@link EventChannelController} to commence distribution.
+         * failures.
          *
          * @return time (in milliseconds)
          */
         public long getRestartDelay();
+
+
+        /**
+         * Sets the number of milliseconds the {@link EventChannelController} should delay between distribution
+         * failures. (0 means no delay)
+         *
+         * @param delayMS  time in milliseconds
+         */
+        public void setRestartDelay(long delayMS);
 
 
         /**

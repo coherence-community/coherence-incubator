@@ -10,6 +10,35 @@ reverse chronological order.
 
 *   Brian Oliver
 
+<h4>coherence-incubator-site</h4>
+
+*   [COHINC-119](http://java.net/jira/browse/COHINC-119): Modifed pom.xml
+    to produce and deploy the documentation to github in the "deploy" phase.
+
+<h4>coherence-messagingpattern</h4>
+
+*   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduce the
+    JMX-based diagnostics for Susbcriptions.  This includes the ability to
+    display the internal state of a Subscription.
+
+<h4>coherence-eventdistributionpattern</h4>
+
+*   [COHINC-110](http://java.net/jira/browse/COHINC-110): Introduce the
+    ability to control batch-size, inter batch-distribution-delay and
+    restart-delay using JMX at runtime.
+
+*   [COHINC-112](http://java.net/jira/browse/COHINC-112): Replace the
+    "message out of order" log when using Coherence-based event distribution
+    implementations with something more apppropriate.  This log only
+    indicates that a recovery is occuring (nothing bad!), because it's
+    redistributing messages to an event channel that previously
+    failed for some reason.
+
+*   [COHINC-115](http://java.net/jira/browse/COHINC-115): Refactored
+    the "drain" functionality for Coherence-based event distribution
+    implementations so that they use the configured batches and delays.
+
+
 --------------------------------------------------------------------------------
 
 <h3>Version 11.3.0 @ 2014-04-12 06:57</h3>

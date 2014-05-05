@@ -25,6 +25,15 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>${maven.install.plugin.version}</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>${maven.deploy.plugin.version}</version>
                 <configuration>
@@ -56,6 +65,14 @@
                         <version>${doxia.module.markdown.version}</version>
                     </dependency>
                 </dependencies>
+            <executions>
+                    <execution>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -71,11 +88,11 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>site</goal>
                         </goals>
-                        <phase>site-deploy</phase>
-                    </execution>
+                        </execution>
                 </executions>
             </plugin>
         </plugins>
