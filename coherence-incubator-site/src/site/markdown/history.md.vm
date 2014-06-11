@@ -43,6 +43,11 @@ reverse chronological order.
     the "drain" functionality for Coherence-based event distribution
     implementations so that they use the configured batches and delays.
 
+<h4>coherence-pushreplicationpattern</h4>
+
+*   [COHINC-64](http://java.net/jira/browse/COHINC-64):  Changed the
+    coherence-web dependency to be "provided".
+
 <h4>coherence-jvisualvm</h4>
 
 *   [COHINC-107](https://java.net/jira/browse/COHINC-107):  Memory Based Charts Should
