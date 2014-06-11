@@ -17,10 +17,15 @@
     <name>Coherence Incubator Web Server</name>
 
     <dependencies>
-
         <dependency>
             <groupId>com.oracle.coherence</groupId>
             <artifactId>coherence</artifactId>
+            <version>${oracle.coherence.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.coherence</groupId>
+            <artifactId>coherence-web</artifactId>
             <version>${oracle.coherence.version}</version>
         </dependency>
 

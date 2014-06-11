@@ -30,7 +30,7 @@
             <groupId>com.oracle.coherence</groupId>
             <artifactId>coherence-web</artifactId>
             <version>${oracle.coherence.version}</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

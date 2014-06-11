@@ -65,7 +65,7 @@
                         <version>${doxia.module.markdown.version}</version>
                     </dependency>
                 </dependencies>
-            <executions>
+                <executions>
                     <execution>
                         <phase>deploy</phase>
                         <goals>
