@@ -4,12 +4,19 @@ Change History
 The following sections outline Oracle Coherence Incubator changes in 
 reverse chronological order.
 
-
 <h3>Version ${project.version} @ ${timestamp} </h3>
 
 <h4>Source and Documentation Contributors</h4>
 
 *   Brian Oliver
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded to use Oracle Tools 1.2.2
+
+*   [COHINC-86](http://java.net/jira/browse/COHINC-86): Upgraded to use Oracle Coherence 3.7.1.11
+
+*   [COHINC-92](http://java.net/jira/browse/COHINC-92): Upgraded Maven Plugins.
 
 <h4>coherence-incubator-site</h4>
 

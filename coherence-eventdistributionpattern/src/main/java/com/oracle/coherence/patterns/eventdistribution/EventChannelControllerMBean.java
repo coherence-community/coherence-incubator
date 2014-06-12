@@ -111,36 +111,6 @@ public interface EventChannelControllerMBean
 
 
     /**
-     * Suspends the {@link EventChannelController} for distribution.  While suspended the {@link EventChannelController}
-     * will queue up all requests to distribute {@link Event}s.  When {@link #start()}ed the
-     * {@link EventChannelController} will commence distributing the queued {@link Event}s.
-     */
-    public void suspend();
-
-
-    /**
-     * Schedules the {@link EventChannelController} commence distribution of {@link Event}s.
-     * (if it was Suspended or Disabled).
-     */
-    public void start();
-
-
-    /**
-     * Schedules the {@link EventChannelController} to disable distribution.  While disabled the
-     * {@link EventChannelController} will ignore all request to distribute {@link Event}s by its associated
-     * {@link EventDistributor}.
-     */
-    public void disable();
-
-
-    /**
-     * Discards all of the currently queued {@link Event}s for distribution.  The {@link EventChannelController}
-     * must be <strong>suspended</strong> before this happens.
-     */
-    public void drain();
-
-
-    /**
      * Determines the number of milliseconds the {@link EventChannelController} should wait when checking for
      * new {@link Event}s to distribute.
      *
@@ -190,4 +160,34 @@ public interface EventChannelControllerMBean
      * @param delayMS  time in milliseconds
      */
     public void setRestartDelay(long delayMS);
+
+
+    /**
+     * Suspends the {@link EventChannelController} for distribution.  While suspended the {@link EventChannelController}
+     * will queue up all requests to distribute {@link Event}s.  When {@link #start()}ed the
+     * {@link EventChannelController} will commence distributing the queued {@link Event}s.
+     */
+    public void suspend();
+
+
+    /**
+     * Schedules the {@link EventChannelController} commence distribution of {@link Event}s.
+     * (if it was Suspended or Disabled).
+     */
+    public void start();
+
+
+    /**
+     * Schedules the {@link EventChannelController} to disable distribution.  While disabled the
+     * {@link EventChannelController} will ignore all request to distribute {@link Event}s by its associated
+     * {@link EventDistributor}.
+     */
+    public void disable();
+
+
+    /**
+     * Discards all of the currently queued {@link Event}s for distribution.  The {@link EventChannelController}
+     * must be <strong>suspended</strong> before this happens.
+     */
+    public void drain();
 }

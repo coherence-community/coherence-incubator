@@ -460,33 +460,6 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    public void start()
-    {
-        final State state = getState();
-
-        if (state == State.PAUSED || state == State.DISABLED || state == State.SUSPENDED)
-        {
-            if (logger.isLoggable(Level.FINER))
-            {
-                logger.log(Level.FINER, "Scheduled EventChannelController {0} to start.", controllerIdentifier);
-            }
-
-            // schedule to start as soon as possible
-            setState(State.STARTING);
-            schedule(new Runnable()
-            {
-                public void run()
-                {
-                    onStart(state);
-                }
-            }, 0, TimeUnit.MILLISECONDS);
-        }
-    }
-
-
     @Override
     public long getBatchDistributionDelay()
     {
@@ -526,6 +499,33 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     public void setRestartDelay(long delayMS)
     {
         controllerDependencies.setRestartDelay(delayMS);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public void start()
+    {
+        final State state = getState();
+
+        if (state == State.PAUSED || state == State.DISABLED || state == State.SUSPENDED)
+        {
+            if (logger.isLoggable(Level.FINER))
+            {
+                logger.log(Level.FINER, "Scheduled EventChannelController {0} to start.", controllerIdentifier);
+            }
+
+            // schedule to start as soon as possible
+            setState(State.STARTING);
+            schedule(new Runnable()
+            {
+                public void run()
+                {
+                    onStart(state);
+                }
+            }, 0, TimeUnit.MILLISECONDS);
+        }
     }
 
 
