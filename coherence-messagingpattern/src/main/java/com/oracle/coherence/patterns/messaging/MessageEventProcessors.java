@@ -28,11 +28,17 @@ package com.oracle.coherence.patterns.messaging;
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.processing.AbstractAsynchronousEventProcessor;
+
 import com.oracle.coherence.common.identifiers.Identifier;
+
+import com.oracle.coherence.common.processors.InvokeMethodProcessor;
+
 import com.oracle.coherence.patterns.messaging.entryprocessors.ExposeMessageToQueueProcessor;
 import com.oracle.coherence.patterns.messaging.entryprocessors.RegisterSubscriptionsWithMessageProcessor;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.processor.UpdaterProcessor;
 
 import java.util.ArrayList;
@@ -214,7 +220,8 @@ class MessageEventProcessors
             NamedCache subscriptionCache = CacheFactory.getCache(Subscription.CACHENAME);
             Map<SubscriptionIdentifier, Boolean> mapSubscriptions =
                 (Map<SubscriptionIdentifier, Boolean>) subscriptionCache.invokeAll(subscriptions,
-                                                                                   new UpdaterProcessor("onAcceptMessage", tracker));
+                                                                                   new InvokeMethodProcessor("onAcceptMessage", new Object[] {
+                                                                                       tracker}));
 
             // build a set of the subscriptions that accepted the messages
             HashSet<SubscriptionIdentifier> activeSubscriptions = new HashSet<SubscriptionIdentifier>();

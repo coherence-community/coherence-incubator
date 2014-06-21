@@ -516,6 +516,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
                                                                                                         passiveServer
                                                                                                             .getSystemProperty("proxy.port"))
                                                                                                                 .setSystemProperty("channel.starting.mode", "disabled");
+            activeServerSchema.setJMXManagementMode(JMXManagementMode.ALL);
 
             activeServer = builder.realize(activeServerSchema, "ACTIVE", console);
 
