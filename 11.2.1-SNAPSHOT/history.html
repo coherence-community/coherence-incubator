@@ -429,7 +429,7 @@
 <p>The following sections outline Oracle Coherence Incubator changes in 
 reverse chronological order.</p>
 
-<h3>Version 11.2.1-SNAPSHOT @ 2014-06-21 11:13 </h3>
+<h3>Version 11.2.1-SNAPSHOT @ 2014-06-21 12:56 </h3>
 
 <h4>Source and Documentation Contributors</h4>
 
@@ -455,9 +455,13 @@ to produce and deploy the documentation to github in the "deploy" phase.</li>
 <h4>coherence-messagingpattern</h4>
 
 <ul>
-<li><a href="http://java.net/jira/browse/COHINC-118">COHINC-118</a>: Introduce the
+<li><p><a href="http://java.net/jira/browse/COHINC-118">COHINC-118</a>: Introduce the
 JMX-based diagnostics for Susbcriptions.  This includes the ability to
-display the internal state of a Subscription.</li>
+display the internal state of a Subscription.</p></li>
+<li><p><a href="http://java.net/jira/browse/COHINC-121">COHINC-121</a>: Resolved
+potential message leaks when publishing to disabled subscriptions
+(subscriptions won't recieve messages, but messages may be left
+unacknowledged)</p></li>
 </ul>
 
 <h4>coherence-eventdistributionpattern</h4>
@@ -770,7 +774,7 @@ used for Push Replication would throw an UnsupportedOperationException.</p></li>
                                                                   <?xml version="1.0" encoding="UTF-8"?>
 <div class="copyright">Copyright © 2008-2013 Oracle Corporation. All rights reserved.</div>
                                                           <?xml version="1.0" encoding="UTF-8"?>
-<div class="version">Version 11.2.1-SNAPSHOT: 2014-06-21 11:13</div>
+<div class="version">Version 11.2.1-SNAPSHOT: 2014-06-21 12:56</div>
                   
         
                 </div>
