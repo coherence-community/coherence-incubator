@@ -18,8 +18,13 @@ reverse chronological order.
 <h4>coherence-messagingpattern</h4>
 
 *   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduce the
-    JMX-based diagnostics for Susbcriptions.  This includes the ability to
+    JMX-based diagnostics for Subcriptions.  This includes the ability to
     display the internal state of a Subscription.
+
+*   [COHINC-121](http://java.net/jira/browse/COHINC-121): Resolved
+    potential message leaks when publishing to disabled subscriptions
+    (subscriptions won't recieve messages, but messages may be left
+    unacknowledged)
 
 <h4>coherence-eventdistributionpattern</h4>
 

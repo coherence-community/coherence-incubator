@@ -31,48 +31,67 @@ import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.CacheStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.filters.ExampleEventFilter;
+
 import com.oracle.tools.deferred.Deferred;
 import com.oracle.tools.deferred.Eventually;
 import com.oracle.tools.deferred.UnresolvableInstanceException;
+
 import com.oracle.tools.junit.AbstractCoherenceTest;
+
 import com.oracle.tools.matchers.Equivalence;
 import com.oracle.tools.matchers.PartitionSetMatcher;
+
 import com.oracle.tools.runtime.Application;
 import com.oracle.tools.runtime.LifecycleEvent;
 import com.oracle.tools.runtime.LifecycleEventInterceptor;
 import com.oracle.tools.runtime.PropertiesBuilder;
+
 import com.oracle.tools.runtime.coherence.ClusterMember;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
 import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
+
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
+
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
 import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.container.Container;
+
 import com.oracle.tools.runtime.network.AvailablePortIterator;
 import com.oracle.tools.runtime.network.Constants;
+
 import com.oracle.tools.util.Capture;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
+
 import com.tangosol.net.partition.PartitionSet;
+
 import com.tangosol.util.Filter;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.management.ObjectName;
+import static com.oracle.tools.deferred.DeferredAssert.assertThat;
+
+import static com.oracle.tools.deferred.DeferredHelper.eventually;
+import static com.oracle.tools.deferred.DeferredHelper.invoking;
+
+import static com.oracle.tools.matchers.MapMatcher.sameAs;
+
+import static org.hamcrest.Matchers.is;
+
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
 import java.util.concurrent.TimeUnit;
 
-import static com.oracle.tools.deferred.DeferredAssert.assertThat;
-import static com.oracle.tools.deferred.DeferredHelper.eventually;
-import static com.oracle.tools.deferred.DeferredHelper.invoking;
-import static com.oracle.tools.matchers.MapMatcher.sameAs;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.fail;
+import javax.management.ObjectName;
 
 /**
  * The {@link AbstractPushReplicationTest} defines a set of standard tests
@@ -443,6 +462,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
                                                                                                             .getSystemProperty("proxy.port"))
                                                                                                                 .setSystemProperty("channel.starting.mode", "disabled");
 
+            activeServerSchema.setJMXManagementMode(JMXManagementMode.ALL);
+
             activeServer = builder.realize(activeServerSchema, "ACTIVE", console);
 
             // turn off local clustering so we don't connect with the process just started
@@ -505,13 +526,95 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
 
     /**
+     * Performs Active-Passive topology tests (but with the channels suspended)
+     *
+     * @throws Exception
+     */
+    @Test(expected = AssertionError.class)
+    public final void testActivePassiveSuspended() throws Exception
+    {
+        ClusterMember                                              passiveServer = null;
+        ClusterMember                                              activeServer  = null;
+
+        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder       = newClusterMemberBuilder();
+        SystemApplicationConsole                                   console       = new SystemApplicationConsole();
+
+        try
+        {
+            // establish the passive cluster
+            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            ClusterMemberSchema passiveServerSchema =
+                newPassiveClusterMemberSchema(passiveClusterPort).setSiteName("sydney");
+
+            passiveServer = builder.realize(passiveServerSchema, "PASSIVE", console);
+
+            // establish the active cluster
+            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            ClusterMemberSchema activeServerSchema =
+                newActiveClusterMemberSchema(activeClusterPort).setSiteName("sydney").setSystemProperty("remote.port",
+                                                                                                        passiveServer
+                                                                                                            .getSystemProperty("proxy.port"))
+                                                                                                                .setSystemProperty("channel.starting.mode", "suspended");
+
+            activeServer = builder.realize(activeServerSchema, "ACTIVE", console);
+
+            // turn off local clustering so we don't connect with the process just started
+            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+
+            System.setProperty("remote.port", activeServer.getSystemProperty("proxy.port"));
+            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            // populate the active site
+            randomlyPopulateNamedCache(CacheFactory.getCache("publishing-cache"), 0, 500, "sydney");
+
+            // shutdown our connection to the active site
+            CacheFactory.shutdown();
+
+            // assert that the value is in the passive site
+            System.setProperty("remote.port", passiveServer.getSystemProperty("proxy.port"));
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            System.out.printf("Waiting for ACTIVE and PASSIVE sites to synchronize.\n");
+
+            NamedCache namedCache = CacheFactory.getCache("publishing-cache");
+
+            Eventually.assertThat(invoking(namedCache).size(), is(1));
+        }
+        catch (Exception exception)
+        {
+            throw exception;
+        }
+        finally
+        {
+            // shutdown our local use of coherence
+            CacheFactory.shutdown();
+
+            if (passiveServer != null)
+            {
+                passiveServer.destroy();
+            }
+
+            if (activeServer != null)
+            {
+                activeServer.destroy();
+            }
+        }
+    }
+
+
+    /**
      * Performs Active-Passive topology tests with Event transformation
      *
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void testActivePassiveEventTranformation() throws Exception
+    public void testActivePassiveEventTransformation() throws Exception
     {
         String                                                     siteName         = "testActivePassive";
         final String                                               cacheName        = "publishing-cache";

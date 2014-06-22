@@ -103,9 +103,9 @@ public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushRepli
      * {@inheritDoc}
      */
     @Override
-    public void testActivePassiveEventTranformation() throws Exception
+    public void testActivePassiveEventTransformation() throws Exception
     {
-        super.testActivePassiveEventTranformation();
+        super.testActivePassiveEventTransformation();
     }
 
 
