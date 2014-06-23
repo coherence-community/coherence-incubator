@@ -153,8 +153,7 @@ public class WebServer
     {
         ClusterMemberSchema serverSchema =
             new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-                .setSystemProperties(propertiesBuilder).setRoleName("CacheServer")
-                .useLocalHostMode();
+                .setSystemProperties(propertiesBuilder).setRoleName("CacheServer");
 
         ClusterBuilder builder = new ClusterBuilder();
 
