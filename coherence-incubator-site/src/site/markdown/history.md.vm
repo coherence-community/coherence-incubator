@@ -21,6 +21,11 @@ reverse chronological order.
     JMX-based diagnostics for Susbcriptions.  This includes the ability to
     display the internal state of a Subscription.
 
+*   [COHINC-121](http://java.net/jira/browse/COHINC-121): Resolved
+    potential message leaks when publishing to disabled subscriptions
+    (subscriptions won't recieve messages, but messages may be left
+    unacknowledged)
+
 <h4>coherence-eventdistributionpattern</h4>
 
 *   [COHINC-106](http://java.net/jira/browse/COHINC-106): Added missing @OnArrived

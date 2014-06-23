@@ -65,8 +65,6 @@ import com.tangosol.net.ExtensibleConfigurableCacheFactory;
 
 import org.junit.Test;
 
-import sun.net.www.content.text.Generic;
-
 import static com.oracle.tools.deferred.DeferredHelper.invoking;
 
 import static com.oracle.tools.deferred.Eventually.assertThat;
@@ -90,121 +88,122 @@ import java.io.IOException;
  */
 public class ContextsManagerTest extends AbstractCoherenceTest
 {
-    @Test
-    public void shouldOperateDuringRollingRestart() throws IOException
-    {
-        Capture<Integer> clusterPort = new Capture<Integer>(Container.getAvailablePorts());
-
-        ClusterMemberSchema memberSchema =
-            new ClusterMemberSchema().useLocalHostMode().setClusterPort(clusterPort).setPofEnabled(true)
-                .setPofConfigURI("coherence-commandpattern-test-pof-config.xml")
-                .setCacheConfigURI("coherence-commandpattern-test-cache-config.xml").setJMXSupport(true)
-                .setJMXPort(Container.getAvailablePorts())
-                .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.ALL)
-                .setRMIServerHostName(Constants.getLocalHost()).setLogLevel(9).setPreferIPv4(true);
-
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> memberBuilder =
-            new NativeJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
-
-        ApplicationConsole console        = new SystemApplicationConsole();
-
-        ClusterBuilder     clusterBuilder = new ClusterBuilder();
-
-        clusterBuilder.addBuilder(memberBuilder, memberSchema, "Server", 2);
-
-        Cluster cluster = clusterBuilder.realize(console);
-
-        assertThat(invoking(cluster).getClusterSize(), is(2));
-
-        System.setProperty(ClusterMemberSchema.PROPERTY_CACHECONFIG, "coherence-commandpattern-test-cache-config.xml");
-        System.setProperty(ClusterMemberSchema.PROPERTY_LOCALHOST_ADDRESS, "127.0.0.1");
-        System.setProperty(ClusterMemberSchema.PROPERTY_CLUSTER_PORT, Integer.toString(clusterPort.get()));
-        System.setProperty(ClusterMemberSchema.PROPERTY_MULTICAST_TTL, "0");
-        System.setProperty(ClusterMemberSchema.PROPERTY_DISTRIBUTED_LOCALSTORAGE, "false");
-        System.setProperty(ClusterMemberSchema.PROPERTY_POF_ENABLED, "true");
-        System.setProperty(ClusterMemberSchema.PROPERTY_POF_CONFIG, "coherence-commandpattern-test-pof-config.xml");
-        System.setProperty(JAVA_NET_PREFER_IPV4_STACK, "true");
-
-        ConfigurableCacheFactory configurableCacheFactory =
-            new ExtensibleConfigurableCacheFactory(ExtensibleConfigurableCacheFactory.DependenciesHelper
-                .newInstance("coherence-commandpattern-test-cache-config.xml"));
-
-        CacheFactory.setConfigurableCacheFactory(configurableCacheFactory);
-
-        final ContextsManager manager    = DefaultContextsManager.getInstance();
-
-        final Identifier      identifier = manager.registerContext(new GenericContext<Integer>(0));
-
-        assertThat(identifier, is(notNullValue()));
-
-        CommandSubmitter submitter = DefaultCommandSubmitter.getInstance();
-
-        final int        LAST      = 1000;
-
-        for (int i = 1; i <= LAST; i++)
-        {
-            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
-        }
-
-        Deferred<Integer> deferred = new Deferred<Integer>()
-        {
-            @Override
-            public Integer get() throws UnresolvableInstanceException, InstanceUnavailableException
-            {
-                return ((GenericContext<Integer>) manager.getContext(identifier)).getValue();
-            }
-
-            @Override
-            public Class<Integer> getDeferredClass()
-            {
-                return Integer.class;
-            }
-        };
-
-        assertThat(deferred, is(greaterThan(0)));
-
-        // construct the action to restart a cluster member
-        RestartClusterMemberAction restartAction = new RestartClusterMemberAction("Server",
-                                                                                  memberBuilder,
-                                                                                  memberSchema,
-                                                                                  console,
-                                                                                  new Predicate<ClusterMember>()
-        {
-            @Override
-            public boolean evaluate(ClusterMember member)
-            {
-                ClusterMember.ServiceStatus status = member.getServiceStatus("DistributedCacheForCommandPattern");
-
-                return status == ClusterMember.ServiceStatus.NODE_SAFE;
-            }
-        });
-
-        // let's perpetually restart a cluster member
-        PerpetualAction<ClusterMember, Cluster> perpetualAction = new PerpetualAction<ClusterMember,
-                                                                                      Cluster>(restartAction);
-
-        InteractiveActionExecutor<ClusterMember, Cluster> executor = new InteractiveActionExecutor<ClusterMember,
-                                                                                                   Cluster>(cluster,
-                                                                                                            perpetualAction);
-
-        executor.executeNext();
-
-        for (int i = LAST; i <= LAST * 2; i++)
-        {
-            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
-        }
-
-        executor.executeNext();
-
-        for (int i = LAST * 2; i <= LAST * 3; i++)
-        {
-            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
-        }
-
-        executor.executeNext();
-
-        assertThat(deferred, is(LAST * 3));
-
-        cluster.close();
-    }
+//TODO: Renamed when we move to Oracle Tools 2.0.0 (it was more reliable rolling restart infrastructure)
+//    @Test
+//    public void shouldOperateDuringRollingRestart() throws IOException
+//    {
+//        Capture<Integer> clusterPort = new Capture<Integer>(Container.getAvailablePorts());
+//
+//        ClusterMemberSchema memberSchema =
+//            new ClusterMemberSchema().useLocalHostMode().setClusterPort(clusterPort).setPofEnabled(true)
+//                .setPofConfigURI("coherence-commandpattern-test-pof-config.xml")
+//                .setCacheConfigURI("coherence-commandpattern-test-cache-config.xml").setJMXSupport(true)
+//                .setJMXPort(Container.getAvailablePorts())
+//                .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.ALL)
+//                .setRMIServerHostName(Constants.getLocalHost()).setLogLevel(9).setPreferIPv4(true);
+//
+//        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> memberBuilder =
+//            new NativeJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
+//
+//        ApplicationConsole console        = new SystemApplicationConsole();
+//
+//        ClusterBuilder     clusterBuilder = new ClusterBuilder();
+//
+//        clusterBuilder.addBuilder(memberBuilder, memberSchema, "Server", 2);
+//
+//        Cluster cluster = clusterBuilder.realize(console);
+//
+//        assertThat(invoking(cluster).getClusterSize(), is(2));
+//
+//        System.setProperty(ClusterMemberSchema.PROPERTY_CACHECONFIG, "coherence-commandpattern-test-cache-config.xml");
+//        System.setProperty(ClusterMemberSchema.PROPERTY_LOCALHOST_ADDRESS, "127.0.0.1");
+//        System.setProperty(ClusterMemberSchema.PROPERTY_CLUSTER_PORT, Integer.toString(clusterPort.get()));
+//        System.setProperty(ClusterMemberSchema.PROPERTY_MULTICAST_TTL, "0");
+//        System.setProperty(ClusterMemberSchema.PROPERTY_DISTRIBUTED_LOCALSTORAGE, "false");
+//        System.setProperty(ClusterMemberSchema.PROPERTY_POF_ENABLED, "true");
+//        System.setProperty(ClusterMemberSchema.PROPERTY_POF_CONFIG, "coherence-commandpattern-test-pof-config.xml");
+//        System.setProperty(JAVA_NET_PREFER_IPV4_STACK, "true");
+//
+//        ConfigurableCacheFactory configurableCacheFactory =
+//            new ExtensibleConfigurableCacheFactory(ExtensibleConfigurableCacheFactory.DependenciesHelper
+//                .newInstance("coherence-commandpattern-test-cache-config.xml"));
+//
+//        CacheFactory.setConfigurableCacheFactory(configurableCacheFactory);
+//
+//        final ContextsManager manager    = DefaultContextsManager.getInstance();
+//
+//        final Identifier      identifier = manager.registerContext(new GenericContext<Integer>(0));
+//
+//        assertThat(identifier, is(notNullValue()));
+//
+//        CommandSubmitter submitter = DefaultCommandSubmitter.getInstance();
+//
+//        final int        LAST      = 1000;
+//
+//        for (int i = 1; i <= LAST; i++)
+//        {
+//            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
+//        }
+//
+//        Deferred<Integer> deferred = new Deferred<Integer>()
+//        {
+//            @Override
+//            public Integer get() throws UnresolvableInstanceException, InstanceUnavailableException
+//            {
+//                return ((GenericContext<Integer>) manager.getContext(identifier)).getValue();
+//            }
+//
+//            @Override
+//            public Class<Integer> getDeferredClass()
+//            {
+//                return Integer.class;
+//            }
+//        };
+//
+//        assertThat(deferred, is(greaterThan(0)));
+//
+//        // construct the action to restart a cluster member
+//        RestartClusterMemberAction restartAction = new RestartClusterMemberAction("Server",
+//                                                                                  memberBuilder,
+//                                                                                  memberSchema,
+//                                                                                  console,
+//                                                                                  new Predicate<ClusterMember>()
+//        {
+//            @Override
+//            public boolean evaluate(ClusterMember member)
+//            {
+//                ClusterMember.ServiceStatus status = member.getServiceStatus("DistributedCacheForCommandPattern");
+//
+//                return status == ClusterMember.ServiceStatus.NODE_SAFE;
+//            }
+//        });
+//
+//        // let's perpetually restart a cluster member
+//        PerpetualAction<ClusterMember, Cluster> perpetualAction = new PerpetualAction<ClusterMember,
+//                                                                                      Cluster>(restartAction);
+//
+//        InteractiveActionExecutor<ClusterMember, Cluster> executor = new InteractiveActionExecutor<ClusterMember,
+//                                                                                                   Cluster>(cluster,
+//                                                                                                            perpetualAction);
+//
+//        executor.executeNext();
+//
+//        for (int i = LAST; i <= LAST * 2; i++)
+//        {
+//            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
+//        }
+//
+//        executor.executeNext();
+//
+//        for (int i = LAST * 2; i <= LAST * 3; i++)
+//        {
+//            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
+//        }
+//
+//        executor.executeNext();
+//
+//        assertThat(deferred, is(LAST * 3));
+//
+//        cluster.close();
+//    }
 }
