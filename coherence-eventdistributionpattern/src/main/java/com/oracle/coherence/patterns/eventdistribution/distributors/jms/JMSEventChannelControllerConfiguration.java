@@ -26,14 +26,18 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.EntryInsertedEvent;
 import com.oracle.coherence.common.events.EntryRemovedEvent;
 import com.oracle.coherence.common.events.Event;
 import com.oracle.coherence.common.events.dispatching.EventDispatcher;
 import com.oracle.coherence.common.events.processing.LiveObject;
+
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
+
 import com.oracle.coherence.environment.Environment;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
@@ -43,20 +47,26 @@ import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerBui
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.distributors.EventChannelControllerManager;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
+
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
+
 import com.tangosol.util.ExternalizableHelper;
 
-import javax.jms.ConnectionFactory;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.jms.ConnectionFactory;
 
 /**
  * An {@link JMSEventChannelControllerConfiguration} is a {@link LiveObject} that holds the configuration of a
@@ -229,11 +239,7 @@ public class JMSEventChannelControllerConfiguration implements LiveObject<Distri
                 }
             });
 
-            if (dependencies.getStartingMode() == Mode.ENABLED)
-            {
-                controller.start();
-            }
-
+            controller.prepare();
         }
         else if (event instanceof EntryRemovedEvent)
         {

@@ -26,32 +26,37 @@
     Copyright (c) 2011. All Rights Reserved. Oracle Corporation.
  -->
 <pof-config>
-	<user-type-list>
-		<!-- coherence-eventdistributionpattern types -->
-		<user-type>
-			<type-id>13000</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.EventDistributor$Identifier</class-name>
-		</user-type>
+    <user-type-list>
+        <!-- coherence-eventdistributionpattern types -->
+        <user-type>
+            <type-id>13000</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.EventDistributor$Identifier</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13001</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13001</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13002</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryInsertedEvent</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13002</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryInsertedEvent</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13003</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryUpdatedEvent</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13003</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryUpdatedEvent</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13004</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryRemovedEvent</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13004</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryRemovedEvent</class-name>
+        </user-type>
+
+        <user-type>
+            <type-id>13005</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryPropagatedEvent</class-name>
+        </user-type>
 
         <user-type>
             <type-id>13010</type-id>
@@ -63,60 +68,60 @@
             <class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableInvokeAllRequestEvent</class-name>
         </user-type>
 
-		<user-type>
-			<type-id>13050</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.EventChannelController$Identifier</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13050</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.EventChannelController$Identifier</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13051</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController$DefaultDependencies</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13051</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController$DefaultDependencies</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13100</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.channels.StdErrEventChannelBuilder</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13100</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.StdErrEventChannelBuilder</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13101</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.channels.FileEventChannelBuilder</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13101</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.FileEventChannelBuilder</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13102</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannelBuilder</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13102</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannelBuilder</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13103</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel$RemoteDistributionAgent</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13103</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel$RemoteDistributionAgent</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13104</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel$GetClusterMetaInfoAgent</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13104</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.RemoteClusterEventChannel$GetClusterMetaInfoAgent</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13105</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.EntryEventProcessor</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13105</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.EntryEventProcessor</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13106</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.LocalCacheEventChannelBuilder</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13106</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.LocalCacheEventChannelBuilder</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13107</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannelBuilder</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13107</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannelBuilder</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13108</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannel$GetClusterMetaInfoProcessor</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13108</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCacheEventChannel$GetClusterMetaInfoProcessor</class-name>
+        </user-type>
 
         <user-type>
             <type-id>13109</type-id>
@@ -128,59 +133,59 @@
             <class-name>com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStoreEventChannelBuilder</class-name>
         </user-type>
 
-		<user-type>
-			<type-id>13200</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.transformers.FilteringEventIteratorTransformerBuilder</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13200</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.FilteringEventIteratorTransformerBuilder</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13202</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.transformers.ChainedEventIteratorTransformerBuilder</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13202</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.ChainedEventIteratorTransformerBuilder</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13203</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.transformers.CoalescingEventIteratorTransformerBuilder</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13203</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.CoalescingEventIteratorTransformerBuilder</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13204</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformerBuilder</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13204</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformerBuilder</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13250</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.filters.EventTypeFilter</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13250</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.filters.EventTypeFilter</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13251</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.filters.EventEntryFilter</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13251</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.filters.EventEntryFilter</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13252</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.filters.EventOriginalEntryFilter</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13252</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.filters.EventOriginalEntryFilter</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13300</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventChannelSubscription</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13300</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.distributors.coherence.CoherenceEventChannelSubscription</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13400</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.distributors.jms.JMSEventChannelControllerConfiguration</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13400</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.distributors.jms.JMSEventChannelControllerConfiguration</class-name>
+        </user-type>
 
-		<user-type>
-			<type-id>13401</type-id>
-			<class-name>com.oracle.coherence.patterns.eventdistribution.distributors.jms.JMSEventChannelControllerInitializationProcessor</class-name>
-		</user-type>
+        <user-type>
+            <type-id>13401</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.distributors.jms.JMSEventChannelControllerInitializationProcessor</class-name>
+        </user-type>
 
         <user-type>
             <type-id>13402</type-id>
             <class-name>com.oracle.coherence.patterns.eventdistribution.channels.cache.ParallelLocalCacheEventChannelBuilder</class-name>
         </user-type>
-	</user-type-list>
+    </user-type-list>
 </pof-config>

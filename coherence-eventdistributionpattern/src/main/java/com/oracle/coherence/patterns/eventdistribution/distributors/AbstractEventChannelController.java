@@ -27,6 +27,9 @@ package com.oracle.coherence.patterns.eventdistribution.distributors;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
 
+import com.oracle.coherence.common.cluster.ClusterMetaInfo;
+import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
+
 import com.oracle.coherence.common.events.Event;
 
 import com.oracle.coherence.common.finitestatemachines.AnnotationDrivenModel;
@@ -57,7 +60,9 @@ import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventIteratorTransformer;
 import com.oracle.coherence.patterns.eventdistribution.EventTransformer;
+import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
+import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryPropagatedEvent;
 import com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformer;
 
 import com.tangosol.io.ExternalizableLite;
@@ -67,17 +72,30 @@ import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
 
+import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
+import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.NamedCache;
 
+import com.tangosol.net.partition.PartitionSet;
+
+import com.tangosol.util.Binary;
+import com.tangosol.util.Converter;
 import com.tangosol.util.ExternalizableHelper;
+
+import com.tangosol.util.filter.PartitionedFilter;
+import com.tangosol.util.filter.PresentFilter;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -94,7 +112,7 @@ import java.util.logging.Logger;
  * If you're planning on implementing your own {@link EventDistributorBuilder} and thus {@link EventChannelController},
  * extending this implementation will save you a bunch of time.
  * <p>
- * Copyright (c) 2011-2014. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2014. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -114,7 +132,7 @@ import java.util.logging.Logger;
         toState    = "SUSPENDED",
         fromStates =
         {
-            "DISTRIBUTING", "STARTING", "ERROR", "DISABLED", "DRAINING", "WAITING", "DELAYING"
+            "DISTRIBUTING", "STARTING", "ERROR", "DISABLED", "DRAINING", "WAITING", "DELAYING", "PROPAGATING"
         }
     ) , @Transition(
         toState    = "STARTING",
@@ -126,7 +144,7 @@ import java.util.logging.Logger;
         toState    = "DISABLED",
         fromStates =
         {
-            "SUSPENDED", "WAITING", "DELAYING", "ERROR"
+            "SUSPENDED", "WAITING", "DELAYING", "ERROR", "PROPAGATING"
         }
     ) , @Transition(
         toState    = "ERROR",
@@ -135,8 +153,11 @@ import java.util.logging.Logger;
         toState    = "STOPPED",
         fromStates =
         {
-            "STARTING", "SUSPENDED", "WAITING", "DISABLED", "ERROR", "DELAYING"
+            "STARTING", "SUSPENDED", "WAITING", "DISABLED", "ERROR", "DELAYING", "PROPAGATING"
         }
+    ) , @Transition(
+        toState    = "PROPAGATING",
+        fromStates = {"SUSPENDED", "DISABLED"}
     )
 })
 public abstract class AbstractEventChannelController<T> implements EventChannelController, EventChannelControllerMBean
@@ -174,14 +195,15 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         DRAIN(State.DRAINING),
 
         /**
-         * The <code>{@link #RETRY}</code> event signals that distribution should be retried (after a failure).
-         */
-        RETRY(State.ERROR),
-
-        /**
          * The <code>{@link #DISTRIBUTE}</code> event signals that distribution should commence.
          */
-        DISTRIBUTE(State.DISTRIBUTING);
+        DISTRIBUTE(State.DISTRIBUTING),
+
+        /**
+         * The <code>{@link #PROPAGATE}</code> event signals that all {@link NamedCache} entries should be
+         * propagated over an {@link EventChannel}.
+         */
+        PROPAGATE(State.PROPAGATING);
 
         /**
          * The desired {@link State} when the {@link ControllerEvent} occurs.
@@ -281,7 +303,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
          * process of draining internal queues to prevent previously queued {@link DistributableEntryEvent}s from
          * being distributed.
          */
-        DRAINING;
+        DRAINING,
+
+        /**
+         * <code>{@link #PROPAGATING}</code> indicates that the {@link EventChannelController} is in the
+         * process of propagating {@link NamedCache} entries over an {@link EventChannel}.
+         */
+        PROPAGATING;
     }
 
 
@@ -327,6 +355,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
      * A {@link ScheduledExecutorService} that will be used to manage the life-cycle of this {@link EventChannelController}.
      */
     protected ScheduledExecutorService executorService;
+
+    /**
+     * The name of the underlying {@link NamedCache} that is used as the source of {@link Event}s.
+     * (may be <code>null</code> if there is no underlying {@link NamedCache})
+     */
+    protected String cacheName;
 
     /**
      * The {@link Serializer} to use for (de)serializing {@link Event}s during distribution using this {@link EventChannelController}.
@@ -454,6 +488,12 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         this.totalBatchesDistributed         = 0;
         this.totalCandidateEvents            = 0;
         this.totalEventsDistributed          = 0;
+
+        // determine the name of the underyling NamedCache (if there is one)
+        Parameter cacheNameParameter = parameterProvider.getParameter("cache-name");
+
+        this.cacheName = cacheNameParameter == null
+                         ? null : cacheNameParameter.evaluate(parameterProvider).getValue(String.class);
     }
 
 
@@ -590,6 +630,14 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
     @Override
+    public void prepare()
+    {
+        // attempt to start the machine
+        machine.start();
+    }
+
+
+    @Override
     public void start()
     {
         // attempt to start the machine
@@ -641,6 +689,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     public void drain()
     {
         machine.process(ControllerEvent.DRAIN);
+    }
+
+
+    @Override
+    public void propagate()
+    {
+        machine.process(ControllerEvent.PROPAGATE);
     }
 
 
@@ -947,6 +1002,206 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         }
 
         return new Instruction.TransitionTo<State>(State.SUSPENDED);
+    }
+
+
+    /**
+     * Rebuilds an {@link EventChannel} by sending it a copy of the underlying {@link NamedCache} as a set of
+     * insert {@link Event}s.
+     */
+    @OnEnterState("PROPAGATING")
+    public Instruction onPropagating(State                                                        previousState,
+                                     State                                                        newState,
+                                     com.oracle.coherence.common.finitestatemachines.Event<State> event,
+                                     ExecutionContext                                             context)
+    {
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER,
+                       "Commencing propagation of entries using the EventChannelController {0}",
+                       controllerIdentifier);
+        }
+
+        try
+        {
+            if (previousState == State.DISABLED)
+            {
+                // enable the EventChannelController (if we were disabled)
+                internalEnable();
+            }
+
+            // attempt to start the channel (as we need it for propagation)
+            internalStart();
+
+            // determine the NamedCache to propagate
+            NamedCache cache = CacheFactory.getCache(cacheName);
+
+            // determine the service and context in which to operate together with the required converters
+            DistributedCacheService  service                  = (DistributedCacheService) cache.getCacheService();
+            BackingMapManagerContext backingMapManagerContext = service.getBackingMapManager().getContext();
+            Converter                keyConverter             = backingMapManagerContext.getKeyToInternalConverter();
+            Converter                valueConverter           = backingMapManagerContext.getValueToInternalConverter();
+
+            // determine the local cluster meta info for decorating entries being sent
+            ClusterMetaInfo localClusterMetaInfo = LocalClusterMetaInfo.getInstance();
+
+            // create a standard set of decorations for entries being set
+            Map decorations = new HashMap();
+
+            decorations.put(DistributableEntry.CLUSTER_META_INFO_DECORATION_KEY, localClusterMetaInfo);
+
+            // determine the maximum number of entries to put in a batch for propagation
+            int batchSize = controllerDependencies.getBatchSize() < 0
+                            ? DefaultDependencies.BATCH_SIZE_DEFAULT : controllerDependencies.getBatchSize();
+
+            // establish the batch data-structure
+            ArrayList<Event> batch = new ArrayList<Event>(batchSize);
+
+            // determine the number of partitions (we'll be doing this on a partition-by-partition basis)
+            int partitionCount = service.getPartitionCount();
+
+            if (logger.isLoggable(Level.FINER))
+            {
+                logger.log(Level.FINER,
+                           "Approximately {0} entries to propagate contained with in {1} partitions (using a batch size of {2})",
+                           new Object[] {cache.size(), partitionCount, batchSize});
+            }
+
+            // process partition at a time
+            for (int partition = 0; partition < partitionCount && context.isAcceptingEvents(); partition++)
+            {
+                // define a suitable partition set for the partition we require
+                PartitionSet partitionSet = new PartitionSet(partitionCount);
+
+                partitionSet.add(partition);
+
+                // get the entries in the partition
+                Set<Map.Entry> entries = cache.entrySet(new PartitionedFilter(PresentFilter.INSTANCE, partitionSet));
+
+                if (logger.isLoggable(Level.FINER))
+                {
+                    logger.log(Level.FINER,
+                               "Propagating {0} entries contained in partition {1}",
+                               new Object[] {entries.size(), partition});
+                }
+
+                // send the entries in the partition (batched)
+                for (Iterator<Map.Entry> iterator = entries.iterator();
+                    iterator.hasNext() && context.isAcceptingEvents(); )
+                {
+                    // determine the entry to add to the batch
+                    Map.Entry entry = iterator.next();
+
+                    // create suitable binary representations of the entry key and value
+                    Binary binaryKey   = (Binary) keyConverter.convert(entry.getKey());
+                    Binary binaryValue = (Binary) valueConverter.convert(entry.getValue());
+
+                    // decorate the binary value with the source cluster
+                    binaryValue =
+                        (Binary) backingMapManagerContext
+                            .addInternalValueDecoration(binaryValue, BackingMapManagerContext.DECO_CUSTOM, decorations);
+
+                    // create a distributable entry
+                    DistributableEntry distributableEntry = new DistributableEntry(binaryKey,
+                                                                                   binaryValue,
+                                                                                   null,
+                                                                                   backingMapManagerContext);
+
+                    // create a event representing the Entry that is to be propagated
+                    DistributableEntryEvent entryEvent = new DistributableEntryPropagatedEvent(cacheName,
+                                                                                               distributableEntry);
+
+                    // send the batch if it's full
+                    if (batch.size() == batchSize)
+                    {
+                        // transform the batch
+                        Iterator<Event> events = transformer == null
+                                                 ? batch.iterator() : transformer.transform(batch.iterator());
+
+                        // send the events
+                        channel.send(events);
+
+                        // calculate JMX statistics
+                        this.totalBatchesDistributed++;
+                        this.totalCandidateEvents   = this.totalCandidateEvents + batch.size();
+                        this.totalEventsDistributed = this.totalEventsDistributed + batch.size();
+
+                        // wait the inter-batch delay (if there is one)
+                        if (context.isAcceptingEvents() && controllerDependencies.getBatchDistributionDelay() > 0)
+                        {
+                            Thread.sleep(controllerDependencies.getBatchDistributionDelay());
+                        }
+
+                        // empty the batch of events for the next batch
+                        batch.clear();
+                    }
+
+                    // add the event to the batch
+                    batch.add(entryEvent);
+                }
+            }
+
+            // is there anything in the batch we haven't sent yet?
+            if (batch.size() > 0)
+            {
+                // transform the batch
+                Iterator<Event> events = transformer == null
+                                         ? batch.iterator() : transformer.transform(batch.iterator());
+
+                // send the events
+                channel.send(events);
+
+                // calculate JMX statistics
+                this.totalBatchesDistributed++;
+                this.totalCandidateEvents   = this.totalCandidateEvents + batch.size();
+                this.totalEventsDistributed = this.totalEventsDistributed + batch.size();
+            }
+        }
+        catch (InterruptedException e)
+        {
+            logger.log(Level.WARNING,
+                       "Interrupted while propagating entries with the EventChannelController {0}. Reverting to the {1} state.",
+                       new Object[] {controllerDependencies.getChannelName(), previousState});
+        }
+
+        catch (EventChannelNotReadyException e)
+        {
+            if (logger.isLoggable(Level.WARNING))
+            {
+                logger.log(Level.WARNING,
+                           "Failed to start propagating entries with the EventChannelController {0} due to {1}. Reverting to the {2} state.",
+                           new Object[] {controllerDependencies.getChannelName(), e.getCause(), previousState});
+
+                logger.log(Level.WARNING, "EventChannel Exception was as follows", e);
+            }
+        }
+        catch (RuntimeException e)
+        {
+            if (logger.isLoggable(Level.WARNING))
+            {
+                logger.log(Level.WARNING,
+                           "Failed to propagate entries with the EventChannelController {0} due to {1}. Reverting to the {2} state.",
+                           new Object[] {controllerDependencies.getChannelName(), e.getCause(), previousState});
+
+                logger.log(Level.WARNING, "EventChannel Exception was as follows", e);
+            }
+        }
+
+        if (previousState == State.DISABLED)
+        {
+            // disable the EventChannelController internals
+            internalDisable();
+        }
+
+        if (logger.isLoggable(Level.FINER))
+        {
+            logger.log(Level.FINER,
+                       "Completed propagation of entries using the EventChannelController {0}",
+                       controllerIdentifier);
+        }
+
+        // return to the previous state
+        return new Instruction.TransitionTo<State>(previousState);
     }
 
 

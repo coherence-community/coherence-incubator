@@ -54,7 +54,7 @@ import java.io.IOException;
  *
  * @author Brian Oliver
  */
-public interface EventChannelController
+public interface EventChannelController extends EventChannelControllerMBean
 {
     /**
      * Each {@link EventChannelController} has a {@link Mode} that indicates it's ability to send {@link Event}s.
@@ -87,9 +87,10 @@ public interface EventChannelController
 
 
     /**
-     * Requests the {@link EventChannelController} to start sending {@link Event}s as soon as possible.
+     * Requests the {@link EventChannelController} to prepare for starting, including transitioning to
+     * the initial state.
      */
-    public void start();
+    public void prepare();
 
 
     /**
@@ -110,29 +111,6 @@ public interface EventChannelController
      * as soon as possible.
      */
     public void preempt();
-
-
-    /**
-     * Requests the {@link EventChannelController} to suspend sending {@link Event}s as soon as possible.  All {@link Event}s
-     * arriving for the said {@link EventChannelController} will be queued until the {@link EventChannelController} is
-     * resumed.
-     */
-    public void suspend();
-
-
-    /**
-     * Requests the {@link EventChannelController} to disable the sending of {@link Event}s as soon as possible.
-     * <p>
-     * Note: When disabled {@link Event}s <strong>will not be queued</strong> for sending.
-     */
-    public void disable();
-
-
-    /**
-     * Requests the {@link EventChannelController} to drain all pending {@link Event}s, none of which will
-     * be sent.  This method can only be called when a {@link EventChannelController} has been suspended.
-     */
-    public void drain();
 
 
     /**
