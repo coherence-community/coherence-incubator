@@ -554,6 +554,13 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
     }
 
 
+    @Override
+    public boolean isAcceptingEvents()
+    {
+        return isAcceptingEvents.get();
+    }
+
+
     /**
      * Processes the specified {@link Event}, causing the {@link FiniteStateMachine}
      * to {@link Transition} to a new state if required.

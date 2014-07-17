@@ -15,6 +15,13 @@ reverse chronological order.
 *   [COHINC-109](http://java.net/jira/browse/COHINC-109): Prepared and certified
     with Coherence 12.1.3.
 
+<h4>coherence-common</h4>
+
+*   [COHINC-124](http://java.net/jira/browse/COHINC-124): Introduced the ability
+    to determine if a FiniteStateMachine is still accepting Events to process
+    while performing an StateEntry/StateExit/Transaction Acton through
+    the use of the new ExecutionContext.isAcceptingEvents() method.
+
 <h4>coherence-messagingpattern</h4>
 
 *   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduce the
@@ -48,10 +55,24 @@ reverse chronological order.
     the "drain" functionality for Coherence-based event distribution
     implementations so that they use the configured batches and delays.
 
+*   [COHINC-120](http://java.net/jira/browse/COHINC-120): Introduced
+    the ability to "propagate" a copy of a NamedCache over an associated
+    EventChannel using a JMX operation.   This allows remote clusters
+    to be "rebuilt" from another cluster or alternatively allows
+    an EventChannel implementation to receive a entire copy of a
+    NamedCache.
+
 <h4>coherence-pushreplicationpattern</h4>
 
 *   [COHINC-64](http://java.net/jira/browse/COHINC-64):  Changed the
     coherence-web dependency to be "provided".
+
+*   [COHINC-120](http://java.net/jira/browse/COHINC-120): Introduced
+    the ability to "propagate" a copy of a NamedCache over an associated
+    EventChannel using a JMX operation.   This allows remote clusters
+    to be "rebuilt" from another cluster or alternatively allows
+    an EventChannel implementation to receive a entire copy of a
+    NamedCache.
 
 <h4>coherence-jvisualvm</h4>
 

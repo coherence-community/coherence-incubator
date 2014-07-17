@@ -27,6 +27,8 @@ package com.oracle.coherence.patterns.eventdistribution;
 
 import com.oracle.coherence.common.events.Event;
 
+import com.tangosol.net.NamedCache;
+
 /**
  * The {@link EventChannelControllerMBean} specifies the JMX interface for {@link EventChannelController}s.
  * <p>
@@ -190,4 +192,12 @@ public interface EventChannelControllerMBean
      * must be <strong>suspended</strong> before this happens.
      */
     public void drain();
+
+
+    /**
+     * Propagates a copy of an underlying {@link NamedCache} as a set of propagation {@link Event}s over an
+     * {@link EventChannel}.  The {@link EventChannelController} must either be <strong>suspended</strong> or
+     * <strong>disabled</strong> to allow propagation to commence.
+     */
+    public void propagate();
 }

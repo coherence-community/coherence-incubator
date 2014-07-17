@@ -25,13 +25,14 @@
 
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
-
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.liveobjects.LiveObject;
 import com.oracle.coherence.common.liveobjects.OnArrived;
 import com.oracle.coherence.common.liveobjects.OnDeparting;
 import com.oracle.coherence.common.liveobjects.OnInserted;
 import com.oracle.coherence.common.liveobjects.OnRemoved;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
@@ -40,14 +41,20 @@ import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mo
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.distributors.EventChannelControllerManager;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.config.expression.ParameterResolver;
+
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.CacheFactory;
+
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.ResourceRegistry;
@@ -55,6 +62,7 @@ import com.tangosol.util.ResourceRegistry;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,8 +79,7 @@ import javax.jms.ConnectionFactory;
  */
 @SuppressWarnings("serial")
 @LiveObject
-public class JMSEventChannelControllerConfiguration implements ExternalizableLite,
-                                                               PortableObject
+public class JMSEventChannelControllerConfiguration implements ExternalizableLite, PortableObject
 {
     /**
      * The {@link Logger} to use.
@@ -117,6 +124,7 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
      * The {@link ClassLoader}.
      */
     private ClassLoader loader;
+
 
     /**
      * Required for {@link ExternalizableLite} and {@link PortableObject}.
@@ -208,36 +216,31 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
             logger.log(Level.FINE, "Establishing the EventChannelController for {0}.", new Object[] {this});
         }
 
-       // ResourceRegistry registry = entry.getContext().getManager().getCacheFactory().getResourceRegistry();
-        ResourceRegistry registry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
-        EventChannelControllerManager manager = registry.getResource(EventChannelControllerManager.class);
+        // ResourceRegistry registry = entry.getContext().getManager().getCacheFactory().getResourceRegistry();
+        ResourceRegistry              registry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
+        EventChannelControllerManager manager  = registry.getResource(EventChannelControllerManager.class);
 
         EventChannelController controller = manager.registerEventChannelController(distributorIdentifier,
-                controllerIdentifier,
-                dependencies,
-                new EventChannelControllerBuilder()
-                {
-                    @Override
-                    public EventChannelController realize(EventDistributor.Identifier distributorIdentifier,
-                            Identifier controllerIdentifier,
-                            Dependencies dependencies)
-                    {
-                        return new JMSEventChannelController(distributorIdentifier,
-                                controllerIdentifier,
-                                dependencies,
-                                loader,
-                                parameterResolver,
-                                serializerBuilder,
-                                connectionFactoryBuilder);
-                    }
-                });
-
-        if (dependencies.getStartingMode() == Mode.ENABLED)
+                                                                                   controllerIdentifier,
+                                                                                   dependencies,
+                                                                                   new EventChannelControllerBuilder()
         {
-            controller.start();
-        }
+            @Override
+            public EventChannelController realize(EventDistributor.Identifier distributorIdentifier,
+                                                  Identifier                  controllerIdentifier,
+                                                  Dependencies                dependencies)
+            {
+                return new JMSEventChannelController(distributorIdentifier,
+                                                     controllerIdentifier,
+                                                     dependencies,
+                                                     loader,
+                                                     parameterResolver,
+                                                     serializerBuilder,
+                                                     connectionFactoryBuilder);
+            }
+        });
 
-
+        controller.prepare();
     }
 
 
@@ -250,7 +253,7 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
     {
         // for deleted subscriptions, schedule the stopping of the associated EventChannelController
 
-        ResourceRegistry registry  = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
+        ResourceRegistry registry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
 
         if (logger.isLoggable(Level.FINE))
         {

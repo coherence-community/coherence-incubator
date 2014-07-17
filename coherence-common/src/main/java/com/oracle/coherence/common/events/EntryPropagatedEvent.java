@@ -1,5 +1,5 @@
 /*
- * File: EntryInsertedEvent.java
+ * File: EntryPropagatedEvent.java
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -28,16 +28,17 @@ package com.oracle.coherence.common.events;
 import java.util.Map.Entry;
 
 /**
- * An {@link EntryInsertedEvent} is an {@link EntryEvent} that
- * represents when an {@link Entry} has been inserted into a {@link com.tangosol.net.NamedCache}.
+ * An {@link EntryPropagatedEvent} is a specialized {@link EntryInsertedEvent} indicating
+ * that an {@link Entry} is being propagated from a {@link com.tangosol.net.NamedCache}, typically
+ * to an external source.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2014. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
  */
 @SuppressWarnings("rawtypes")
-public interface EntryInsertedEvent<E extends Entry> extends EntryEvent<E>
+public interface EntryPropagatedEvent<E extends Entry> extends EntryInsertedEvent<E>
 {
     /**
      * A marker interface.

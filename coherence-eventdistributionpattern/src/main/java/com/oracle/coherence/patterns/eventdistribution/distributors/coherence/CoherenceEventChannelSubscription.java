@@ -250,10 +250,7 @@ public class CoherenceEventChannelSubscription extends Subscription
             }
         });
 
-        if (controllerDependencies.getStartingMode() == EventChannelController.Mode.ENABLED)
-        {
-            controller.start();
-        }
+        controller.prepare();
     }
 
 

@@ -531,7 +531,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void testActivePassiveEventTranformation() throws Exception
+    public void testActivePassiveEventTransformation() throws Exception
     {
         String                                                     siteName         = "testActivePassive";
         final String                                               cacheName        = "publishing-cache";
@@ -758,6 +758,134 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             if (activeServer != null)
             {
                 activeServer.close();
+            }
+        }
+    }
+
+
+    /**
+     * Ensure that we can propagate a passive site from an active site
+     * (that has push replication disabled)
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testActivePassivePropagation() throws Exception
+    {
+        String                                                     siteName         = "testActivePassive";
+        final String                                               cacheName        = "publishing-cache";
+
+        int                                                        nrPassiveServers = 1;
+        int                                                        nrActiveServers  = 1;
+
+        ArrayList<ClusterMember> passiveServers = new ArrayList<ClusterMember>(nrPassiveServers);
+        ArrayList<ClusterMember> activeServers = new ArrayList<ClusterMember>(nrActiveServers);
+
+        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder          = newClusterMemberBuilder();
+
+        try
+        {
+            SystemApplicationConsole console = new SystemApplicationConsole();
+
+            // establish the passive cluster
+            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            for (int i = 0; i < nrPassiveServers; i++)
+            {
+                ClusterMemberSchema passiveServerSchema =
+                    newPassiveClusterMemberSchema(passiveClusterPort).setSiteName(siteName);
+
+                passiveServers.add(builder.realize(passiveServerSchema, String.format("PASSIVE %s", i), console));
+            }
+
+            // establish the active cluster
+            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            for (int i = 0; i < nrActiveServers; i++)
+            {
+                ClusterMemberSchema activeServerSchema =
+                    newActiveClusterMemberSchema(activeClusterPort).setSiteName(siteName)
+                        .setSystemProperty("remote.port",
+                                           passiveServers.get(0).getSystemProperty("proxy.port"))
+                                               .setSystemProperty("channel.starting.mode",
+                                                                  "disabled")
+                                                                      .setJMXManagementMode(JMXManagementMode.ALL);
+
+                activeServers.add(builder.realize(activeServerSchema, String.format("ACTIVE  %d", i), console));
+            }
+
+            // wait for passive cluster to start
+            for (ClusterMember server : passiveServers)
+            {
+                assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
+            }
+
+            // wait for active server cluster to start
+            for (ClusterMember server : activeServers)
+            {
+                assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
+            }
+
+            // turn off local clustering so we don't connect with the process just started
+            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+
+            System.setProperty("remote.address", activeServers.get(0).getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", activeServers.get(0).getSystemProperty("proxy.port"));
+            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            // populate the active site
+            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "ACTIVE");
+
+            // grab a copy of the active site entries (we'll use this for comparison later)
+            final Map<Object, Object> activeCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
+
+            // using JMX, ask the channel to propagate
+            EventChannelControllerMBean controllerMBean =
+                activeServers.get(0)
+                    .getMBeanProxy(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
+                                   EventChannelControllerMBean.class);
+
+            controllerMBean.propagate();
+
+            // shutdown our connection to the active site
+            CacheFactory.shutdown();
+
+            // assert that the values have arrived in the remote site
+            System.out.printf("Connecting to PASSIVE site.\n");
+            System.setProperty("remote.address", passiveServers.get(0).getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", passiveServers.get(0).getSystemProperty("proxy.port"));
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            System.out.printf("\nWaiting for %d entries to propagate from the ACTIVE site to the PASSIVE site\n",
+                              activeCache.size());
+
+            NamedCache namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache), sameAs(activeCache));
+
+            Assert.assertNotNull(namedCache);
+        }
+        catch (Exception exception)
+        {
+            throw exception;
+        }
+        finally
+        {
+            // shutdown our local use of coherence
+            CacheFactory.shutdown();
+
+            for (ClusterMember server : passiveServers)
+            {
+                server.close();
+            }
+
+            for (ClusterMember server : activeServers)
+            {
+                server.close();
             }
         }
     }

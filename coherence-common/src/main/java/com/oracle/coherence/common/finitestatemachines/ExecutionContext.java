@@ -61,6 +61,9 @@ public interface ExecutionContext
      * Determines if there is a potential backlog of pending events
      * (or waiting threads) for the {@link FiniteStateMachine} that
      * may cause transitions.
+     * <p>
+     * {@link StateEntryAction}, {@link StateExitAction} and {@link TransitionAction}s
+     * may use this information to terminate early.
      *
      * @return  <code>true</code> if there is a backlog of pending events
      *          (of threads) that may cause transitions, <code>false</code>
@@ -68,4 +71,19 @@ public interface ExecutionContext
      *          is stopped).
      */
     public boolean hasPendingEvents();
+
+
+    /**
+     * Determines if the {@link FiniteStateMachine} is accepting events.
+     * <p>
+     * When a {@link FiniteStateMachine} is no longer accepting events, that
+     * typically indicates that it is in the process of stopping.
+     * <p>
+     * {@link StateEntryAction}, {@link StateExitAction} and {@link TransitionAction}s
+     * may use this information to terminate early.
+     *
+     * @return <code>true</code> if the {@link FiniteStateMachine} is accepting
+     *         events, <code>false</code> otherwise.
+     */
+    public boolean isAcceptingEvents();
 }

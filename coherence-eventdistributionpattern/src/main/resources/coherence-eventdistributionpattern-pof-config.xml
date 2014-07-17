@@ -54,6 +54,11 @@
         </user-type>
 
         <user-type>
+            <type-id>13005</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryPropagatedEvent</class-name>
+        </user-type>
+
+        <user-type>
             <type-id>13010</type-id>
             <class-name>com.oracle.coherence.patterns.eventdistribution.events.DistributableInvokeRequestEvent</class-name>
         </user-type>
