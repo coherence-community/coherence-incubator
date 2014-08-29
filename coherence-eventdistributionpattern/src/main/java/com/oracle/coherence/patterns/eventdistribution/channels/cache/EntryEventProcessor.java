@@ -44,6 +44,8 @@ import com.tangosol.io.pof.PortableObject;
 
 import com.tangosol.net.BackingMapManagerContext;
 
+import com.tangosol.net.cache.CacheMap;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
@@ -165,8 +167,6 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
             logger.log(Level.FINEST, "..Returning from resolve method");
         }
 
-        // Operation = UseTgtValue is a noop.
-
         if (result.getOperation() == Operation.UseInComingValue)
         {
             if (logger.isLoggable(Level.FINEST))
@@ -176,8 +176,27 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
 
             // Extract decorated value from the source and apply it as the
             // new value of the target.
-
             targetEntry.updateBinaryValue((Binary) entryEvent.getEntry().getBinaryValue());
+
+            // determine the relative expiry time of the incoming value
+            long incomingExpiry = entryEvent.getEntry().getExpiry();
+
+            long expiry;
+
+            if (incomingExpiry == CacheMap.EXPIRY_DEFAULT)
+            {
+                expiry = CacheMap.EXPIRY_DEFAULT;
+            }
+            else if (incomingExpiry == CacheMap.EXPIRY_NEVER)
+            {
+                expiry = CacheMap.EXPIRY_NEVER;
+            }
+            else
+            {
+                expiry = incomingExpiry - Base.getSafeTimeMillis();
+            }
+
+            targetEntry.expire(expiry);
         }
         else if (result.getOperation() == Operation.UseMergedValue)
         {
@@ -210,6 +229,9 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
             {
                 // we use the merged value as though it's a local put
                 targetEntry.updateBinaryValue(binMergedValue);
+
+                // use the specified expiry from the conflict resolution
+                targetEntry.expire(result.getExpiry());
             }
         }
         else if (result.getOperation() == Operation.Remove && targetEntry.isPresent())

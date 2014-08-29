@@ -303,7 +303,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
      */
     public long getExpiry()
     {
-        return CacheMap.EXPIRY_NEVER;
+        return ExternalizableHelper.decodeExpiry(getBinaryValue());
     }
 
 

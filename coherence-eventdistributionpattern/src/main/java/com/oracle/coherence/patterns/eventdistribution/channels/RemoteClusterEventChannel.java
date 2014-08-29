@@ -27,28 +27,33 @@ package com.oracle.coherence.patterns.eventdistribution.channels;
 
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
 import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
+
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.resourcing.InvocationServiceSupervisedResourceProvider;
 import com.oracle.coherence.common.resourcing.ResourceProviderManager;
+import com.oracle.coherence.common.resourcing.ResourceUnavailableException;
 import com.oracle.coherence.common.resourcing.SupervisedResourceProvider;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
-import com.oracle.tools.deferred.InstanceUnavailableException;
-import com.oracle.tools.deferred.Supervised;
+
 import com.tangosol.config.expression.ParameterResolver;
-import com.tangosol.internal.util.ObjectFormatter;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.AbstractInvocable;
-import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
 import com.tangosol.net.InvocationService;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.ResourceRegistry;
@@ -56,9 +61,11 @@ import com.tangosol.util.ResourceRegistry;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -153,17 +160,17 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
 
 
     /**
-     * Returns the {@link Supervised} for the remote {@link InvocationService}.
+     * Returns the {@link SupervisedResourceProvider} for the remote {@link InvocationService}.
      *
-     * @return The {@link Supervised} for the remote {@link InvocationService}
+     * @return The {@link SupervisedResourceProvider} for the remote {@link InvocationService}
      */
     private SupervisedResourceProvider<InvocationService> getSupervisedResourceProvider()
     {
         // register a Supervised for the remote invocation scheme
-        ResourceProviderManager manager =  registry.getResource(ResourceProviderManager.class);
+        ResourceProviderManager manager = registry.getResource(ResourceProviderManager.class);
 
-        return  (SupervisedResourceProvider<InvocationService>) manager.getResourceProvider(InvocationService.class,
-                remoteInvocationServiceName);
+        return (SupervisedResourceProvider<InvocationService>) manager.getResourceProvider(InvocationService.class,
+                                                                                           remoteInvocationServiceName);
 
     }
 
@@ -189,11 +196,9 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
             if (resourceProvider == null)
             {
                 // register a SupervisedResourceProvider for the remote invocation scheme
-                registry.getResource(ResourceProviderManager.class)
-                        .registerResourceProvider(InvocationService.class,
-                                remoteInvocationServiceName,
-                                new InvocationServiceSupervisedResourceProvider(
-                                        remoteInvocationServiceName));
+                registry.getResource(ResourceProviderManager.class).registerResourceProvider(InvocationService.class,
+                                                                                             remoteInvocationServiceName,
+                                                                                             new InvocationServiceSupervisedResourceProvider(remoteInvocationServiceName));
 
                 // now ask for it again (just in case it was replaced by the supervisor)
                 resourceProvider = getSupervisedResourceProvider();
@@ -208,8 +213,7 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
                 {
                     logger.log(Level.FINE,
                                "Attempting to connect to Remote Invocation Service {0} in {1} for {2}",
-                               new Object[] {remoteInvocationServiceName, distributorIdentifier,
-                                             controllerIdentifier});
+                               new Object[] {remoteInvocationServiceName, distributorIdentifier, controllerIdentifier});
                 }
 
                 // attempt to access the remote InvocationService (this will make the connection)
@@ -219,8 +223,7 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
                 {
                     logger.log(Level.FINE,
                                "Connected to Remote Invocation Service {0} in {1} for {2}",
-                               new Object[] {remoteInvocationServiceName, distributorIdentifier,
-                                             controllerIdentifier});
+                               new Object[] {remoteInvocationServiceName, distributorIdentifier, controllerIdentifier});
                 }
 
                 if (logger.isLoggable(Level.FINE))
@@ -241,7 +244,7 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
                                getTargetClusterMetaInfo().getUniqueName());
                 }
             }
-            catch (InstanceUnavailableException resourceUnavailableException)
+            catch (ResourceUnavailableException resourceUnavailableException)
             {
                 // when the resource is unavailable this means that the channel is not ready
                 throw new EventChannelNotReadyException(this);
@@ -252,8 +255,7 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
                 {
                     logger.log(Level.WARNING,
                                "Failed to connect to Remote Invocation Service {0} in {1} for {2}",
-                               new Object[] {remoteInvocationServiceName, distributorIdentifier,
-                                             controllerIdentifier});
+                               new Object[] {remoteInvocationServiceName, distributorIdentifier, controllerIdentifier});
                     logger.log(Level.WARNING, "Causing exception was:", runtimeException);
                 }
 
@@ -282,8 +284,7 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
             {
                 logger.log(Level.FINE,
                            "Disconnected from Remote Invocation Service {0} in {1} for {2}",
-                           new Object[] {remoteInvocationServiceName, m_distributorIdentifier,
-                                         m_controllerIdentifier});
+                           new Object[] {remoteInvocationServiceName, m_distributorIdentifier, m_controllerIdentifier});
             }
 
             remoteInvocationService = null;
@@ -308,12 +309,11 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
 
             try
             {
-
                 remoteInvocationService.query(new RemoteDistributionAgent(m_distributorIdentifier,
-                                                                            m_controllerIdentifier,
-                                                                            eventsToDistribute,
-                                                                            remoteEventChannelBuilder,
-                                                                            resolver), null);
+                                                                          m_controllerIdentifier,
+                                                                          eventsToDistribute,
+                                                                          remoteEventChannelBuilder,
+                                                                          resolver), null);
             }
             catch (RuntimeException runtimeException)
             {
@@ -435,7 +435,8 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
         public void run()
         {
             EventChannel channel = remoteEventChannelBuilder.realize(resolver,
-                    ParameterResolver.class.getClassLoader(), null);
+                                                                     ParameterResolver.class.getClassLoader(),
+                                                                     null);
 
             try
             {
@@ -469,7 +470,7 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
             this.events                = new LinkedList<Event>();
             ExternalizableHelper.readCollection(in, events, Thread.currentThread().getContextClassLoader());
             this.remoteEventChannelBuilder = (EventChannelBuilder) ExternalizableHelper.readObject(in);
-            this.resolver               = (ParameterResolver) ExternalizableHelper.readObject(in);
+            this.resolver                  = (ParameterResolver) ExternalizableHelper.readObject(in);
 
         }
 
@@ -497,7 +498,7 @@ public class RemoteClusterEventChannel extends AbstractInterClusterEventChannel
             this.events                = new LinkedList<Event>();
             reader.readCollection(3, events);
             this.remoteEventChannelBuilder = (EventChannelBuilder) reader.readObject(4);
-            this.resolver                 = (ParameterResolver) reader.readObject(5);
+            this.resolver                  = (ParameterResolver) reader.readObject(5);
         }
 
 

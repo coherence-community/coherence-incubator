@@ -25,6 +25,8 @@
 
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
+import com.tangosol.net.cache.CacheMap;
+
 /**
  * A {@link ConflictResolution} represents the action should be taken as a result of executing a {@link ConflictResolver}.
  * <p>
@@ -66,57 +68,101 @@ public class ConflictResolution
     /**
      * The {@link ConflictResolution.Operation} for this {@link ConflictResolution}
      */
-    private Operation m_operation = Operation.UseInComingValue;
+    private Operation operation = Operation.UseInComingValue;
 
     /**
      * The merged value associated with this {@link ConflictResolution}
      */
-    private Object m_mergedValue = null;
+    private Object mergedValue = null;
+
+    /**
+     * The new expiry to use for the new value.
+     */
+    private long expiry = CacheMap.EXPIRY_DEFAULT;
 
 
     /**
-     * Standard Constructor.
+     * Standard Constructor (for a default resolution of using the incoming value)
      */
     public ConflictResolution()
     {
-        m_operation = Operation.UseInComingValue;
+        this.operation = Operation.UseInComingValue;
     }
 
 
     /**
      * Set the resolution to {@link Operation#Remove}.
+     *
+     * @return the {@link ConflictResolution} to permit fluent-style method calls
      */
-    public void remove()
+    public ConflictResolution remove()
     {
-        m_operation = Operation.Remove;
+        this.operation = Operation.Remove;
+
+        return this;
     }
 
 
     /**
      * Set the resolution to {@link Operation#UseInComingValue}.
+     *
+     * @return the {@link ConflictResolution} to permit fluent-style method calls
      */
-    public void useInComingValue()
+    public ConflictResolution useInComingValue()
     {
-        m_operation = Operation.UseInComingValue;
+        this.operation = Operation.UseInComingValue;
+
+        return this;
     }
 
 
     /**
      * Set the resolution to {@link Operation#UseLocalValue}.
+     *
+     * @return the {@link ConflictResolution} to permit fluent-style method calls
      */
-    public void useLocalValue()
+    public ConflictResolution useLocalValue()
     {
-        m_operation = Operation.UseLocalValue;
+        this.operation = Operation.UseLocalValue;
+
+        return this;
     }
 
 
     /**
-     * Set the resolution to {@link Operation#UseMergedValue}.
+     * Set the resolution to {@link Operation#UseMergedValue}, with
+     * a specific value and expiry.
+     *
+     * @param mergedValue  the value to use
+     * @param expiry       the expiry for the merged value
+     *
+     * @return the {@link ConflictResolution} to permit fluent-style method calls
+     *
+     * @see CacheMap#EXPIRY_DEFAULT
+     * @see CacheMap#EXPIRY_NEVER
      */
-    public void useMergedValue(Object mergedValue)
+    public ConflictResolution useMergedValue(Object mergedValue,
+                                             long   expiry)
     {
-        m_operation   = Operation.UseMergedValue;
-        m_mergedValue = mergedValue;
+        this.operation   = Operation.UseMergedValue;
+        this.mergedValue = mergedValue;
+        this.expiry      = expiry;
+
+        return this;
+    }
+
+
+    /**
+     * Set the resolution to {@link Operation#UseMergedValue} with
+     * the {@link CacheMap#EXPIRY_DEFAULT} expiry.
+     *
+     * @param  mergedValue the value to use
+     *
+     * @return the {@link ConflictResolution} to permit fluent-style method calls
+     */
+    public ConflictResolution useMergedValue(Object mergedValue)
+    {
+        return useMergedValue(mergedValue, CacheMap.EXPIRY_DEFAULT);
     }
 
 
@@ -127,7 +173,7 @@ public class ConflictResolution
      */
     public Operation getOperation()
     {
-        return m_operation;
+        return operation;
     }
 
 
@@ -138,6 +184,20 @@ public class ConflictResolution
      */
     public Object getMergedValue()
     {
-        return m_mergedValue;
+        return mergedValue;
+    }
+
+
+    /**
+     * Obtains the expiry time when using a merged value.
+     *
+     * @return  the expiry time
+     *
+     * @see CacheMap#EXPIRY_DEFAULT
+     * @see CacheMap#EXPIRY_NEVER
+     */
+    public long getExpiry()
+    {
+        return expiry;
     }
 }

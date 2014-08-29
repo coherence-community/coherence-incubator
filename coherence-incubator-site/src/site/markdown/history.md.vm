@@ -24,7 +24,7 @@ reverse chronological order.
 
 <h4>coherence-messagingpattern</h4>
 
-*   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduce the
+*   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduced
     JMX-based diagnostics for Susbcriptions.  This includes the ability to
     display the internal state of a Subscription.
 
@@ -40,11 +40,17 @@ reverse chronological order.
     JMSEventChannelControllerConfiguration LiveObjects to ensure correct event distribution
     and push replication recovery during fail-over/fail-back/scale-out/scale-down.
 
-*   [COHINC-110](http://java.net/jira/browse/COHINC-110): Introduce the
+*   [COHINC-108](http://java.net/jira/browse/COHINC-108): Resolved ability
+    to distribute and replicate Cache Entry expiry timeouts between clusters.
+
+    This includes introducing the ability to customize expiry when during
+    conflict resolution.
+
+*   [COHINC-110](http://java.net/jira/browse/COHINC-110): Introduced the
     ability to control batch-size, inter batch-distribution-delay and
     restart-delay using JMX at runtime.
 
-*   [COHINC-112](http://java.net/jira/browse/COHINC-112): Replace the
+*   [COHINC-112](http://java.net/jira/browse/COHINC-112): Replaced the
     "message out of order" log when using Coherence-based event distribution
     implementations with something more apppropriate.  This log only
     indicates that a recovery is occuring (nothing bad!), because it's
