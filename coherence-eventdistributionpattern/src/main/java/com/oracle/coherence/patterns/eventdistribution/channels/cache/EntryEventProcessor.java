@@ -26,29 +26,44 @@
 package com.oracle.coherence.patterns.eventdistribution.channels.cache;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
+
 import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.configuration.parameters.EmptyParameterProvider;
+
 import com.oracle.coherence.patterns.eventdistribution.channels.cache.ConflictResolution.Operation;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.net.BackingMapManagerContext;
+
+import com.tangosol.net.cache.CacheMap;
+
+import com.tangosol.util.Base;
 import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.Converter;
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.InvocableMap.Entry;
 import com.tangosol.util.InvocableMap.EntryProcessor;
+
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+
+import java.util.HashMap;
 import java.util.Map;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -99,9 +114,9 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
     /**
      * Standard Constructor.
      *
-     * @param entryEvent
-     * @param conflictResolverBuilder
-     * @param targetCacheName
+     * @param entryEvent               the EntryEvent
+     * @param conflictResolverBuilder  the ConflictResolverBuilder
+     * @param targetCacheName          the target cache name
      */
     public EntryEventProcessor(DistributableEntryEvent                entryEvent,
                                ParameterizedBuilder<ConflictResolver> conflictResolverBuilder,
@@ -161,8 +176,27 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
 
             // Extract decorated value from the source and apply it as the
             // new value of the target.
-
             targetEntry.updateBinaryValue((Binary) entryEvent.getEntry().getBinaryValue());
+
+            // determine the relative expiry time of the incoming value
+            long incomingExpiry = entryEvent.getEntry().getExpiry();
+
+            long expiry;
+
+            if (incomingExpiry == CacheMap.EXPIRY_DEFAULT)
+            {
+                expiry = CacheMap.EXPIRY_DEFAULT;
+            }
+            else if (incomingExpiry == CacheMap.EXPIRY_NEVER)
+            {
+                expiry = CacheMap.EXPIRY_NEVER;
+            }
+            else
+            {
+                expiry = incomingExpiry - Base.getSafeTimeMillis();
+            }
+
+            targetEntry.expire(expiry);
         }
         else if (result.getOperation() == Operation.UseMergedValue)
         {
@@ -195,6 +229,9 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
             {
                 // we use the merged value as though it's a local put
                 targetEntry.updateBinaryValue(binMergedValue);
+
+                // use the specified expiry from the conflict resolution
+                targetEntry.expire(result.getExpiry());
             }
         }
         else if (result.getOperation() == Operation.Remove && targetEntry.isPresent())
@@ -205,9 +242,12 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
             }
 
             // simply add the "mark for erase decoration"
-            Map srcDecorations =
-                (Map<?, ?>) targetEntry.getContext().getInternalValueDecoration(entryEvent.getEntry().getBinaryValue(),
-                                                                                BackingMapManagerContext.DECO_CUSTOM);
+            Binary binaryValue = entryEvent.getEntry().getBinaryValue();
+            Map srcDecorations = binaryValue == null
+                                 ? new HashMap()
+                                 : (Map<?, ?>) targetEntry.getContext().getInternalValueDecoration(binaryValue,
+                                                                                                   BackingMapManagerContext
+                                                                                                       .DECO_CUSTOM);
 
             srcDecorations.put(DistributableEntry.MARKED_FOR_ERASE_DECORATION_KEY, new Boolean(true));
 
