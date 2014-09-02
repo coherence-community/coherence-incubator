@@ -36,6 +36,12 @@ reverse chronological order.
 
 <h4>coherence-eventdistributionpattern</h4>
 
+*   [COHINC-108](http://java.net/jira/browse/COHINC-108): Resolved ability
+    to distribute and replicate Cache Entry expiry timeouts between clusters.
+
+    This includes introducing the ability to customize expiry when during
+    conflict resolution.
+
 *   [COHINC-110](http://java.net/jira/browse/COHINC-110): Introduce the
     ability to control batch-size, inter batch-distribution-delay and
     restart-delay using JMX at runtime.
