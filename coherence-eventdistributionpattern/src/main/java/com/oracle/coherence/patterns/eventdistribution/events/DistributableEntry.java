@@ -175,56 +175,41 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object extract(ValueExtractor extractor)
     {
         return InvocableMapHelper.extractFromEntry(extractor, this);
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Binary getBinaryKey()
     {
         return binaryKey;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Binary getBinaryValue()
     {
         return binaryValue;
     }
 
 
-    /**
-     * Returns the Original {@link Binary} Value for the {@link Entry}.
-     *
-     * @return The original {@link Binary} value of the {@link Entry}
-     */
+    @Override
     public Binary getOriginalBinaryValue()
     {
         return originalBinaryValue;
     }
 
 
-    /**
-     * Sets the Original {@link Binary} for the {@link Entry}.
-     */
-    public void setOriginalBinaryValue(Binary orginalBinaryValue)
+    public void setOriginalBinaryValue(Binary originalBinaryValue)
     {
-        this.originalBinaryValue = orginalBinaryValue;
+        this.originalBinaryValue = originalBinaryValue;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getOriginalValue()
     {
         Object originalValue;
@@ -258,9 +243,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ObservableMap getBackingMap()
     {
         // SKIP: deliberately empty
@@ -268,9 +251,6 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public BackingMapManagerContext getContext()
     {
@@ -278,9 +258,6 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public BackingMapContext getBackingMapContext()
     {
@@ -288,9 +265,6 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void expire(long durationMS)
     {
@@ -298,18 +272,24 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     public long getExpiry()
     {
-        return ExternalizableHelper.decodeExpiry(getBinaryValue());
+        // obtain the date/time the entry will expire
+        long expiryTime = ExternalizableHelper.decodeExpiry(getBinaryValue());
+
+        if (expiryTime == CacheMap.EXPIRY_DEFAULT || expiryTime == CacheMap.EXPIRY_NEVER)
+        {
+            return expiryTime;
+        }
+        else
+        {
+            long deltaTime = expiryTime - Base.getSafeTimeMillis();
+
+            return deltaTime <= 0 ? -2 : deltaTime;
+        }
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isReadOnly()
     {
@@ -337,9 +317,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getKey()
     {
         Object key;
@@ -373,9 +351,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getValue()
     {
         Object value;
@@ -409,18 +385,14 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Serializer getSerializer()
     {
         return serializer;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean isPresent()
     {
         // NOTE: we always return true as it was always present when distribution began
@@ -428,18 +400,14 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void remove(boolean isSynthetic)
     {
         throw new UnsupportedOperationException("DistributableEntry doesn't support remove(boolean) as it's immutable.");
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object setValue(Object value)
     {
         // we need to return the previous value
@@ -471,9 +439,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void setValue(Object  value,
                          boolean isSynthetic)
     {
@@ -481,9 +447,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void update(ValueUpdater valueUpdater,
                        Object       value)
     {
@@ -491,18 +455,13 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void updateBinaryValue(Binary binary)
     {
         throw new UnsupportedOperationException("DistributableEntry doesn't support updateBinaryValue(Binary).");
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateBinaryValue(Binary  binary,
                                   boolean b)
@@ -511,9 +470,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void readExternal(DataInput in) throws IOException
     {
         this.binaryKey           = (Binary) ExternalizableHelper.readObject(in);
@@ -524,9 +481,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(DataOutput out) throws IOException
     {
         ExternalizableHelper.writeObject(out, binaryKey);
@@ -535,9 +490,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void readExternal(PofReader reader) throws IOException
     {
         this.binaryKey           = reader.readBinary(0);
@@ -548,9 +501,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(PofWriter writer) throws IOException
     {
         writer.writeBinary(0, binaryKey);
@@ -559,18 +510,14 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int hashCode()
     {
         return binaryKey.hashCode();
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean equals(Object obj)
     {
         if (this == obj)
@@ -674,9 +621,7 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String toString()
     {
         Object key           = null;

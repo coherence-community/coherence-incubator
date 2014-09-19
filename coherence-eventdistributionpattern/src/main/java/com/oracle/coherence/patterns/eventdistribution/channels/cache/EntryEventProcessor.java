@@ -128,10 +128,7 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
     public Object process(Entry entry)
     {
         // the target entry is the entry being processed
@@ -143,15 +140,14 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
         // set the context of the entry
         entryEvent.getEntry().setContext(targetEntry.getContext());
 
-        if (logger.isLoggable(Level.FINER))
+        if (logger.isLoggable(Level.FINEST))
         {
             logger.log(Level.FINER, "Entering process method");
         }
 
         if (logger.isLoggable(Level.FINEST))
         {
-            logger.log(Level.FINEST, "..Processing Event of {0}", entryEvent);
-            logger.log(Level.FINEST, "..Calling registered conflict resolver resolve method.");
+            logger.log(Level.FINEST, "Performing Conflict Resolution with {0}", conflictResolverBuilder);
         }
 
         // realize the conflict resolver to resolve any conflicts
@@ -160,51 +156,49 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
                                             : conflictResolverBuilder.realize(new NullParameterResolver(),
                                                                               Base.getContextClassLoader(),
                                                                               null);
+
+        if (logger.isLoggable(Level.FINEST))
+        {
+            logger.log(Level.FINEST, "Performing Conflict Resolution with {0}", conflictResolver);
+        }
+
         ConflictResolution result = conflictResolver.resolve(entryEvent, targetEntry);
 
         if (logger.isLoggable(Level.FINEST))
         {
-            logger.log(Level.FINEST, "..Returning from resolve method");
+            logger.log(Level.FINEST, "Using Conflict Resolution {0}", result);
         }
 
         if (result.getOperation() == Operation.UseInComingValue)
         {
-            if (logger.isLoggable(Level.FINEST))
-            {
-                logger.log(Level.FINEST, "..Using src value");
-            }
-
             // Extract decorated value from the source and apply it as the
             // new value of the target.
             targetEntry.updateBinaryValue((Binary) entryEvent.getEntry().getBinaryValue());
 
-            // determine the relative expiry time of the incoming value
-            long incomingExpiry = entryEvent.getEntry().getExpiry();
+            // determine the expiry time of the incoming value
+            long expiry = entryEvent.getEntry().getExpiry();
 
-            long expiry;
-
-            if (incomingExpiry == CacheMap.EXPIRY_DEFAULT)
+            if (expiry == CacheMap.EXPIRY_DEFAULT)
             {
-                expiry = CacheMap.EXPIRY_DEFAULT;
+                targetEntry.expire(CacheMap.EXPIRY_DEFAULT);
             }
-            else if (incomingExpiry == CacheMap.EXPIRY_NEVER)
+            else if (expiry == CacheMap.EXPIRY_NEVER)
             {
-                expiry = CacheMap.EXPIRY_NEVER;
+                targetEntry.expire(CacheMap.EXPIRY_NEVER);
+            }
+            else if (expiry < 0)
+            {
+                // when the entry has expired, we have to silently remove it
+                targetEntry.remove(true);
             }
             else
             {
-                expiry = incomingExpiry - Base.getSafeTimeMillis();
+                // set the expiry for the entry to be that which is incoming
+                targetEntry.expire(expiry);
             }
-
-            targetEntry.expire(expiry);
         }
         else if (result.getOperation() == Operation.UseMergedValue)
         {
-            if (logger.isLoggable(Level.FINEST))
-            {
-                logger.log(Level.FINEST, "..Using merged value");
-            }
-
             // convert the merged value into a binary
             BackingMapManagerContext bmctx          = targetEntry.getContext();
             Converter                toInternal     = bmctx.getValueToInternalConverter();
@@ -231,16 +225,30 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
                 targetEntry.updateBinaryValue(binMergedValue);
 
                 // use the specified expiry from the conflict resolution
-                targetEntry.expire(result.getExpiry());
+                long expiry = result.getExpiry();
+
+                if (expiry == CacheMap.EXPIRY_DEFAULT)
+                {
+                    targetEntry.expire(CacheMap.EXPIRY_DEFAULT);
+                }
+                else if (expiry == CacheMap.EXPIRY_NEVER)
+                {
+                    targetEntry.expire(CacheMap.EXPIRY_NEVER);
+                }
+                else if (expiry < 0)
+                {
+                    // when the entry has expired, we have to silently remove it
+                    targetEntry.remove(true);
+                }
+                else
+                {
+                    // set the expiry for the entry to be that which is incoming
+                    targetEntry.expire(expiry);
+                }
             }
         }
         else if (result.getOperation() == Operation.Remove && targetEntry.isPresent())
         {
-            if (logger.isLoggable(Level.FINEST))
-            {
-                logger.log(Level.FINEST, "..Removing entry");
-            }
-
             // simply add the "mark for erase decoration"
             Binary binaryValue = entryEvent.getEntry().getBinaryValue();
             Map srcDecorations = binaryValue == null
@@ -249,6 +257,7 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
                                                                                                    BackingMapManagerContext
                                                                                                        .DECO_CUSTOM);
 
+            // decorate the existing entry to signal that it will be removed
             srcDecorations.put(DistributableEntry.MARKED_FOR_ERASE_DECORATION_KEY, new Boolean(true));
 
             Binary decoratedTargetValue =
@@ -256,42 +265,21 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
                                                                              BackingMapManagerContext.DECO_CUSTOM,
                                                                              srcDecorations);
 
-            if (logger.isLoggable(Level.FINEST))
-            {
-                logger.log(Level.FINEST, "..remove is decorating tgtEntry with MarkedForErase");
-                logger.log(Level.FINEST, "..remove is forcing a synthetic backing map put");
-            }
-
             targetEntry.getBackingMap().put(targetEntry.getBinaryKey(), decoratedTargetValue);
 
-            if (logger.isLoggable(Level.FINEST))
-            {
-                logger.log(Level.FINEST, "..remove is calling remove for target entry");
-            }
-
+            // remove the entry (with the decoration will cause an event we can then replicate if necessary)
             targetEntry.remove(false);
         }
         else
         {
-            if (logger.isLoggable(Level.FINEST))
-            {
-                logger.log(Level.FINEST, "..Using target value");
-            }
-        }
-
-        if (logger.isLoggable(Level.FINER))
-        {
-            logger.log(Level.FINER, "Exiting process method");
+            // there's nothing to do when we have been requested to keep the existing entry
         }
 
         return null;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
+    @Override
     public void readExternal(DataInput in) throws IOException
     {
         this.entryEvent              = (DistributableEntryEvent) ExternalizableHelper.readObject(in);
@@ -300,9 +288,7 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(DataOutput out) throws IOException
     {
         ExternalizableHelper.writeObject(out, entryEvent);
@@ -311,10 +297,7 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
+    @Override
     public void readExternal(PofReader reader) throws IOException
     {
         this.entryEvent              = (DistributableEntryEvent) reader.readObject(1);
@@ -323,9 +306,7 @@ public class EntryEventProcessor extends AbstractProcessor implements Externaliz
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(PofWriter writer) throws IOException
     {
         writer.writeObject(1, entryEvent);

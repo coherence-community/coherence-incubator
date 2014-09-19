@@ -192,6 +192,7 @@ public class ConflictResolution
      * Obtains the expiry time when using a merged value.
      *
      * @return  the expiry time
+     *          (a negative value not equal to DEFAULT or NEVER means expire immediately)
      *
      * @see CacheMap#EXPIRY_DEFAULT
      * @see CacheMap#EXPIRY_NEVER
