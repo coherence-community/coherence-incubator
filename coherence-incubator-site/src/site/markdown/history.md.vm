@@ -107,6 +107,10 @@ reverse chronological order.
     control whether a NonBlockingFiniteStateMachine autostarts (aka: transitions)
     to its initial state.
 
+*   [COHINC-128](http://java.net/jira/browse/COHINC-128): Removed the dependency
+    on CGLib from the pom.xml file as the code does not actually have a
+    dependency on CGLib.
+
 <h4>coherence-eventdistributionpattern</h4>
 
 *   [COHINC-83](http://java.net/jira/browse/COHINC-83): Refactored
