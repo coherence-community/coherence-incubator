@@ -22,6 +22,10 @@ reverse chronological order.
     while performing an StateEntry/StateExit/Transaction Acton through
     the use of the new ExecutionContext.isAcceptingEvents() method.
 
+*   [COHINC-128](http://java.net/jira/browse/COHINC-128): Removed the dependency
+    on CGLib from the pom.xml file as the code does not actually have a
+    dependency on CGLib.
+
 <h4>coherence-messagingpattern</h4>
 
 *   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduced
@@ -67,6 +71,9 @@ reverse chronological order.
     to be "rebuilt" from another cluster or alternatively allows
     an EventChannel implementation to receive a entire copy of a
     NamedCache.
+
+*   [COHINC-128](http://java.net/jira/browse/COHINC-128): Correct the
+    scope of the dependency on oracle-tools-core to make it test scope.
 
 <h4>coherence-pushreplicationpattern</h4>
 
