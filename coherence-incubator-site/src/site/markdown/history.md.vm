@@ -22,6 +22,10 @@ reverse chronological order.
     while performing an StateEntry/StateExit/Transaction Acton through
     the use of the new ExecutionContext.isAcceptingEvents() method.
 
+*   [COHINC-126](http://java.net/jira/browse/COHINC-126): Added support for
+    merging &lt;defaults&gt; elements in a Coherence Cache Configuration
+    when using the XmlPreprocessingNamespaceHandler (aka: introduce-cache-config)
+
 *   [COHINC-128](http://java.net/jira/browse/COHINC-128): Removed the dependency
     on CGLib from the pom.xml file as the code does not actually have a
     dependency on CGLib.

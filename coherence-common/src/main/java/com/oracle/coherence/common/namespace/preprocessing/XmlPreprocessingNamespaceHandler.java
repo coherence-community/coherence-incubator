@@ -100,6 +100,11 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
     private static final String CACHING_SCHEME_MAPPING = "caching-scheme-mapping";
 
     /**
+     * The 'defaults' {@link XmlElement}.
+     */
+    private static final String DEFAULTS = "defaults";
+
+    /**
      * The 'originated-from' {@link XmlElement}.
      */
     private static final String ORIGINATED_FROM = "originated-from";
@@ -118,27 +123,27 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
      * The set of currently introduced cache configuration file uris.
      * (we keep track of this so we don't re-introduce previously introduced urs).
      */
-    private HashSet<String> m_setIntroducedURIs;
+    private HashSet<String> introducedURIs;
 
     /**
      * The prefix that was used to register the namespace.
      */
-    private String m_sPrefix;
+    private String prefix;
 
     /**
      * The {@link QualifiedName} representing the "introduce-cache-config" attribute.
      */
-    private QualifiedName m_qnIntroduceCacheConfig;
+    private QualifiedName qnIntroduceCacheConfig;
 
     /**
      * The {@link QualifiedName} representing the "replace-with-file" attribute.
      */
-    private QualifiedName m_qnReplaceWithFile;
+    private QualifiedName qnReplaceWithFile;
 
     /**
      * The {@link QualifiedName} representing the "originated-from" attribute.
      */
-    private QualifiedName m_qnOriginatedFrom;
+    private QualifiedName qnOriginatedFrom;
 
 
     /**
@@ -147,7 +152,7 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
     public XmlPreprocessingNamespaceHandler()
     {
         // remember the uri's we've already introduced
-        m_setIntroducedURIs = new HashSet<String>();
+        introducedURIs = new HashSet<String>();
 
         // establish a document preprocessor for the namespace
         DocumentElementPreprocessor dpp = new DocumentElementPreprocessor();
@@ -162,9 +167,6 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onStartNamespace(ProcessingContext context,
                                  XmlElement        element,
@@ -175,12 +177,12 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
 
         // we need to remember the prefix that was used to declare the namespace
         // so that we can use it later when pre-processing
-        m_sPrefix = prefix;
+        this.prefix = prefix;
 
         // establish some constants for the elements/attributes for this namespace
-        m_qnIntroduceCacheConfig = new QualifiedName(m_sPrefix, INTRODUCE_CACHE_CONFIG);
-        m_qnReplaceWithFile      = new QualifiedName(m_sPrefix, REPLACE_WITH_FILE);
-        m_qnOriginatedFrom       = new QualifiedName(m_sPrefix, ORIGINATED_FROM);
+        qnIntroduceCacheConfig = new QualifiedName(this.prefix, INTRODUCE_CACHE_CONFIG);
+        qnReplaceWithFile      = new QualifiedName(this.prefix, REPLACE_WITH_FILE);
+        qnOriginatedFrom       = new QualifiedName(this.prefix, ORIGINATED_FROM);
     }
 
 
@@ -248,13 +250,15 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
             {
                 mergeCachingSchemes(context, sFromURI, element, xmlIntoCacheConfig);
             }
+            else if (element.getName().equals(DEFAULTS))
+            {
+                mergeDefaults(context, sFromURI, element, xmlIntoCacheConfig);
+            }
             else
             {
                 mergeForeignElement(context, sFromURI, element, xmlIntoCacheConfig);
             }
-
         }
-
     }
 
 
@@ -304,7 +308,7 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
                             XmlElement xmlMergeElement = (XmlElement) xmlCacheMapping.clone();
 
                             // annotate the origin of the merging element
-                            xmlMergeElement.addAttribute(m_qnOriginatedFrom.getName()).setString(sFromURI);
+                            xmlMergeElement.addAttribute(qnOriginatedFrom.getName()).setString(sFromURI);
 
                             xmlIntoCacheConfig.ensureElement(CACHING_SCHEME_MAPPING).getElementList()
                                 .add(xmlMergeElement);
@@ -360,11 +364,61 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
                             XmlElement xmlMergeElement = (XmlElement) xmlScheme.clone();
 
                             // annotate the origin of the merging element
-                            xmlMergeElement.addAttribute(m_qnOriginatedFrom.getName()).setString(sFromURI);
+                            xmlMergeElement.addAttribute(qnOriginatedFrom.getName()).setString(sFromURI);
 
                             xmlIntoCacheConfig.ensureElement(CACHING_SCHEMES).getElementList().add(xmlMergeElement);
                         }
                     }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Merges the cache config &lt;defaults&gt; elements from one cache configuration
+     * into another cache defaults element (mutating the "into" cache config).
+     * <p>
+     * NOTE: Merging will only occur if the 'into' cache doesn't already contain a
+     * defaults element.
+     *
+     * @param context             the {@link ProcessingContext} in which the merge is occurring
+     * @param sFromURI            the URI to which the 'from' element belongs
+     * @param xmlFromDefaults     the defaults element from which the merge should occur
+     * @param xmlIntoCacheConfig  the element into which the merge should occur
+     */
+    @SuppressWarnings("unchecked")
+    private void mergeDefaults(ProcessingContext context,
+                               String            sFromURI,
+                               XmlElement        xmlFromDefaults,
+                               XmlElement        xmlIntoCacheConfig)
+    {
+        // we only attempt to merge 'from' <defaults> when it isn't already
+        // defined in the 'into' cache configuration
+        if (xmlIntoCacheConfig.getElement(DEFAULTS) == null && xmlFromDefaults != null)
+        {
+            // create the <defaults> element in the 'into' cache config
+            XmlElement xmlIntoDefaults = xmlIntoCacheConfig.ensureElement(DEFAULTS);
+
+            // merge each of the 'from' <defaults> into the 'into' <defaults>
+            for (XmlElement xmlDefault : (List<XmlElement>) xmlFromDefaults.getElementList())
+            {
+                QualifiedName qualifiedName = xmlDefault.getQualifiedName();
+
+                if (qualifiedName.hasPrefix())
+                {
+                    mergeForeignElement(context, sFromURI, xmlDefault, xmlIntoDefaults);
+                }
+                else
+                {
+                    // clone the element to merge
+                    XmlElement xmlMergeElement = (XmlElement) xmlDefault.clone();
+
+                    // annotate the origin of the merging element
+                    xmlMergeElement.addAttribute(qnOriginatedFrom.getName()).setString(sFromURI);
+
+                    // add the merged element
+                    xmlIntoDefaults.getElementList().add(xmlMergeElement);
                 }
             }
         }
@@ -393,7 +447,7 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
                                                                        sFromURI,
                                                                        xmlFromElement,
                                                                        xmlIntoCacheConfig,
-                                                                       m_qnOriginatedFrom);
+                                                                       qnOriginatedFrom);
         }
     }
 
@@ -553,9 +607,6 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
         private static final String CACHE_CONFIG = "cache-config";
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean preprocess(ProcessingContext context,
                                   XmlElement        xmlElement) throws ConfigurationException
@@ -567,7 +618,7 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
             {
                 // obtain the cache config URIs (a comma separated list in
                 // the "introduce-cache-config" attribute)
-                XmlValue xmlValue = xmlElement.getAttribute(m_qnIntroduceCacheConfig.getName());
+                XmlValue xmlValue = xmlElement.getAttribute(qnIntroduceCacheConfig.getName());
 
                 if (xmlValue == null)
                 {
@@ -580,7 +631,7 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
                     // (so we don't attempt to merge it again)
                     String sCacheConfigURIs = xmlValue.getString();
 
-                    xmlElement.getAttributeMap().remove(m_qnIntroduceCacheConfig.getName());
+                    xmlElement.getAttributeMap().remove(qnIntroduceCacheConfig.getName());
 
                     // pre-process (merge) the specified URIs into the current element
                     String[] arrURIs = sCacheConfigURIs.split(",");
@@ -615,7 +666,7 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
                             sURI = exprURI.evaluate(context.getDefaultParameterResolver());
 
                             // only process the URI if we've not already processed it.
-                            if (!m_setIntroducedURIs.contains(sURI))
+                            if (!introducedURIs.contains(sURI))
                             {
                                 // attempt to load the specified URI
                                 XmlElement xmlOtherElement = XmlHelper.loadFileOrResource(sURI,
@@ -634,7 +685,7 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
                                     if (xmlElement.getName().equals(xmlOtherElement.getName()))
                                     {
                                         // remember this URI as we want to avoid recursive pre-processing/introduction of it
-                                        m_setIntroducedURIs.add(sURI);
+                                        introducedURIs.add(sURI);
 
                                         // merge the otherElement into the this element
                                         mergeCacheConfig(context, sURI, xmlOtherElement, xmlElement);
@@ -675,16 +726,13 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
      */
     public class ReplaceWithFilePreprocessor implements ElementPreprocessor
     {
-        /**
-         * {@inheritDoc}
-         */
         @SuppressWarnings("unchecked")
         @Override
         public boolean preprocess(ProcessingContext context,
                                   XmlElement        xmlElement) throws ConfigurationException
         {
             // determine if the element as a 'replace-with-file' attribute (directive)
-            XmlValue xmlReplaceWithFile = xmlElement.getAttribute(m_qnReplaceWithFile.getName());
+            XmlValue xmlReplaceWithFile = xmlElement.getAttribute(qnReplaceWithFile.getName());
 
             if (xmlReplaceWithFile == null)
             {

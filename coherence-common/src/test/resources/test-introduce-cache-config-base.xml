@@ -6,10 +6,6 @@
     xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
     element:introduce-cache-config="test-introduce-cache-config-a.xml, test-introduce-cache-config-b.xml">
 
-    <defaults>
-        <serializer>pof</serializer>
-    </defaults>
-
     <caching-scheme-mapping>
         <cache-mapping>
             <cache-name>common-*</cache-name>
@@ -30,5 +26,4 @@
             <autostart>true</autostart>
         </distributed-scheme>
     </caching-schemes>
-
 </cache-config>
