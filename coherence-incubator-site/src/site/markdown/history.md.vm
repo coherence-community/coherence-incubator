@@ -30,6 +30,10 @@ reverse chronological order.
     on CGLib from the pom.xml file as the code does not actually have a
     dependency on CGLib.
 
+*   [COHINC-129](http://java.net/jira/browse/COHINC-129): Removed unnecessary
+    Coherence ConfigurableCacheFactory functional test.  These have been part
+    of core Coherence functional tests since 3.7.1.
+
 <h4>coherence-messagingpattern</h4>
 
 *   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduced
