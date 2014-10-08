@@ -189,6 +189,11 @@ reverse chronological order.
 *   [COHINC-103](https://java.net/jira/browse/COHINC-103): Corrected the resolution
     of target/destinations caches when using a LocalCacheEventChannel.
 
+*   [COHINC-127](https://java.net/jira/browse/COHINC-127): Corrected expiry-time
+    calculation to ensure that "loaded" BinaryEntries can be sent over an
+    EventChannel without loss of fidelity.  This allows LocalCacheEventChannels
+    to correctly update Entries with the required expiry time.
+
 <h4>coherence-pushreplicationpattern-tests</h4>
 
 *   [COHINC-11](http://java.net/jira/browse/COHINC-11):  Refactored
