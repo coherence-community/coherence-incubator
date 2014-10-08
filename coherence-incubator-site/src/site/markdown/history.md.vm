@@ -63,6 +63,11 @@ reverse chronological order.
     an EventChannel implementation to receive a entire copy of a
     NamedCache.
 
+*   [COHINC-127](https://java.net/jira/browse/COHINC-127): Corrected expiry-time
+    calculation to ensure that "loaded" BinaryEntries can be sent over an
+    EventChannel without loss of fidelity.  This allows LocalCacheEventChannels
+    to correctly update Entries with the required expiry time.
+
 <h4>coherence-pushreplicationpattern</h4>
 
 *   [COHINC-64](http://java.net/jira/browse/COHINC-64):  Changed the
