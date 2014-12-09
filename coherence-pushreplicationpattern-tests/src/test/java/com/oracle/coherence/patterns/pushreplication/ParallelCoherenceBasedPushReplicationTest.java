@@ -25,11 +25,9 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
+import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
 
 import com.oracle.tools.util.Capture;
-
-import org.junit.Test;
 
 /**
  * The {@link com.oracle.coherence.patterns.pushreplication.ParallelCoherenceBasedPushReplicationTest}
@@ -44,37 +42,27 @@ import org.junit.Test;
  */
 public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushReplicationTest
 {
-    /**
-     * {@inheritDoc}
-     */
-    protected ClusterMemberSchema newBaseClusterMemberSchema(Capture<Integer> clusterPort)
+    protected CoherenceCacheServerSchema newBaseCacheServerSchema(Capture<Integer> clusterPort)
     {
-        return super.newBaseClusterMemberSchema(clusterPort).setSystemProperty("event.distributor.config",
-                                                                               "test-coherence-based-distributor-config.xml")
-                                                                                   .setSystemProperty("proxy.port",
-                                                                                                      getAvailablePortIterator())
-                                                                                                          .setPreferIPv4(true);
+        return super.newBaseCacheServerSchema(clusterPort).setSystemProperty("event.distributor.config",
+                                                                             "test-coherence-based-distributor-config.xml")
+                                                                                 .setSystemProperty("proxy.port",
+                                                                                                    getAvailablePortIterator());
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected ClusterMemberSchema newPassiveClusterMemberSchema(Capture<Integer> clusterPort)
+    protected CoherenceCacheServerSchema newPassiveCacheServerSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(clusterPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
+        return newBaseCacheServerSchema(clusterPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
             .setClusterName("passive");
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected ClusterMemberSchema newActiveClusterMemberSchema(Capture<Integer> clusterPort)
+    protected CoherenceCacheServerSchema newActiveCacheServerSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(clusterPort)
+        return newBaseCacheServerSchema(clusterPort)
             .setCacheConfigURI("test-remotecluster-paralleleventchannel-cache-config.xml").setClusterName("active");
     }
 }

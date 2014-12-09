@@ -31,67 +31,46 @@ import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.channels.CacheStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.filters.ExampleEventFilter;
-
 import com.oracle.tools.deferred.Deferred;
 import com.oracle.tools.deferred.Eventually;
-import com.oracle.tools.deferred.UnresolvableInstanceException;
-
+import com.oracle.tools.deferred.PermanentlyUnavailableException;
 import com.oracle.tools.junit.AbstractCoherenceTest;
-
 import com.oracle.tools.matchers.Equivalence;
 import com.oracle.tools.matchers.PartitionSetMatcher;
-
-import com.oracle.tools.runtime.Application;
-import com.oracle.tools.runtime.LifecycleEvent;
-import com.oracle.tools.runtime.LifecycleEventInterceptor;
-import com.oracle.tools.runtime.PropertiesBuilder;
-
-import com.oracle.tools.runtime.coherence.ClusterMember;
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
-
+import com.oracle.tools.runtime.ApplicationListener;
+import com.oracle.tools.runtime.coherence.CoherenceCacheServer;
+import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
+import com.oracle.tools.runtime.coherence.JMXManagementMode;
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
-
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
-import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
+import com.oracle.tools.runtime.java.LocalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.container.Container;
-
 import com.oracle.tools.runtime.network.AvailablePortIterator;
 import com.oracle.tools.runtime.network.Constants;
-
+import com.oracle.tools.runtime.options.EnvironmentVariables;
 import com.oracle.tools.util.Capture;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.net.partition.PartitionSet;
-
 import com.tangosol.util.Filter;
-
+import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static com.oracle.tools.deferred.DeferredAssert.assertThat;
-
-import static com.oracle.tools.deferred.DeferredHelper.eventually;
-import static com.oracle.tools.deferred.DeferredHelper.invoking;
-
-import static com.oracle.tools.matchers.MapMatcher.sameAs;
-
-import static org.hamcrest.Matchers.is;
-
-import static org.junit.Assert.fail;
-
+import javax.management.ObjectName;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
 import java.util.concurrent.TimeUnit;
 
-import javax.management.ObjectName;
+import static com.oracle.tools.deferred.DeferredAssert.assertThat;
+import static com.oracle.tools.deferred.DeferredHelper.eventually;
+import static com.oracle.tools.deferred.DeferredHelper.invoking;
+import static com.oracle.tools.matchers.MapMatcher.sameAs;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
 
 /**
  * The {@link AbstractPushReplicationTest} defines a set of standard tests
@@ -106,21 +85,6 @@ import javax.management.ObjectName;
 public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 {
     /**
-     * A simple method to wait a specified amount of time, with a message to stdout.
-     *
-     * @param time The time to wait in ms.
-     * @param rationale The rationale (message) for waiting.
-     * @throws InterruptedException When interrupted while waiting.
-     */
-    public void wait(long   time,
-                     String rationale) throws InterruptedException
-    {
-        System.out.printf("%s: Waiting %dms %s\n", new Date(), time, rationale);
-        Thread.sleep(time);
-    }
-
-
-    /**
      * Determines the {@link AvailablePortIterator} to use for locating free ports on the host.
      *
      * @return {@link AvailablePortIterator}
@@ -132,34 +96,42 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
 
     /**
-     * Constructs a new {@link ClusterMemberSchema} on which sub-classes of this class should
-     * configure new {@link ClusterMemberSchema}s.  ie: This method returns a pre-configured
-     * {@link ClusterMemberSchema} that the tests in this class expect to use.
+     * Constructs a new {@link CoherenceCacheServerSchema} on which sub-classes of this class should
+     * configure new {@link CoherenceCacheServerSchema}s.  ie: This method returns a pre-configured
+     * {@link CoherenceCacheServerSchema} that the tests in this class expect to use.
      *
-     * @return {@link ClusterMemberSchema}
+     * @return {@link CoherenceCacheServerSchema}
      */
-    protected ClusterMemberSchema newBaseClusterMemberSchema(Capture<Integer> clusterPort)
+    protected CoherenceCacheServerSchema newBaseCacheServerSchema(Capture<Integer> clusterPort)
     {
-        ClusterMemberSchema schema =
-            new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-                .useLocalHostMode().setClusterPort(clusterPort).setPofConfigURI("test-pof-config.xml")
+        CoherenceCacheServerSchema schema =
+            new CoherenceCacheServerSchema().addOption(EnvironmentVariables.inherited()).useLocalHostMode()
+                .setClusterPort(clusterPort).setPofConfigURI("test-pof-config.xml")
+                .setPreferIPv4(true)
                 .setJMXManagementMode(JMXManagementMode.ALL).setJMXPort(getAvailablePortIterator())
                 .setSystemProperty("remote.address",
                                    Constants.getLocalHost())
                                        .setSystemProperty("proxy.address", Constants.getLocalHost());
 
-        schema.addLifecycleInterceptor(new LifecycleEventInterceptor<ClusterMember>()
+        schema.addApplicationListener(new ApplicationListener<CoherenceCacheServer>()
         {
             @Override
-            public void onEvent(LifecycleEvent<ClusterMember> event)
+            public void onClosing(CoherenceCacheServer server)
             {
-                if (event.getType() == Application.EventKind.REALIZED)
-                {
-                    // ensure that we wait until the extend tcp proxy service is running
-                    ClusterMember member = event.getObject();
+                // SKIP: nothing to do when closing
+            }
 
-                    Eventually.assertThat(invoking(member).isServiceRunning("ExtendTcpProxyService"), is(true));
-                }
+            @Override
+            public void onClosed(CoherenceCacheServer server)
+            {
+                // SKIP: nothing to do when closed
+            }
+
+            @Override
+            public void onRealized(CoherenceCacheServer server)
+            {
+                // ensure that the proxy service has started
+                Eventually.assertThat(invoking(server).isServiceRunning("ExtendTcpProxyService"), is(true));
             }
         });
 
@@ -167,15 +139,15 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     }
 
 
-    protected abstract ClusterMemberSchema newPassiveClusterMemberSchema(Capture<Integer> clusterPort);
+    protected abstract CoherenceCacheServerSchema newPassiveCacheServerSchema(Capture<Integer> clusterPort);
 
 
-    protected abstract ClusterMemberSchema newActiveClusterMemberSchema(Capture<Integer> clusterPort);
+    protected abstract CoherenceCacheServerSchema newActiveCacheServerSchema(Capture<Integer> clusterPort);
 
 
-    protected JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> newClusterMemberBuilder()
+    protected JavaApplicationBuilder<CoherenceCacheServer> newCacheServerBuilder()
     {
-        return new NativeJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
+        return new LocalJavaApplicationBuilder<CoherenceCacheServer>();
     }
 
 
@@ -188,12 +160,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public final void testActiveActive() throws Exception
     {
-        final String                                               cacheName     = "publishing-cache";
+        final String                                 cacheName     = "publishing-cache";
 
-        ClusterMember                                              londonServer  = null;
-        ClusterMember                                              newyorkServer = null;
+        CoherenceCacheServer                         londonServer  = null;
+        CoherenceCacheServer                         newyorkServer = null;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder       = newClusterMemberBuilder();
+        JavaApplicationBuilder<CoherenceCacheServer> builder       = newCacheServerBuilder();
 
         try
         {
@@ -203,11 +175,11 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             Capture<Integer> londonClusterPort = new Capture<Integer>(getAvailablePortIterator());
 
             // establish the london server
-            ClusterMemberSchema londonServerSchema =
-                newActiveClusterMemberSchema(londonClusterPort).setSiteName("london").setSystemProperty("proxy.address",
-                                                                                                        Constants
-                                                                                                            .getLocalHost())
-                                                                                                                .setSystemProperty("proxy.port",
+            CoherenceCacheServerSchema londonServerSchema =
+                newActiveCacheServerSchema(londonClusterPort).setSiteName("london").setSystemProperty("proxy.address",
+                                                                                                      Constants
+                                                                                                          .getLocalHost())
+                                                                                                              .setSystemProperty("proxy.port",
                 getAvailablePortIterator()).setSystemProperty("remote.port",
                                                               getAvailablePortIterator());
 
@@ -217,11 +189,11 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             Capture<Integer> newyorkClusterPort = new Capture<Integer>(getAvailablePortIterator());
 
             // establish the newyork server
-            ClusterMemberSchema newyorkServerSchema =
-                newActiveClusterMemberSchema(newyorkClusterPort).setSiteName("newyork").setSystemProperty("proxy.port",
-                                                                                                          londonServer
-                                                                                                              .getSystemProperty("remote.port"))
-                                                                                                                  .setSystemProperty("remote.port",
+            CoherenceCacheServerSchema newyorkServerSchema =
+                newActiveCacheServerSchema(newyorkClusterPort).setSiteName("newyork").setSystemProperty("proxy.port",
+                                                                                                        londonServer
+                                                                                                            .getSystemProperty("remote.port"))
+                                                                                                                .setSystemProperty("remote.port",
                 londonServer.getSystemProperty("proxy.port"));
 
             newyorkServer = builder.realize(newyorkServerSchema, "NEWYORK", console);
@@ -256,7 +228,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             NamedCache namedCache = CacheFactory.getCache(cacheName);
 
-            Eventually.assertThat(invoking(namedCache), sameAs(newyorkCache));
+            Eventually.assertThat(invoking(namedCache), sameAs((Map) newyorkCache));
 
             // assert that no been queued in London (from New York)
             // (even though this is Active-Active, events from New York to London should not be
@@ -289,7 +261,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             namedCache = CacheFactory.getCache(cacheName);
 
-            Eventually.assertThat(invoking(namedCache), sameAs(londonCache));
+            Eventually.assertThat(invoking(namedCache), sameAs((Map) londonCache));
         }
         catch (Exception exception)
         {
@@ -322,16 +294,16 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActivePassive() throws Exception
     {
-        String                                                     siteName         = "testActivePassive";
-        final String                                               cacheName        = "publishing-cache";
+        String                                       siteName         = "testActivePassive";
+        final String                                 cacheName        = "publishing-cache";
 
-        int                                                        nrPassiveServers = 2;
-        int                                                        nrActiveServers  = 2;
+        int                                          nrPassiveServers = 2;
+        int                                          nrActiveServers  = 2;
 
-        ArrayList<ClusterMember> passiveServers = new ArrayList<ClusterMember>(nrPassiveServers);
-        ArrayList<ClusterMember> activeServers = new ArrayList<ClusterMember>(nrActiveServers);
+        ArrayList<CoherenceCacheServer> passiveServers = new ArrayList<CoherenceCacheServer>(nrPassiveServers);
+        ArrayList<CoherenceCacheServer> activeServers = new ArrayList<CoherenceCacheServer>(nrActiveServers);
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder          = newClusterMemberBuilder();
+        JavaApplicationBuilder<CoherenceCacheServer> builder          = newCacheServerBuilder();
 
         try
         {
@@ -342,8 +314,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             for (int i = 0; i < nrPassiveServers; i++)
             {
-                ClusterMemberSchema passiveServerSchema =
-                    newPassiveClusterMemberSchema(passiveClusterPort).setSiteName(siteName);
+                CoherenceCacheServerSchema passiveServerSchema =
+                    newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
 
                 passiveServers.add(builder.realize(passiveServerSchema, String.format("PASSIVE %s", i), console));
             }
@@ -353,22 +325,23 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             for (int i = 0; i < nrActiveServers; i++)
             {
-                ClusterMemberSchema activeServerSchema =
-                    newActiveClusterMemberSchema(activeClusterPort).setSiteName(siteName)
-                        .setSystemProperty("remote.port",
-                                           passiveServers.get(0).getSystemProperty("proxy.port"));
+                CoherenceCacheServerSchema activeServerSchema =
+                    newActiveCacheServerSchema(activeClusterPort).setSiteName(siteName).setSystemProperty("remote.port",
+                                                                                                          passiveServers
+                                                                                                              .get(0)
+                                                                                                              .getSystemProperty("proxy.port"));
 
                 activeServers.add(builder.realize(activeServerSchema, String.format("ACTIVE  %d", i), console));
             }
 
             // wait for passive cluster to start
-            for (ClusterMember server : passiveServers)
+            for (CoherenceCacheServer server : passiveServers)
             {
                 assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
             }
 
             // wait for active server cluster to start
-            for (ClusterMember server : activeServers)
+            for (CoherenceCacheServer server : activeServers)
             {
                 assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
             }
@@ -403,7 +376,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             NamedCache namedCache = CacheFactory.getCache(cacheName);
 
-            Eventually.assertThat(invoking(namedCache), sameAs(activeCache));
+            Eventually.assertThat(invoking(namedCache), sameAs((Map) activeCache));
 
             Assert.assertNotNull(namedCache);
         }
@@ -416,12 +389,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // shutdown our local use of coherence
             CacheFactory.shutdown();
 
-            for (ClusterMember server : passiveServers)
+            for (CoherenceCacheServer server : passiveServers)
             {
                 server.close();
             }
 
-            for (ClusterMember server : activeServers)
+            for (CoherenceCacheServer server : activeServers)
             {
                 server.close();
             }
@@ -437,30 +410,30 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public final void testActivePassiveDisabled() throws Exception
     {
-        ClusterMember                                              passiveServer = null;
-        ClusterMember                                              activeServer  = null;
+        CoherenceCacheServer                         passiveServer = null;
+        CoherenceCacheServer                         activeServer  = null;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder       = newClusterMemberBuilder();
-        SystemApplicationConsole                                   console       = new SystemApplicationConsole();
+        JavaApplicationBuilder<CoherenceCacheServer> builder       = newCacheServerBuilder();
+        SystemApplicationConsole                     console       = new SystemApplicationConsole();
 
         try
         {
             // establish the passive cluster
             Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
 
-            ClusterMemberSchema passiveServerSchema =
-                newPassiveClusterMemberSchema(passiveClusterPort).setSiteName("sydney");
+            CoherenceCacheServerSchema passiveServerSchema =
+                newPassiveCacheServerSchema(passiveClusterPort).setSiteName("sydney");
 
             passiveServer = builder.realize(passiveServerSchema, "PASSIVE", console);
 
             // establish the active cluster
             Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
 
-            ClusterMemberSchema activeServerSchema =
-                newActiveClusterMemberSchema(activeClusterPort).setSiteName("sydney").setSystemProperty("remote.port",
-                                                                                                        passiveServer
-                                                                                                            .getSystemProperty("proxy.port"))
-                                                                                                                .setSystemProperty("channel.starting.mode",
+            CoherenceCacheServerSchema activeServerSchema =
+                newActiveCacheServerSchema(activeClusterPort).setSiteName("sydney").setSystemProperty("remote.port",
+                                                                                                      passiveServer
+                                                                                                          .getSystemProperty("proxy.port"))
+                                                                                                              .setSystemProperty("channel.starting.mode",
                 "disabled").setJMXManagementMode(JMXManagementMode.ALL);
 
             activeServer = builder.realize(activeServerSchema, "ACTIVE", console);
@@ -497,7 +470,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
         }
         catch (AssertionError error)
         {
-            if (error.getCause() instanceof UnresolvableInstanceException)
+            if (error.getCause() instanceof PermanentlyUnavailableException)
             {
                 // this is actually ok as we should never assert that the disabled site receives information
             }
@@ -533,16 +506,16 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActivePassiveEventTransformation() throws Exception
     {
-        String                                                     siteName         = "testActivePassive";
-        final String                                               cacheName        = "publishing-cache";
+        String                                       siteName         = "testActivePassive";
+        final String                                 cacheName        = "publishing-cache";
 
-        int                                                        nrPassiveServers = 2;
-        int                                                        nrActiveServers  = 2;
+        int                                          nrPassiveServers = 2;
+        int                                          nrActiveServers  = 2;
 
-        ArrayList<ClusterMember> passiveServers = new ArrayList<ClusterMember>(nrPassiveServers);
-        ArrayList<ClusterMember> activeServers = new ArrayList<ClusterMember>(nrActiveServers);
+        ArrayList<CoherenceCacheServer> passiveServers = new ArrayList<CoherenceCacheServer>(nrPassiveServers);
+        ArrayList<CoherenceCacheServer> activeServers = new ArrayList<CoherenceCacheServer>(nrActiveServers);
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder          = newClusterMemberBuilder();
+        JavaApplicationBuilder<CoherenceCacheServer> builder          = newCacheServerBuilder();
 
         try
         {
@@ -553,8 +526,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             for (int i = 0; i < nrPassiveServers; i++)
             {
-                ClusterMemberSchema passiveServerSchema =
-                    newPassiveClusterMemberSchema(passiveClusterPort).setSiteName(siteName);
+                CoherenceCacheServerSchema passiveServerSchema =
+                    newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
 
                 passiveServers.add(builder.realize(passiveServerSchema, String.format("PASSIVE %s", i), console));
             }
@@ -564,8 +537,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             for (int i = 0; i < nrActiveServers; i++)
             {
-                ClusterMemberSchema activeServerSchema =
-                    newActiveClusterMemberSchema(activeClusterPort)
+                CoherenceCacheServerSchema activeServerSchema =
+                    newActiveCacheServerSchema(activeClusterPort)
                         .setCacheConfigURI("test-remotecluster-eventtransformation-cache-config.xml")
                         .setSiteName(siteName).setSystemProperty("remote.port",
                                                                  passiveServers.get(0).getSystemProperty("proxy.port"));
@@ -574,13 +547,13 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             }
 
             // wait for passive cluster to start
-            for (ClusterMember server : passiveServers)
+            for (CoherenceCacheServer server : passiveServers)
             {
                 assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
             }
 
             // wait for active server cluster to start
-            for (ClusterMember server : activeServers)
+            for (CoherenceCacheServer server : activeServers)
             {
                 assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
             }
@@ -615,7 +588,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             NamedCache namedCache = CacheFactory.getCache(cacheName);
 
-            Eventually.assertThat(invoking(namedCache), is(sameAs(activeCache, Equivalence.EQUALS_IGNORE_CASE)));
+            Eventually.assertThat(invoking(namedCache), is(sameAs((Map) activeCache, Equivalence.EQUALS_IGNORE_CASE)));
         }
         catch (Exception exception)
         {
@@ -626,12 +599,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // shutdown our local use of coherence
             CacheFactory.shutdown();
 
-            for (ClusterMember server : passiveServers)
+            for (CoherenceCacheServer server : passiveServers)
             {
                 server.close();
             }
 
-            for (ClusterMember server : activeServers)
+            for (CoherenceCacheServer server : activeServers)
             {
                 server.close();
             }
@@ -648,22 +621,22 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActivePassiveEventFiltering() throws Exception
     {
-        String                                                     siteName      = "testActivePassiveWithFiltering";
-        final String                                               cacheName     = "publishing-cache";
+        String                                       siteName      = "testActivePassiveWithFiltering";
+        final String                                 cacheName     = "publishing-cache";
 
-        ClusterMember                                              passiveServer = null;
-        ClusterMember                                              activeServer  = null;
+        CoherenceCacheServer                         passiveServer = null;
+        CoherenceCacheServer                         activeServer  = null;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder       = newClusterMemberBuilder();
-        SystemApplicationConsole                                   console       = new SystemApplicationConsole();
+        JavaApplicationBuilder<CoherenceCacheServer> builder       = newCacheServerBuilder();
+        SystemApplicationConsole                     console       = new SystemApplicationConsole();
 
         try
         {
             // establish the passive cluster
             Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
 
-            ClusterMemberSchema passiveServerSchema =
-                newPassiveClusterMemberSchema(passiveClusterPort).setSiteName(siteName);
+            CoherenceCacheServerSchema passiveServerSchema =
+                newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
 
             passiveServer = builder.realize(passiveServerSchema, "PASSIVE", console);
 
@@ -673,8 +646,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // establish the active cluster
             Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
 
-            ClusterMemberSchema activeServerSchema =
-                newActiveClusterMemberSchema(activeClusterPort)
+            CoherenceCacheServerSchema activeServerSchema =
+                newActiveCacheServerSchema(activeClusterPort)
                     .setCacheConfigURI("test-remotecluster-eventfiltering-cache-config.xml").setSiteName(siteName)
                     .setSystemProperty("remote.port",
                                        passiveServer.getSystemProperty("proxy.port"));
@@ -737,7 +710,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             NamedCache namedCache = CacheFactory.getCache(cacheName);
 
-            Eventually.assertThat(invoking(namedCache), is(sameAs(activeCache, Equivalence.EQUALS_IGNORE_CASE)));
+            Eventually.assertThat(invoking(namedCache), is(sameAs((Map) activeCache, Equivalence.EQUALS_IGNORE_CASE)));
 
             Assert.assertNotNull(namedCache);
         }
@@ -773,16 +746,16 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActivePassivePropagation() throws Exception
     {
-        String                                                     siteName         = "testActivePassive";
-        final String                                               cacheName        = "publishing-cache";
+        String                                       siteName         = "testActivePassive";
+        final String                                 cacheName        = "publishing-cache";
 
-        int                                                        nrPassiveServers = 1;
-        int                                                        nrActiveServers  = 1;
+        int                                          nrPassiveServers = 1;
+        int                                          nrActiveServers  = 1;
 
-        ArrayList<ClusterMember> passiveServers = new ArrayList<ClusterMember>(nrPassiveServers);
-        ArrayList<ClusterMember> activeServers = new ArrayList<ClusterMember>(nrActiveServers);
+        ArrayList<CoherenceCacheServer> passiveServers = new ArrayList<CoherenceCacheServer>(nrPassiveServers);
+        ArrayList<CoherenceCacheServer> activeServers = new ArrayList<CoherenceCacheServer>(nrActiveServers);
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder          = newClusterMemberBuilder();
+        JavaApplicationBuilder<CoherenceCacheServer> builder          = newCacheServerBuilder();
 
         try
         {
@@ -793,8 +766,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             for (int i = 0; i < nrPassiveServers; i++)
             {
-                ClusterMemberSchema passiveServerSchema =
-                    newPassiveClusterMemberSchema(passiveClusterPort).setSiteName(siteName);
+                CoherenceCacheServerSchema passiveServerSchema =
+                    newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
 
                 passiveServers.add(builder.realize(passiveServerSchema, String.format("PASSIVE %s", i), console));
             }
@@ -804,25 +777,25 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             for (int i = 0; i < nrActiveServers; i++)
             {
-                ClusterMemberSchema activeServerSchema =
-                    newActiveClusterMemberSchema(activeClusterPort).setSiteName(siteName)
-                        .setSystemProperty("remote.port",
-                                           passiveServers.get(0).getSystemProperty("proxy.port"))
-                                               .setSystemProperty("channel.starting.mode",
-                                                                  "disabled")
-                                                                      .setJMXManagementMode(JMXManagementMode.ALL);
+                CoherenceCacheServerSchema activeServerSchema =
+                    newActiveCacheServerSchema(activeClusterPort).setSiteName(siteName).setSystemProperty("remote.port",
+                                                                                                          passiveServers
+                                                                                                              .get(0)
+                                                                                                              .getSystemProperty("proxy.port"))
+                                                                                                                  .setSystemProperty("channel.starting.mode",
+                    "disabled").setJMXManagementMode(JMXManagementMode.ALL);
 
                 activeServers.add(builder.realize(activeServerSchema, String.format("ACTIVE  %d", i), console));
             }
 
             // wait for passive cluster to start
-            for (ClusterMember server : passiveServers)
+            for (CoherenceCacheServer server : passiveServers)
             {
                 assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
             }
 
             // wait for active server cluster to start
-            for (ClusterMember server : activeServers)
+            for (CoherenceCacheServer server : activeServers)
             {
                 assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
             }
@@ -865,7 +838,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             NamedCache namedCache = CacheFactory.getCache(cacheName);
 
-            Eventually.assertThat(invoking(namedCache), sameAs(activeCache));
+            Eventually.assertThat(invoking(namedCache), sameAs((Map) activeCache));
 
             Assert.assertNotNull(namedCache);
         }
@@ -878,12 +851,12 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // shutdown our local use of coherence
             CacheFactory.shutdown();
 
-            for (ClusterMember server : passiveServers)
+            for (CoherenceCacheServer server : passiveServers)
             {
                 server.close();
             }
 
-            for (ClusterMember server : activeServers)
+            for (CoherenceCacheServer server : activeServers)
             {
                 server.close();
             }
@@ -899,9 +872,9 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testCacheStoreEventChannel() throws Exception
     {
-        ClusterMember                                              londonServer = null;
+        CoherenceCacheServer                         londonServer = null;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder      = newClusterMemberBuilder();
+        JavaApplicationBuilder<CoherenceCacheServer> builder      = newCacheServerBuilder();
 
         try
         {
@@ -909,8 +882,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
 
             // establish the london server
-            ClusterMemberSchema londonServerSchema =
-                newBaseClusterMemberSchema(clusterPort).setSiteName("london")
+            CoherenceCacheServerSchema londonServerSchema =
+                newBaseCacheServerSchema(clusterPort).setSiteName("london")
                     .setCacheConfigURI("test-cachestore-eventchannel-cache-config.xml").setClusterName("passive");
 
             londonServer = builder.realize(londonServerSchema, "LONDON");
@@ -957,6 +930,130 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
 
     /**
+     * Performs Active-Passive topology tests using expiry
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testActivePassiveWithExpiry() throws Exception
+    {
+        String                                       siteName         = "testActivePassiveWithExpiry";
+        final String                                 cacheName        = "publishing-cache";
+
+        int                                          nrPassiveServers = 2;
+        int                                          nrActiveServers  = 2;
+
+        ArrayList<CoherenceCacheServer> passiveServers = new ArrayList<CoherenceCacheServer>(nrPassiveServers);
+        ArrayList<CoherenceCacheServer> activeServers = new ArrayList<CoherenceCacheServer>(nrActiveServers);
+
+        JavaApplicationBuilder<CoherenceCacheServer> builder          = newCacheServerBuilder();
+
+        try
+        {
+            SystemApplicationConsole console = new SystemApplicationConsole();
+
+            // establish the passive cluster
+            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            for (int i = 0; i < nrPassiveServers; i++)
+            {
+                CoherenceCacheServerSchema passiveServerSchema =
+                    newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
+
+                passiveServers.add(builder.realize(passiveServerSchema, String.format("PASSIVE %s", i), console));
+            }
+
+            // establish the active cluster
+            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            for (int i = 0; i < nrActiveServers; i++)
+            {
+                CoherenceCacheServerSchema activeServerSchema =
+                    newActiveCacheServerSchema(activeClusterPort).setSiteName(siteName).setSystemProperty("remote.port",
+                                                                                                          passiveServers
+                                                                                                              .get(0)
+                                                                                                              .getSystemProperty("proxy.port"));
+
+                activeServers.add(builder.realize(activeServerSchema, String.format("ACTIVE  %d", i), console));
+            }
+
+            // wait for passive cluster to start
+            for (CoherenceCacheServer server : passiveServers)
+            {
+                assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
+            }
+
+            // wait for active server cluster to start
+            for (CoherenceCacheServer server : activeServers)
+            {
+                assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
+            }
+
+            // turn off local clustering so we don't connect with the process just started
+            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+
+            System.setProperty("remote.address", activeServers.get(0).getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", activeServers.get(0).getSystemProperty("proxy.port"));
+            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            // populate the active site
+            NamedCache cache = CacheFactory.getCache(cacheName);
+
+            cache.put("5", "5", 5000);
+            cache.put("10", "10", 10000);
+            cache.put("15", "15", 15000);
+
+            // shutdown our connection to the active site
+            CacheFactory.shutdown();
+
+            // assert that the values have arrived in the remote site
+            System.out.printf("Connecting to PASSIVE site.\n");
+            System.setProperty("remote.address", passiveServers.get(0).getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", passiveServers.get(0).getSystemProperty("proxy.port"));
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            System.out.printf("\nWaiting for entries to synchronize between ACTIVE and PASSIVE site.\n");
+
+            NamedCache namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache).get("5"), is((Object) "5"));
+            Eventually.assertThat(invoking(namedCache).get("10"), is((Object) "10"));
+            Eventually.assertThat(invoking(namedCache).get("15"), is((Object) "15"));
+
+            // now we must ensure that the entries have expired
+            System.out.printf("\nEnsuring entries have expired in the PASSIVE site.\n");
+
+            Eventually.assertThat(invoking(namedCache).containsKey("5"), is(false));
+            Eventually.assertThat(invoking(namedCache).containsKey("10"), is(false));
+            Eventually.assertThat(invoking(namedCache).containsKey("15"), is(false));
+        }
+        catch (Exception exception)
+        {
+            throw exception;
+        }
+        finally
+        {
+            // shutdown our local use of coherence
+            CacheFactory.shutdown();
+
+            for (CoherenceCacheServer server : passiveServers)
+            {
+                server.close();
+            }
+
+            for (CoherenceCacheServer server : activeServers)
+            {
+                server.close();
+            }
+        }
+    }
+
+
+    /**
      * Test that the {@link BinaryEntryStoreEventChannel} publishes entries.
      *
      * @throws Exception
@@ -964,10 +1061,10 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testBinaryEntryStoreEventChannel() throws Exception
     {
-        ClusterMember                                              londonServer = null;
+        CoherenceCacheServer                         londonServer = null;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder      = newClusterMemberBuilder();
-        SystemApplicationConsole                                   console      = new SystemApplicationConsole();
+        JavaApplicationBuilder<CoherenceCacheServer> builder      = newCacheServerBuilder();
+        SystemApplicationConsole                     console      = new SystemApplicationConsole();
 
         try
         {
@@ -975,8 +1072,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
 
             // establish the london server
-            ClusterMemberSchema londonServerSchema =
-                newBaseClusterMemberSchema(clusterPort).setSiteName("london")
+            CoherenceCacheServerSchema londonServerSchema =
+                newBaseCacheServerSchema(clusterPort).setSiteName("london")
                     .setCacheConfigURI("test-binaryentrystore-eventchannel-cache-config.xml").setClusterName("passive");
 
             londonServer = builder.realize(londonServerSchema, "LONDON", console);
@@ -1030,10 +1127,10 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testCustomEventChannel() throws Exception
     {
-        ClusterMember                                              londonServer = null;
+        CoherenceCacheServer                         londonServer = null;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder      = newClusterMemberBuilder();
-        SystemApplicationConsole                                   console      = new SystemApplicationConsole();
+        JavaApplicationBuilder<CoherenceCacheServer> builder      = newCacheServerBuilder();
+        SystemApplicationConsole                     console      = new SystemApplicationConsole();
 
         try
         {
@@ -1041,8 +1138,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
 
             // establish the london server
-            ClusterMemberSchema londonServerSchema =
-                newBaseClusterMemberSchema(clusterPort).setSiteName("london")
+            CoherenceCacheServerSchema londonServerSchema =
+                newBaseCacheServerSchema(clusterPort).setSiteName("london")
                     .setCacheConfigURI("test-custom-eventchannel-cache-config.xml").setClusterName("passive");
 
             londonServer = builder.realize(londonServerSchema, "LONDON", console);
@@ -1101,23 +1198,23 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActiveActiveConflictResolution() throws Exception
     {
-        final String                                               cacheName     = "publishing-cache";
+        final String                                 cacheName     = "publishing-cache";
 
-        ClusterMember                                              londonServer  = null;
-        ClusterMember                                              newyorkServer = null;
+        CoherenceCacheServer                         londonServer  = null;
+        CoherenceCacheServer                         newyorkServer = null;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder       = newClusterMemberBuilder();
-        SystemApplicationConsole                                   console       = new SystemApplicationConsole();
+        JavaApplicationBuilder<CoherenceCacheServer> builder       = newCacheServerBuilder();
+        SystemApplicationConsole                     console       = new SystemApplicationConsole();
 
         try
         {
             // establish the london server
             Capture<Integer> londonClusterPort = new Capture<Integer>(getAvailablePortIterator());
 
-            ClusterMemberSchema londonServerSchema =
-                newActiveClusterMemberSchema(londonClusterPort).setSiteName("london").setSystemProperty("proxy.port",
-                                                                                                        getAvailablePortIterator())
-                                                                                                            .setSystemProperty("remote.port",
+            CoherenceCacheServerSchema londonServerSchema =
+                newActiveCacheServerSchema(londonClusterPort).setSiteName("london").setSystemProperty("proxy.port",
+                                                                                                      getAvailablePortIterator())
+                                                                                                          .setSystemProperty("remote.port",
                 getAvailablePortIterator()).setSystemProperty("conflict.resolver.classname",
                                                               "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver");
 
@@ -1126,11 +1223,11 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // establish the newyork server
             Capture<Integer> newyorkClusterPort = new Capture<Integer>(getAvailablePortIterator());
 
-            ClusterMemberSchema newyorkServerSchema =
-                newActiveClusterMemberSchema(newyorkClusterPort).setSiteName("newyork").setSystemProperty("proxy.port",
-                                                                                                          londonServer
-                                                                                                              .getSystemProperty("remote.port"))
-                                                                                                                  .setSystemProperty("remote.port",
+            CoherenceCacheServerSchema newyorkServerSchema =
+                newActiveCacheServerSchema(newyorkClusterPort).setSiteName("newyork").setSystemProperty("proxy.port",
+                                                                                                        londonServer
+                                                                                                            .getSystemProperty("remote.port"))
+                                                                                                                .setSystemProperty("remote.port",
                 londonServer.getSystemProperty("proxy.port")).setSystemProperty("conflict.resolver.classname",
                                                                                 "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver");
 
@@ -1169,7 +1266,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             NamedCache namedCache = CacheFactory.getCache(cacheName);
 
-            Eventually.assertThat(invoking(namedCache).get("partitions"), PartitionSetMatcher.contains(0, 1));
+            Eventually.assertThat(invoking(namedCache).get("partitions"), (Matcher) PartitionSetMatcher.contains(0, 1));
 
             // shutdown our connection to the london cluster
             CacheFactory.shutdown();
@@ -1183,7 +1280,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             namedCache = CacheFactory.getCache(cacheName);
 
-            Eventually.assertThat(invoking(namedCache).get("partitions"), PartitionSetMatcher.contains(0, 1));
+            Eventually.assertThat(invoking(namedCache).get("partitions"), (Matcher) PartitionSetMatcher.contains(0, 1));
 
             // shutdown our connection to the london cluster
             CacheFactory.shutdown();
@@ -1218,10 +1315,10 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testAsyncCacheStoreEventChannel() throws Exception
     {
-        ClusterMember                                              londonServer = null;
+        CoherenceCacheServer                         londonServer = null;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder      = newClusterMemberBuilder();
-        SystemApplicationConsole                                   console      = new SystemApplicationConsole();
+        JavaApplicationBuilder<CoherenceCacheServer> builder      = newCacheServerBuilder();
+        SystemApplicationConsole                     console      = new SystemApplicationConsole();
 
         try
         {
@@ -1229,8 +1326,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
 
             // establish the london server
-            ClusterMemberSchema londonServerSchema =
-                newBaseClusterMemberSchema(clusterPort).setSiteName("london")
+            CoherenceCacheServerSchema londonServerSchema =
+                newBaseCacheServerSchema(clusterPort).setSiteName("london")
                     .setCacheConfigURI("test-cachestore-eventchannel-cache-config.xml").setClusterName("passive")
                     .setSystemProperty("write.behind.delay",
                                        1);
@@ -1288,10 +1385,10 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testAsyncPutAllWithCacheStoreChannel() throws Exception
     {
-        ClusterMember                                              londonServer = null;
+        CoherenceCacheServer                         londonServer = null;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder      = newClusterMemberBuilder();
-        SystemApplicationConsole                                   console      = new SystemApplicationConsole();
+        JavaApplicationBuilder<CoherenceCacheServer> builder      = newCacheServerBuilder();
+        SystemApplicationConsole                     console      = new SystemApplicationConsole();
 
         try
         {
@@ -1299,8 +1396,8 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
 
             // establish the london server
-            ClusterMemberSchema londonServerSchema =
-                newBaseClusterMemberSchema(clusterPort).setSiteName("london")
+            CoherenceCacheServerSchema londonServerSchema =
+                newBaseCacheServerSchema(clusterPort).setSiteName("london")
                     .setCacheConfigURI("test-cachestore-eventchannel-cache-config.xml").setClusterName("passive")
                     .setSystemProperty("write.behind.delay",
                                        1);

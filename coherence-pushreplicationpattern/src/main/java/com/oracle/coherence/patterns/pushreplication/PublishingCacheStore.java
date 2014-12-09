@@ -68,6 +68,7 @@ import com.tangosol.net.GuardSupport;
 
 import com.tangosol.net.cache.BackingMapBinaryEntry;
 import com.tangosol.net.cache.BinaryEntryStore;
+import com.tangosol.net.cache.CacheMap;
 import com.tangosol.net.cache.CacheStore;
 
 import com.tangosol.util.Base;
@@ -75,6 +76,9 @@ import com.tangosol.util.Binary;
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.ResourceRegistry;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,6 +124,12 @@ public class PublishingCacheStore implements BinaryEntryStore
      * which this {@link CacheStore} will send {@link Event}s.
      */
     private ResourceProvider<ArrayList<Pair<EventDistributor, EventDistributorTemplate>>> eventDistributors;
+
+    /**
+     * The "getExpiry" {@link Method} to use for obtaining the expiry of a {@link BinaryEntry}
+     * (or <code>null</code> if using decorations manually will be required).
+     */
+    private Method getExpiryMethod;
 
 
     /**
@@ -203,6 +213,19 @@ public class PublishingCacheStore implements BinaryEntryStore
             }
         };
 
+        // determine how to obtain expiry information from BinaryEntries
+        // (as it can be optimized based on the version of Coherence)
+        Class<BinaryEntry> binaryEntryClass = BinaryEntry.class;
+
+        // attempt to use the Coherence 12.1.3+ optimized approach to obtaining the expiry
+        try
+        {
+            getExpiryMethod = binaryEntryClass.getMethod("getExpiry");
+        }
+        catch (Exception e)
+        {
+            getExpiryMethod = null;
+        }
     }
 
 
@@ -490,6 +513,11 @@ public class PublishingCacheStore implements BinaryEntryStore
             Binary undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
             Binary originalBinaryValue  = entry.getOriginalBinaryValue();
 
+            // ensure the BinaryValue we're sending contains the expiry
+            long expiry = getExpiry(entry);
+
+            decoratedBinaryValue = (Binary) ExternalizableHelper.encodeExpiry(decoratedBinaryValue, expiry);
+
             if (originalBinaryValue == null)
             {
                 distribute(new DistributableEntryInsertedEvent(cacheName,
@@ -576,6 +604,11 @@ public class PublishingCacheStore implements BinaryEntryStore
                 BackingMapBinaryEntry bmbe                 = (BackingMapBinaryEntry) entry;
                 Binary                originalBinaryValue  = bmbe.getOriginalBinaryValue();
 
+                // ensure the BinaryValue we're sending contains the expiry
+                long expiry = getExpiry(entry);
+
+                decoratedBinaryValue = (Binary) ExternalizableHelper.encodeExpiry(decoratedBinaryValue, expiry);
+
                 if (originalBinaryValue == null)
                 {
                     events.add(new DistributableEntryInsertedEvent(cacheName,
@@ -647,5 +680,47 @@ public class PublishingCacheStore implements BinaryEntryStore
     {
         // NOTE: override this method it you'd like to support "pull-replication"
         // or cache loading.
+    }
+
+
+    /**
+     * Obtains the time the specified {@link BinaryEntry} will expire, relative
+     * to the epoc, not a delta time.
+     *
+     * @param entry  the {@link BinaryEntry}
+     * @return  the expiry time
+     */
+    protected long getExpiry(BinaryEntry entry)
+    {
+        if (getExpiryMethod == null)
+        {
+            // use the Coherence pre-12.1.3 approach of un-decorating the expiry value from
+            // the binary value representation (which is stored in epoc time)
+            return ExternalizableHelper.decodeExpiry(entry.getBinaryValue());
+        }
+        else
+        {
+            // attempt to use the Coherence 12.1.3+ optimized approach to obtaining the expiry
+            try
+            {
+                long expiry = ((Long) getExpiryMethod.invoke(entry));
+
+                // BinaryEntry.getExpiry() returns a delta time so we need to convert
+                // it into a time relative to the epoc
+                return (expiry == CacheMap.EXPIRY_NEVER || expiry == CacheMap.EXPIRY_DEFAULT)
+                       ? expiry : expiry + Base.getSafeTimeMillis();
+
+            }
+            catch (IllegalAccessException e)
+            {
+                return CacheMap.EXPIRY_DEFAULT;
+            }
+            catch (InvocationTargetException e)
+            {
+                return CacheMap.EXPIRY_DEFAULT;
+            }
+
+        }
+
     }
 }

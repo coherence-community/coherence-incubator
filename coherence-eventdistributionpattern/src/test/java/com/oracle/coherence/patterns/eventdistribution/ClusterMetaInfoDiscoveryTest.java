@@ -32,16 +32,14 @@ import com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCach
 
 import com.oracle.tools.junit.AbstractTest;
 
-import com.oracle.tools.runtime.PropertiesBuilder;
-
-import com.oracle.tools.runtime.coherence.ClusterMember;
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
+import com.oracle.tools.runtime.coherence.CoherenceCacheServer;
+import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
+import com.oracle.tools.runtime.coherence.JMXManagementMode;
 
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
 
-import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
+import com.oracle.tools.runtime.java.LocalJavaApplicationBuilder;
 
 import com.oracle.tools.runtime.network.AvailablePortIterator;
 import com.oracle.tools.runtime.network.Constants;
@@ -55,12 +53,16 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static com.oracle.tools.deferred.DeferredHelper.invoking;
+
+import static com.oracle.tools.deferred.Eventually.assertThat;
+
+import static org.hamcrest.CoreMatchers.is;
+
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.net.UnknownHostException;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
@@ -114,31 +116,14 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     }
 
 
-    /**
-     * A simple method to wait a specified amount of time, with a message to stdout.
-     *
-     * @param time      The time to wait in ms.
-     * @param rationale The rationale (message) for waiting.
-     * @throws InterruptedException When interrupted while waiting.
-     */
-    public void wait(long   time,
-                     String rationale) throws InterruptedException
+    private CoherenceCacheServerSchema newCacheServerSchema()
     {
-        System.out.printf("%s: Waiting %dms %s\n", new Date(), time, rationale);
-        Thread.sleep(time);
-    }
-
-
-    private ClusterMemberSchema newClusterMemberSchema()
-    {
-        return new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-            .setCacheConfigURI("test-cluster-cache-config.xml").setPofConfigURI("test-pof-config.xml")
-            .setSingleServerMode().setClusterPort(portIterator).setSystemProperty("proxy.port",
-                                                                                  portIterator).setJMXPort(portIterator)
-                                                                                  .setJMXManagementMode(JMXManagementMode
-                                                                                      .LOCAL_ONLY)
-                                                                                          .setSystemProperty("proxy.host",
-            Constants.getLocalHost());
+        return new CoherenceCacheServerSchema().setCacheConfigURI("test-cluster-cache-config.xml")
+            .setPofConfigURI("test-pof-config.xml").useLocalHostMode().setClusterPort(portIterator)
+            .setSystemProperty("proxy.port",
+                               portIterator).setJMXPort(portIterator).setJMXManagementMode(JMXManagementMode.LOCAL_ONLY)
+                                   .setSystemProperty("proxy.host",
+                                                      Constants.getLocalHost());
     }
 
 
@@ -151,22 +136,20 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     @Test
     public void testDetermineDefaultClusterMetaInfoWithRemoteInvocationService() throws Exception
     {
-        ClusterMember server = null;
+        JavaApplicationBuilder<CoherenceCacheServer> serverBuilder =
+            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
 
-        try
+        CoherenceCacheServerSchema serverSchema = newCacheServerSchema();
+
+        try (CoherenceCacheServer server = serverBuilder.realize(serverSchema,
+                                                                 "DCGNRI",
+                                                                 new SystemApplicationConsole()))
         {
-            // build the server
-            ClusterMemberSchema serverSchema = newClusterMemberSchema();
-            JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> serverBuilder =
-                new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
-
-            server = serverBuilder.realize(serverSchema, "DCGNRI", new SystemApplicationConsole());
-
             // wait for the server cluster to start
-            server.getClusterMBeanInfo();
+            assertThat(invoking(server).getClusterSize(), is(1));
 
             // wait for server extend proxy service to start
-            server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
+            assertThat(invoking(server).isServiceRunning("ExtendTcpProxyService"), is(true));
 
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
@@ -195,11 +178,6 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
         {
             // shutdown our local use of coherence
             CacheFactory.shutdown();
-
-            if (server != null)
-            {
-                server.destroy();
-            }
         }
     }
 
@@ -213,23 +191,21 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     @Test
     public void testDetermineSpecificClusterMetaInfoWithRemoteInvocationService() throws Exception
     {
-        ClusterMember server = null;
+        JavaApplicationBuilder<CoherenceCacheServer> serverBuilder =
+            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
 
-        try
+        CoherenceCacheServerSchema serverSchema =
+            newCacheServerSchema().setClusterName("waterloo").setSiteName("london");
+
+        try (CoherenceCacheServer server = serverBuilder.realize(serverSchema,
+                                                                 "SCGNRI",
+                                                                 new SystemApplicationConsole()))
         {
-            // build the server
-            ClusterMemberSchema serverSchema =
-                newClusterMemberSchema().setClusterName("waterloo").setSiteName("london");
-            JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> serverBuilder =
-                new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
-
-            server = serverBuilder.realize(serverSchema, "SCGNRI", new SystemApplicationConsole());
-
             // wait for the server cluster to start
-            server.getClusterMBeanInfo();
+            assertThat(invoking(server).getClusterSize(), is(1));
 
             // wait for server extend proxy service to start
-            server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
+            assertThat(invoking(server).isServiceRunning("ExtendTcpProxyService"), is(true));
 
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
@@ -248,8 +224,8 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
             ClusterMetaInfo clusterMetaInfo = (ClusterMetaInfo) (result != null && result.size() == 1
                                                                  ? result.values().iterator().next() : null);
 
-            assertTrue(clusterMetaInfo.getClusterName().equals("waterloo"));
-            assertTrue(clusterMetaInfo.getSiteName().equals("london"));
+            assertThat(clusterMetaInfo.getClusterName(), is("waterloo"));
+            assertThat(clusterMetaInfo.getSiteName(), is("london"));
         }
         catch (Exception exception)
         {
@@ -259,11 +235,6 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
         {
             // shutdown our local use of coherence
             CacheFactory.shutdown();
-
-            if (server != null)
-            {
-                server.destroy();
-            }
         }
     }
 
@@ -276,22 +247,20 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     @Test
     public void testDetermineDefaultClusterMetaInfoWithRemoteCacheService() throws Exception
     {
-        ClusterMember server = null;
+        JavaApplicationBuilder<CoherenceCacheServer> serverBuilder =
+            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
 
-        try
+        CoherenceCacheServerSchema serverSchema = newCacheServerSchema();
+
+        try (CoherenceCacheServer server = serverBuilder.realize(serverSchema,
+                                                                 "DCGNRI",
+                                                                 new SystemApplicationConsole()))
         {
-            // build the server
-            ClusterMemberSchema serverSchema = newClusterMemberSchema();
-            JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> serverBuilder =
-                new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
-
-            server = serverBuilder.realize(serverSchema, "DCGNRI", new SystemApplicationConsole());
-
             // wait for the server cluster to start
-            server.getClusterMBeanInfo();
+            assertThat(invoking(server).getClusterSize(), is(1));
 
             // wait for server extend proxy service to start
-            server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
+            assertThat(invoking(server).isServiceRunning("ExtendTcpProxyService"), is(true));
 
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
@@ -316,11 +285,6 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
         {
             // shutdown our local use of coherence
             CacheFactory.shutdown();
-
-            if (server != null)
-            {
-                server.destroy();
-            }
         }
     }
 
@@ -333,23 +297,21 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     @Test
     public void testDetermineSpecificClusterMetaInfoWithRemoteCacheService() throws Exception
     {
-        ClusterMember server = null;
+        JavaApplicationBuilder<CoherenceCacheServer> serverBuilder =
+            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
 
-        try
+        CoherenceCacheServerSchema serverSchema =
+            newCacheServerSchema().setClusterName("waterloo").setSiteName("london");
+
+        try (CoherenceCacheServer server = serverBuilder.realize(serverSchema,
+                                                                 "SCGNRC",
+                                                                 new SystemApplicationConsole()))
         {
-            // build the server
-            ClusterMemberSchema serverSchema =
-                newClusterMemberSchema().setClusterName("waterloo").setSiteName("london");
-            JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> serverBuilder =
-                new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
-
-            server = serverBuilder.realize(serverSchema, "SCGNRC", new SystemApplicationConsole());
-
             // wait for the server cluster to start
-            server.getClusterMBeanInfo();
+            assertThat(invoking(server).getClusterSize(), is(1));
 
             // wait for server extend proxy service to start
-            server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
+            assertThat(invoking(server).isServiceRunning("ExtendTcpProxyService"), is(true));
 
             // turn off local clustering so we don't connect with the process just started
             System.setProperty("tangosol.coherence.tcmp.enabled", "false");
@@ -364,8 +326,8 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
                                                                                                        new RemoteCacheEventChannel
                                                                                                            .GetClusterMetaInfoProcessor());
 
-            assertTrue(clusterMetaInfo.getClusterName().equals("waterloo"));
-            assertTrue(clusterMetaInfo.getSiteName().equals("london"));
+            assertThat(clusterMetaInfo.getClusterName(), is("waterloo"));
+            assertThat(clusterMetaInfo.getSiteName(), is("london"));
         }
         catch (Exception exception)
         {
@@ -375,11 +337,6 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
         {
             // shutdown our local use of coherence
             CacheFactory.shutdown();
-
-            if (server != null)
-            {
-                server.destroy();
-            }
         }
     }
 }

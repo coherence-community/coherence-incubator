@@ -28,27 +28,33 @@ package com.oracle.coherence.patterns.messaging.test;
 import com.oracle.coherence.patterns.messaging.MessagingSession;
 import com.oracle.coherence.patterns.messaging.Subscriber;
 
+import com.oracle.tools.deferred.Eventually;
+
 import com.oracle.tools.junit.AbstractCoherenceTest;
 
-import com.oracle.tools.runtime.Application;
-import com.oracle.tools.runtime.LifecycleEvent;
-import com.oracle.tools.runtime.LifecycleEventInterceptor;
-import com.oracle.tools.runtime.PropertiesBuilder;
+import com.oracle.tools.runtime.ApplicationListener;
 
-import com.oracle.tools.runtime.coherence.ClusterMember;
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema.JMXManagementMode;
+import com.oracle.tools.runtime.coherence.CoherenceCacheServer;
+import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
+import com.oracle.tools.runtime.coherence.JMXManagementMode;
 
 import com.oracle.tools.runtime.java.container.Container;
 
 import com.oracle.tools.runtime.network.AvailablePortIterator;
 
+import com.oracle.tools.runtime.options.EnvironmentVariables;
+
+import com.oracle.tools.util.Capture;
 import org.hamcrest.Matchers;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+
+import static com.oracle.tools.deferred.DeferredHelper.invoking;
+
+import static org.hamcrest.core.Is.is;
 
 import java.net.UnknownHostException;
 
@@ -140,38 +146,38 @@ public abstract class AbstractPartitionTest extends AbstractCoherenceTest
 
 
     /**
-     * Constructs a new {@link ClusterMemberSchema} on which sub-classes of this class should
-     * configure new {@link ClusterMemberSchema}s.  ie: This method returns a pre-configured
-     * {@link ClusterMemberSchema} that the tests in this class expect to use.
+     * Constructs a new {@link CoherenceCacheServerSchema} on which sub-classes of this class should
+     * configure new {@link CoherenceCacheServerSchema}s.  ie: This method returns a pre-configured
+     * {@link CoherenceCacheServerSchema} that the tests in this class expect to use.
      *
-     * @return {@link ClusterMemberSchema}
+     * @return {@link CoherenceCacheServerSchema}
      */
-    protected ClusterMemberSchema newBaseClusterMemberSchema(int iClusterPort)
+    protected CoherenceCacheServerSchema newBaseCacheServerSchema(Capture<Integer> clusterPort)
     {
-        ClusterMemberSchema schema =
-            new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
-                .useLocalHostMode()
-                .setClusterPort(iClusterPort == 0 ? getAvailablePortIterator().next() : iClusterPort)
+        CoherenceCacheServerSchema schema =
+            new CoherenceCacheServerSchema().addOption(EnvironmentVariables.inherited()).useLocalHostMode()
+                .setClusterPort(clusterPort)
                 .setPofConfigURI("coherence-messagingpattern-test-pof-config.xml")
+                .setPofEnabled(true)
+                .setPreferIPv4(true)
                 .setJMXManagementMode(JMXManagementMode.ALL).setJMXPort(getAvailablePortIterator());
 
-        schema.addLifecycleInterceptor(new LifecycleEventInterceptor<ClusterMember>()
+        schema.addApplicationListener(new ApplicationListener<CoherenceCacheServer>()
         {
             @Override
-            public void onEvent(LifecycleEvent<ClusterMember> event)
+            public void onClosing(CoherenceCacheServer server)
             {
-                if (event.getType() == Application.EventKind.REALIZED)
-                {
-                    ClusterMember member = event.getObject();
+            }
 
-                    // wait for the coherence application cluster MBean to become available
-                    member.getClusterMBeanInfo();
+            @Override
+            public void onClosed(CoherenceCacheServer server)
+            {
+            }
 
-                    // wait for the defined extend tcp proxy service to become available
-                    // ToDo note there must be a safer way to check for the extend service - this expects to always
-                    // be able to see the proxy service on member 1
-                    member.getServiceMBeanInfo("ExtendTcpProxyService", 1);
-                }
+            @Override
+            public void onRealized(CoherenceCacheServer server)
+            {
+                Eventually.assertThat(invoking(server).isServiceRunning("ExtendTcpProxyService"), is(true));
             }
         });
 
@@ -179,7 +185,7 @@ public abstract class AbstractPartitionTest extends AbstractCoherenceTest
     }
 
 
-    protected abstract ClusterMemberSchema newClusterMemberSchema(int iPort);
+    protected abstract CoherenceCacheServerSchema newCacheServerSchema(Capture<Integer> clusterPort);
 
 
     /**

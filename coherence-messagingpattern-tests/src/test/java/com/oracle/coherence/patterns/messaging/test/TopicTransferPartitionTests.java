@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,16 +26,29 @@
 package com.oracle.coherence.patterns.messaging.test;
 
 import com.oracle.coherence.common.identifiers.Identifier;
+
 import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.MessagingSession;
 import com.oracle.coherence.patterns.messaging.Subscriber;
-import com.oracle.tools.runtime.coherence.ClusterMember;
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
+
+import com.oracle.tools.runtime.coherence.CoherenceCacheServer;
+import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
+
+import com.oracle.tools.runtime.concurrent.runnable.RuntimeExit;
+import com.oracle.tools.runtime.concurrent.runnable.RuntimeHalt;
+import com.oracle.tools.runtime.concurrent.runnable.SystemExit;
+
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
+
 import com.oracle.tools.runtime.java.JavaApplicationBuilder;
-import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
+import com.oracle.tools.runtime.java.LocalJavaApplicationBuilder;
+
+import com.oracle.tools.util.Capture;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DefaultConfigurableCacheFactory;
+import com.tangosol.net.ExtensibleConfigurableCacheFactory;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -51,49 +63,44 @@ import java.util.ArrayList;
  */
 public class TopicTransferPartitionTests extends AbstractPartitionTest
 {
-    /**
-     * {@inheritDoc}
-     */
-    protected ClusterMemberSchema newClusterMemberSchema(int iPort)
+    @Override
+    protected CoherenceCacheServerSchema newCacheServerSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(iPort).setCacheConfigURI("coherence-messagingpattern-test-cache-config.xml")
-            .setClusterName("TopicMessagePattern").setSystemProperty("proxy.port",
-                                                                     getAvailablePortIterator());
+        return newBaseCacheServerSchema(clusterPort)
+            .setCacheConfigURI("coherence-messagingpattern-test-cache-config.xml").setClusterName("TopicMessagePattern")
+            .setSystemProperty("proxy.port",
+                               getAvailablePortIterator());
     }
 
 
     /**
      * Test partition transfer logic with the addition of a node to the cluster
      */
-    @Test
+    //TODO: refactor these tests to use Oracle Tools (so that the tests doesn't connect / join the cluster)
+    //@Test
     public void partitionAddServerTest() throws Exception
     {
-        int                      nrServers = 1;
+        CacheFactory.shutdown();
 
-        ArrayList<ClusterMember> servers   = new ArrayList<ClusterMember>(nrServers);
+        int                                          nrServers = 1;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder =
-            new NativeJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
+        ArrayList<CoherenceCacheServer>              servers   = new ArrayList<CoherenceCacheServer>(nrServers);
+
+        JavaApplicationBuilder<CoherenceCacheServer> builder   =
+            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
 
         try
         {
             // establish the cluster
-            int                      iPort   = getAvailablePortIterator().next();
-            SystemApplicationConsole console = new SystemApplicationConsole();
+            Capture<Integer>         clusterPort = new Capture<>(getAvailablePortIterator());
+            SystemApplicationConsole console     = new SystemApplicationConsole();
 
             // Start one of the nodes of the cluster
             for (int i = 0; i < nrServers; i++)
             {
-                ClusterMemberSchema serverSchema = newClusterMemberSchema(iPort);
+                CoherenceCacheServerSchema serverSchema = newCacheServerSchema(clusterPort);
 
                 servers.add(i, builder.realize(serverSchema, String.format("SERVER %s", i), console));
-            }
-
-            // wait for cluster to start
-            for (ClusterMember server : servers)
-            {
-                server.getClusterMBeanInfo();
-                server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
             }
 
             // turn off local clustering so we don't connect with the process just started
@@ -103,8 +110,9 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
 
             System.setProperty("remote.port", remPort);
             System.setProperty("tangosol.pof.config", "coherence-messagingpattern-test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("coherence-messagingpattern-test-client-cache-config.xml"));
+            System.setProperty("tangosol.pof.enabled", "true");
+            System.setProperty("tangosol.coherence.cacheconfig",
+                               "coherence-messagingpattern-test-client-cache-config.xml");
 
             String           topicName        = "topic-partitionAddServerTest";
             int              publisherCount   = 100;
@@ -115,15 +123,14 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
             super.concurrentPublisher(messagingSession, topicName, publisherCount);
 
             // Start new member
-            ClusterMemberSchema serverSchema = newClusterMemberSchema(iPort);
-            ClusterMember member = builder.realize(serverSchema, String.format("SERVER %s", nrServers + 1), console);
+            CoherenceCacheServerSchema serverSchema = newCacheServerSchema(clusterPort);
+            CoherenceCacheServer member = builder.realize(serverSchema, String.format("SERVER %s", nrServers), console);
+
             servers.add(member);
-            
-            member.getClusterMBeanInfo();
-            member.getServiceMBeanInfo("ExtendTcpProxyService", 1);
 
             super.subscriber(subscriber, publisherCount);
 
+            subscriber.unsubscribe();
         }
         catch (Exception exception)
         {
@@ -132,48 +139,45 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
         finally
         {
             // shutdown our local use of coherence
+            CacheFactory.getConfigurableCacheFactory().dispose();
             CacheFactory.shutdown();
-            
-            for (ClusterMember server : servers)
-            {
-                server.destroy();
-            }
 
+            for (CoherenceCacheServer server : servers)
+            {
+                server.close(new RuntimeHalt());
+            }
         }
     }
-    
+
+
     /**
      * Test partition transfer logic with the addition of a node to the cluster
      */
-    @Test
+    //TODO: refactor these tests to use Oracle Tools (so that the tests doesn't connect / join the cluster)
+    //@Test
     public void partitionRemoveServerTest() throws Exception
     {
-        int                      nrServers = 2;
+        CacheFactory.shutdown();
 
-        ArrayList<ClusterMember> servers   = new ArrayList<ClusterMember>(nrServers);
+        int                                          nrServers = 2;
 
-        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> builder =
-            new NativeJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
+        ArrayList<CoherenceCacheServer>              servers   = new ArrayList<CoherenceCacheServer>(nrServers);
+
+        JavaApplicationBuilder<CoherenceCacheServer> builder   =
+            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
 
         try
         {
             // establish the cluster
-            int                      iPort   = getAvailablePortIterator().next();
-            SystemApplicationConsole console = new SystemApplicationConsole();
+            Capture<Integer>         clusterPort = new Capture<>(getAvailablePortIterator());
+            SystemApplicationConsole console     = new SystemApplicationConsole();
 
             // Start one of the nodes of the cluster
             for (int i = 0; i < nrServers; i++)
             {
-                ClusterMemberSchema serverSchema = newClusterMemberSchema(iPort);
+                CoherenceCacheServerSchema serverSchema = newCacheServerSchema(clusterPort);
 
                 servers.add(i, builder.realize(serverSchema, String.format("SERVER %s", i), console));
-            }
-
-            // wait for cluster to start
-            for (ClusterMember server : servers)
-            {
-                server.getClusterMBeanInfo();
-                server.getServiceMBeanInfo("ExtendTcpProxyService", 1);
             }
 
             // turn off local clustering so we don't connect with the process just started
@@ -183,22 +187,26 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
 
             System.setProperty("remote.port", remPort);
             System.setProperty("tangosol.pof.config", "coherence-messagingpattern-test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("coherence-messagingpattern-test-client-cache-config.xml"));
+            System.setProperty("tangosol.pof.enabled", "true");
+            System.setProperty("tangosol.coherence.cacheconfig",
+                               "coherence-messagingpattern-test-client-cache-config.xml");
 
-            String           topicName        = "topic-partitionAddServerTest";
+            String           topicName        = "topic-partitionRemoveServerTest";
             int              publisherCount   = 100;
             MessagingSession messagingSession = DefaultMessagingSession.getInstance();
             Identifier       topicIdentifier  = messagingSession.createTopic(topicName);
             Subscriber       subscriber       = messagingSession.subscribe(topicIdentifier);
 
             super.concurrentPublisher(messagingSession, topicName, publisherCount);
-    
+
             // stop member
-            ClusterMember member = servers.remove(nrServers - 1);
-            member.destroy();
-            
+            CoherenceCacheServer member = servers.remove(nrServers - 1);
+
+            member.close(new RuntimeHalt());
+
             super.subscriber(subscriber, publisherCount);
+
+            subscriber.unsubscribe();
 
         }
         catch (Exception exception)
@@ -208,14 +216,13 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
         finally
         {
             // shutdown our local use of coherence
+            CacheFactory.getConfigurableCacheFactory().dispose();
             CacheFactory.shutdown();
 
-            for (ClusterMember server : servers)
+            for (CoherenceCacheServer server : servers)
             {
-                server.destroy();
+                server.close(new RuntimeHalt());
             }
-
         }
     }
-    
 }

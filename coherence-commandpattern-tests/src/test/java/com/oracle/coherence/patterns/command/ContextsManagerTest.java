@@ -25,58 +25,7 @@
 
 package com.oracle.coherence.patterns.command;
 
-import com.oracle.coherence.common.identifiers.Identifier;
-
-import com.oracle.tools.deferred.Deferred;
-import com.oracle.tools.deferred.DeferredHelper;
-import com.oracle.tools.deferred.InstanceUnavailableException;
-import com.oracle.tools.deferred.UnresolvableInstanceException;
-
 import com.oracle.tools.junit.AbstractCoherenceTest;
-import com.oracle.tools.junit.AbstractTest;
-
-import com.oracle.tools.runtime.ApplicationConsole;
-
-import com.oracle.tools.runtime.actions.InteractiveActionExecutor;
-import com.oracle.tools.runtime.actions.PerpetualAction;
-
-import com.oracle.tools.runtime.coherence.Cluster;
-import com.oracle.tools.runtime.coherence.ClusterBuilder;
-import com.oracle.tools.runtime.coherence.ClusterMember;
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
-import com.oracle.tools.runtime.coherence.actions.RestartClusterMemberAction;
-
-import com.oracle.tools.runtime.console.SystemApplicationConsole;
-
-import com.oracle.tools.runtime.java.ContainerBasedJavaApplicationBuilder;
-import com.oracle.tools.runtime.java.JavaApplicationBuilder;
-import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
-import com.oracle.tools.runtime.java.container.Container;
-
-import com.oracle.tools.runtime.network.Constants;
-
-import com.oracle.tools.util.Capture;
-import com.oracle.tools.util.Predicate;
-
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.ConfigurableCacheFactory;
-import com.tangosol.net.DefaultConfigurableCacheFactory;
-import com.tangosol.net.ExtensibleConfigurableCacheFactory;
-
-import org.junit.Test;
-
-import static com.oracle.tools.deferred.DeferredHelper.invoking;
-
-import static com.oracle.tools.deferred.Eventually.assertThat;
-
-import static com.oracle.tools.runtime.java.JavaApplication.JAVA_NET_PREFER_IPV4_STACK;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-
-import static org.hamcrest.Matchers.greaterThan;
-
-import java.io.IOException;
 
 /**
  * Functional tests for the {@link ContextsManager}.

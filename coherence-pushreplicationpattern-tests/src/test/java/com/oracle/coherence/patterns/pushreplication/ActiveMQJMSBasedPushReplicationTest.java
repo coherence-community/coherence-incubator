@@ -27,7 +27,7 @@ package com.oracle.coherence.patterns.pushreplication;
 
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
+import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
 
 import com.oracle.tools.runtime.network.Constants;
 
@@ -86,15 +86,15 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
 
         try
         {
-        brokerService.setDataDirectoryFile(activeMQDir);
-        brokerService.setPersistent(false);
-        brokerService.addConnector(jndiProviderURL);
-        brokerService.setDeleteAllMessagesOnStartup(true);
-        brokerService.setUseJmx(false);
-        brokerService.setUseShutdownHook(true);
-        brokerService.start(true);
-        brokerService.waitUntilStarted();
-    }
+            brokerService.setDataDirectoryFile(activeMQDir);
+            brokerService.setPersistent(false);
+            brokerService.addConnector(jndiProviderURL);
+            brokerService.setDeleteAllMessagesOnStartup(true);
+            brokerService.setUseJmx(false);
+            brokerService.setUseShutdownHook(true);
+            brokerService.start(true);
+            brokerService.waitUntilStarted();
+        }
         catch (Exception e)
         {
             throw new RuntimeException("Failed to start JMS", e);
@@ -109,10 +109,10 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
 
         // tear down the ActiveMQ broker
         try
-    {
-        brokerService.stop();
-        brokerService.waitUntilStopped();
-    }
+        {
+            brokerService.stop();
+            brokerService.waitUntilStopped();
+        }
         catch (Exception e)
         {
             throw new RuntimeException("Failed to stop JMS", e);
@@ -120,38 +120,29 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected ClusterMemberSchema newBaseClusterMemberSchema(Capture<Integer> clusterPort)
+    protected CoherenceCacheServerSchema newBaseCacheServerSchema(Capture<Integer> clusterPort)
     {
-        return super.newBaseClusterMemberSchema(clusterPort).setSystemProperty("event.distributor.config",
-                                                                               "test-jms-based-distributor-config.xml")
-                                                                                   .setSystemProperty("proxy.port",
-                                                                                                      getAvailablePortIterator())
-                                                                                                      .setSystemProperty("java.naming.provider.url", jndiProviderURL);
+        return super.newBaseCacheServerSchema(clusterPort).setSystemProperty("event.distributor.config",
+                                                                             "test-jms-based-distributor-config.xml")
+                                                                                 .setSystemProperty("proxy.port",
+                                                                                                    getAvailablePortIterator())
+                                                                                                    .setSystemProperty("java.naming.provider.url", jndiProviderURL);
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected ClusterMemberSchema newPassiveClusterMemberSchema(Capture<Integer> clusterPort)
+    protected CoherenceCacheServerSchema newPassiveCacheServerSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(clusterPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
+        return newBaseCacheServerSchema(clusterPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
             .setClusterName("passive");
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected ClusterMemberSchema newActiveClusterMemberSchema(Capture<Integer> clusterPort)
+    protected CoherenceCacheServerSchema newActiveCacheServerSchema(Capture<Integer> clusterPort)
     {
-        return newBaseClusterMemberSchema(clusterPort)
+        return newBaseCacheServerSchema(clusterPort)
             .setCacheConfigURI("test-remotecluster-eventchannel-cache-config.xml").setClusterName("active");
     }
 }

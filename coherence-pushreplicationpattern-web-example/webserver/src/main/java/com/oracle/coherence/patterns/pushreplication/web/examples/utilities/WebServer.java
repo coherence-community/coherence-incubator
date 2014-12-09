@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,22 +25,30 @@
 
 package com.oracle.coherence.patterns.pushreplication.web.examples.utilities;
 
+import com.oracle.tools.runtime.LocalPlatform;
 import com.oracle.tools.runtime.PropertiesBuilder;
-import com.oracle.tools.runtime.coherence.Cluster;
-import com.oracle.tools.runtime.coherence.ClusterBuilder;
-import com.oracle.tools.runtime.coherence.ClusterMember;
-import com.oracle.tools.runtime.coherence.ClusterMemberSchema;
+
+import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
+import com.oracle.tools.runtime.coherence.CoherenceCluster;
+import com.oracle.tools.runtime.coherence.CoherenceClusterBuilder;
+
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
-import com.oracle.tools.runtime.java.ExternalJavaApplicationBuilder;
+
+import com.oracle.tools.runtime.options.EnvironmentVariables;
+
 import org.eclipse.jetty.server.Server;
+
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import java.net.URL;
+
 import java.security.ProtectionDomain;
+
 import java.util.Properties;
 
 /**
@@ -57,7 +64,7 @@ import java.util.Properties;
  */
 public class WebServer
 {
-    private static Cluster cluster = null;
+    private static CoherenceCluster cluster = null;
 
 
     /**
@@ -100,7 +107,7 @@ public class WebServer
                 cacheProps.addProperties(cohProps);
                 webserverProps.addProperties(jettyProps);
 
-                cluster = startCacheServer(cacheProps);
+                cluster = startCluster(cacheProps);
                 startJettyServer(webserverProps);
             }
             else if (arguments.length == 2)
@@ -149,30 +156,20 @@ public class WebServer
      *
      * @throws IOException
      */
-    public static Cluster startCacheServer(PropertiesBuilder propertiesBuilder) throws IOException
+    public static CoherenceCluster startCluster(PropertiesBuilder propertiesBuilder)
     {
-        ClusterMemberSchema serverSchema =
-            new ClusterMemberSchema().setEnvironmentVariables(PropertiesBuilder.fromCurrentEnvironmentVariables())
+        CoherenceCacheServerSchema serverSchema =
+            new CoherenceCacheServerSchema().addOption(EnvironmentVariables.inherited())
                 .setSystemProperties(propertiesBuilder).setRoleName("CacheServer");
 
-        ClusterBuilder builder = new ClusterBuilder();
+        CoherenceClusterBuilder builder = new CoherenceClusterBuilder();
 
-        builder.addBuilder(new ExternalJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>(),
-                           serverSchema,
-                           propertiesBuilder.getProperty("tangosol.coherence.site") + "-CacheServer",
-                           1);
+        builder.addSchema(propertiesBuilder.getProperty("tangosol.coherence.site") + "-CacheServer",
+                          serverSchema,
+                          1,
+                          LocalPlatform.getInstance());
 
-        try
-        {
-            return builder.realize(new SystemApplicationConsole());
-        }
-        catch (IOException e)
-        {
-            System.out.printf("Error starting cache server: %s", e.getMessage());
-            e.printStackTrace();
-
-            throw e;
-        }
+        return builder.realize(new SystemApplicationConsole());
     }
 
 

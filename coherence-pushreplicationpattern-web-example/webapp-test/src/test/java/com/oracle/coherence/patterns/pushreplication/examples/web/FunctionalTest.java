@@ -30,26 +30,27 @@ import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebTable;
 
+import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer;
 
 import com.oracle.tools.deferred.Deferred;
 import com.oracle.tools.deferred.DeferredAssert;
-import com.oracle.tools.deferred.DeferredHelper;
 import com.oracle.tools.deferred.Eventually;
-import com.oracle.tools.deferred.InstanceUnavailableException;
-import com.oracle.tools.deferred.UnresolvableInstanceException;
+import com.oracle.tools.deferred.PermanentlyUnavailableException;
+import com.oracle.tools.deferred.TemporarilyUnavailableException;
 
 import com.oracle.tools.runtime.PropertiesBuilder;
 
-import com.oracle.tools.runtime.coherence.Cluster;
+import com.oracle.tools.runtime.coherence.CoherenceCluster;
 
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
 
-import com.oracle.tools.runtime.java.NativeJavaApplicationBuilder;
+import com.oracle.tools.runtime.java.LocalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.SimpleJavaApplication;
 import com.oracle.tools.runtime.java.SimpleJavaApplicationSchema;
-
 import com.oracle.tools.runtime.java.container.Container;
+
 import com.oracle.tools.runtime.network.AvailablePortIterator;
 
 import org.hamcrest.Matchers;
@@ -58,8 +59,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.oracle.tools.deferred.DeferredHelper.eventually;
+import static com.oracle.tools.deferred.DeferredHelper.ensure;
 import static com.oracle.tools.deferred.DeferredHelper.invoking;
+import static com.oracle.tools.deferred.DeferredHelper.valueOf;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -72,8 +74,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class FunctionalTest
 {
-    private static Cluster               cluster1;
-    private static Cluster               cluster2;
+    private static CoherenceCluster      cluster1;
+    private static CoherenceCluster      cluster2;
     private static SimpleJavaApplication site1;
     private static int                   site1Port;
     private static SimpleJavaApplication site2;
@@ -106,10 +108,10 @@ public class FunctionalTest
         cache1Props.setProperty("bind.port", acceptor1Port);
 
         // Setup site 2
-        PropertiesBuilder globalProps2    = WebServer.parseConfig("System-Property", "site2.properties");
-        PropertiesBuilder cohProps2       = WebServer.parseConfig("COHSystem-Property", "site2.properties");
+        PropertiesBuilder globalProps2 = WebServer.parseConfig("System-Property", "site2.properties");
+        PropertiesBuilder cohProps2    = WebServer.parseConfig("COHSystem-Property", "site2.properties");
 
-        PropertiesBuilder cache2Props     = new PropertiesBuilder(globalProps2);
+        PropertiesBuilder cache2Props  = new PropertiesBuilder(globalProps2);
 
         cache2Props.addProperties(cohProps2);
 
@@ -117,8 +119,8 @@ public class FunctionalTest
         cache2Props.setProperty("client.port", acceptor1Port);
         cache2Props.setProperty("bind.port", acceptor2Port);
 
-        NativeJavaApplicationBuilder<SimpleJavaApplication, SimpleJavaApplicationSchema> appBuilder =
-            new NativeJavaApplicationBuilder<SimpleJavaApplication, SimpleJavaApplicationSchema>();
+        LocalJavaApplicationBuilder<SimpleJavaApplication> appBuilder =
+            new LocalJavaApplicationBuilder<SimpleJavaApplication>();
 
         SystemApplicationConsole console = new SystemApplicationConsole();
 
@@ -132,10 +134,10 @@ public class FunctionalTest
         site1schema.addArgument(String.valueOf(site1Port));
         site1schema.setSystemProperties(globalProps1);
 
-        cluster1 = WebServer.startCacheServer(cache1Props);
+        cluster1 = WebServer.startCluster(cache1Props);
         site1    = appBuilder.realize(site1schema, "Site1-Web", console);
 
-        Eventually.assertThat(eventually(invoking(cluster1).getClusterSize()), is(2));
+        Eventually.assertThat(invoking(cluster1).getClusterSize(), is(2));
 
         // Startup Site2
         site2Port = portIter.next();
@@ -147,10 +149,10 @@ public class FunctionalTest
         site2schema.addArgument(String.valueOf(site2Port));
         site2schema.setSystemProperties(globalProps2);
 
-        cluster2 = WebServer.startCacheServer(cache2Props);
+        cluster2 = WebServer.startCluster(cache2Props);
         site2    = appBuilder.realize(site2schema, "Site2-Web", console);
 
-        Eventually.assertThat(eventually(invoking(cluster2).getClusterSize()), is(2));
+        Eventually.assertThat(invoking(cluster2).getClusterSize(), is(2));
     }
 
 
@@ -160,10 +162,10 @@ public class FunctionalTest
     @AfterClass
     public static void tearDown()
     {
-        cluster1.destroy();
-        cluster2.destroy();
-        site1.destroy();
-        site2.destroy();
+        cluster1.close();
+        cluster2.close();
+        site1.close();
+        site2.close();
     }
 
 
@@ -184,7 +186,7 @@ public class FunctionalTest
             final String          site2url = "http://127.0.0.1:" + site2Port + "/sessionAccess.jsp";
 
             // Make initial request to siteA and add a value to the session
-            WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc, site1url), 60, TimeUnit.SECONDS);
+            WebResponse response = ensure(new DeferredWebResponse(wc, site1url));
 
             WebForm     form     = response.getFormWithID("HttpSessionAttributesForm");
 
@@ -199,11 +201,7 @@ public class FunctionalTest
             assertEquals("value", "B", table.getCellAsText(1, 1));
 
             // Now make a request to the siteB, validate our session data is there and add another value
-            DeferredAssert.assertThat("First set of session variables",
-                                      new DeferredRowCount(wc, site2url),
-                                      Matchers.equalTo(2),
-                                      60,
-                                      TimeUnit.SECONDS);
+            Eventually.assertThat(valueOf(new DeferredRowCount(wc, site2url)), is(2));
 
             response = wc.getResponse(site2url);
             table    = response.getTableWithID("HttpSessionAttributes");
@@ -226,11 +224,7 @@ public class FunctionalTest
             assertEquals("value2", "D", table.getCellAsText(2, 1));
 
             // Now go back to the original site and make sure everything replicated properly
-            DeferredAssert.assertThat("First set of session variables",
-                                      new DeferredRowCount(wc, site1url),
-                                      Matchers.equalTo(3),
-                                      60,
-                                      TimeUnit.SECONDS);
+            Eventually.assertThat(valueOf(new DeferredRowCount(wc, site1url)), is(3));
 
             response = wc.getResponse(site1url);
             table    = response.getTableWithID("HttpSessionAttributes");
@@ -276,19 +270,12 @@ public class FunctionalTest
         }
 
 
-        /**
-         * Return the deferred row count value.
-         *
-         * @return the deferred row count value
-         *
-         * @throws UnresolvableInstanceException, InstanceUnavailableException
-         */
         @Override
-        public Integer get() throws UnresolvableInstanceException, InstanceUnavailableException
+        public Integer get() throws PermanentlyUnavailableException, TemporarilyUnavailableException
         {
             try
             {
-                WebResponse response = DeferredHelper.ensure(new DeferredWebResponse(wc, request));
+                WebResponse response = ensure(new DeferredWebResponse(wc, request));
                 WebTable    table    = response.getTableWithID("HttpSessionAttributes");
 
                 return table.getRowCount();
@@ -298,14 +285,11 @@ public class FunctionalTest
                 System.out.println("Error getting rowcount for " + request + " - " + "HttpSessionAttributes");
                 e.printStackTrace();
 
-                throw new InstanceUnavailableException(this, e);
+                throw new TemporarilyUnavailableException(this, e);
             }
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public Class<Integer> getDeferredClass()
         {
@@ -345,7 +329,7 @@ public class FunctionalTest
          * @return WebResponse from the Deferred.
          */
         @Override
-        public WebResponse get() throws UnresolvableInstanceException, InstanceUnavailableException
+        public WebResponse get() throws PermanentlyUnavailableException, TemporarilyUnavailableException
         {
             try
             {
@@ -353,16 +337,11 @@ public class FunctionalTest
             }
             catch (Exception e)
             {
-                throw new InstanceUnavailableException(this, e);
+                throw new TemporarilyUnavailableException(this, e);
             }
         }
 
 
-        /**
-         * Method description
-         *
-         * @return
-         */
         @Override
         public Class<WebResponse> getDeferredClass()
         {

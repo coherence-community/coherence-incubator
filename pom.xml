@@ -9,7 +9,7 @@
 
     <artifactId>coherence-incubator</artifactId>
     <groupId>com.oracle.coherence.incubator</groupId>
-    <version>12.2.1-SNAPSHOT</version>
+    <version>12.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Coherence Incubator</name>
@@ -140,8 +140,8 @@
         <junit.version>4.10</junit.version>
         <miglayout.version>3.6</miglayout.version>
         <mockito.version>1.9.0</mockito.version>
-        <oracle.coherence.version>12.1.2-0-1</oracle.coherence.version>
-        <oracle.tools.version>1.2.2</oracle.tools.version>
+        <oracle.coherence.version>12.1.2-0-3</oracle.coherence.version>
+        <oracle.tools.version>2.0.0-RC3</oracle.tools.version>
         <powermock.version>1.4.12</powermock.version>
     </properties>
 
@@ -189,7 +189,7 @@
                                     <version>3.0.4</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>1.6.0</version>
+                                    <version>1.7.0</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -202,8 +202,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
 

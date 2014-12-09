@@ -25,8 +25,9 @@
 
 package com.oracle.coherence.common.liveobjects;
 
+import com.oracle.tools.deferred.Eventually;
+
 import com.oracle.tools.junit.AbstractCoherenceTest;
-import com.oracle.tools.junit.AbstractTest;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.ConfigurableCacheFactory;
@@ -36,8 +37,6 @@ import com.tangosol.net.ExtensibleConfigurableCacheFactory.DependenciesHelper;
 
 import com.tangosol.net.NamedCache;
 
-import com.tangosol.net.events.Event;
-
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ResourceRegistry;
 
@@ -45,11 +44,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.oracle.tools.deferred.DeferredAssert.assertThat;
-
 import static com.oracle.tools.deferred.DeferredHelper.deferred;
-import static com.oracle.tools.deferred.DeferredHelper.eventually;
 
+import static com.oracle.tools.deferred.DeferredHelper.valueOf;
 import static org.hamcrest.core.Is.is;
 
 import static org.junit.Assert.assertEquals;
@@ -124,23 +121,23 @@ public class LiveObjectTest extends AbstractCoherenceTest
         m_cacheLiveObjects.put("alo", new AnnotatedLiveObject());
 
         assertEquals(1, m_cacheLiveObjects.size());
-        assertThat(eventually(deferred(m_resourceRegistry.getResource(AtomicLong.class, INSERTS))), is(2L));
+        Eventually.assertThat(valueOf(m_resourceRegistry.getResource(AtomicLong.class, INSERTS)), is(2L));
         assertEquals(0, m_resourceRegistry.getResource(AtomicLong.class, UPDATES).get());
         assertEquals(0, m_resourceRegistry.getResource(AtomicLong.class, REMOVES).get());
 
         m_cacheLiveObjects.put("alo", new AnnotatedLiveObject());
 
         assertEquals(1, m_cacheLiveObjects.size());
-        assertThat(eventually(deferred(m_resourceRegistry.getResource(AtomicLong.class, INSERTS))), is(2L));
-        assertThat(eventually(deferred(m_resourceRegistry.getResource(AtomicLong.class, UPDATES))), is(2L));
+        Eventually.assertThat(valueOf(m_resourceRegistry.getResource(AtomicLong.class, INSERTS)), is(2L));
+        Eventually.assertThat(valueOf(m_resourceRegistry.getResource(AtomicLong.class, UPDATES)), is(2L));
         assertEquals(0, m_resourceRegistry.getResource(AtomicLong.class, REMOVES).get());
 
         m_cacheLiveObjects.remove("alo");
 
         assertEquals(0, m_cacheLiveObjects.size());
-        assertThat(eventually(deferred(m_resourceRegistry.getResource(AtomicLong.class, INSERTS))), is(2L));
-        assertThat(eventually(deferred(m_resourceRegistry.getResource(AtomicLong.class, UPDATES))), is(2L));
-        assertThat(eventually(deferred(m_resourceRegistry.getResource(AtomicLong.class, REMOVES))), is(2L));
+        Eventually.assertThat(valueOf(m_resourceRegistry.getResource(AtomicLong.class, INSERTS)), is(2L));
+        Eventually.assertThat(valueOf(m_resourceRegistry.getResource(AtomicLong.class, UPDATES)), is(2L));
+        Eventually.assertThat(valueOf(m_resourceRegistry.getResource(AtomicLong.class, REMOVES)), is(2L));
     }
 
 
