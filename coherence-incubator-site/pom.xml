@@ -78,7 +78,7 @@
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version>${github.site.maven.plugin.version}</version>
+                <version>${maven.github.site.plugin.version}</version>
                 <configuration>
                     <message>${project.version} Site</message>
                     <path>${project.version}</path>
