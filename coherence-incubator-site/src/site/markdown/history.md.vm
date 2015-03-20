@@ -88,6 +88,10 @@ reverse chronological order.
 *   [COHINC-128](http://java.net/jira/browse/COHINC-128): Correct the
     scope of the dependency on oracle-tools-core to make it test scope.
 
+*   [COHINC-133](http://java.net/jira/browse/COHINC-133): Corrected the
+    choice of class loader when realizing Event Distribution Channels
+    to prevent ClassNotFound exceptions when running in certain containers.
+
 <h4>coherence-pushreplicationpattern</h4>
 
 *   [COHINC-64](http://java.net/jira/browse/COHINC-64):  Changed the

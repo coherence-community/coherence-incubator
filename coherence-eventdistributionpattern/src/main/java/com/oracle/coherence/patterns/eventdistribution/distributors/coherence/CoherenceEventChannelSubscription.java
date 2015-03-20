@@ -63,6 +63,7 @@ import com.tangosol.io.pof.PortableObject;
 
 import com.tangosol.net.CacheFactory;
 
+import com.tangosol.util.Base;
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.ResourceRegistry;
@@ -241,10 +242,12 @@ public class CoherenceEventChannelSubscription extends Subscription
                                                   EventChannelController.Identifier controllerIdentifier,
                                                   Dependencies                      dependencies)
             {
+                ClassLoader classLoader = Base.getContextClassLoader();
+
                 return new CoherenceEventChannelController(distributorIdentifier,
                                                            controllerIdentifier,
                                                            dependencies,
-                                                           CoherenceEventChannelSubscription.class.getClassLoader(),
+                                                           classLoader,
                                                            scopedResolver,
                                                            serializerBuilder);
             }
