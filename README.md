@@ -28,10 +28,3 @@ Coherence Incubator 11 (for Coherence 3.7.1.x)
 Release Documentation: [http://coherence-community.github.com/coherence-incubator/11.1.0/](http://coherence-community.github.com/coherence-incubator/11.1.0/)
 
 Development Branch: [**develop-11**](https://github.com/coherence-community/coherence-incubator/tree/develop-11) 
-
-Coherence Incubator 10 (legacy for Coherence 3.7.1.x)
------------------------------------------------------
-
-The original source code and releases for Coherence Incubator 10 remain available at:
-
-[http://coherence.oracle.com/display/INC10/Home](http://coherence.oracle.com/display/INC10/Home)
