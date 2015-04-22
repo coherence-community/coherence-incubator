@@ -105,10 +105,17 @@ public class ProcessingPattern
             {
                 // These objects are put in registry by ProcessingPatternConfigProcessor
                 ProcessingPatternConfig config = ccf.getResourceRegistry().getResource(ProcessingPatternConfig.class);
-                Base.checkNotNull(config, "ProcessingPatternConfig");
+
+                if (config == null)
+                {
+                    throw new RuntimeException("ProcessingPatternConfig is missing from the ResourceRegistry");
+                }
 
                 Environment env = ccf.getResourceRegistry().getResource(Environment.class);
-                Base.checkNotNull(env, "Environment");
+                if (config == null)
+                {
+                    throw new RuntimeException("ProcessingPattern Environment is missing from the ResourceRegistry");
+                }
 
                 ProcessingPattern pp = new ProcessingPattern(ccf, env, config);
 

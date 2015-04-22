@@ -8,6 +8,24 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
+*   Brian Oliver
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   [COHINC-125](http://java.net/jira/browse/COHINC-125): Upgraded to use Oracle Tools 2.0.0-RC5-SNAPSHOT
+
+<h4>coherence-processingpattern</h4>
+
+*   [COHINC-132](http://java.net/jira/browse/COHINC-132): Removed use of Coherence internal calls
+    (Base.checkNotNull(...)) to ensure that the pattern works across different versions of Coherence.
+
+
+--------------------------------------------------------------------------------
+
+<h3>Version: 12.3.0 built on 2014-12-10 11:21</h3>
+
+<h4>Source and Documentation Contributors</h4>
+
 *   Brian Oliver, Tim Middleton
 
 <h4>Global and Cross-Module Changes</h4>
