@@ -19,6 +19,9 @@ reverse chronological order.
 *   [COHINC-132](http://java.net/jira/browse/COHINC-132): Removed use of Coherence internal calls
     (Base.checkNotNull(...)) to ensure that the pattern works across different versions of Coherence.
 
+*   [COHINC-137](http://java.net/jira/browse/COHINC-137): Repair processing-pattern configuration files
+    (fails validation when enforced)
+
 <h4>coherence-pushreplicationpattern</h4>
 
 *   [COHINC-136](http://java.net/jira/browse/COHINC-136): Removed duplicate definition of
