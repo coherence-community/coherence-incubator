@@ -12,7 +12,7 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-125](http://java.net/jira/browse/COHINC-125): Upgraded to use Oracle Tools 2.0.0-RC5-SNAPSHOT
+*   [COHINC-125](http://java.net/jira/browse/COHINC-125): Upgraded to use Oracle Tools 2.0.0-RC8-SNAPSHOT
 
 <h4>coherence-processingpattern</h4>
 
@@ -26,6 +26,9 @@ reverse chronological order.
 
 *   [COHINC-136](http://java.net/jira/browse/COHINC-136): Removed duplicate definition of
     Coherence*Web dependency.
+
+*   [COHINC-141](http://java.net/jira/browse/COHINC-141): Resolved ClassCastException
+    experienced with Coherence 12.1.2-0-3.
 
 
 --------------------------------------------------------------------------------

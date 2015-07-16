@@ -516,7 +516,8 @@ public class PublishingCacheStore implements BinaryEntryStore
             // ensure the BinaryValue we're sending contains the expiry
             long expiry = getExpiry(entry);
 
-            decoratedBinaryValue = (Binary) ExternalizableHelper.encodeExpiry(decoratedBinaryValue, expiry);
+            decoratedBinaryValue =
+                ExternalizableHelper.asBinary(ExternalizableHelper.encodeExpiry(decoratedBinaryValue, expiry));
 
             if (originalBinaryValue == null)
             {
@@ -607,7 +608,8 @@ public class PublishingCacheStore implements BinaryEntryStore
                 // ensure the BinaryValue we're sending contains the expiry
                 long expiry = getExpiry(entry);
 
-                decoratedBinaryValue = (Binary) ExternalizableHelper.encodeExpiry(decoratedBinaryValue, expiry);
+                decoratedBinaryValue =
+                    ExternalizableHelper.asBinary(ExternalizableHelper.encodeExpiry(decoratedBinaryValue, expiry));
 
                 if (originalBinaryValue == null)
                 {
