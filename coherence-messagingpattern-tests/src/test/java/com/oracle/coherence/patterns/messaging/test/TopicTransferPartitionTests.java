@@ -31,6 +31,7 @@ import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.MessagingSession;
 import com.oracle.coherence.patterns.messaging.Subscriber;
 
+import com.oracle.tools.runtime.LocalPlatform;
 import com.oracle.tools.runtime.coherence.CoherenceCacheServer;
 import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
 
@@ -86,11 +87,11 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
 
         ArrayList<CoherenceCacheServer>              servers   = new ArrayList<CoherenceCacheServer>(nrServers);
 
-        JavaApplicationBuilder<CoherenceCacheServer> builder   =
-            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
-
         try
         {
+            // acquire the platform on which to realize the servers
+            LocalPlatform platform = LocalPlatform.getInstance();
+
             // establish the cluster
             Capture<Integer>         clusterPort = new Capture<>(getAvailablePortIterator());
             SystemApplicationConsole console     = new SystemApplicationConsole();
@@ -100,7 +101,7 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
             {
                 CoherenceCacheServerSchema serverSchema = newCacheServerSchema(clusterPort);
 
-                servers.add(i, builder.realize(serverSchema, String.format("SERVER %s", i), console));
+                servers.add(i, platform.realize(String.format("SERVER %s", i), serverSchema, console));
             }
 
             // turn off local clustering so we don't connect with the process just started
@@ -124,7 +125,7 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
 
             // Start new member
             CoherenceCacheServerSchema serverSchema = newCacheServerSchema(clusterPort);
-            CoherenceCacheServer member = builder.realize(serverSchema, String.format("SERVER %s", nrServers), console);
+            CoherenceCacheServer member = platform.realize(String.format("SERVER %s", nrServers), serverSchema, console);
 
             servers.add(member);
 
@@ -163,11 +164,11 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
 
         ArrayList<CoherenceCacheServer>              servers   = new ArrayList<CoherenceCacheServer>(nrServers);
 
-        JavaApplicationBuilder<CoherenceCacheServer> builder   =
-            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
-
         try
         {
+            // acquire the platform on which to realize the servers
+            LocalPlatform platform = LocalPlatform.getInstance();
+
             // establish the cluster
             Capture<Integer>         clusterPort = new Capture<>(getAvailablePortIterator());
             SystemApplicationConsole console     = new SystemApplicationConsole();
@@ -177,7 +178,7 @@ public class TopicTransferPartitionTests extends AbstractPartitionTest
             {
                 CoherenceCacheServerSchema serverSchema = newCacheServerSchema(clusterPort);
 
-                servers.add(i, builder.realize(serverSchema, String.format("SERVER %s", i), console));
+                servers.add(i, platform.realize(String.format("SERVER %s", i), serverSchema, console));
             }
 
             // turn off local clustering so we don't connect with the process just started

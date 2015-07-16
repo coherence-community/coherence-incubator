@@ -32,6 +32,8 @@ import com.oracle.coherence.patterns.eventdistribution.channels.cache.RemoteCach
 
 import com.oracle.tools.junit.AbstractTest;
 
+import com.oracle.tools.runtime.LocalPlatform;
+
 import com.oracle.tools.runtime.coherence.CoherenceCacheServer;
 import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
 import com.oracle.tools.runtime.coherence.JMXManagementMode;
@@ -136,14 +138,11 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     @Test
     public void testDetermineDefaultClusterMetaInfoWithRemoteInvocationService() throws Exception
     {
-        JavaApplicationBuilder<CoherenceCacheServer> serverBuilder =
-            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
+        LocalPlatform              platform     = LocalPlatform.getInstance();
 
         CoherenceCacheServerSchema serverSchema = newCacheServerSchema();
 
-        try (CoherenceCacheServer server = serverBuilder.realize(serverSchema,
-                                                                 "DCGNRI",
-                                                                 new SystemApplicationConsole()))
+        try (CoherenceCacheServer server = platform.realize("DCGNRI", serverSchema, new SystemApplicationConsole()))
         {
             // wait for the server cluster to start
             assertThat(invoking(server).getClusterSize(), is(1));
@@ -191,15 +190,12 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     @Test
     public void testDetermineSpecificClusterMetaInfoWithRemoteInvocationService() throws Exception
     {
-        JavaApplicationBuilder<CoherenceCacheServer> serverBuilder =
-            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
+        LocalPlatform platform = LocalPlatform.getInstance();
 
         CoherenceCacheServerSchema serverSchema =
             newCacheServerSchema().setClusterName("waterloo").setSiteName("london");
 
-        try (CoherenceCacheServer server = serverBuilder.realize(serverSchema,
-                                                                 "SCGNRI",
-                                                                 new SystemApplicationConsole()))
+        try (CoherenceCacheServer server = platform.realize("SCGNRI", serverSchema, new SystemApplicationConsole()))
         {
             // wait for the server cluster to start
             assertThat(invoking(server).getClusterSize(), is(1));
@@ -247,14 +243,11 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     @Test
     public void testDetermineDefaultClusterMetaInfoWithRemoteCacheService() throws Exception
     {
-        JavaApplicationBuilder<CoherenceCacheServer> serverBuilder =
-            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
+        LocalPlatform              platform     = LocalPlatform.getInstance();
 
         CoherenceCacheServerSchema serverSchema = newCacheServerSchema();
 
-        try (CoherenceCacheServer server = serverBuilder.realize(serverSchema,
-                                                                 "DCGNRI",
-                                                                 new SystemApplicationConsole()))
+        try (CoherenceCacheServer server = platform.realize("DCGNRI", serverSchema, new SystemApplicationConsole()))
         {
             // wait for the server cluster to start
             assertThat(invoking(server).getClusterSize(), is(1));
@@ -297,15 +290,12 @@ public class ClusterMetaInfoDiscoveryTest extends AbstractTest
     @Test
     public void testDetermineSpecificClusterMetaInfoWithRemoteCacheService() throws Exception
     {
-        JavaApplicationBuilder<CoherenceCacheServer> serverBuilder =
-            new LocalJavaApplicationBuilder<CoherenceCacheServer>();
+        LocalPlatform platform = LocalPlatform.getInstance();
 
         CoherenceCacheServerSchema serverSchema =
             newCacheServerSchema().setClusterName("waterloo").setSiteName("london");
 
-        try (CoherenceCacheServer server = serverBuilder.realize(serverSchema,
-                                                                 "SCGNRC",
-                                                                 new SystemApplicationConsole()))
+        try (CoherenceCacheServer server = platform.realize("SCGNRC", serverSchema, new SystemApplicationConsole()))
         {
             // wait for the server cluster to start
             assertThat(invoking(server).getClusterSize(), is(1));

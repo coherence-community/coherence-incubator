@@ -30,30 +30,25 @@ import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebTable;
 
-import com.oracle.coherence.common.events.Event;
-
 import com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer;
 
 import com.oracle.tools.deferred.Deferred;
-import com.oracle.tools.deferred.DeferredAssert;
 import com.oracle.tools.deferred.Eventually;
 import com.oracle.tools.deferred.PermanentlyUnavailableException;
 import com.oracle.tools.deferred.TemporarilyUnavailableException;
 
+import com.oracle.tools.runtime.LocalPlatform;
 import com.oracle.tools.runtime.PropertiesBuilder;
 
 import com.oracle.tools.runtime.coherence.CoherenceCluster;
 
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
 
-import com.oracle.tools.runtime.java.LocalJavaApplicationBuilder;
 import com.oracle.tools.runtime.java.SimpleJavaApplication;
 import com.oracle.tools.runtime.java.SimpleJavaApplicationSchema;
 import com.oracle.tools.runtime.java.container.Container;
 
 import com.oracle.tools.runtime.network.AvailablePortIterator;
-
-import org.hamcrest.Matchers;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -66,8 +61,6 @@ import static com.oracle.tools.deferred.DeferredHelper.valueOf;
 import static junit.framework.Assert.assertEquals;
 
 import static org.hamcrest.CoreMatchers.is;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Test that the CoherenceWeb Examples Work
@@ -119,10 +112,9 @@ public class FunctionalTest
         cache2Props.setProperty("client.port", acceptor1Port);
         cache2Props.setProperty("bind.port", acceptor2Port);
 
-        LocalJavaApplicationBuilder<SimpleJavaApplication> appBuilder =
-            new LocalJavaApplicationBuilder<SimpleJavaApplication>();
+        LocalPlatform            platform = LocalPlatform.getInstance();
 
-        SystemApplicationConsole console = new SystemApplicationConsole();
+        SystemApplicationConsole console  = new SystemApplicationConsole();
 
         // Startup Site1
         site1Port = portIter.next();
@@ -135,7 +127,7 @@ public class FunctionalTest
         site1schema.setSystemProperties(globalProps1);
 
         cluster1 = WebServer.startCluster(cache1Props);
-        site1    = appBuilder.realize(site1schema, "Site1-Web", console);
+        site1    = platform.realize("Site1-Web", site1schema, console);
 
         Eventually.assertThat(invoking(cluster1).getClusterSize(), is(2));
 
@@ -150,7 +142,7 @@ public class FunctionalTest
         site2schema.setSystemProperties(globalProps2);
 
         cluster2 = WebServer.startCluster(cache2Props);
-        site2    = appBuilder.realize(site2schema, "Site2-Web", console);
+        site2    = platform.realize("Site2-Web", site2schema, console);
 
         Eventually.assertThat(invoking(cluster2).getClusterSize(), is(2));
     }
