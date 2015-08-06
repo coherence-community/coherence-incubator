@@ -125,6 +125,9 @@ public class FunctionalTest
         site1schema.addArgument("site1.properties");
         site1schema.addArgument(String.valueOf(site1Port));
         site1schema.setSystemProperties(globalProps1);
+        site1schema.setSystemProperty("client.port", acceptor2Port);
+        site1schema.setSystemProperty("bind.port", acceptor1Port);
+        site1schema.setSystemProperty("proxy.enabled", false);
 
         cluster1 = WebServer.startCluster(cache1Props);
         site1    = platform.realize("Site1-Web", site1schema, console);
@@ -140,6 +143,9 @@ public class FunctionalTest
         site2schema.addArgument("site2.properties");
         site2schema.addArgument(String.valueOf(site2Port));
         site2schema.setSystemProperties(globalProps2);
+        site2schema.setSystemProperty("client.port", acceptor1Port);
+        site2schema.setSystemProperty("bind.port", acceptor2Port);
+        site2schema.setSystemProperty("proxy.enabled", false);
 
         cluster2 = WebServer.startCluster(cache2Props);
         site2    = platform.realize("Site2-Web", site2schema, console);

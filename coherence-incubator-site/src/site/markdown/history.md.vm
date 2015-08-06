@@ -12,7 +12,10 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-125](http://java.net/jira/browse/COHINC-125): Upgraded to use Oracle Tools 2.0.0-RC8-SNAPSHOT
+*   [COHINC-125](http://java.net/jira/browse/COHINC-125): Upgraded to use Oracle Tools 2.0.0-RC9
+
+*   [COHINC-142](http://java.net/jira/browse/COHINC-142): Upgraded to use Coherence 12.1.2-0-4
+    (and certified with Coherence 12.1.3-0-2)
 
 <h4>coherence-processingpattern</h4>
 
