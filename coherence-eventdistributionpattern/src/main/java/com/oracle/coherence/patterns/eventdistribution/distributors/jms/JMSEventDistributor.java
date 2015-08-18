@@ -26,19 +26,53 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.expression.SystemPropertyParameterList;
+
+import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.config.expression.NullParameterResolver;
 import com.tangosol.config.expression.ParameterResolver;
+
 import com.tangosol.io.Serializer;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
+import com.tangosol.net.cache.ContinuousQueryCache;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.BinaryWriteBuffer;
-import com.tangosol.util.ResourceRegistry;
+import com.tangosol.util.Filter;
+import com.tangosol.util.MapEvent;
+import com.tangosol.util.MapListener;
+import com.tangosol.util.ValueExtractor;
+
+import com.tangosol.util.extractor.ReflectionExtractor;
+
+import com.tangosol.util.filter.AndFilter;
+import com.tangosol.util.filter.EqualsFilter;
+import com.tangosol.util.filter.MapEventFilter;
+import com.tangosol.util.filter.MapEventTransformerFilter;
+import com.tangosol.util.filter.OrFilter;
+import com.tangosol.util.filter.ValueChangeEventFilter;
+
+import com.tangosol.util.transformer.ExtractorEventTransformer;
+import com.tangosol.util.transformer.SemiLiteEventTransformer;
+
+import java.io.IOException;
+
+import java.util.List;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -46,10 +80,6 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A {@link JMSEventDistributor} is a {@link EventDistributor} implementation that uses a Java Messaging Service (JMS) to manage the
@@ -104,9 +134,16 @@ public class JMSEventDistributor implements EventDistributor
     private MessageProducer messageProducer;
 
     /**
-     * The {@link ResourceRegistry}.
+     * A {@link NamedCache} representing the starting modes of
+     * {@link EventChannel}s according to their {@link EventChannelController}.
      */
-    private ResourceRegistry registry;
+    private volatile ContinuousQueryCache eventChannelStartingModes;
+
+    /**
+     * The number of active (enabled or suspended) {@link EventChannel}s.
+     */
+    private AtomicInteger activeEventChannelCount;
+
 
     /**
      * Standard Constructor.
@@ -146,8 +183,8 @@ public class JMSEventDistributor implements EventDistributor
         try
         {
             // create the connection
-            this.connection = connectionFactoryBuilder.realize( new NullParameterResolver(),
-                    loader, new SystemPropertyParameterList()).createConnection();
+            this.connection = connectionFactoryBuilder.realize(new NullParameterResolver(), loader,
+                                                               new SystemPropertyParameterList()).createConnection();
 
             // create the session
             this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -164,6 +201,12 @@ public class JMSEventDistributor implements EventDistributor
 
             throw Base.ensureRuntimeException(jmsException);
         }
+
+        // initially we haven't tracked the starting modes of event channels
+        this.eventChannelStartingModes = null;
+
+        // initially we haven't tracked any active event channels
+        this.activeEventChannelCount = new AtomicInteger(-1);
     }
 
 
@@ -196,9 +239,6 @@ public class JMSEventDistributor implements EventDistributor
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public EventDistributor.Identifier getIdentifier()
     {
@@ -206,13 +246,10 @@ public class JMSEventDistributor implements EventDistributor
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public EventChannelController.Identifier establishEventChannelController(
-            Dependencies dependencies, ParameterResolver parameterResolver,
-            ClassLoader loader)
+    public EventChannelController.Identifier establishEventChannelController(Dependencies      dependencies,
+                                                                             ParameterResolver parameterResolver,
+                                                                             ClassLoader       loader)
     {
         if (logger.isLoggable(Level.FINER))
         {
@@ -220,6 +257,9 @@ public class JMSEventDistributor implements EventDistributor
                             "establishEventChannelController",
                             new Object[] {dependencies});
         }
+
+        // establish the NamedCache to track the event channel starting modes
+        establishEventChannelStartingMode();
 
         // establish the serializer (if we haven't done so already)
         if (serializer == null)
@@ -259,65 +299,193 @@ public class JMSEventDistributor implements EventDistributor
 
 
     /**
-     * {@inheritDoc}
+     * Acquire the {@link NamedCache} that is a local view of the {@link EventChannel}
+     * starting mode states.
+     *
+     * @return a {@link NamedCache}
      */
+    protected NamedCache establishEventChannelStartingMode()
+    {
+        if (eventChannelStartingModes == null)
+        {
+            synchronized (this)
+            {
+                if (eventChannelStartingModes == null)
+                {
+                    eventChannelStartingModes =
+                        new CustomContinuousQueryCache(CacheFactory.getCache("coherence.live.objects.distributed"),
+                                                       new EqualsFilter("getDistributorIdentifier",
+                                                                        identifier),
+                                                       false,
+                                                       new MapListener()
+                    {
+                        @Override
+                        public void entryInserted(MapEvent mapEvent)
+                        {
+                            EventChannelController.Mode mode = (EventChannelController.Mode) mapEvent.getNewValue();
+
+                            if (mode != EventChannelController.Mode.DISABLED)
+                            {
+                                int count = activeEventChannelCount.getAndIncrement();
+
+                                if (count == -1)
+                                {
+                                    activeEventChannelCount.incrementAndGet();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void entryUpdated(MapEvent mapEvent)
+                        {
+                            EventChannelController.Mode oldMode = (EventChannelController.Mode) mapEvent.getOldValue();
+                            EventChannelController.Mode newMode = (EventChannelController.Mode) mapEvent.getNewValue();
+
+                            if (oldMode == EventChannelController.Mode.DISABLED
+                                && newMode != EventChannelController.Mode.DISABLED)
+                            {
+                                activeEventChannelCount.incrementAndGet();
+                            }
+
+                            if (oldMode != EventChannelController.Mode.DISABLED
+                                && newMode == EventChannelController.Mode.DISABLED)
+                            {
+                                activeEventChannelCount.decrementAndGet();
+                            }
+                        }
+
+                        @Override
+                        public void entryDeleted(MapEvent mapEvent)
+                        {
+                            EventChannelController.Mode mode = (EventChannelController.Mode) mapEvent.getOldValue();
+
+                            if (mode != EventChannelController.Mode.DISABLED)
+                            {
+                                activeEventChannelCount.decrementAndGet();
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        return eventChannelStartingModes;
+    }
+
+
     @Override
     public void distribute(Event event)
     {
-        try
+        if (activeEventChannelCount.get() == 0)
         {
-            // create bytes message for the event
-            BytesMessage      message     = session.createBytesMessage();
-
-            BinaryWriteBuffer writeBuffer = new BinaryWriteBuffer(1024);
-
-            serializer.serialize(writeBuffer.getBufferOutput(), event);
-
-            byte[] bytes = writeBuffer.toByteArray();
-
-            message.writeInt(bytes.length);
-            message.writeBytes(bytes);
-
-            // we add the symbolicname property to the message to allow JMS selector use by EventChannelControllers
-            // (when all caches are going via the same topic)
-            message.setStringProperty("symbolicname", getIdentifier().getSymbolicName());
+            // SKIP: don't send events if there are no actively tracked event channels
+            System.out.println("Skipping " + event);
 
             if (logger.isLoggable(Level.FINEST))
             {
-                logger.log(Level.FINEST, "Distributing {0} as Message {1}", new Object[] {event, message});
+                logger.log(Level.FINEST, "Skipping {0} (all event channels disabled).", event);
             }
-
-            messageProducer.send(message);
         }
-        catch (JMSException jmsException)
+        else
         {
-            logger.log(Level.SEVERE,
-                       "Failed to distribute {0} on the Topic {1}."
-                       + "Please ensure that the JMS infrastructure is correctly configured and is available.",
-                       new Object[] {event, getIdentifier().getExternalName()});
+            try
+            {
+                // create bytes message for the event
+                BytesMessage      message     = session.createBytesMessage();
 
-            throw Base.ensureRuntimeException(jmsException);
-        }
-        catch (IOException ioException)
-        {
-            logger.log(Level.SEVERE,
-                       "Failed to distribute {0} on the Topic {1}." + "Due to a serialization failure.",
-                       new Object[] {event, getIdentifier().getExternalName()});
+                BinaryWriteBuffer writeBuffer = new BinaryWriteBuffer(1024);
 
-            throw Base.ensureRuntimeException(ioException);
+                serializer.serialize(writeBuffer.getBufferOutput(), event);
+
+                byte[] bytes = writeBuffer.toByteArray();
+
+                message.writeInt(bytes.length);
+                message.writeBytes(bytes);
+
+                // we add the symbolicname property to the message to allow JMS selector use by EventChannelControllers
+                // (when all caches are going via the same topic)
+                message.setStringProperty("symbolicname", getIdentifier().getSymbolicName());
+
+                if (logger.isLoggable(Level.FINEST))
+                {
+                    logger.log(Level.FINEST, "Distributing {0} as Message {1}", new Object[] {event, message});
+                }
+
+                messageProducer.send(message);
+            }
+            catch (JMSException jmsException)
+            {
+                logger.log(Level.SEVERE,
+                           "Failed to distribute {0} on the Topic {1}."
+                           + "Please ensure that the JMS infrastructure is correctly configured and is available.",
+                           new Object[] {event, getIdentifier().getExternalName()});
+
+                throw Base.ensureRuntimeException(jmsException);
+            }
+            catch (IOException ioException)
+            {
+                logger.log(Level.SEVERE,
+                           "Failed to distribute {0} on the Topic {1}." + "Due to a serialization failure.",
+                           new Object[] {event, getIdentifier().getExternalName()});
+
+                throw Base.ensureRuntimeException(ioException);
+            }
         }
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void distribute(List<Event> events)
     {
         for (Event event : events)
         {
             distribute(event);
+        }
+    }
+
+
+    /**
+     * A custom {@link ContinuousQueryCache} to specialize the
+     * {@link MapEventTransformerFilter}.
+     */
+    public static class CustomContinuousQueryCache extends ContinuousQueryCache
+    {
+        /**
+         * The {@link ValueExtractor} to extract the starting mode of an
+         * {@link EventChannelController}.
+         */
+        private static ValueExtractor transformer = new ReflectionExtractor("getStartingMode");
+
+
+        /**
+         * Constructs a CustomContinuousQueryCache.
+         *
+         * @param cache         the {@link NamedCache}
+         * @param filter        the {@link Filter} for the view
+         * @param fCacheValues  are values cached?
+         * @param listener      the {@link MapListener}
+         */
+        public CustomContinuousQueryCache(NamedCache  cache,
+                                          Filter      filter,
+                                          boolean     fCacheValues,
+                                          MapListener listener)
+        {
+            super(cache, filter, fCacheValues, listener, transformer);
+        }
+
+
+        @Override
+        protected Filter createTransformerFilter(MapEventFilter filterAdd)
+        {
+            return new MapEventTransformerFilter(transformer == null ? filterAdd : new AndFilter(filterAdd,
+                                                                                                 new OrFilter(new MapEventFilter(MapEventFilter
+                                                                                                     .E_INSERTED | MapEventFilter
+                                                                                                     .E_DELETED),
+                                                                                                              new ValueChangeEventFilter(transformer))),
+                                                 transformer == null
+                                                 ? SemiLiteEventTransformer.INSTANCE
+                                                 : new ExtractorEventTransformer(null,
+                                                                                 transformer));
         }
     }
 }

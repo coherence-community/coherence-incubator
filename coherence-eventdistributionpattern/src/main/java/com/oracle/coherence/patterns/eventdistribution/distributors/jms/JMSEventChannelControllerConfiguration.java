@@ -205,6 +205,18 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
 
 
     /**
+     * Determines the starting {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode}
+     * of the {@link JMSEventChannelController}.
+     *
+     * @return  the {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode}
+     */
+    public EventChannelController.Mode getStartingMode()
+    {
+        return dependencies.getStartingMode();
+    }
+
+
+    /**
      * {@inheritDoc}
      */
     @OnInserted

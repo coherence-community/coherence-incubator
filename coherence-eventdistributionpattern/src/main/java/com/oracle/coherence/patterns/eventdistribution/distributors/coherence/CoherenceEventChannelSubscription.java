@@ -50,7 +50,6 @@ import com.oracle.coherence.patterns.messaging.SubscriptionIdentifier;
 
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 
-import com.tangosol.config.expression.Parameter;
 import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.config.expression.ScopedParameterResolver;
 
@@ -199,6 +198,18 @@ public class CoherenceEventChannelSubscription extends Subscription
 
 
     /**
+     * Determines the starting {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode}
+     * of the {@link CoherenceEventChannelSubscription}.
+     *
+     * @return  the {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode}
+     */
+    public EventChannelController.Mode getStartingMode()
+    {
+        return controllerDependencies.getStartingMode();
+    }
+
+
+    /**
      * Required for abstract class subscription.  This is not used for event distribution.
      */
     public MessageIdentifier nextMessageToDeliver(long partitionId)
@@ -315,10 +326,7 @@ public class CoherenceEventChannelSubscription extends Subscription
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
+    @Override
     public void readExternal(DataInput in) throws IOException
     {
         super.readExternal(in);
@@ -330,9 +338,7 @@ public class CoherenceEventChannelSubscription extends Subscription
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(DataOutput out) throws IOException
     {
         super.writeExternal(out);
@@ -344,10 +350,7 @@ public class CoherenceEventChannelSubscription extends Subscription
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
+    @Override
     public void readExternal(PofReader reader) throws IOException
     {
         super.readExternal(reader);
@@ -359,9 +362,7 @@ public class CoherenceEventChannelSubscription extends Subscription
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(PofWriter writer) throws IOException
     {
         super.writeExternal(writer);
@@ -373,9 +374,7 @@ public class CoherenceEventChannelSubscription extends Subscription
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String toString()
     {
         return String

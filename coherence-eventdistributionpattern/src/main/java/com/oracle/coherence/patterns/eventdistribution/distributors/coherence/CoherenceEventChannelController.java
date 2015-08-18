@@ -145,8 +145,8 @@ public class CoherenceEventChannelController extends AbstractEventChannelControl
                 if (logger.isLoggable(Level.SEVERE))
                 {
                     logger.log(Level.SEVERE,
-                            "Recovery in process. Previously at message {0}, now at message: {1}.",
-                            new Object[] {prevSequenceNumber, prevSequenceNumber});
+                               "Recovery in process. Previously at message {0}, now at message: {1}.",
+                               new Object[] {prevSequenceNumber, prevSequenceNumber});
                 }
 
                 return false;
@@ -368,9 +368,33 @@ public class CoherenceEventChannelController extends AbstractEventChannelControl
     }
 
 
+    @Override
+    public void setStartingMode(Mode mode)
+    {
+        if (mode != getStartingMode())
+        {
+            if (logger.isLoggable(Level.INFO))
+            {
+                logger.log(Level.INFO,
+                           "Changing Starting Mode from {0} to {1}",
+                           new Object[] {controllerDependencies.getStartingMode(), mode});
+            }
+
+            super.setStartingMode(mode);
+
+            // now update the subscription itself so we don't lose the value on rolling restart
+            NamedCache subscriptionsCache = CacheFactory.getCache(Subscription.CACHENAME);
+
+            subscriptionsCache.invoke(subscriptionIdentifier,
+                                      new UpdaterProcessor("getEventControllerDependencies.setStartingMode",
+                                                           mode));
+        }
+    }
+
+
     /**
-     * {@inheritDoc}
-     */
+         * {@inheritDoc}
+         */
     @SuppressWarnings("unchecked")
     @Override
     protected Pair<List<Event>, MessageTracker> getEventsToDistribute()

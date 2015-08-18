@@ -114,6 +114,22 @@ public interface EventChannelController extends EventChannelControllerMBean
 
 
     /**
+     * Determines desired starting {@link Mode} of a {@link EventChannelController}.
+     *
+     * @return A {@link Mode}
+     */
+    public Mode getStartingMode();
+
+
+    /**
+     * Sets the desired starting {@link Mode} of an {@link EventChannelController}.
+     *
+     * @param mode  the {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode}
+     */
+    public void setStartingMode(Mode mode);
+
+
+    /**
      * The {@link EventChannelController.Dependencies} for a {@link EventChannelController}.
      */
     public interface Dependencies
@@ -165,6 +181,14 @@ public interface EventChannelController extends EventChannelControllerMBean
          * @return A {@link Mode}
          */
         public Mode getStartingMode();
+
+
+        /**
+         * Sets the desired starting {@link Mode} of an {@link EventChannelController}.
+         *
+         * @param mode  the {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode}
+         */
+        public void setStartingMode(Mode mode);
 
 
         /**

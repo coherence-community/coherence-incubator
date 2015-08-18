@@ -26,11 +26,14 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.coherence;
 
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.identifiers.StringBasedIdentifier;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+
 import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.DefaultSubscriptionConfiguration;
 import com.oracle.coherence.patterns.messaging.Destination;
@@ -38,16 +41,43 @@ import com.oracle.coherence.patterns.messaging.MessagingSession;
 import com.oracle.coherence.patterns.messaging.Subscription;
 import com.oracle.coherence.patterns.messaging.SubscriptionConfiguration;
 import com.oracle.coherence.patterns.messaging.entryprocessors.TopicSubscribeProcessor;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.config.expression.Parameter;
 import com.tangosol.config.expression.ParameterResolver;
 import com.tangosol.config.expression.Value;
+
 import com.tangosol.io.Serializer;
+
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
+
+import com.tangosol.net.cache.ContinuousQueryCache;
+
 import com.tangosol.util.Base;
+import com.tangosol.util.Filter;
+import com.tangosol.util.MapEvent;
+import com.tangosol.util.MapListener;
+import com.tangosol.util.ValueExtractor;
+
+import com.tangosol.util.extractor.KeyExtractor;
+import com.tangosol.util.extractor.ReflectionExtractor;
+
+import com.tangosol.util.filter.AndFilter;
+import com.tangosol.util.filter.EqualsFilter;
+import com.tangosol.util.filter.MapEventFilter;
+import com.tangosol.util.filter.MapEventTransformerFilter;
+import com.tangosol.util.filter.OrFilter;
+import com.tangosol.util.filter.ValueChangeEventFilter;
+
+import com.tangosol.util.transformer.ExtractorEventTransformer;
+import com.tangosol.util.transformer.SemiLiteEventTransformer;
 
 import java.util.List;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -88,6 +118,17 @@ public class CoherenceEventDistributor implements EventDistributor
      */
     private Serializer serializer;
 
+    /**
+     * A {@link NamedCache} representing the starting modes of
+     * {@link EventChannel}s according to their {@link EventChannelController}.
+     */
+    private volatile ContinuousQueryCache eventChannelStartingModes;
+
+    /**
+     * The number of active (enabled or suspended) {@link EventChannel}s.
+     */
+    private AtomicInteger activeEventChannelCount;
+
 
     /**
      * Standard Constructor.
@@ -122,12 +163,15 @@ public class CoherenceEventDistributor implements EventDistributor
 
         // create the topic to which events will be sent for distribution
         messagingSession.createTopic(getIdentifier().getExternalName());
+
+        // initially we haven't tracked the starting modes of event channels
+        this.eventChannelStartingModes = null;
+
+        // initially we haven't tracked any active event channels
+        this.activeEventChannelCount = new AtomicInteger(-1);
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public EventDistributor.Identifier getIdentifier()
     {
@@ -135,14 +179,14 @@ public class CoherenceEventDistributor implements EventDistributor
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public EventChannelController.Identifier establishEventChannelController(Dependencies      dependencies,
                                                                              ParameterResolver resolver,
                                                                              ClassLoader       loader)
     {
+        // establish the NamedCache to track the event channel starting modes
+        establishEventChannelStartingMode();
+
         // establish the serializer (if we haven't done so already)
         if (serializer == null)
         {
@@ -154,9 +198,9 @@ public class CoherenceEventDistributor implements EventDistributor
             new EventChannelController.Identifier(dependencies.getChannelName(),
                                                   dependencies.getExternalName());
 
-        Parameter testName = resolver.resolve("cache-name");
-        Value val  = (Value) testName.evaluate(resolver);
-        String cacheName = (String) val.get();
+        Parameter testName  = resolver.resolve("cache-name");
+        Value     val       = (Value) testName.evaluate(resolver);
+        String    cacheName = (String) val.get();
 
         // create a customized subscription that we'll use to trigger distribution when the subscription changes
         // ie: when a message arrives for the subscription, changes to the subscription will appropriately trigger
@@ -180,29 +224,156 @@ public class CoherenceEventDistributor implements EventDistributor
 
 
     /**
-     * {@inheritDoc}
+     * Acquire the {@link NamedCache} that is a local view of the {@link EventChannel}
+     * starting mode states.
+     *
+     * @return a {@link NamedCache}
      */
-    @Override
-    public void distribute(Event event)
+    protected NamedCache establishEventChannelStartingMode()
     {
-        if (logger.isLoggable(Level.FINEST))
+        if (eventChannelStartingModes == null)
         {
-            logger.log(Level.FINEST, "Distributing {0}.", event);
+            synchronized (this)
+            {
+                if (eventChannelStartingModes == null)
+                {
+                    eventChannelStartingModes =
+                        new CustomContinuousQueryCache(CacheFactory.getCache(Subscription.CACHENAME),
+                                                       new EqualsFilter(new KeyExtractor("getDestinationIdentifier"),
+                                                                        StringBasedIdentifier
+                                                                            .newInstance(identifier.getExternalName())),
+                                                       false,
+                                                       new MapListener()
+                    {
+                        @Override
+                        public void entryInserted(MapEvent mapEvent)
+                        {
+                            EventChannelController.Mode mode = (EventChannelController.Mode) mapEvent.getNewValue();
+
+                            if (mode != EventChannelController.Mode.DISABLED)
+                            {
+                                int count = activeEventChannelCount.getAndIncrement();
+
+                                if (count == -1)
+                                {
+                                    activeEventChannelCount.incrementAndGet();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void entryUpdated(MapEvent mapEvent)
+                        {
+                            EventChannelController.Mode oldMode = (EventChannelController.Mode) mapEvent.getOldValue();
+                            EventChannelController.Mode newMode = (EventChannelController.Mode) mapEvent.getNewValue();
+
+                            if (oldMode == EventChannelController.Mode.DISABLED
+                                && newMode != EventChannelController.Mode.DISABLED)
+                            {
+                                activeEventChannelCount.incrementAndGet();
+                            }
+
+                            if (oldMode != EventChannelController.Mode.DISABLED
+                                && newMode == EventChannelController.Mode.DISABLED)
+                            {
+                                activeEventChannelCount.decrementAndGet();
+                            }
+                        }
+
+                        @Override
+                        public void entryDeleted(MapEvent mapEvent)
+                        {
+                            EventChannelController.Mode mode = (EventChannelController.Mode) mapEvent.getOldValue();
+
+                            if (mode != EventChannelController.Mode.DISABLED)
+                            {
+                                activeEventChannelCount.decrementAndGet();
+                            }
+                        }
+                    });
+                }
+            }
         }
 
-        messagingSession.publishMessage(StringBasedIdentifier.newInstance(getIdentifier().getExternalName()), event);
+        return eventChannelStartingModes;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public void distribute(Event event)
+    {
+        if (activeEventChannelCount.get() == 0)
+        {
+            // SKIP: don't send events if there are no actively tracked event channels
+            if (logger.isLoggable(Level.FINEST))
+            {
+                logger.log(Level.FINEST, "Skipping {0} (all event channels disabled).", event);
+            }
+        }
+        else
+        {
+            if (logger.isLoggable(Level.FINEST))
+            {
+                logger.log(Level.FINEST, "Distributing {0}.", event);
+            }
+
+            messagingSession.publishMessage(StringBasedIdentifier.newInstance(getIdentifier().getExternalName()),
+                                            event);
+        }
+    }
+
+
     @Override
     public void distribute(List<Event> events)
     {
         for (Event event : events)
         {
             distribute(event);
+        }
+    }
+
+
+    /**
+     * A custom {@link ContinuousQueryCache} to specialize the
+     * {@link MapEventTransformerFilter}.
+     */
+    public static class CustomContinuousQueryCache extends ContinuousQueryCache
+    {
+        /**
+         * The {@link ValueExtractor} to extract the starting mode.
+         */
+        private static ValueExtractor transformer = new ReflectionExtractor("getStartingMode");
+
+
+        /**
+         * Constructs a CustomContinuousQueryCache.
+         *
+         * @param cache         the {@link NamedCache}
+         * @param filter        the {@link Filter} for the view
+         * @param fCacheValues  are values cached?
+         * @param listener      the {@link MapListener}
+         */
+        public CustomContinuousQueryCache(NamedCache  cache,
+                                          Filter      filter,
+                                          boolean     fCacheValues,
+                                          MapListener listener)
+        {
+            super(cache, filter, fCacheValues, listener, transformer);
+        }
+
+
+        @Override
+        protected Filter createTransformerFilter(MapEventFilter filterAdd)
+        {
+            return new MapEventTransformerFilter(transformer == null ? filterAdd : new AndFilter(filterAdd,
+                                                                                                 new OrFilter(new MapEventFilter(MapEventFilter
+                                                                                                     .E_INSERTED | MapEventFilter
+                                                                                                     .E_DELETED),
+                                                                                                              new ValueChangeEventFilter(transformer))),
+                                                 transformer == null
+                                                 ? SemiLiteEventTransformer.INSTANCE
+                                                 : new ExtractorEventTransformer(null,
+                                                                                 transformer));
         }
     }
 }

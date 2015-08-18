@@ -26,17 +26,37 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
 import com.oracle.coherence.common.events.Event;
+
 import com.oracle.coherence.common.tuples.Pair;
+
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributorBuilder;
 import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController;
+
+import com.oracle.coherence.patterns.messaging.Subscription;
+
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
+
 import com.tangosol.config.expression.ParameterResolver;
+
 import com.tangosol.io.Serializer;
+
+import com.tangosol.net.CacheFactory;
+import com.tangosol.net.NamedCache;
+
 import com.tangosol.util.Binary;
-import com.tangosol.util.ResourceRegistry;
+
+import com.tangosol.util.processor.UpdaterProcessor;
+
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -46,11 +66,6 @@ import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A {@link JMSEventChannelController} is an implementation of a {@link EventChannelController}, specifically for
@@ -87,8 +102,7 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
     /**
      * The {@link TopicSubscriber} we'll use to read messages from JMS.
      */
-    private TopicSubscriber  subscriber;
-    private ResourceRegistry registry;
+    private TopicSubscriber subscriber;
 
 
     /**
@@ -429,6 +443,98 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
         catch (JMSException jmsException)
         {
             throw new RuntimeException(jmsException);
+        }
+    }
+
+
+    @Override
+    public void setBatchDistributionDelay(long delayMS)
+    {
+        if (logger.isLoggable(Level.INFO))
+        {
+            logger.log(Level.INFO,
+                       "Changing Batch Distribution Delay from {0} ms to {1} ms",
+                       new Object[] {controllerDependencies.getBatchDistributionDelay(), delayMS});
+        }
+
+        super.setBatchDistributionDelay(delayMS);
+
+        // now update the configuration so we don't lose the value on rolling restart
+        NamedCache liveObjectsCache = CacheFactory.getCache("coherence.live.objects.distributed");
+
+        liveObjectsCache.invoke(distributorIdentifier.getSymbolicName() + ":" + controllerIdentifier.getSymbolicName(),
+                                new UpdaterProcessor("getDependencies.setBatchDistributionDelay",
+                                                     Long.valueOf(delayMS)));
+    }
+
+
+    @Override
+    public void setBatchSize(int batchSize)
+    {
+        batchSize = batchSize <= 0 ? 1 : batchSize;
+
+        if (logger.isLoggable(Level.INFO))
+        {
+            logger.log(Level.INFO,
+                       "Changing Batch Size from {0} to {1}",
+                       new Object[] {controllerDependencies.getBatchSize(), batchSize});
+        }
+
+        super.setBatchSize(batchSize);
+
+        // now update the subscription itself so we don't lose the value on rolling restart
+        NamedCache subscriptionsCache = CacheFactory.getCache(Subscription.CACHENAME);
+
+        // now update the configuration so we don't lose the value on rolling restart
+        NamedCache liveObjectsCache = CacheFactory.getCache("coherence.live.objects.distributed");
+
+        liveObjectsCache.invoke(distributorIdentifier.getSymbolicName() + ":" + controllerIdentifier.getSymbolicName(),
+                                new UpdaterProcessor("getDependencies.setBatchSize", Long.valueOf(batchSize)));
+    }
+
+
+    @Override
+    public void setRestartDelay(long delayMS)
+    {
+        if (logger.isLoggable(Level.INFO))
+        {
+            logger.log(Level.INFO,
+                       "Changing Restart Delay from {0} ms to {1} ms",
+                       new Object[] {controllerDependencies.getBatchDistributionDelay(), delayMS});
+        }
+
+        super.setRestartDelay(delayMS);
+
+        // now update the configuration so we don't lose the value on rolling restart
+        NamedCache liveObjectsCache = CacheFactory.getCache("coherence.live.objects.distributed");
+
+        liveObjectsCache.invoke(distributorIdentifier.getSymbolicName() + ":" + controllerIdentifier.getSymbolicName(),
+                                new UpdaterProcessor("getDependencies.setRestartDelay", Long.valueOf(delayMS)));
+    }
+
+
+    @Override
+    public void setStartingMode(Mode mode)
+    {
+        System.out.println("Setting Starting Mode:" + mode);
+
+        if (mode != getStartingMode())
+        {
+            if (logger.isLoggable(Level.INFO))
+            {
+                logger.log(Level.INFO,
+                           "Changing Starting Mode from {0} to {1}",
+                           new Object[] {controllerDependencies.getStartingMode(), mode});
+            }
+
+            super.setStartingMode(mode);
+
+            // now update the configuration so we don't lose the value on rolling restart
+            NamedCache liveObjectsCache = CacheFactory.getCache("coherence.live.objects.distributed");
+
+            liveObjectsCache.invoke(distributorIdentifier.getSymbolicName() + ":"
+                                    + controllerIdentifier.getSymbolicName(),
+                                    new UpdaterProcessor("getDependencies.setStartingMode", mode));
         }
     }
 }

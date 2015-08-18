@@ -620,6 +620,29 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
     @Override
+    public Mode getStartingMode()
+    {
+        return controllerDependencies.getStartingMode();
+    }
+
+
+    @Override
+    public void setStartingMode(Mode mode)
+    {
+        controllerDependencies.setStartingMode(mode);
+    }
+
+
+    @Override
+    public String getInitialState()
+    {
+        Mode mode = getStartingMode();
+
+        return mode == Mode.ENABLED ? "AUTO-START" : mode.toString();
+    }
+
+
+    @Override
     public void prepare()
     {
         // attempt to start the machine
@@ -739,6 +762,9 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
             // we've successfully started so reset the distribution failure count
             consecutiveDistributionFailures = 0;
 
+            // now that we've started we should always recover into a starting state
+            setStartingMode(Mode.ENABLED);
+
             // schedule distribution to commence immediately
             if (logger.isLoggable(Level.FINER))
             {
@@ -856,6 +882,9 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         try
         {
             internalDisable();
+
+            // now that we're in a disabled state, we must restart in this state.
+            setStartingMode(Mode.DISABLED);
         }
         catch (RuntimeException runtimeException)
         {
@@ -885,6 +914,9 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                                    com.oracle.coherence.common.finitestatemachines.Event<State> event,
                                    ExecutionContext                                             context)
     {
+        // now that we're in a suspended state, we must restart in this state.
+        setStartingMode(Mode.SUSPENDED);
+
         // when transitioning from DISABLED state we must call internalEnable()
         if (previousState == State.DISABLED)
         {
@@ -1509,6 +1541,13 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
         public Mode getStartingMode()
         {
             return startingMode;
+        }
+
+
+        @Override
+        public void setStartingMode(Mode startingMode)
+        {
+            this.startingMode = startingMode;
         }
 
 

@@ -165,6 +165,16 @@ public interface EventChannelControllerMBean
 
 
     /**
+     * Determines the name of the starting mode (initial state) of the {@link EventChannelController}.
+     *
+     * @see {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode}
+     *
+     * @return  the initial state
+     */
+    public String getInitialState();
+
+
+    /**
      * Suspends the {@link EventChannelController} for distribution.  While suspended the {@link EventChannelController}
      * will queue up all requests to distribute {@link Event}s.  When {@link #start()}ed the
      * {@link EventChannelController} will commence distributing the queued {@link Event}s.
