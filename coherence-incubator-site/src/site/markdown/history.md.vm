@@ -10,6 +10,10 @@ reverse chronological order.
 
 *   Brian Oliver
 
+<h4>Global and Cross-Module Changes</h4>
+
+*   [COHINC-104](http://java.net/jira/browse/COHINC-104): Upgraded to use Oracle Coherence 3.7.1.11
+
 <h4>coherence-common</h4>
 
 *   [COHINC-124](http://java.net/jira/browse/COHINC-124): Introduced the ability
@@ -72,7 +76,6 @@ reverse chronological order.
 
 *   [COHINC-64](http://java.net/jira/browse/COHINC-64):  Changed the
     coherence-web dependency to be "provided".
-
 
 *   [COHINC-120](http://java.net/jira/browse/COHINC-120): Introduced
     the ability to "propagate" a copy of a NamedCache over an associated
