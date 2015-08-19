@@ -55,6 +55,7 @@ import org.hamcrest.Matchers;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.oracle.tools.deferred.DeferredHelper.invoking;
@@ -166,6 +167,7 @@ public class FunctionalTest
      * @throws Exception
      */
     @Test
+    @Ignore  // TODO: Renable when we migrate to Oracle Tools 2.0.0
     public void testSessionReplication() throws Exception
         {
         try
