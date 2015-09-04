@@ -28,19 +28,25 @@ package com.oracle.coherence.common.finitestatemachines;
 import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMachine.CoalescedEvent;
 import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMachine.CoalescedEvent.Process;
 import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMachine.SubsequentEvent;
+
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
-import com.oracle.tools.deferred.DeferredAssert;
+
+import com.oracle.tools.deferred.Eventually;
+
 import junit.framework.Assert;
+
 import org.junit.Test;
 
+import static com.oracle.tools.deferred.DeferredHelper.invoking;
+
+import static org.hamcrest.core.Is.is;
+
 import java.util.EnumSet;
+
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.oracle.tools.deferred.DeferredHelper.eventually;
-import static com.oracle.tools.deferred.DeferredHelper.invoking;
-import static org.hamcrest.core.Is.is;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Unit tests for the {@link NonBlockingFiniteStateMachine}
@@ -166,7 +172,7 @@ public class TestNonBlockingFiniteStateMachine
         machine.processLater(new SubsequentEvent<Motor>(MotorEvent.TURN_ON), 1, TimeUnit.SECONDS);
 
         // ensure that a subsequent event is executed when there's no interleaving
-        DeferredAssert.assertThat(eventually(invoking(machine).getTransitionCount()), is(1L));
+        Eventually.assertThat(invoking(machine).getTransitionCount(), is(1L));
         Assert.assertEquals(machine.getState(), Motor.RUNNING);
 
         // ensure that a subsequent event is not executed when there's interleaving
@@ -178,7 +184,7 @@ public class TestNonBlockingFiniteStateMachine
         machine.process(MotorEvent.TURN_ON);
         machine.process(MotorEvent.TURN_OFF);
 
-        DeferredAssert.assertThat(eventually(invoking(machine).getTransitionCount()), is(4L));
+        Eventually.assertThat(invoking(machine).getTransitionCount(), is(4L));
         Assert.assertEquals(Motor.STOPPED, machine.getState());
 
         Assert.assertEquals(true, event.accepted());
@@ -215,19 +221,19 @@ public class TestNonBlockingFiniteStateMachine
         machine.processLater(new CoalescedEvent<Motor>(event2, Process.FIRST), 2, TimeUnit.SECONDS);
         machine.processLater(new CoalescedEvent<Motor>(event3, Process.FIRST), 1, TimeUnit.SECONDS);
 
-        DeferredAssert.assertThat(eventually(invoking(machine).getTransitionCount()), is(1L));
+        Eventually.assertThat(invoking(machine).getTransitionCount(), is(1L));
         Assert.assertEquals(machine.getState(), Motor.RUNNING);
 
         Assert.assertEquals(true, event1.accepted());
-        DeferredAssert.assertThat(eventually(invoking(event1).evaluated()), is(true));
+        Eventually.assertThat(invoking(event1).evaluated(), is(true));
         Assert.assertEquals(true, event1.processed());
 
         Assert.assertEquals(true, event2.accepted());
-        DeferredAssert.assertThat(eventually(invoking(event2).evaluated()), is(false));
+        Eventually.assertThat(invoking(event2).evaluated(), is(false));
         Assert.assertEquals(false, event2.processed());
 
         Assert.assertEquals(true, event3.accepted());
-        DeferredAssert.assertThat(eventually(invoking(event3).evaluated()), is(false));
+        Eventually.assertThat(invoking(event3).evaluated(), is(false));
         Assert.assertEquals(false, event3.processed());
 
         // ensure that the most recently submitted coalesced event is processed
@@ -240,19 +246,19 @@ public class TestNonBlockingFiniteStateMachine
         machine.processLater(new CoalescedEvent<Motor>(event2, Process.MOST_RECENT), 2, TimeUnit.SECONDS);
         machine.processLater(new CoalescedEvent<Motor>(event3, Process.MOST_RECENT), 1, TimeUnit.SECONDS);
 
-        DeferredAssert.assertThat(eventually(invoking(machine).getTransitionCount()), is(2L));
+        Eventually.assertThat(invoking(machine).getTransitionCount(), is(2L));
         Assert.assertEquals(machine.getState(), Motor.STOPPED);
 
         Assert.assertEquals(true, event3.accepted());
-        DeferredAssert.assertThat(eventually(invoking(event3).evaluated()), is(true));
+        Eventually.assertThat(invoking(event3).evaluated(), is(true));
         Assert.assertEquals(true, event3.processed());
 
         Assert.assertEquals(true, event2.accepted());
-        DeferredAssert.assertThat(eventually(invoking(event2).evaluated()), is(false));
+        Eventually.assertThat(invoking(event2).evaluated(), is(false));
         Assert.assertEquals(false, event2.processed());
 
         Assert.assertEquals(true, event1.accepted());
-        DeferredAssert.assertThat(eventually(invoking(event1).evaluated()), is(false));
+        Eventually.assertThat(invoking(event1).evaluated(), is(false));
         Assert.assertEquals(false, event1.processed());
     }
 
@@ -297,8 +303,8 @@ public class TestNonBlockingFiniteStateMachine
             machine.process(new Instruction.TransitionTo<Singularity>(Singularity.PROCESSING));
         }
 
-        DeferredAssert.assertThat(eventually(invoking(actionTransition).getExecutionCount()), is(10L));
-        DeferredAssert.assertThat(eventually(invoking(actionExit).getExecutionCount()), is(10L));
-        DeferredAssert.assertThat(eventually(invoking(actionEntry).getExecutionCount()), is(11L));
+        Eventually.assertThat(invoking(actionTransition).getExecutionCount(), is(10L));
+        Eventually.assertThat(invoking(actionExit).getExecutionCount(), is(10L));
+        Eventually.assertThat(invoking(actionEntry).getExecutionCount(), is(11L));
     }
 }

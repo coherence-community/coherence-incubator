@@ -12,6 +12,9 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
+*   [COHINC-125](http://java.net/jira/browse/COHINC-125): Replaced use of
+    deprecated DeferredAssert.assertThat(...) methods with Eventually.assertThat(...)
+
 *   [COHINC-146](http://java.net/jira/browse/COHINC-146): Corrected use of
     &lt;connect-timeout&gt; configuration elements for Coherence 12.1.2+.
 

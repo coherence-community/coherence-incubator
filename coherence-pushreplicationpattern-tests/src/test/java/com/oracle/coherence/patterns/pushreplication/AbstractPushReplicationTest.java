@@ -48,7 +48,6 @@ import com.oracle.tools.runtime.coherence.CoherenceCacheServer;
 import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
 import com.oracle.tools.runtime.coherence.JMXManagementMode;
 
-import com.oracle.tools.runtime.console.NullApplicationConsole;
 import com.oracle.tools.runtime.console.SystemApplicationConsole;
 
 import com.oracle.tools.runtime.java.container.Container;
@@ -73,10 +72,9 @@ import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static com.oracle.tools.deferred.DeferredAssert.assertThat;
-
-import static com.oracle.tools.deferred.DeferredHelper.eventually;
 import static com.oracle.tools.deferred.DeferredHelper.invoking;
+import static com.oracle.tools.deferred.DeferredHelper.valueOf;
+import static com.oracle.tools.deferred.DeferredHelper.within;
 
 import static com.oracle.tools.matchers.MapMatcher.sameAs;
 
@@ -244,16 +242,16 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             Eventually.assertThat(invoking(namedCache), sameAs((Map) newyorkCache));
 
-            // assert that no been queued in London (from New York)
+            // assert that nothing been queued in London (from New York)
             // (even though this is Active-Active, events from New York to London should not be
             // re-queued in London for distribution back to New York).
-            Deferred<Integer> deferred =
+            Deferred<Integer> deferredMBeanAttribute =
                 londonServer
                     .getDeferredMBeanAttribute(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
                                                "EventsDistributedCount",
                                                Integer.class);
 
-            assertThat(deferred, is(0));
+            Eventually.assertThat(valueOf(deferredMBeanAttribute), is(0));
 
             // update the london site
             randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 1000, 500, "LONDON");
@@ -351,13 +349,13 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // wait for passive cluster to start
             for (CoherenceCacheServer server : passiveServers)
             {
-                assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
+                Eventually.assertThat(invoking(server).getClusterSize(), is(nrPassiveServers));
             }
 
             // wait for active server cluster to start
             for (CoherenceCacheServer server : activeServers)
             {
-                assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
+                Eventually.assertThat(invoking(server).getClusterSize(), is(nrActiveServers));
             }
 
             // turn off local clustering so we don't connect with the process just started
@@ -478,7 +476,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             NamedCache namedCache = CacheFactory.getCache("publishing-cache");
 
             // we only wait a little bit for this
-            Eventually.assertThat(eventually(invoking(namedCache).size()), is(1), 5, TimeUnit.SECONDS);
+            Eventually.assertThat(invoking(namedCache).size(), is(1), within(5, TimeUnit.SECONDS));
 
             fail("The disabled site should not have received any values");
         }
@@ -563,13 +561,13 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // wait for passive cluster to start
             for (CoherenceCacheServer server : passiveServers)
             {
-                assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
+                Eventually.assertThat(invoking(server).getClusterSize(), is(nrPassiveServers));
             }
 
             // wait for active server cluster to start
             for (CoherenceCacheServer server : activeServers)
             {
-                assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
+                Eventually.assertThat(invoking(server).getClusterSize(), is(nrActiveServers));
             }
 
             // turn off local clustering so we don't connect with the process just started
@@ -805,13 +803,13 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // wait for passive cluster to start
             for (CoherenceCacheServer server : passiveServers)
             {
-                assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
+                Eventually.assertThat(invoking(server).getClusterSize(), is(nrPassiveServers));
             }
 
             // wait for active server cluster to start
             for (CoherenceCacheServer server : activeServers)
             {
-                assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
+                Eventually.assertThat(invoking(server).getClusterSize(), is(nrActiveServers));
             }
 
             // turn off local clustering so we don't connect with the process just started
@@ -995,13 +993,13 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             // wait for passive cluster to start
             for (CoherenceCacheServer server : passiveServers)
             {
-                assertThat(eventually(invoking(server).getClusterSize()), is(nrPassiveServers));
+                Eventually.assertThat(invoking(server).getClusterSize(), is(nrPassiveServers));
             }
 
             // wait for active server cluster to start
             for (CoherenceCacheServer server : activeServers)
             {
-                assertThat(eventually(invoking(server).getClusterSize()), is(nrActiveServers));
+                Eventually.assertThat(invoking(server).getClusterSize(), is(nrActiveServers));
             }
 
             // turn off local clustering so we don't connect with the process just started
