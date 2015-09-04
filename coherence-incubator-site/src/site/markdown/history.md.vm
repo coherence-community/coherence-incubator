@@ -10,6 +10,11 @@ reverse chronological order.
 
 *   Brian Oliver
 
+<h4>Global and Cross-Module Changes</h4>
+
+*   [COHINC-146](http://java.net/jira/browse/COHINC-146): Corrected use of
+    &lt;connect-timeout&gt; configuration elements for Coherence 12.1.2+.
+
 <h4>coherence-eventdistributionpattern</h4>
 
 *   [COHINC-140](http://java.net/jira/browse/COHINC-140): Optimized (by avoiding)
