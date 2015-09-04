@@ -28,6 +28,7 @@ package com.oracle.coherence.patterns.eventdistribution.configuration;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+import com.oracle.coherence.patterns.eventdistribution.EventDistributorMBean;
 
 import com.tangosol.coherence.config.ParameterList;
 import com.tangosol.coherence.config.ParameterMacroExpression;
@@ -43,7 +44,10 @@ import com.tangosol.config.expression.ScopedParameterResolver;
 
 import com.tangosol.io.Serializer;
 
+import com.tangosol.net.CacheFactory;
 import com.tangosol.net.GuardSupport;
+
+import com.tangosol.net.management.Registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -228,7 +232,7 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
     {
         String externalName = m_exprDistributorExternalName.evaluate(parameterResolver);
 
-        // resolve the event distributor names
+        // resolve the event distributor name
         String distributorName = getDistributorName(parameterResolver);
 
         // establish the event distributor
@@ -264,6 +268,20 @@ public class EventDistributorTemplate implements ParameterizedBuilder<EventDistr
         }
 
         GuardSupport.heartbeat();
+
+        // register the MBean for the EventDistributor
+        if (distributor instanceof EventDistributorMBean)
+        {
+            Registry registry = CacheFactory.getCluster().getManagement();
+
+            if (registry != null)
+            {
+                String mBeanName = registry.ensureGlobalName("type=EventDistributors,id="
+                                                             + distributor.getIdentifier().getSymbolicName());
+
+                registry.register(mBeanName, distributor);
+            }
+        }
 
         return distributor;
     }

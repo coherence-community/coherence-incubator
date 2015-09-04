@@ -44,6 +44,7 @@ import com.oracle.coherence.common.threading.ThreadFactories;
 import com.oracle.coherence.common.tuples.Pair;
 
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
+import com.oracle.coherence.patterns.eventdistribution.EventChannelControlled;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelNotReadyException;
@@ -76,11 +77,16 @@ import com.tangosol.net.NamedCache;
 import com.tangosol.net.partition.PartitionSet;
 
 import com.tangosol.util.Binary;
+import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.Converter;
 import com.tangosol.util.ExternalizableHelper;
+import com.tangosol.util.InvocableMap;
+import com.tangosol.util.ResourceRegistry;
 
 import com.tangosol.util.filter.PartitionedFilter;
 import com.tangosol.util.filter.PresentFilter;
+
+import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -1688,6 +1694,115 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                                  restartDelay,
                                  totalConsecutiveFailuresBeforeSuspending,
                                  eventPollingDelay);
+        }
+    }
+
+
+    /**
+     * Raises the specified {@link com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController.ControllerEvent}
+     * against an {@link AbstractEventChannelController}.
+     */
+    public static class RaiseControllerEventProcessor extends AbstractProcessor implements PortableObject,
+                                                                                           ExternalizableLite
+    {
+        /**
+         * The desired event to raise.
+         */
+        private AbstractEventChannelController.ControllerEvent event;
+
+
+        /**
+         * Default constructor (for serializtion).
+         */
+        public RaiseControllerEventProcessor()
+        {
+            // required for serialization
+        }
+
+
+        /**
+         * Constructs a RaiseControllerEventProcessor for a specified
+         * {@link com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController.ControllerEvent}.
+         *
+         * @param event  the {@link com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController.ControllerEvent}
+         */
+        public RaiseControllerEventProcessor(AbstractEventChannelController.ControllerEvent event)
+        {
+            this.event = event;
+        }
+
+
+        @Override
+        public Object process(InvocableMap.Entry entry)
+        {
+            if (entry.isPresent())
+            {
+                Object value = entry.getValue();
+
+                if (value instanceof EventChannelControlled)
+                {
+                    EventChannelControlled controlled = (EventChannelControlled) value;
+
+                    // look up the Event Channel Controller to which we'll send the event
+                    BinaryEntry binaryEntry = (BinaryEntry) entry;
+                    ResourceRegistry registry =
+                        binaryEntry.getContext().getManager().getCacheFactory().getResourceRegistry();
+
+                    EventChannelControllerManager manager = registry.getResource(EventChannelControllerManager.class);
+
+                    EventChannelController controller =
+                        manager.getEventChannelController(controlled.getEventDistributorIdentifier(),
+                                                          controlled.getEventChannelControllerIdentifier());
+
+                    if (controller instanceof AbstractEventChannelController)
+                    {
+                        NonBlockingFiniteStateMachine<AbstractEventChannelController.State> machine =
+                            ((AbstractEventChannelController) controller).machine;
+
+                        if (event == AbstractEventChannelController.ControllerEvent.START)
+                        {
+                            if (!machine.start())
+                            {
+                                machine.process(event);
+                            }
+                        }
+                        else
+                        {
+                            machine.process(event);
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+
+        @Override
+        public void readExternal(DataInput input) throws IOException
+        {
+            this.event = (ControllerEvent) ExternalizableHelper.readObject(input);
+        }
+
+
+        @Override
+        public void writeExternal(DataOutput output) throws IOException
+        {
+            ExternalizableHelper.writeObject(output, event);
+        }
+
+
+        @Override
+        public void readExternal(PofReader reader) throws IOException
+        {
+            this.event = (ControllerEvent) reader.readObject(100);
+        }
+
+
+        @Override
+        public void writeExternal(PofWriter writer) throws IOException
+        {
+            writer.writeObject(100, event);
         }
     }
 }

@@ -38,6 +38,7 @@ import com.oracle.coherence.common.liveobjects.OnInserted;
 import com.oracle.coherence.common.liveobjects.OnRemoved;
 import com.oracle.coherence.common.liveobjects.OnUpdated;
 
+import com.oracle.coherence.patterns.eventdistribution.EventChannelControlled;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerBuilder;
@@ -95,7 +96,7 @@ import java.util.logging.Logger;
  */
 @SuppressWarnings({"deprecation", "serial"})
 @LiveObject
-public class CoherenceEventChannelSubscription extends Subscription
+public class CoherenceEventChannelSubscription extends Subscription implements EventChannelControlled
 {
     /**
      * The {@link Logger} to use.
@@ -161,12 +162,7 @@ public class CoherenceEventChannelSubscription extends Subscription
     }
 
 
-    /**
-     * Determines the {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor.Identifier} in which the
-     * {@link CoherenceEventChannelController} is operating.
-     *
-     * @return A {@link com.oracle.coherence.patterns.eventdistribution.EventDistributor.Identifier}
-     */
+    @Override
     public EventDistributor.Identifier getEventDistributorIdentifier()
     {
         return distributorIdentifier;
@@ -371,6 +367,13 @@ public class CoherenceEventChannelSubscription extends Subscription
         writer.writeObject(103, controllerDependencies);
         writer.writeString(104, cacheName);
         writer.writeObject(105, resolver);
+    }
+
+
+    @Override
+    public EventChannelController.Identifier getEventChannelControllerIdentifier()
+    {
+        return controllerIdentifier;
     }
 
 

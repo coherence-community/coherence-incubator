@@ -34,6 +34,7 @@ import com.oracle.coherence.common.liveobjects.OnInserted;
 import com.oracle.coherence.common.liveobjects.OnRemoved;
 
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
+import com.oracle.coherence.patterns.eventdistribution.EventChannelControlled;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Identifier;
@@ -79,7 +80,9 @@ import javax.jms.ConnectionFactory;
  */
 @SuppressWarnings("serial")
 @LiveObject
-public class JMSEventChannelControllerConfiguration implements ExternalizableLite, PortableObject
+public class JMSEventChannelControllerConfiguration implements ExternalizableLite,
+                                                               PortableObject,
+                                                               EventChannelControlled
 {
     /**
      * The {@link Logger} to use.
@@ -169,18 +172,6 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
 
 
     /**
-     * Returns the {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Identifier} that
-     * created the {@link JMSEventChannelControllerConfiguration}.
-     *
-     * @return A {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Identifier}
-     */
-    public EventChannelController.Identifier getEventChannelControllerIdentifier()
-    {
-        return controllerIdentifier;
-    }
-
-
-    /**
      * Determines the {@link com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies} for the
      * {@link JMSEventChannelControllerConfiguration}.
      *
@@ -216,9 +207,6 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @OnInserted
     @OnArrived
     public void onEntryInserted(BinaryEntry entry)
@@ -256,9 +244,6 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @OnRemoved
     @OnDeparting
     public void onEntryRemoved(BinaryEntry entry)
@@ -281,9 +266,7 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public void readExternal(DataInput in) throws IOException
     {
@@ -296,9 +279,7 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(DataOutput out) throws IOException
     {
         ExternalizableHelper.writeObject(out, distributorIdentifier);
@@ -310,10 +291,7 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
+    @Override
     public void readExternal(PofReader reader) throws IOException
     {
         this.distributorIdentifier    = (EventDistributor.Identifier) reader.readObject(1);
@@ -325,9 +303,7 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(PofWriter writer) throws IOException
     {
         writer.writeObject(1, distributorIdentifier);
@@ -339,9 +315,21 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public EventDistributor.Identifier getEventDistributorIdentifier()
+    {
+        return distributorIdentifier;
+    }
+
+
+    @Override
+    public EventChannelController.Identifier getEventChannelControllerIdentifier()
+    {
+        return controllerIdentifier;
+    }
+
+
+    @Override
     public String toString()
     {
         return String

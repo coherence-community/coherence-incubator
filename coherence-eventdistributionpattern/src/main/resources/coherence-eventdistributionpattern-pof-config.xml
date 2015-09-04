@@ -87,6 +87,11 @@
         </user-type>
 
         <user-type>
+            <type-id>13053</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController$RaiseControllerEventProcessor</class-name>
+        </user-type>
+
+        <user-type>
             <type-id>13100</type-id>
             <class-name>com.oracle.coherence.patterns.eventdistribution.channels.StdErrEventChannelBuilder</class-name>
         </user-type>

@@ -33,6 +33,7 @@ import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
+import com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController;
 
 import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.DefaultSubscriptionConfiguration;
@@ -57,6 +58,7 @@ import com.tangosol.net.cache.ContinuousQueryCache;
 
 import com.tangosol.util.Base;
 import com.tangosol.util.Filter;
+import com.tangosol.util.InvocableMap;
 import com.tangosol.util.MapEvent;
 import com.tangosol.util.MapListener;
 import com.tangosol.util.ValueExtractor;
@@ -90,7 +92,7 @@ import java.util.logging.Logger;
  *
  * @author Brian Oliver
  */
-public class CoherenceEventDistributor implements EventDistributor
+public class CoherenceEventDistributor implements EventDistributor, CoherenceEventDistributorMBean
 {
     /**
      * The {@link Logger} for the class.
@@ -333,9 +335,53 @@ public class CoherenceEventDistributor implements EventDistributor
     }
 
 
+    @Override
+    public String getEventDistributorName()
+    {
+        return identifier.getSymbolicName();
+    }
+
+
     /**
-     * A custom {@link ContinuousQueryCache} to specialize the
-     * {@link MapEventTransformerFilter}.
+     * Universally raises an event channel controller event against all
+     * known event channel controllers for this event distributor.
+     *
+     * @param event  the {@link com.oracle.coherence.patterns.eventdistribution.distributors.AbstractEventChannelController.ControllerEvent}
+     */
+    private void universallyRaiseEventChannelControllerEvent(AbstractEventChannelController.ControllerEvent event)
+    {
+        NamedCache subscriptions = CacheFactory.getCache(Subscription.CACHENAME);
+
+        subscriptions.invokeAll(new EqualsFilter(new KeyExtractor("getDestinationIdentifier"),
+                                                 StringBasedIdentifier.newInstance(identifier.getExternalName())),
+                                new AbstractEventChannelController.RaiseControllerEventProcessor(event));
+    }
+
+
+    @Override
+    public void startAll()
+    {
+        universallyRaiseEventChannelControllerEvent(AbstractEventChannelController.ControllerEvent.START);
+    }
+
+
+    @Override
+    public void suspendAll()
+    {
+        universallyRaiseEventChannelControllerEvent(AbstractEventChannelController.ControllerEvent.SUSPEND);
+    }
+
+
+    @Override
+    public void disableAll()
+    {
+        universallyRaiseEventChannelControllerEvent(AbstractEventChannelController.ControllerEvent.DISABLE);
+    }
+
+
+    /**
+     *     A custom {@link ContinuousQueryCache} to specialize the
+     *     {@link MapEventTransformerFilter}.
      */
     public static class CustomContinuousQueryCache extends ContinuousQueryCache
     {

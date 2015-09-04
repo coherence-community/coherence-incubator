@@ -516,8 +516,6 @@ public class JMSEventChannelController extends AbstractEventChannelController<ja
     @Override
     public void setStartingMode(Mode mode)
     {
-        System.out.println("Setting Starting Mode:" + mode);
-
         if (mode != getStartingMode())
         {
             if (logger.isLoggable(Level.INFO))

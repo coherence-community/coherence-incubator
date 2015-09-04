@@ -23,6 +23,10 @@ reverse chronological order.
 *   [COHINC-140](http://java.net/jira/browse/COHINC-140): Optimized (by avoiding)
     Event Distribution when all Event Channels are disabled.
 
+*   [COHINC-144](http://java.net/jira/browse/COHINC-144): Introduced the
+    ability to universally control all EventChannels for a single EventDistributor
+    though the new EventDistributor JMX MBeans.
+
 
 --------------------------------------------------------------------------------
 
