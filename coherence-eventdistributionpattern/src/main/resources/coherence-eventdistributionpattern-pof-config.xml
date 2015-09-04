@@ -79,6 +79,14 @@
         </user-type>
 
         <user-type>
+            <type-id>13052</type-id>
+            <class-name>com.oracle.coherence.patterns.eventdistribution.EventChannelController$Mode</class-name>
+            <serializer>
+                <class-name>com.tangosol.io.pof.EnumPofSerializer</class-name>
+            </serializer>
+        </user-type>
+
+        <user-type>
             <type-id>13100</type-id>
             <class-name>com.oracle.coherence.patterns.eventdistribution.channels.StdErrEventChannelBuilder</class-name>
         </user-type>
