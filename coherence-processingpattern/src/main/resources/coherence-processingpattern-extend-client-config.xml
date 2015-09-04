@@ -48,8 +48,8 @@
                         <port>20020</port>
                     </socket-address>
                 </remote-addresses>
-                <connect-timeout>10s</connect-timeout>
             </tcp-initiator>
+             <connect-timeout>10s</connect-timeout>
         </initiator-config>
     </remote-cache-scheme>
  </caching-schemes>

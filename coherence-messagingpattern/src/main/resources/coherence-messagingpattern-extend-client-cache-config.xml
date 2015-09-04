@@ -62,15 +62,13 @@
                             <port>4800</port> 
                         </socket-address>                      
                     </remote-addresses> 
-                    <connect-timeout>2s</connect-timeout> 
-                </tcp-initiator> 
+                </tcp-initiator>
                 <outgoing-message-handler> 
                     <request-timeout>3s</request-timeout>               
-                </outgoing-message-handler> 
-            </initiator-config> 
-
-            <autostart>true</autostart>
-        </remote-cache-scheme> 
+                </outgoing-message-handler>
+                <connect-timeout>2s</connect-timeout>
+            </initiator-config>
+        </remote-cache-scheme>
     </caching-schemes>
 </cache-config>
         

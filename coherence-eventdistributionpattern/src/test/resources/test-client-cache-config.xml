@@ -52,11 +52,11 @@
                             <port system-property="remote.port">10000</port>
                         </socket-address>
                     </remote-addresses>
-                    <connect-timeout>10s</connect-timeout>
                 </tcp-initiator>
                 <outgoing-message-handler>
                     <request-timeout>10s</request-timeout>
                 </outgoing-message-handler>
+                <connect-timeout>10s</connect-timeout>
             </initiator-config>
         </remote-cache-scheme>
 
@@ -70,11 +70,11 @@
                             <port system-property="remote.port">10000</port>
                         </socket-address>
                     </remote-addresses>
-                    <connect-timeout>10s</connect-timeout>
                 </tcp-initiator>
                 <outgoing-message-handler>
                     <request-timeout>10s</request-timeout>
                 </outgoing-message-handler>
+                <connect-timeout>10s</connect-timeout>
             </initiator-config>
         </remote-invocation-scheme>
     </caching-schemes>

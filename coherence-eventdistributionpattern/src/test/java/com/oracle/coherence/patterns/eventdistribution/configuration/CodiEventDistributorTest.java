@@ -83,11 +83,11 @@ public class CodiEventDistributorTest
                 "       <port system-property=\"remote.port\" />" +
                 "      </socket-address>" +
                 "     </remote-addresses>" +
-                "     <connect-timeout>2s</connect-timeout>" +
                 "    </tcp-initiator>" +
                 "    <outgoing-message-handler>" +
                 "     <request-timeout>5s</request-timeout>" +
                 "    </outgoing-message-handler>" +
+                "    <connect-timeout>2s</connect-timeout>" +
                 "   </initiator-config>" +
                 "  </remote-invocation-scheme>" +
                 "" +
@@ -189,11 +189,11 @@ public class CodiEventDistributorTest
                 "       <port system-property=\"remote.port\" /> " +
                 "      </socket-address> " +
                 "     </remote-addresses> " +
-                "     <connect-timeout>2s</connect-timeout> " +
                 "    </tcp-initiator> " +
                 "    <outgoing-message-handler> " +
                 "     <request-timeout>5s</request-timeout> " +
                 "    </outgoing-message-handler> " +
+                "    <connect-timeout>2s</connect-timeout> " +
                 "   </initiator-config> " +
                 "  </remote-invocation-scheme> " +
                 " " +
