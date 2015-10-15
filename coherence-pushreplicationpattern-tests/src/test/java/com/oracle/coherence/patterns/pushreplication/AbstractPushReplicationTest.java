@@ -25,6 +25,8 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
+import com.oracle.coherence.patterns.domain.DomainKey;
+import com.oracle.coherence.patterns.domain.DomainValue;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
@@ -82,6 +84,7 @@ import static org.hamcrest.Matchers.is;
 
 import static org.junit.Assert.fail;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,6 +130,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             new CoherenceCacheServerSchema().addOption(EnvironmentVariables.inherited()).useLocalHostMode()
                 .setClusterPort(clusterPort).setPofConfigURI("test-pof-config.xml").setPreferIPv4(true)
                 .setJMXManagementMode(JMXManagementMode.ALL).setJMXPort(getAvailablePortIterator())
+                .setSystemProperty("java.rmi.server.hostname", "127.0.0.1")
                 .setSystemProperty("remote.address",
                                    Constants.getLocalHost())
                                        .setSystemProperty("proxy.address", Constants.getLocalHost());
@@ -278,6 +282,136 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
         catch (Exception exception)
         {
             throw exception;
+        }
+        finally
+        {
+            // shutdown our local use of coherence
+            CacheFactory.shutdown();
+
+            if (londonServer != null)
+            {
+                londonServer.close();
+            }
+
+            if (newyorkServer != null)
+            {
+                newyorkServer.close();
+            }
+        }
+    }
+
+
+    /**
+     * Performs Active-Active topology tests where the two clusters
+     * have different partition counts.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testActiveActiveWithDifferentPartitionCounts() throws Exception
+    {
+        final String         cacheName     = "publishing-cache";
+
+        CoherenceCacheServer londonServer  = null;
+        CoherenceCacheServer newyorkServer = null;
+
+        LocalPlatform        platform      = LocalPlatform.getInstance();
+        InetAddress          localAddress  = platform.getLoopbackAddress();
+
+        try
+        {
+            SystemApplicationConsole console = new SystemApplicationConsole();
+
+            // define the london cluster port
+            Capture<Integer> londonClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            // establish the london server
+            CoherenceCacheServerSchema londonServerSchema =
+                newActiveCacheServerSchema(londonClusterPort).setSiteName("london")
+                        .setSystemProperty("proxy.address", Constants.getLocalHost())
+                        .setSystemProperty("proxy.port", getAvailablePortIterator())
+                        .setSystemProperty("remote.port", getAvailablePortIterator())
+                        .setSystemProperty("partition.count", 13);
+
+            londonServer = platform.realize("LONDON", londonServerSchema, console);
+
+            // define the london cluster port
+            Capture<Integer> newyorkClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            // establish the newyork server
+            CoherenceCacheServerSchema newyorkServerSchema =
+                newActiveCacheServerSchema(newyorkClusterPort).setSiteName("newyork")
+                        .setSystemProperty("proxy.port", londonServer.getSystemProperty("remote.port"))
+                        .setSystemProperty("remote.port", londonServer.getSystemProperty("proxy.port"))
+                        .setSystemProperty("partition.count", 257);
+
+            newyorkServer = platform.realize("NEWYORK", newyorkServerSchema, console);
+
+            // turn off local clustering so we don't connect with the process just started
+            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+
+            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
+            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            // populate the new york site
+            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "NEWYORK");
+
+            // grab a copy of the new york site entries (we'll use this for comparison later)
+            final Map<Object, Object> newyorkCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
+
+            // shutdown our connection to the new york cluster
+            CacheFactory.shutdown();
+
+            // connect to the london cluster
+            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
+            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            System.out.printf("\nWaiting for %d entries to synchronize between NEWYORK to LONDON.\n",
+                              newyorkCache.size());
+
+            NamedCache namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache), sameAs((Map) newyorkCache));
+
+            // assert that nothing been queued in London (from New York)
+            // (even though this is Active-Active, events from New York to London should not be
+            // re-queued in London for distribution back to New York).
+            Deferred<Integer> deferredMBeanAttribute =
+                londonServer
+                    .getDeferredMBeanAttribute(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
+                                               "EventsDistributedCount",
+                                               Integer.class);
+
+            Eventually.assertThat(valueOf(deferredMBeanAttribute), is(0));
+
+            // update the london site
+            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 1000, 500, "LONDON");
+
+            // grab a copy of the london site entries (we'll use this for comparison later)
+            final Map<Object, Object> londonCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
+
+            // shutdown our connection to the london cluster
+            CacheFactory.shutdown();
+
+            // assert that the value is in the newyork cluster
+            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            System.out.printf("\nWaiting for %d entries to synchronize between LONDON and NEWYORK.\n",
+                              londonCache.size());
+
+            namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache), sameAs((Map) londonCache));
         }
         finally
         {
@@ -1460,6 +1594,139 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
 
     /**
+     * Performs Active-Active topology tests with PortableObject keys and values
+     * where the classes are only defined in the client's POF configuration file
+     * to ensure that the keys and values are not deserialized or serialized on
+     * the server.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testShouldNotDeserializeKeysOrValuesInCluster() throws Exception
+    {
+        final int            entryCount    = 3;
+        final String         cacheName     = "publishing-cache";
+
+        CoherenceCacheServer londonServer  = null;
+        CoherenceCacheServer newyorkServer = null;
+
+        LocalPlatform        platform      = LocalPlatform.getInstance();
+
+        try
+        {
+            SystemApplicationConsole console = new SystemApplicationConsole();
+
+            // define the london cluster port
+            Capture<Integer> londonClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            // establish the london server
+            CoherenceCacheServerSchema londonServerSchema =
+                newActiveCacheServerSchema(londonClusterPort)
+                        .setSiteName("london")
+                        .setSystemProperty("proxy.address", Constants.getLocalHost())
+                        .setSystemProperty("proxy.port", getAvailablePortIterator())
+                        .setSystemProperty("remote.port", getAvailablePortIterator());
+
+            londonServer = platform.realize("LONDON", londonServerSchema, console);
+
+            // define the london cluster port
+            Capture<Integer> newyorkClusterPort = new Capture<Integer>(getAvailablePortIterator());
+
+            // establish the new york server
+            CoherenceCacheServerSchema newyorkServerSchema =
+                newActiveCacheServerSchema(newyorkClusterPort)
+                        .setSiteName("newyork")
+                        .setSystemProperty("proxy.port", londonServer.getSystemProperty("remote.port"))
+                        .setSystemProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
+
+            newyorkServer = platform.realize("NEWYORK", newyorkServerSchema, console);
+
+            // turn off local clustering so we don't connect with the process just started
+            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+
+            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
+            System.setProperty("tangosol.pof.config", "test-client-pof-config.xml");
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            // populate the new york site
+            NamedCache newYorkCache = CacheFactory.getCache(cacheName);
+            randomlyPopulateNamedCacheWithDomainValues(newYorkCache, 0, entryCount, "NEWYORK", false);
+
+            // grab a copy of the new york site entries (we'll use this for comparison later)
+            final Map<Object, Object> newyorkCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
+
+            // shutdown our connection to the new york cluster
+            CacheFactory.shutdown();
+
+            // connect to the london cluster
+            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
+            System.setProperty("tangosol.pof.config", "test-client-pof-config.xml");
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            System.out.printf("\nWaiting for %d entries to synchronize between NEWYORK to LONDON.\n",
+                              newyorkCache.size());
+
+            NamedCache namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache), sameAs((Map) newyorkCache));
+
+            // assert that nothing been queued in London (from New York)
+            // (even though this is Active-Active, events from New York to London should not be
+            // re-queued in London for distribution back to New York).
+            Deferred<Integer> deferredMBeanAttribute =
+                londonServer
+                    .getDeferredMBeanAttribute(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
+                                               "EventsDistributedCount",
+                                               Integer.class);
+
+            Eventually.assertThat(valueOf(deferredMBeanAttribute), is(0));
+
+            // update the london site
+            randomlyPopulateNamedCacheWithDomainValues(CacheFactory.getCache(cacheName), 1000, entryCount, "LONDON", false);
+
+            // grab a copy of the london site entries (we'll use this for comparison later)
+            final Map<Object, Object> londonCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
+
+            // shutdown our connection to the london cluster
+            CacheFactory.shutdown();
+
+            // assert that the value is in the new york cluster
+            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
+            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
+            CacheFactory
+                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+
+            System.out.printf("\nWaiting for %d entries to synchronize between LONDON and NEWYORK.\n",
+                              londonCache.size());
+
+            namedCache = CacheFactory.getCache(cacheName);
+
+            Eventually.assertThat(invoking(namedCache), sameAs((Map) londonCache));
+        }
+        finally
+        {
+            // shutdown our local use of coherence
+            CacheFactory.shutdown();
+
+            if (londonServer != null)
+            {
+                londonServer.close();
+            }
+
+            if (newyorkServer != null)
+            {
+                newyorkServer.close();
+            }
+        }
+    }
+
+
+    /**
      * Randomly populates the specified {@link NamedCache} by inserting, updating and removing a number of entries
      * (using single operation methods)
      *
@@ -1481,7 +1748,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
     /**
      * Randomly populates the specified {@link NamedCache} by inserting, updating and removing a number of entries
-     * (optionally using bulk operations).
+     * (optionally using bulk operations) where the value of the entry is a String.
      *
      * @param namedCache        The {@link NamedCache} to populate.
      * @param minimumKey        The minimum key value (inclusive)
@@ -1551,6 +1818,89 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
             int    key     = random.nextInt(nrEntries) + minimumKey;
 
             Object current = namedCache.remove(key);
+
+            changeCount = current == null ? changeCount : changeCount + 1;
+        }
+
+        System.out.printf("Inserted/Updated/Removed %d actual entries from the %s site.\n", changeCount, siteName);
+
+        return changeCount;
+    }
+
+
+    /**
+     * Randomly populates the specified {@link NamedCache} by inserting, updating and removing a number of entries
+     * (optionally using bulk operations) where the value of the entry is a {@link DomainValue} instance.
+     *
+     * @param namedCache        The {@link NamedCache} to populate.
+     * @param minimumKey        The minimum key value (inclusive)
+     * @param nrEntries         The number of entries to generate
+     * @param siteName          The name of the site in which the {@link NamedCache} is defined (for logging purposes).
+     * @param usePutAll         Should putAll be used to perform inserts
+     *
+     * @return The number of entries in the {@link NamedCache} that were inserted/updated/removed (ie: changed)
+     */
+    public int randomlyPopulateNamedCacheWithDomainValues(NamedCache namedCache,
+                                          int        minimumKey,
+                                          int        nrEntries,
+                                          String     siteName,
+                                          boolean    usePutAll)
+    {
+        Random random = new Random();
+
+        // insert a number of random entries
+        System.out.printf("Inserting %d random entries into %s site.\n", nrEntries, siteName);
+
+        @SuppressWarnings("unchecked") Map<DomainKey, DomainValue> mapInserts = usePutAll
+                                                                         ? new HashMap<DomainKey, DomainValue>()
+                                                                         : (Map<DomainKey, DomainValue>) namedCache;
+
+        for (int i = 0; i < nrEntries; i++)
+        {
+            DomainKey   key   = new DomainKey(minimumKey + i);
+            String      s     = randomString(random, "abcdefghijklmnopqrstuvwxyz", 20);
+            DomainValue value = new DomainValue(s);
+
+            mapInserts.put(key, value);
+        }
+
+        if (usePutAll)
+        {
+            namedCache.putAll(mapInserts);
+        }
+
+        int changeCount = nrEntries;
+
+        // update a random number of existing entries
+        int count = random.nextInt(nrEntries / 3);
+
+        System.out.printf("Updating %d random entries in %s site.\n", count, siteName);
+
+        for (int i = 0; i < count; i++)
+        {
+            DomainKey   key          = new DomainKey(random.nextInt(nrEntries) + minimumKey);
+
+            DomainValue currentValue = (DomainValue) namedCache.get(key);
+
+            if (currentValue != null)
+            {
+                String value = randomString(random, "abcdefghijklmnopqrstuvwxyz", 10);
+
+                namedCache.put(key, new DomainValue(currentValue.getValue() + value));
+                changeCount = changeCount + 1;
+            }
+
+        }
+
+        // remove a random number of existing entries
+        count = random.nextInt(nrEntries / 3);
+        System.out.printf("Removing %d random entries from the %s site.\n", count, siteName);
+
+        for (int i = 0; i < count; i++)
+        {
+            DomainKey key     = new DomainKey(random.nextInt(nrEntries) + minimumKey);
+
+            Object    current = namedCache.remove(key);
 
             changeCount = current == null ? changeCount : changeCount + 1;
         }

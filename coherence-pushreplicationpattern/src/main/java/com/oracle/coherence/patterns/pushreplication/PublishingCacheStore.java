@@ -413,33 +413,6 @@ public class PublishingCacheStore implements BinaryEntryStore
 
 
     /**
-     * A helper method to clear decorations from a Binary.
-     *
-     * NOTE: A distributed cache may decorate keys with partition and other information. This needs to be removed
-     * before distribution.
-     *
-     * @param binary The {@link Binary} to undecorate.
-     *
-     * @return A decorated Binary value
-     */
-    private Binary undecorateBinary(Binary binary)
-    {
-        if (ExternalizableHelper.isIntDecorated(binary))
-        {
-            Binary cleanBinary = ExternalizableHelper.removeIntDecoration(binary);
-
-            assert(!ExternalizableHelper.isIntDecorated(cleanBinary));
-
-            return cleanBinary;
-        }
-        else
-        {
-            return binary;
-        }
-    }
-
-
-    /**
      * A helper method to decorate a binary value with the local {@link ClusterMetaInfo}.
      *
      * @param context      The backing map manager context.
@@ -501,8 +474,6 @@ public class PublishingCacheStore implements BinaryEntryStore
      */
     public synchronized void store(BinaryEntry entry)
     {
-        ResourceRegistry registry = entry.getContext().getManager().getCacheFactory().getResourceRegistry();
-
         if (isMarkedForErase(entry.getContext(), entry.getBinaryValue()))
         {
             // SKIP
@@ -510,7 +481,7 @@ public class PublishingCacheStore implements BinaryEntryStore
         else
         {
             Binary decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getBinaryValue(), false);
-            Binary undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
+            Binary binaryKey            = entry.getBinaryKey();
             Binary originalBinaryValue  = entry.getOriginalBinaryValue();
 
             // ensure the BinaryValue we're sending contains the expiry
@@ -522,7 +493,7 @@ public class PublishingCacheStore implements BinaryEntryStore
             if (originalBinaryValue == null)
             {
                 distribute(new DistributableEntryInsertedEvent(cacheName,
-                                                               new DistributableEntry(undecoratedBinaryKey,
+                                                               new DistributableEntry(binaryKey,
                                                                                       decoratedBinaryValue,
                                                                                       null,
                                                                                       entry.getContext())));
@@ -530,7 +501,7 @@ public class PublishingCacheStore implements BinaryEntryStore
             else
             {
                 distribute(new DistributableEntryUpdatedEvent(cacheName,
-                                                              new DistributableEntry(undecoratedBinaryKey,
+                                                              new DistributableEntry(binaryKey,
                                                                                      decoratedBinaryValue,
                                                                                      originalBinaryValue,
                                                                                      entry.getContext())));
@@ -567,11 +538,10 @@ public class PublishingCacheStore implements BinaryEntryStore
             decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
         }
 
-        Binary undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
-        Binary originalBinaryValue  = entry.getOriginalBinaryValue();
+        Binary originalBinaryValue = entry.getOriginalBinaryValue();
 
         distribute(new DistributableEntryRemovedEvent(cacheName,
-                                                      new DistributableEntry(undecoratedBinaryKey,
+                                                      new DistributableEntry(entry.getBinaryKey(),
                                                                              decoratedBinaryValue,
                                                                              originalBinaryValue,
                                                                              entry.getContext())));
@@ -600,7 +570,7 @@ public class PublishingCacheStore implements BinaryEntryStore
             if (!isMarkedForErase(entry.getContext(), entry.getBinaryValue()))
             {
                 Binary decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getBinaryValue(), false);
-                Binary                undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
+                Binary binaryKey            = entry.getBinaryKey();
 
                 BackingMapBinaryEntry bmbe                 = (BackingMapBinaryEntry) entry;
                 Binary                originalBinaryValue  = bmbe.getOriginalBinaryValue();
@@ -614,7 +584,7 @@ public class PublishingCacheStore implements BinaryEntryStore
                 if (originalBinaryValue == null)
                 {
                     events.add(new DistributableEntryInsertedEvent(cacheName,
-                                                                   new DistributableEntry(undecoratedBinaryKey,
+                                                                   new DistributableEntry(binaryKey,
                                                                                           decoratedBinaryValue,
                                                                                           new Binary(),
                                                                                           entry.getContext())));
@@ -622,7 +592,7 @@ public class PublishingCacheStore implements BinaryEntryStore
                 else
                 {
                     events.add(new DistributableEntryUpdatedEvent(cacheName,
-                                                                  new DistributableEntry(undecoratedBinaryKey,
+                                                                  new DistributableEntry(binaryKey,
                                                                                          decoratedBinaryValue,
                                                                                          originalBinaryValue,
                                                                                          entry.getContext())));
@@ -659,12 +629,11 @@ public class PublishingCacheStore implements BinaryEntryStore
                 decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
             }
 
-            Binary                undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
-            BackingMapBinaryEntry bmbe                 = (BackingMapBinaryEntry) entry;
-            Binary                originalBinaryValue  = bmbe.getOriginalBinaryValue();
+            BackingMapBinaryEntry bmbe                = (BackingMapBinaryEntry) entry;
+            Binary                originalBinaryValue = bmbe.getOriginalBinaryValue();
 
             events.add(new DistributableEntryRemovedEvent(cacheName,
-                                                          new DistributableEntry(undecoratedBinaryKey,
+                                                          new DistributableEntry(entry.getBinaryKey(),
                                                                                  decoratedBinaryValue,
                                                                                  originalBinaryValue,
                                                                                  entry.getContext())));
