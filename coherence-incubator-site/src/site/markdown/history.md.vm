@@ -9,6 +9,7 @@ reverse chronological order.
 <h4>Source and Documentation Contributors</h4>
 
 *   Brian Oliver
+*   Jonathan Knight
 
 <h4>Global and Cross-Module Changes</h4>
 
@@ -73,6 +74,12 @@ reverse chronological order.
     to correctly update Entries with the required expiry time.
 
 <h4>coherence-pushreplicationpattern</h4>
+
+<h4>coherence-pushreplicationpattern</h4>
+
+*   [COHINC-36](http://java.net/jira/browse/COHINC-36): Fixed an issue where keys
+    of replicated entries were being deserialized on the receiving cluster during
+    replication.
 
 *   [COHINC-64](http://java.net/jira/browse/COHINC-64):  Changed the
     coherence-web dependency to be "provided".

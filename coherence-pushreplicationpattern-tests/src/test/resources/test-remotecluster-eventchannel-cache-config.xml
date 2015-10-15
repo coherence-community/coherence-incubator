@@ -43,7 +43,7 @@
 	<caching-scheme-mapping>
 		<cache-mapping>
 			<cache-name>publishing-*</cache-name>
-			<scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
+			<scheme-name>publishing-scheme</scheme-name>
 
 			<event:distributor>
 				<event:distributor-name>{cache-name}</event:distributor-name>
@@ -80,6 +80,12 @@
 	</caching-scheme-mapping>
 
 	<caching-schemes>
+		<distributed-scheme>
+			<scheme-name>publishing-scheme</scheme-name>
+			<scheme-ref>distributed-scheme-with-publishing-cachestore</scheme-ref>
+			<partition-count system-property="partition.count">257</partition-count>
+		</distributed-scheme>
+
 		<remote-invocation-scheme>
 			<service-name>remote-site</service-name>
 			<initiator-config>
