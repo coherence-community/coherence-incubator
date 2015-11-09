@@ -57,6 +57,12 @@ reverse chronological order.
     the "drain" functionality for Coherence-based event distribution
     implementations so that they use the configured batches and delays.
 
+<h4>coherence-pushreplicationpattern</h4>
+
+*   [COHINC-36](http://java.net/jira/browse/COHINC-36): Fixed an issue where keys
+    of replicated entries were being deserialized on the receiving cluster during
+    replication.
+
 
 --------------------------------------------------------------------------------
 

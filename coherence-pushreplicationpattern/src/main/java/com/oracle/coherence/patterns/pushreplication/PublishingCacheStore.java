@@ -484,13 +484,13 @@ public class PublishingCacheStore implements BinaryEntryStore
         else
         {
             Binary decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getBinaryValue(), false);
-            Binary undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
+            Binary binaryKey            = entry.getBinaryKey();
             Binary originalBinaryValue  = entry.getOriginalBinaryValue();
 
             if (originalBinaryValue == null)
             {
                 distribute(new DistributableEntryInsertedEvent(cacheName,
-                                                               new DistributableEntry(undecoratedBinaryKey,
+                                                               new DistributableEntry(binaryKey,
                                                                                       decoratedBinaryValue,
                                                                                       null,
                                                                                       entry.getContext())));
@@ -498,7 +498,7 @@ public class PublishingCacheStore implements BinaryEntryStore
             else
             {
                 distribute(new DistributableEntryUpdatedEvent(cacheName,
-                                                              new DistributableEntry(undecoratedBinaryKey,
+                                                              new DistributableEntry(binaryKey,
                                                                                      decoratedBinaryValue,
                                                                                      originalBinaryValue,
                                                                                      entry.getContext())));
@@ -535,11 +535,10 @@ public class PublishingCacheStore implements BinaryEntryStore
             decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
         }
 
-        Binary undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
         Binary originalBinaryValue  = entry.getOriginalBinaryValue();
 
         distribute(new DistributableEntryRemovedEvent(cacheName,
-                                                      new DistributableEntry(undecoratedBinaryKey,
+                                                      new DistributableEntry(entry.getBinaryKey(),
                                                                              decoratedBinaryValue,
                                                                              originalBinaryValue,
                                                                              entry.getContext())));
@@ -568,7 +567,7 @@ public class PublishingCacheStore implements BinaryEntryStore
             if (!isMarkedForErase(entry.getContext(), entry.getBinaryValue()))
             {
                 Binary decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getBinaryValue(), false);
-                Binary                undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
+                Binary binaryKey            = undecorateBinary(entry.getBinaryKey());
 
                 BackingMapBinaryEntry bmbe                 = (BackingMapBinaryEntry) entry;
                 Binary                originalBinaryValue  = bmbe.getOriginalBinaryValue();
@@ -576,7 +575,7 @@ public class PublishingCacheStore implements BinaryEntryStore
                 if (originalBinaryValue == null)
                 {
                     events.add(new DistributableEntryInsertedEvent(cacheName,
-                                                                   new DistributableEntry(undecoratedBinaryKey,
+                                                                   new DistributableEntry(binaryKey,
                                                                                           decoratedBinaryValue,
                                                                                           new Binary(),
                                                                                           entry.getContext())));
@@ -584,7 +583,7 @@ public class PublishingCacheStore implements BinaryEntryStore
                 else
                 {
                     events.add(new DistributableEntryUpdatedEvent(cacheName,
-                                                                  new DistributableEntry(undecoratedBinaryKey,
+                                                                  new DistributableEntry(binaryKey,
                                                                                          decoratedBinaryValue,
                                                                                          originalBinaryValue,
                                                                                          entry.getContext())));
@@ -621,12 +620,11 @@ public class PublishingCacheStore implements BinaryEntryStore
                 decoratedBinaryValue = decorateBinary(entry.getContext(), entry.getOriginalBinaryValue(), true);
             }
 
-            Binary                undecoratedBinaryKey = undecorateBinary(entry.getBinaryKey());
-            BackingMapBinaryEntry bmbe                 = (BackingMapBinaryEntry) entry;
-            Binary                originalBinaryValue  = bmbe.getOriginalBinaryValue();
+            BackingMapBinaryEntry bmbe                = (BackingMapBinaryEntry) entry;
+            Binary                originalBinaryValue = bmbe.getOriginalBinaryValue();
 
             events.add(new DistributableEntryRemovedEvent(cacheName,
-                                                          new DistributableEntry(undecoratedBinaryKey,
+                                                          new DistributableEntry(entry.getBinaryKey(),
                                                                                  decoratedBinaryValue,
                                                                                  originalBinaryValue,
                                                                                  entry.getContext())));
