@@ -1695,7 +1695,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
 
             // connect to the london cluster
             System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
+            System.setProperty("tangosol.pof.config", "test-client-pof-config.xml");
             CacheFactory
                 .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
 
