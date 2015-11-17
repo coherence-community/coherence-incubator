@@ -8,6 +8,25 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
+*   Brian Oliver, Jonathan Knight
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   [COHINC-104](http://java.net/jira/browse/COHINC-104): Upgraded to use Oracle Coherence 3.7.1.13
+
+<h4>coherence-pushreplicationpattern</h4>
+
+*   [COHINC-36](http://java.net/jira/browse/COHINC-36): Fixed an issue where keys
+of replicated entries were being deserialized on the receiving cluster during
+replication.
+
+
+--------------------------------------------------------------------------------
+
+<h3>Version: 11.2.1 built on 2014-10-23 10:47</h3>
+
+<h4>Source and Documentation Contributors</h4>
+
 *   Brian Oliver
 
 <h4>Global and Cross-Module Changes</h4>
@@ -56,12 +75,6 @@ reverse chronological order.
 *   [COHINC-115](http://java.net/jira/browse/COHINC-115): Refactored
     the "drain" functionality for Coherence-based event distribution
     implementations so that they use the configured batches and delays.
-
-<h4>coherence-pushreplicationpattern</h4>
-
-*   [COHINC-36](http://java.net/jira/browse/COHINC-36): Fixed an issue where keys
-    of replicated entries were being deserialized on the receiving cluster during
-    replication.
 
 
 --------------------------------------------------------------------------------
