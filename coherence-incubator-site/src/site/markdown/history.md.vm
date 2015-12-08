@@ -10,6 +10,7 @@ reverse chronological order.
 
 *   Brian Oliver
 *   Jonathan Knight
+*   Jan Vissers
 
 <h4>Global and Cross-Module Changes</h4>
 
@@ -27,6 +28,12 @@ reverse chronological order.
 *   [COHINC-144](http://java.net/jira/browse/COHINC-144): Introduced the
     ability to universally control all EventChannels for a single EventDistributor
     though the new EventDistributor JMX MBeans.
+
+<h4>coherence-processingnpattern</h4>
+
+*   [COHINC-143](http://java.net/jira/browse/COHINC-143): Resolved issue
+    where the processing pattern cluster-config configuration elements aren't
+    correctly included when using introduce-cache-config namespace.
 
 <h4>coherence-pushreplicationpattern</h4>
 

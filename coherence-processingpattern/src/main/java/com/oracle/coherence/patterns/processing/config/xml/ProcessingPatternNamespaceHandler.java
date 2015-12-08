@@ -26,7 +26,7 @@
 
 package com.oracle.coherence.patterns.processing.config.xml;
 
-
+import com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler.IntroduceCacheConfigSupport;
 import com.oracle.coherence.patterns.processing.config.builder.AttributeConfig;
 import com.oracle.coherence.patterns.processing.config.builder.LocalExecutorDispatcherBuilder;
 import com.oracle.coherence.patterns.processing.config.builder.LoggingDispatcherBuilder;
@@ -46,6 +46,7 @@ import com.tangosol.config.xml.AbstractNamespaceHandler;
 import com.tangosol.config.xml.DocumentElementPreprocessor;
 import com.tangosol.config.xml.ProcessingContext;
 import com.tangosol.net.events.InterceptorRegistry;
+import com.tangosol.run.xml.QualifiedName;
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.util.RegistrationBehavior;
 
@@ -59,6 +60,7 @@ import java.net.URI;
  * @author Paul Mackin
  */
 public class ProcessingPatternNamespaceHandler extends AbstractNamespaceHandler
+    implements IntroduceCacheConfigSupport
 {
     /**
      * Standard Constructor.
@@ -111,5 +113,23 @@ public class ProcessingPatternNamespaceHandler extends AbstractNamespaceHandler
         {
             registryInterceptor.registerEventInterceptor(new LifecycleInterceptor(), RegistrationBehavior.ALWAYS);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void mergeConfiguration(ProcessingContext context,
+                                   String            uri,
+                                   XmlElement        xmlElement,
+                                   XmlElement        xmlIntoCacheConfig,
+                                   QualifiedName     qualifiedName)
+    {
+        XmlElement xmlMergeElement = (XmlElement) xmlElement.clone();
+
+        // annotate the origin of the merging element
+        xmlMergeElement.addAttribute(qualifiedName.getName()).setString(uri);
+
+        xmlIntoCacheConfig.getElementList().add(xmlMergeElement);
     }
 }

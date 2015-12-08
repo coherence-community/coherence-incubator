@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-	File: coherence-processingpattern-simple-server-cache-config.xml
- 
+<!--
+	File: coherence-processingpattern-modular-cache-config.xml
+
  	DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- 	
-	The contents of this file are subject to the terms and conditions of 
+
+	The contents of this file are subject to the terms and conditions of
 	the Common Development and Distribution License 1.0 (the "License").
 
 	You may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@
 	If applicable, add the following below the License Header, with the fields
 	enclosed by brackets [] replaced by your own identifying information:
 	"Portions Copyright [year] [name of copyright owner]"
-    
+
     Copyright (c) 2009. All Rights Reserved. Oracle Corporation.
   -->
 <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler"
-                xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
-                element:introduce-cache-config="coherence-processingpattern-cache-config.xml">
+              xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
+              element:introduce-cache-config="coherence-processingpattern-cache-config.xml">
     <processing:cluster-config pof="true">
         <processing:dispatchers>
             <processing:logging-dispatcher displayname="Logging Dispatcher" />
@@ -40,18 +40,18 @@
             <processing:local-executor-dispatcher displayname="Local Dispatcher" />
         </processing:dispatchers>
 
-          <processing:taskprocessors>
+        <processing:taskprocessors>
             <processing:taskprocessordefinition id="SingleTaskProcessor" displayname="Single Task Processor"
-                type="SINGLE">
+                                                type="SINGLE">
                 <instance>
-                  <class-name>com.oracle.coherence.patterns.processing.taskprocessor.DefaultTaskProcessor</class-name>
+                    <class-name>com.oracle.coherence.patterns.processing.taskprocessor.DefaultTaskProcessor</class-name>
                     <init-params>
-                      <init-param>String Task Processor</init-param>
-                      <init-param>10</init-param>
+                        <init-param>String Task Processor</init-param>
+                        <init-param>10</init-param>
                     </init-params>
                 </instance>
                 <processing:attribute name="type">single</processing:attribute>
-             </processing:taskprocessordefinition>
+            </processing:taskprocessordefinition>
         </processing:taskprocessors>
     </processing:cluster-config>
 </cache-config>

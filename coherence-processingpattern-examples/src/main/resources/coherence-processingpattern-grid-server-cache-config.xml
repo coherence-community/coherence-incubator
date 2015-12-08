@@ -27,7 +27,7 @@
   -->
 <cache-config xmlns:processing="class:com.oracle.coherence.patterns.processing.config.xml.ProcessingPatternNamespaceHandler"
               xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
-              element:introduce-cache-config="coherence-processingpattern-cache-config.xml">>
+              element:introduce-cache-config="coherence-processingpattern-cache-config.xml">
     <processing:cluster-config pof="true">
         <processing:dispatchers>
             <processing:logging-dispatcher displayname="Logging Dispatcher" />
