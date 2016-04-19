@@ -192,8 +192,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
         if (LOGGER.isLoggable(Level.FINER))
         {
             LOGGER.entering(getClass().getName(),
-                            "Constructor",
-                            new Object[] {name, model, initialState, executorService, ignoreRuntimeExceptions});
+                            "Constructor");
         }
 
         // FUTURE: we should prove that the model is valid
@@ -465,8 +464,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
         if (LOGGER.isLoggable(Level.FINER))
         {
             LOGGER.entering(getClass().getName(),
-                            String.format("[%s]: processLater", getName()),
-                            new Object[] {event, duration, timeUnit});
+                            String.format("%s: processLater", getName()));
         }
 
         if (isAcceptingEvents.get())
@@ -572,7 +570,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
     {
         if (LOGGER.isLoggable(Level.FINER))
         {
-            LOGGER.entering(getClass().getName(), String.format("[%s]: processEvent", getName()), new Object[] {event});
+            LOGGER.entering(getClass().getName(), String.format("%s: processEvent", getName()));
         }
 
         // this is a totally defensive synchronized block to prevent multiple threads
@@ -605,7 +603,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                     // do nothing for the event
                     if (LOGGER.isLoggable(Level.FINER))
                     {
-                        LOGGER.finer(String.format("[%s]: Ignoring event %s as it produced a null desired state.",
+                        LOGGER.finer(String.format("%s: Ignoring event %s as it produced a null desired state.",
                                                    name, event));
                     }
 
@@ -639,7 +637,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                             if (LOGGER.isLoggable(Level.FINER))
                             {
                                 LOGGER.finer(String
-                                    .format("[%s]: Can't find a valid transition from %s to %s.  Ignoring event %s.",
+                                    .format("%s: Can't find a valid transition from %s to %s.  Ignoring event %s.",
                                             name, stateCurrent, stateDesired, event));
                             }
 
@@ -676,7 +674,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                     if (LOGGER.isLoggable(Level.FINER))
                                     {
                                         LOGGER.finer(String
-                                            .format("[%s]: Transition for event %s from %s to %s has been rolledback due to:\n%s",
+                                            .format("%s: Transition for event %s from %s to %s has been rolledback due to:\n%s",
                                                     name, event, stateCurrent, stateDesired, e));
                                     }
 
@@ -697,7 +695,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                         if (LOGGER.isLoggable(Level.FINER))
                                         {
                                             LOGGER.finer(String
-                                                .format("[%s]: Transition Action %s for event %s from %s to %s raised runtime exception (continuing with transition and ignoring the exception):\n%s",
+                                                .format("%s: Transition Action %s for event %s from %s to %s raised runtime exception (continuing with transition and ignoring the exception):\n%s",
                                                         name, actionTransition, event, stateCurrent, stateDesired, e));
                                         }
                                     }
@@ -715,7 +713,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                             writerPrint.close();
 
                                             LOGGER.warning(String
-                                                .format("[%s]: Stopping the machine as the Transition Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
+                                                .format("%s: Stopping the machine as the Transition Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
                                                         name, actionTransition, event, stateCurrent, stateDesired, e,
                                                         writerString.toString()));
                                         }
@@ -757,7 +755,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                         if (LOGGER.isLoggable(Level.FINER))
                                         {
                                             LOGGER.finer(String
-                                                .format("[%s]: State Exit Action %s for event %s from %s to %s raised runtime exception (continuing with transition and ignoring the exception):\n%s",
+                                                .format("%s: State Exit Action %s for event %s from %s to %s raised runtime exception (continuing with transition and ignoring the exception):\n%s",
                                                         name, actionExit, event, stateCurrent, stateDesired, e));
                                         }
                                     }
@@ -775,7 +773,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                             writerPrint.close();
 
                                             LOGGER.warning(String
-                                                .format("[%s]: Stopping the machine as the State Exit Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
+                                                .format("%s: Stopping the machine as the State Exit Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
                                                         name, actionExit, event, stateCurrent, stateDesired, e,
                                                         writerString.toString()));
                                         }
@@ -797,7 +795,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                             {
                                 if (LOGGER.isLoggable(Level.FINER))
                                 {
-                                    LOGGER.finer(String.format("[%s]: No Exit Action defined for %s", name,
+                                    LOGGER.finer(String.format("%s: No Exit Action defined for %s", name,
                                                                stateCurrent));
                                 }
                             }
@@ -832,7 +830,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                     if (LOGGER.isLoggable(Level.FINER))
                                     {
                                         LOGGER.finer(String
-                                            .format("[%s]: State Entry Action %s for event %s from %s to %s raised runtime exception (continuing and ignoring the exception):\n%s",
+                                            .format("%s: State Entry Action %s for event %s from %s to %s raised runtime exception (continuing and ignoring the exception):\n%s",
                                                     name, actionEntry, event, stateCurrent, stateDesired, e));
                                     }
                                 }
@@ -850,7 +848,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                                         writerPrint.close();
 
                                         LOGGER.warning(String
-                                            .format("[%s]: Stopping the machine as the State Entry Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
+                                            .format("%s: Stopping the machine as the State Entry Action %s for event %s from %s to %s raised runtime exception %s:\n%s",
                                                     name, actionEntry, event, stateCurrent, stateDesired, e,
                                                     writerString.toString()));
                                     }
@@ -873,14 +871,14 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                         {
                             if (LOGGER.isLoggable(Level.FINER))
                             {
-                                LOGGER.finer(String.format("[%s]: No Entry Action defined for %s", name, stateDesired));
+                                LOGGER.finer(String.format("%s: No Entry Action defined for %s", name, stateDesired));
                             }
                         }
 
                         if (LOGGER.isLoggable(Level.FINER))
                         {
                             LOGGER.finer(String
-                                .format("[%s]: State changed to %s. There are %d remaining events to process", name,
+                                .format("%s: State changed to %s. There are %d remaining events to process", name,
                                         stateDesired, pendingEventCount.get()));
                         }
 
@@ -947,7 +945,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                             if (LOGGER.isLoggable(Level.FINER))
                             {
                                 LOGGER.finer(String
-                                    .format("[%s]: Ignoring Instruction [%s] returned as part of transition to %s as it an unknown type for this Finite State Machine.",
+                                    .format("%s: Ignoring Instruction %s returned as part of transition to %s as it an unknown type for this Finite State Machine.",
                                             name, instruction, stateDesired));
                             }
                         }
@@ -961,7 +959,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
             {
                 if (LOGGER.isLoggable(Level.FINER))
                 {
-                    LOGGER.finer(String.format("[%s]: Completed processing events", name));
+                    LOGGER.finer(String.format("%s: Completed processing events", name));
                 }
 
                 notifyAll();
@@ -970,7 +968,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
 
         if (LOGGER.isLoggable(Level.FINER))
         {
-            LOGGER.exiting(getClass().getName(), String.format("[%s]: processEvent", getName()));
+            LOGGER.exiting(getClass().getName(), String.format("%s: processEvent", getName()));
         }
     }
 
@@ -1594,7 +1592,7 @@ public class NonBlockingFiniteStateMachine<S extends Enum<S>> implements FiniteS
                 if (LOGGER.isLoggable(Level.FINER))
                 {
                     LOGGER.finer(String
-                        .format("[%s]: Skipping event %s as another event was interleaved between when it was scheduled and when it was processed",
+                        .format("%s: Skipping event %s as another event was interleaved between when it was scheduled and when it was processed",
                                 context.getName(), this));
                 }
 

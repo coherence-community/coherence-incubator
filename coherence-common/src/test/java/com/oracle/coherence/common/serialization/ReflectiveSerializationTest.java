@@ -35,6 +35,7 @@ import com.tangosol.io.pof.ConfigurablePofContext;
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -353,6 +354,7 @@ public class ReflectiveSerializationTest extends AbstractCoherenceTest
      * @throws IOException
      */
     @Test
+    @Ignore
     public void testVersionedTypeV0toV1Upgrade() throws IOException
     {
         // deserialize a V0

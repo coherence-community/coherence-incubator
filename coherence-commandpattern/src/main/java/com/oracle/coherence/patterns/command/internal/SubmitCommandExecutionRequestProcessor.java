@@ -33,8 +33,8 @@ import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
 import com.tangosol.net.BackingMapManagerContext;
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.DistributedCacheService;
+import com.tangosol.net.PartitionedService;
+import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
 import com.tangosol.util.InvocableMap.Entry;
 import com.tangosol.util.processor.AbstractProcessor;
@@ -92,23 +92,19 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object process(Entry entry)
     {
         // we need the CommandExecutor so that we can submit the CommandExecutionRequest for execution
-        CommandExecutor commandExecutor;
-        Identifier      contextIdentifier = commandExecutionRequest.getContextIdentifier();
+        CommandExecutor          commandExecutor;
+        Identifier               contextIdentifier        = commandExecutionRequest.getContextIdentifier();
+
+        BackingMapManagerContext backingMapManagerContext = ((BinaryEntry) entry).getContext();
 
         if (acceptCommandIfContextDoesNotExist)
         {
-            // TODO: The following line needs to be changed when we adopt Coherence 3.5.2 to use the BinaryEntry.getContext()
-            BackingMapManagerContext backingMapManagerContext =
-                ((DistributedCacheService) CacheFactory.getService("DistributedCacheForCommandPattern"))
-                    .getBackingMapManager().getContext();
-
-            commandExecutor = CommandExecutorManager.ensureCommandExecutor(contextIdentifier, backingMapManagerContext);
+            commandExecutor = CommandExecutorManager.ensureCommandExecutor(contextIdentifier,
+                                                                           (PartitionedService) backingMapManagerContext.getCacheService());
         }
         else
         {
@@ -124,14 +120,12 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
         else
         {
             // accept the command execution request for execution
-            return commandExecutor.acceptCommandExecutionRequest(commandExecutionRequest);
+            return commandExecutor.acceptCommandExecutionRequest(commandExecutionRequest, backingMapManagerContext);
         }
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void readExternal(DataInput in) throws IOException
     {
         this.commandExecutionRequest = (CommandExecutionRequest) ExternalizableHelper.readExternalizableLite(in);
@@ -139,9 +133,7 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(DataOutput out) throws IOException
     {
         ExternalizableHelper.writeExternalizableLite(out, commandExecutionRequest);
@@ -149,9 +141,7 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void readExternal(PofReader reader) throws IOException
     {
         this.commandExecutionRequest            = (CommandExecutionRequest) reader.readObject(0);
@@ -159,9 +149,7 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void writeExternal(PofWriter writer) throws IOException
     {
         writer.writeObject(0, commandExecutionRequest);

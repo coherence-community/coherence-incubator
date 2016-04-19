@@ -34,21 +34,6 @@
     element:introduce-cache-config="coherence-commandpattern-cache-config.xml">
 
     <caching-schemes>
-        <proxy-scheme>
-            <service-name>ExtendTcpProxyService</service-name>
-            <acceptor-config>
-                <serializer>
-                    <class-name>com.tangosol.io.pof.ConfigurablePofContext</class-name>
-                </serializer>
-                <tcp-acceptor>
-                    <local-address>
-                        <address>localhost</address>
-                        <port>20000</port>
-                    </local-address>
-                </tcp-acceptor>
-            </acceptor-config>
-            <autostart>true</autostart>
-        </proxy-scheme>
     </caching-schemes>
 </cache-config>
 

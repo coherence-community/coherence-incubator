@@ -31,11 +31,11 @@ import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
 import com.oracle.coherence.patterns.command.Context;
 import com.tangosol.net.BackingMapManagerContext;
+import com.tangosol.net.PartitionedService;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An {@link CommandExecutorManager} is responsible for managing and scheduling
@@ -49,16 +49,23 @@ import java.util.concurrent.TimeUnit;
 public final class CommandExecutorManager
 {
     /**
-     * The map of {@link Context} {@link ContextIdentifier}s to associated {@link CommandExecutor}s
+     * The number of {@link ScheduledExecutorService}s we'll create for {@link CommandExecutor}s.
+     *
+     * <p>THIS MUST BE A PRIME NUMBER</p>
+     */
+    private static int EXECUTOR_SERVICES = 5;
+
+    /**
+     * The map of {@link Context} {@link Identifier}s to associated {@link CommandExecutor}s
      * that the {@link CommandExecutorManager} is managing.
      */
     private static ConcurrentHashMap<Identifier, CommandExecutor> commandExecutors;
 
     /**
-     * An {@link ScheduledExecutorService} that we can use to perform asynchronous tasks, like
+     * The {@link ScheduledExecutorService}s that we can use to perform asynchronous tasks, like
      * managing {@link CommandExecutor}s.
      */
-    private static ScheduledExecutorService executorService;
+    private static ScheduledExecutorService[] executorServices;
 
     /**
      * A {@link ThreadGroup} for the {@link ExecutorService} so that {@link Thread}s
@@ -68,31 +75,58 @@ public final class CommandExecutorManager
 
 
     /**
+     * Static initialization.
+     */
+    static
+    {
+        // TODO: get the size of the thread pool for our executorService from the system properties (or cache config?)
+
+        commandExecutors           = new ConcurrentHashMap<Identifier, CommandExecutor>();
+        executorServiceThreadGroup = new ThreadGroup("CommandExecutorManager");
+
+        // establish the ScheduledExecutorServices we'll allocate to CommandExecutors
+        executorServices = new ScheduledExecutorService[EXECUTOR_SERVICES];
+
+        for (int i = 0; i < EXECUTOR_SERVICES; i++)
+        {
+            executorServices[i] =
+                ExecutorServiceFactory.newSingleThreadScheduledExecutor(ThreadFactories.newThreadFactory(true,
+                                                                                                         "CommandExecutor",
+                                                                                                         executorServiceThreadGroup));
+
+        }
+    }
+
+
+    /**
      * Returns the {@link CommandExecutor} for the {@link Context} identified by the provided {@link Identifier}.
      * If a {@link CommandExecutor} does not yet exist, one is created and associated with the specified
      * {@link BackingMapManagerContext}.
      *
-     * @param contextIdentifier The {@link Identifier} of the {@link Context} for which we
-     *                          are requesting a {@link CommandExecutor}.
-     * @param backingMapManagerContext The {@link BackingMapManagerContext} to which the {@link CommandExecutor}
-     *                                 is associated
+     * @param contextIdentifier   The {@link Identifier} of the {@link Context} for which we
+     *                            are requesting a {@link CommandExecutor}.
+     * @param partitionedService  the {@link PartitionedService} on which the {@link CommandExecutor}
+     *                            is operating
      *
      * @return {@link CommandExecutor}
      */
-    public static CommandExecutor ensureCommandExecutor(Identifier               contextIdentifier,
-                                                        BackingMapManagerContext backingMapManagerContext)
+    public static CommandExecutor ensureCommandExecutor(Identifier         contextIdentifier,
+                                                        PartitionedService partitionedService)
     {
         CommandExecutor commandExecutor = commandExecutors.get(contextIdentifier);
 
         if (commandExecutor == null)
         {
+            // determine which executor service the CommandExecutor should use
+            int executorServiceId = contextIdentifier.hashCode() % EXECUTOR_SERVICES;
+
             if (Logger.isEnabled(Logger.DEBUG))
             {
-                Logger.log(Logger.DEBUG, "Creating CommandExecutor for %s", contextIdentifier);
+                Logger.log(Logger.DEBUG, "Creating CommandExecutor for %s (using ExecutorService %d)", contextIdentifier, executorServiceId);
             }
 
             // create and register the new CommandExecutor
-            commandExecutor = new CommandExecutor(contextIdentifier, backingMapManagerContext);
+            commandExecutor = new CommandExecutor(contextIdentifier, partitionedService, executorServices[executorServiceId]);
 
             CommandExecutor previouslyRegisteredCommandExecutor = commandExecutors.putIfAbsent(contextIdentifier,
                                                                                                commandExecutor);
@@ -148,43 +182,5 @@ public final class CommandExecutorManager
         }
 
         return commandExecutors.remove(contextIdentifier);
-    }
-
-
-    /**
-     * Schedules the provided {@link Runnable} to be executed at a specified time in the future.
-     *
-     * @param runnable The {@link Runnable} to execute
-     * @param delay The minimum delay from now until the execution should commence
-     * @param timeUnit The {@link TimeUnit} for the specified delay
-     */
-    public static void schedule(Runnable runnable,
-                                long     delay,
-                                TimeUnit timeUnit)
-    {
-        if (delay == 0)
-        {
-            executorService.execute(runnable);
-        }
-        else
-        {
-            executorService.schedule(runnable, delay, timeUnit);
-        }
-    }
-
-
-    /**
-     * Static initialization.
-     */
-    static
-    {
-        // TODO: get the size of the thread pool for our executorService from the system properties (or cache config?)
-
-        commandExecutors           = new ConcurrentHashMap<Identifier, CommandExecutor>();
-        executorServiceThreadGroup = new ThreadGroup("CommandExecutorManager");
-        executorService =
-            ExecutorServiceFactory
-                .newScheduledThreadPool(5, ThreadFactories
-                    .newThreadFactory(true, "CommandExecutor", executorServiceThreadGroup));
     }
 }

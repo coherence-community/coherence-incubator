@@ -31,9 +31,8 @@ import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.logging.Logger;
 import com.oracle.coherence.patterns.command.Context;
 import com.tangosol.net.BackingMapManagerContext;
+import com.tangosol.net.PartitionedService;
 import com.tangosol.util.MapEvent;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * A {@link ContextBackingMapListener} is responsible for starting
@@ -59,9 +58,7 @@ public class ContextBackingMapListener extends AbstractMultiplexingBackingMapLis
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void onBackingMapEvent(MapEvent    mapEvent,
                                   final Cause cause)
     {
@@ -75,21 +72,14 @@ public class ContextBackingMapListener extends AbstractMultiplexingBackingMapLis
             }
 
             final CommandExecutor commandExecutor = CommandExecutorManager.ensureCommandExecutor(contextIdentifier,
-                                                                                                 getContext());
+                                                                                                 (PartitionedService) getContext().getCacheService());
 
             if (Logger.isEnabled(Logger.DEBUG))
             {
                 Logger.log(Logger.DEBUG, "Scheduling ContextExecutor for %s to start", contextIdentifier);
             }
 
-            CommandExecutorManager.schedule(new Runnable()
-            {
-                public void run()
-                {
-                    commandExecutor.start();
-                }
-            }, 0, TimeUnit.SECONDS);
-
+            commandExecutor.start();
         }
         else if (mapEvent.getId() == MapEvent.ENTRY_DELETED)
         {
