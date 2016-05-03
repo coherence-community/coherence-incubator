@@ -29,6 +29,7 @@ import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.logging.Logger;
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
+import com.oracle.coherence.common.util.Primes;
 import com.oracle.coherence.patterns.command.Context;
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.PartitionedService;
@@ -53,7 +54,7 @@ public final class CommandExecutorManager
      *
      * <p>THIS MUST BE A PRIME NUMBER</p>
      */
-    private static int EXECUTOR_SERVICES = 5;
+    private static int EXECUTOR_SERVICES = 3;
 
     /**
      * The map of {@link Context} {@link Identifier}s to associated {@link CommandExecutor}s
@@ -79,7 +80,17 @@ public final class CommandExecutorManager
      */
     static
     {
-        // TODO: get the size of the thread pool for our executorService from the system properties (or cache config?)
+        // determine the number of executor service (threads) to allocate
+        try
+        {
+            EXECUTOR_SERVICES =
+                Primes.closestPrime(Integer.parseInt(System.getProperty("coherence.commandpattern.suggestedthreads",
+                                                                        "3")));
+        }
+        catch (NumberFormatException e)
+        {
+            EXECUTOR_SERVICES = 3;
+        }
 
         commandExecutors           = new ConcurrentHashMap<Identifier, CommandExecutor>();
         executorServiceThreadGroup = new ThreadGroup("CommandExecutorManager");
@@ -122,11 +133,16 @@ public final class CommandExecutorManager
 
             if (Logger.isEnabled(Logger.DEBUG))
             {
-                Logger.log(Logger.DEBUG, "Creating CommandExecutor for %s (using ExecutorService %d)", contextIdentifier, executorServiceId);
+                Logger.log(Logger.DEBUG,
+                           "Creating CommandExecutor for %s (using ExecutorService %d)",
+                           contextIdentifier,
+                           executorServiceId);
             }
 
             // create and register the new CommandExecutor
-            commandExecutor = new CommandExecutor(contextIdentifier, partitionedService, executorServices[executorServiceId]);
+            commandExecutor = new CommandExecutor(contextIdentifier,
+                                                  partitionedService,
+                                                  executorServices[executorServiceId]);
 
             CommandExecutor previouslyRegisteredCommandExecutor = commandExecutors.putIfAbsent(contextIdentifier,
                                                                                                commandExecutor);
