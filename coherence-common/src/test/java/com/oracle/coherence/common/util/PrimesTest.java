@@ -3,7 +3,7 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of
+ * The contents of this file are subject to the terms and conditions of 
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
@@ -46,9 +46,9 @@ public class PrimesTest
     @Test
     public void shouldReturnOneForClosestPrimesToOneAndBelow()
     {
-        assertThat(Primes.closestPrime(1), is(1));
-        assertThat(Primes.closestPrime(0), is(1));
-        assertThat(Primes.closestPrime(-1), is(1));
+        assertThat(Primes.closestPrimeTo(1), is(1));
+        assertThat(Primes.closestPrimeTo(0), is(1));
+        assertThat(Primes.closestPrimeTo(-1), is(1));
     }
 
 
@@ -58,10 +58,10 @@ public class PrimesTest
     @Test
     public void shouldReturnPrimeForClosestOfAPrime()
     {
-        assertThat(Primes.closestPrime(2), is(2));
-        assertThat(Primes.closestPrime(3), is(3));
-        assertThat(Primes.closestPrime(5), is(5));
-        assertThat(Primes.closestPrime(7), is(7));
+        assertThat(Primes.closestPrimeTo(2), is(2));
+        assertThat(Primes.closestPrimeTo(3), is(3));
+        assertThat(Primes.closestPrimeTo(5), is(5));
+        assertThat(Primes.closestPrimeTo(7), is(7));
     }
 
 
@@ -71,11 +71,11 @@ public class PrimesTest
     @Test
     public void shouldReturnClosestPrimes()
     {
-        assertThat(Primes.closestPrime(4), is(5));
-        assertThat(Primes.closestPrime(6), is(7));
-        assertThat(Primes.closestPrime(8), is(7));
-        assertThat(Primes.closestPrime(9), is(11));
-        assertThat(Primes.closestPrime(10), is(11));
-        assertThat(Primes.closestPrime(32), is(31));
+        assertThat(Primes.closestPrimeTo(4), is(5));
+        assertThat(Primes.closestPrimeTo(6), is(7));
+        assertThat(Primes.closestPrimeTo(8), is(7));
+        assertThat(Primes.closestPrimeTo(9), is(11));
+        assertThat(Primes.closestPrimeTo(10), is(11));
+        assertThat(Primes.closestPrimeTo(32), is(31));
     }
 }

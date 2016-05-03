@@ -59,7 +59,7 @@ public class Primes
      * <p>
      * When the specified index is less than 1, the value 1 will be returned.
      * When the specified index it out of the range of primes knowm by {@link Primes}, the
-     * {@link #largest()} prime will be returned.
+     * {@link #largestPrime()} prime will be returned.
      *
      * @param i  the prime number
      *
@@ -73,7 +73,7 @@ public class Primes
         }
         else if (i > PRIMES.length)
         {
-            return largest();
+            return largestPrime();
         }
         else
         {
@@ -88,7 +88,7 @@ public class Primes
      *
      * @return  the largest prime
      */
-    public static int largest()
+    public static int largestPrime()
     {
         return PRIMES[PRIMES.length - 1];
     }
@@ -100,7 +100,7 @@ public class Primes
      * When the specified value is a prime number, the specified value is simply returned.
      * <p>
      * When the specified value is less than or equal to 1, the value 1 is returned.  When the specified value is out
-     * of the range of prime numbers maintained by {@link Primes}, the {@link #largest()} prime is returned.
+     * of the range of prime numbers maintained by {@link Primes}, the {@link #largestPrime()} prime is returned.
      * <p>
      * When the specified value falls precisely between two prime numbers, the larger prime is returned.
      *
@@ -108,7 +108,7 @@ public class Primes
      *
      * @return the closest prime number
      */
-    public static int closestPrime(int n)
+    public static int closestPrimeTo(int n)
     {
         if (n <= 1)
         {
@@ -127,7 +127,7 @@ public class Primes
                 if (i >= PRIMES.length)
                 {
                     // to big!
-                    return largest();
+                    return largestPrime();
                 }
                 else
                 {

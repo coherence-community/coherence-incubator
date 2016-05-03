@@ -84,8 +84,8 @@ public final class CommandExecutorManager
         try
         {
             EXECUTOR_SERVICES =
-                Primes.closestPrime(Integer.parseInt(System.getProperty("coherence.commandpattern.suggestedthreads",
-                                                                        "3")));
+                Primes.closestPrimeTo(Integer.parseInt(System.getProperty("coherence.commandpattern.suggestedthreads",
+                                                                          "3")));
         }
         catch (NumberFormatException e)
         {
