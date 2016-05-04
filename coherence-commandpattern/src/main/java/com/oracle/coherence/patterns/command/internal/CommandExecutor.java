@@ -800,8 +800,10 @@ public class CommandExecutor implements CommandExecutorMBean
      */
     public void start()
     {
-        m_fsm.start();
-        m_fsm.processLater(CommandExecutorEvent.START);
+        if (m_fsm.start())
+        {
+            m_fsm.processLater(CommandExecutorEvent.START);
+        }
     }
 
 

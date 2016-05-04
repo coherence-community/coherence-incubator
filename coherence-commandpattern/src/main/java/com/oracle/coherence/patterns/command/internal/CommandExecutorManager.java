@@ -153,6 +153,9 @@ public final class CommandExecutorManager
                 {
                     Logger.log(Logger.DEBUG, "Created CommandExecutor for %s", contextIdentifier);
                 }
+
+                // ensure the command executor is started
+                commandExecutor.start();
             }
             else
             {
