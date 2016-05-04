@@ -101,26 +101,17 @@ public class SubmitCommandExecutionRequestProcessor extends AbstractProcessor im
 
         BackingMapManagerContext backingMapManagerContext = ((BinaryEntry) entry).getContext();
 
-        if (acceptCommandIfContextDoesNotExist)
+        if (entry.isPresent() || acceptCommandIfContextDoesNotExist)
         {
             commandExecutor = CommandExecutorManager.ensureCommandExecutor(contextIdentifier,
                                                                            (PartitionedService) backingMapManagerContext.getCacheService());
-        }
-        else
-        {
-            commandExecutor = CommandExecutorManager.getCommandExecutor(contextIdentifier);
-        }
 
-        // only accept the command execution request if there is a command executor
-        if (commandExecutor == null &&!acceptCommandIfContextDoesNotExist)
-        {
-            return new SubmissionOutcome.UnknownContext();
-
-        }
-        else
-        {
             // accept the command execution request for execution
             return commandExecutor.acceptCommandExecutionRequest(commandExecutionRequest, backingMapManagerContext);
+        }
+        else
+        {
+            return new SubmissionOutcome.UnknownContext();
         }
     }
 
