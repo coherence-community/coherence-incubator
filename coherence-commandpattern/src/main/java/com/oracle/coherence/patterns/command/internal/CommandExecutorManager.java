@@ -129,7 +129,7 @@ public final class CommandExecutorManager
         if (commandExecutor == null)
         {
             // determine which executor service the CommandExecutor should use
-            int executorServiceId = contextIdentifier.hashCode() % EXECUTOR_SERVICES;
+            int executorServiceId = Math.abs(contextIdentifier.hashCode()) % EXECUTOR_SERVICES;
 
             if (Logger.isEnabled(Logger.DEBUG))
             {
