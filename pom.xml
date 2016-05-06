@@ -9,7 +9,7 @@
 
     <artifactId>coherence-incubator</artifactId>
     <groupId>com.oracle.coherence.incubator</groupId>
-    <version>11.3.2-SNAPSHOT</version>
+    <version>11.3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Coherence Incubator</name>
