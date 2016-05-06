@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.oracle.coherence.incubator</groupId>
         <artifactId>coherence-incubator</artifactId>
-        <version>11.3.1-SNAPSHOT</version>
+        <version>11.3.1</version>
     </parent>
 
     <artifactId>coherence-incubator-all</artifactId>
