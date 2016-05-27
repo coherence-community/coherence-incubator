@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,14 +26,13 @@
 package com.oracle.coherence.patterns.command;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.ticketing.Ticket;
 
 /**
  * A {@link CommandSubmitter} provides the mechanisms by which
  * we submit {@link Command} execution within {@link Context}s.
  * <p>
- * Copyright (c) 2008-2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -46,14 +44,14 @@ public interface CommandSubmitter
      * against the {@link Context} with the specified {@link Identifier} and
      * returns a {@link Ticket} that may be used to cancel the execution of the {@link Command}.
      *
-     * @param ctxIdentifier
+     * @param contextIdentifier
      * @param command
      *
      * @return The {@link Identifier} that was issued to track the execution of the {@link Command}
      *
      * @throws IllegalArgumentException If no {@link Context} with the specified {@link Identifier} exists.
      */
-    public <C extends Context> Identifier submitCommand(Identifier ctxIdentifier,
+    public <C extends Context> Identifier submitCommand(Identifier contextIdentifier,
                                                         Command<C> command);
 
 
@@ -66,7 +64,7 @@ public interface CommandSubmitter
      * parameter is <code>true</code>, the provided {@link Command} will be queued for
      * execution when the {@link Context} is created.
      *
-     * @param ctxIdentifier
+     * @param contextIdentifier
      * @param command
      * @param allowSubmissionWhenContextDoesNotExist
      *
@@ -75,19 +73,19 @@ public interface CommandSubmitter
      * @throws IllegalArgumentException If no {@link Context} with the specified {@link Identifier} exists
      *                                  and allowSubmissionWhenContextDoesNotExist is <code>false</code>
      */
-    public <C extends Context> Identifier submitCommand(Identifier ctxIdentifier,
+    public <C extends Context> Identifier submitCommand(Identifier contextIdentifier,
                                                         Command<C> command,
-                                                        boolean allowSubmissionWhenContextDoesNotExist);
+                                                        boolean    allowSubmissionWhenContextDoesNotExist);
 
 
     /**
      * Attempts to cancel the execution of the {@link Command} that was issued with the specified {@link Ticket}.
      * <p>
-     * If the {@link Command} has already been executed or has commenced execution, it may not be canceled.
+     * NOTE: If the {@link Command} has already been executed or has commenced execution, it may not be canceled.
      * Only {@link Command}s that have not been executed may be canceled.  All other requests are ignored.
      *
      * @param <C>
-     * @param cmdIdentifier
+     * @param commandIdentifier
      */
-    public <C extends Context> boolean cancelCommand(Identifier cmdIdentifier);
+    public <C extends Context> boolean cancelCommand(Identifier commandIdentifier);
 }

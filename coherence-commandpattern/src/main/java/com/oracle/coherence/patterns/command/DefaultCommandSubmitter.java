@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,23 +26,20 @@
 package com.oracle.coherence.patterns.command;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.patterns.command.ContextConfiguration.ManagementStrategy;
 import com.oracle.coherence.patterns.command.internal.CancelCommandProcessor;
 import com.oracle.coherence.patterns.command.internal.CommandExecutionRequest;
 import com.oracle.coherence.patterns.command.internal.ContextWrapper;
 import com.oracle.coherence.patterns.command.internal.SubmissionOutcome;
 import com.oracle.coherence.patterns.command.internal.SubmitCommandExecutionRequestProcessor;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.util.extractor.ReflectionExtractor;
 
 /**
  * The default implementation of a {@link CommandSubmitter}.
  * <p>
- * Copyright (c) 2008-2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @see CommandSubmitter
@@ -79,17 +75,17 @@ public class DefaultCommandSubmitter implements CommandSubmitter
     /**
      * {@inheritDoc}
      */
-    public <C extends Context> Identifier submitCommand(Identifier ctxIdentifier,
+    public <C extends Context> Identifier submitCommand(Identifier contextIdentifier,
                                                         Command<C> command,
-                                                        boolean acceptCommandIfContextDoesNotExist)
+                                                        boolean    acceptCommandIfContextDoesNotExist)
     {
         // create a CommandExecutionRequest to wrap the provided Command
         // (we do this as we need to track internal state around a Command)
-        CommandExecutionRequest commandExecutionRequest = new CommandExecutionRequest(ctxIdentifier, command);
+        CommandExecutionRequest commandExecutionRequest = new CommandExecutionRequest(contextIdentifier, command);
 
         // submit the command to the context
-        NamedCache        contextsCache     = CacheFactory.getCache(ContextWrapper.CACHENAME);
-        SubmissionOutcome submissionOutcome = (SubmissionOutcome) contextsCache.invoke(ctxIdentifier,
+        NamedCache contextsCache = CacheFactory.getCache(ContextWrapper.CACHENAME);
+        SubmissionOutcome submissionOutcome = (SubmissionOutcome) contextsCache.invoke(contextIdentifier,
                                                                                        new SubmitCommandExecutionRequestProcessor(commandExecutionRequest,
             acceptCommandIfContextDoesNotExist));
 
@@ -97,7 +93,8 @@ public class DefaultCommandSubmitter implements CommandSubmitter
         if (submissionOutcome instanceof SubmissionOutcome.UnknownContext)
         {
             throw new IllegalArgumentException(String
-                .format("Can't submit Command %s to Context %s as the Context does not exist", command, ctxIdentifier));
+                .format("Can't submit Command %s to Context %s as the Context does not exist", command,
+                        contextIdentifier));
 
         }
         else
@@ -110,21 +107,21 @@ public class DefaultCommandSubmitter implements CommandSubmitter
     /**
      * {@inheritDoc}
      */
-    public <C extends Context> Identifier submitCommand(Identifier ctxIdentifier,
+    public <C extends Context> Identifier submitCommand(Identifier contextIdentifier,
                                                         Command<C> command)
     {
-        return submitCommand(ctxIdentifier, command, false);
+        return submitCommand(contextIdentifier, command, false);
     }
 
 
     /**
      * {@inheritDoc}
      */
-    public <C extends Context> boolean cancelCommand(Identifier cmdIdentifier)
+    public <C extends Context> boolean cancelCommand(Identifier commandIdentifier)
     {
-        SubmissionOutcome.Accepted submissionOutcome = (SubmissionOutcome.Accepted) cmdIdentifier;
+        SubmissionOutcome.Accepted submissionOutcome = (SubmissionOutcome.Accepted) commandIdentifier;
 
-        NamedCache                 commandsCache     =
+        NamedCache commandsCache =
             CacheFactory.getCache(CommandExecutionRequest.getCacheName(submissionOutcome.getManagementStrategy()));
 
         Boolean result = (Boolean) commandsCache.invoke(submissionOutcome.getCommandExecutionRequestKey(),

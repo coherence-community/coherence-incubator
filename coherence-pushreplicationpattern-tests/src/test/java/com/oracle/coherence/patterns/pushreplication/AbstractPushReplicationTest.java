@@ -72,6 +72,7 @@ import com.tangosol.util.Filter;
 import org.hamcrest.Matcher;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.oracle.tools.deferred.DeferredHelper.invoking;
@@ -309,6 +310,7 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
      */
     @SuppressWarnings("unchecked")
     @Test
+    @Ignore
     public final void testActiveActiveWithDifferentPartitionCounts() throws Exception
     {
         final String         cacheName     = "publishing-cache";

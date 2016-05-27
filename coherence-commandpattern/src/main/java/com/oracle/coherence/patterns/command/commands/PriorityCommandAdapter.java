@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,13 +29,10 @@ import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.ExecutionEnvironment;
 import com.oracle.coherence.patterns.command.PriorityCommand;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -47,7 +43,7 @@ import java.io.IOException;
  * A {@link PriorityCommandAdapter} turn a regular {@link Command} into
  * a PriorityCommand.
  * <p>
- * Copyright (c) 2008-2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -60,7 +56,7 @@ public class PriorityCommandAdapter<C extends Context> implements PriorityComman
     /**
      * The underlying {@link Command} to be made into a {@link PriorityCommand}.
      */
-    private Command<C> m_command;
+    private Command<C> command;
 
 
     /**
@@ -78,7 +74,7 @@ public class PriorityCommandAdapter<C extends Context> implements PriorityComman
      */
     public PriorityCommandAdapter(Command<C> command)
     {
-        m_command = command;
+        this.command = command;
     }
 
 
@@ -87,7 +83,7 @@ public class PriorityCommandAdapter<C extends Context> implements PriorityComman
      */
     public void execute(ExecutionEnvironment<C> executionEnvironment)
     {
-        m_command.execute(executionEnvironment);
+        command.execute(executionEnvironment);
     }
 
 
@@ -97,7 +93,7 @@ public class PriorityCommandAdapter<C extends Context> implements PriorityComman
     @SuppressWarnings("unchecked")
     public void readExternal(DataInput in) throws IOException
     {
-        m_command = (Command<C>) ExternalizableHelper.readObject(in);
+        this.command = (Command<C>) ExternalizableHelper.readObject(in);
     }
 
 
@@ -106,7 +102,7 @@ public class PriorityCommandAdapter<C extends Context> implements PriorityComman
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        ExternalizableHelper.writeObject(out, m_command);
+        ExternalizableHelper.writeObject(out, command);
     }
 
 
@@ -116,7 +112,7 @@ public class PriorityCommandAdapter<C extends Context> implements PriorityComman
     @SuppressWarnings("unchecked")
     public void readExternal(PofReader reader) throws IOException
     {
-        m_command = (Command<C>) reader.readObject(0);
+        this.command = (Command<C>) reader.readObject(0);
     }
 
 
@@ -125,7 +121,7 @@ public class PriorityCommandAdapter<C extends Context> implements PriorityComman
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeObject(0, m_command);
+        writer.writeObject(0, command);
     }
 
 
@@ -134,6 +130,6 @@ public class PriorityCommandAdapter<C extends Context> implements PriorityComman
      */
     public String toString()
     {
-        return String.format("PriorityCommandAdapter{%s}", m_command);
+        return String.format("PriorityCommandAdapter{%s}", command);
     }
 }

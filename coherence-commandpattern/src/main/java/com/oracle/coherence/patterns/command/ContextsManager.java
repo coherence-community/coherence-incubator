@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,14 +26,13 @@
 package com.oracle.coherence.patterns.command;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.tangosol.util.ValueExtractor;
 
 /**
  * A {@link ContextsManager} provides the mechanism by which
  * we may register and manage {@link Context}s.
  * <p>
- * Copyright (c) 2008-2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -53,8 +51,8 @@ public interface ContextsManager
      * @param context
      * @param contextConfiguration
      */
-    public Identifier registerContext(Identifier identifier,
-                                      Context context,
+    public Identifier registerContext(Identifier           identifier,
+                                      Context              context,
                                       ContextConfiguration contextConfiguration);
 
 
@@ -70,7 +68,7 @@ public interface ContextsManager
      * @param context
      */
     public Identifier registerContext(Identifier identifier,
-                                      Context context);
+                                      Context    context);
 
 
     /**
@@ -85,8 +83,8 @@ public interface ContextsManager
      * @param context
      * @param contextConfiguration
      */
-    public Identifier registerContext(String contextName,
-                                      Context context,
+    public Identifier registerContext(String               contextName,
+                                      Context              context,
                                       ContextConfiguration contextConfiguration);
 
 
@@ -101,7 +99,7 @@ public interface ContextsManager
      * @param contextName
      * @param context
      */
-    public Identifier registerContext(String contextName,
+    public Identifier registerContext(String  contextName,
                                       Context context);
 
 
@@ -117,7 +115,7 @@ public interface ContextsManager
      * @param context
      * @param contextConfiguration
      */
-    public Identifier registerContext(Context context,
+    public Identifier registerContext(Context              context,
                                       ContextConfiguration contextConfiguration);
 
 
@@ -151,6 +149,6 @@ public interface ContextsManager
      * @param identifier
      * @param valueExtractor
      */
-    public Object extractValueFromContext(Identifier identifier,
+    public Object extractValueFromContext(Identifier     identifier,
                                           ValueExtractor valueExtractor);
 }

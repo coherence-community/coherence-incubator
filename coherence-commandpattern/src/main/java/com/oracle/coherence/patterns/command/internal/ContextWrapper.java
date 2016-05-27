@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,20 +26,15 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.identifiers.Identifier;
-
 import com.oracle.coherence.common.ticketing.Ticket;
-
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.ContextConfiguration;
 import com.oracle.coherence.patterns.command.DefaultContextsManager;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -71,17 +65,17 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
     /**
      * The {@link Identifier} of the {@link Context}.
      */
-    private Identifier m_ctxIdentifier;
+    private Identifier contextIdentifier;
 
     /**
      * The {@link Context} that is being wrapped.
      */
-    private Context m_context;
+    private Context context;
 
     /**
      * The {@link ContextConfiguration} for the {@link Context} being wrapped.
      */
-    private ContextConfiguration m_ctxConfiguration;
+    private ContextConfiguration contextConfiguration;
 
     /**
      * The version of a {@link ContextWrapper} is used to isolate and manage
@@ -89,31 +83,31 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      * is to provide "versioning" of a {@link Context} when it moves between Members
      * (due to scale out or partition load-balancing).
      */
-    private long m_ctxVersion;
+    private long contextVersion;
 
     /**
      * The {@link Ticket} of the last successfully executed {@link Command}.
      */
-    private Ticket m_lastExecutedTicket;
+    private Ticket lastExecutedTicket;
 
     /**
      * The total number of {@link Command}s that have been executed.
      */
-    private long m_totalCommandsExecuted;
+    private long totalCommandsExecuted;
 
     /**
      * The total amount of time (in milliseconds) that {@link Command}s
      * have taken to execute.  This is the sum of
      * individual {@link Command} execution times.
      */
-    private long m_totalCommandExecutionDuration;
+    private long totalCommandExecutionDuration;
 
     /**
      * The total amount of time (in milliseconds) that {@link Command}s
      * have waited before they have been executed.  This is the sum of
      * individual {@link Command} waiting times (in the queue).
      */
-    private long m_totalCommandExecutionWaitingDuration;
+    private long totalCommandExecutionWaitingDuration;
 
 
     /**
@@ -128,21 +122,21 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      * Standard Constructor.  Used by the {@link DefaultContextsManager}
      * class when creating {@link Context}s.
      *
-     * @param ctxIdentifier
+     * @param contextIdentifier
      * @param context
      */
-    public ContextWrapper(Identifier ctxIdentifier,
-                          Context context,
+    public ContextWrapper(Identifier           contextIdentifier,
+                          Context              context,
                           ContextConfiguration contextConfiguration)
     {
-        m_ctxIdentifier                        = ctxIdentifier;
-        m_context                              = context;
-        m_ctxConfiguration                     = contextConfiguration;
-        m_ctxVersion                           = 0;
-        m_lastExecutedTicket                   = Ticket.NONE;
-        m_totalCommandsExecuted                = 0;
-        m_totalCommandExecutionDuration        = 0;
-        m_totalCommandExecutionWaitingDuration = 0;
+        this.contextIdentifier                    = contextIdentifier;
+        this.context                              = context;
+        this.contextConfiguration                 = contextConfiguration;
+        this.contextVersion                       = 0;
+        this.lastExecutedTicket                   = Ticket.NONE;
+        this.totalCommandsExecuted                = 0;
+        this.totalCommandExecutionDuration        = 0;
+        this.totalCommandExecutionWaitingDuration = 0;
     }
 
 
@@ -151,7 +145,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public Identifier getContentIdentifier()
     {
-        return m_ctxIdentifier;
+        return contextIdentifier;
     }
 
 
@@ -160,7 +154,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public Context getContext()
     {
-        return m_context;
+        return context;
     }
 
 
@@ -169,7 +163,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public void setContext(Context context)
     {
-        m_context = context;
+        this.context = context;
     }
 
 
@@ -178,7 +172,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public ContextConfiguration getContextConfiguration()
     {
-        return m_ctxConfiguration;
+        return contextConfiguration;
     }
 
 
@@ -187,7 +181,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public long getContextVersion()
     {
-        return m_ctxVersion;
+        return contextVersion;
     }
 
 
@@ -196,7 +190,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public long nextVersion()
     {
-        return ++m_ctxVersion;
+        return ++contextVersion;
     }
 
 
@@ -206,7 +200,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public Ticket getLastExecutedTicket()
     {
-        return m_lastExecutedTicket;
+        return lastExecutedTicket;
     }
 
 
@@ -216,7 +210,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public long getTotalCommandsExecuted()
     {
-        return m_totalCommandsExecuted;
+        return totalCommandsExecuted;
     }
 
 
@@ -226,7 +220,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public long getTotalCommandExecutionDuration()
     {
-        return m_totalCommandExecutionDuration;
+        return totalCommandExecutionDuration;
     }
 
 
@@ -236,7 +230,7 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public long getTotalCommandExecutionWaitingDuration()
     {
-        return m_totalCommandExecutionWaitingDuration;
+        return totalCommandExecutionWaitingDuration;
     }
 
 
@@ -250,13 +244,13 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      * @param waitingDuration
      */
     public void updateExecutionInformation(Ticket ticket,
-                                           long executionDuration,
-                                           long waitingDuration)
+                                           long   executionDuration,
+                                           long   waitingDuration)
     {
-        m_lastExecutedTicket = ticket;
-        m_totalCommandsExecuted++;
-        m_totalCommandExecutionDuration        += executionDuration;
-        m_totalCommandExecutionWaitingDuration += waitingDuration;
+        this.lastExecutedTicket = ticket;
+        this.totalCommandsExecuted++;
+        this.totalCommandExecutionDuration        += executionDuration;
+        this.totalCommandExecutionWaitingDuration += waitingDuration;
     }
 
 
@@ -265,14 +259,14 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public void readExternal(DataInput in) throws IOException
     {
-        m_ctxIdentifier                        = (Identifier) ExternalizableHelper.readObject(in);
-        m_context                              = (Context) ExternalizableHelper.readObject(in);
-        m_ctxConfiguration                     = (ContextConfiguration) ExternalizableHelper.readObject(in);
-        m_ctxVersion                           = ExternalizableHelper.readLong(in);
-        m_lastExecutedTicket                   = (Ticket) ExternalizableHelper.readExternalizableLite(in);
-        m_totalCommandsExecuted                = ExternalizableHelper.readLong(in);
-        m_totalCommandExecutionDuration        = ExternalizableHelper.readLong(in);
-        m_totalCommandExecutionWaitingDuration = ExternalizableHelper.readLong(in);
+        this.contextIdentifier                    = (Identifier) ExternalizableHelper.readObject(in);
+        this.context                              = (Context) ExternalizableHelper.readObject(in);
+        this.contextConfiguration                 = (ContextConfiguration) ExternalizableHelper.readObject(in);
+        this.contextVersion                       = ExternalizableHelper.readLong(in);
+        this.lastExecutedTicket                   = (Ticket) ExternalizableHelper.readExternalizableLite(in);
+        this.totalCommandsExecuted                = ExternalizableHelper.readLong(in);
+        this.totalCommandExecutionDuration        = ExternalizableHelper.readLong(in);
+        this.totalCommandExecutionWaitingDuration = ExternalizableHelper.readLong(in);
     }
 
 
@@ -281,14 +275,14 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        ExternalizableHelper.writeObject(out, m_ctxIdentifier);
-        ExternalizableHelper.writeObject(out, m_context);
-        ExternalizableHelper.writeObject(out, m_ctxConfiguration);
-        ExternalizableHelper.writeLong(out, m_ctxVersion);
-        ExternalizableHelper.writeExternalizableLite(out, m_lastExecutedTicket);
-        ExternalizableHelper.writeLong(out, m_totalCommandsExecuted);
-        ExternalizableHelper.writeLong(out, m_totalCommandExecutionDuration);
-        ExternalizableHelper.writeLong(out, m_totalCommandExecutionWaitingDuration);
+        ExternalizableHelper.writeObject(out, contextIdentifier);
+        ExternalizableHelper.writeObject(out, context);
+        ExternalizableHelper.writeObject(out, contextConfiguration);
+        ExternalizableHelper.writeLong(out, contextVersion);
+        ExternalizableHelper.writeExternalizableLite(out, lastExecutedTicket);
+        ExternalizableHelper.writeLong(out, totalCommandsExecuted);
+        ExternalizableHelper.writeLong(out, totalCommandExecutionDuration);
+        ExternalizableHelper.writeLong(out, totalCommandExecutionWaitingDuration);
     }
 
 
@@ -297,14 +291,14 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public void readExternal(PofReader reader) throws IOException
     {
-        m_ctxIdentifier                        = (Identifier) reader.readObject(0);
-        m_context                              = (Context) reader.readObject(1);
-        m_ctxConfiguration                     = (ContextConfiguration) reader.readObject(2);
-        m_ctxVersion                           = reader.readLong(3);
-        m_lastExecutedTicket                   = (Ticket) reader.readObject(4);
-        m_totalCommandsExecuted                = reader.readLong(5);
-        m_totalCommandExecutionDuration        = reader.readLong(6);
-        m_totalCommandExecutionWaitingDuration = reader.readLong(7);
+        this.contextIdentifier                    = (Identifier) reader.readObject(0);
+        this.context                              = (Context) reader.readObject(1);
+        this.contextConfiguration                 = (ContextConfiguration) reader.readObject(2);
+        this.contextVersion                       = reader.readLong(3);
+        this.lastExecutedTicket                   = (Ticket) reader.readObject(4);
+        this.totalCommandsExecuted                = reader.readLong(5);
+        this.totalCommandExecutionDuration        = reader.readLong(6);
+        this.totalCommandExecutionWaitingDuration = reader.readLong(7);
     }
 
 
@@ -313,14 +307,14 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeObject(0, m_ctxIdentifier);
-        writer.writeObject(1, m_context);
-        writer.writeObject(2, m_ctxConfiguration);
-        writer.writeLong(3, m_ctxVersion);
-        writer.writeObject(4, m_lastExecutedTicket);
-        writer.writeLong(5, m_totalCommandsExecuted);
-        writer.writeLong(6, m_totalCommandExecutionDuration);
-        writer.writeLong(7, m_totalCommandExecutionWaitingDuration);
+        writer.writeObject(0, contextIdentifier);
+        writer.writeObject(1, context);
+        writer.writeObject(2, contextConfiguration);
+        writer.writeLong(3, contextVersion);
+        writer.writeObject(4, lastExecutedTicket);
+        writer.writeLong(5, totalCommandsExecuted);
+        writer.writeLong(6, totalCommandExecutionDuration);
+        writer.writeLong(7, totalCommandExecutionWaitingDuration);
     }
 
 
@@ -332,13 +326,13 @@ public class ContextWrapper implements ExternalizableLite, PortableObject
         return String
             .format("ContextWrapper{contextIdentifier=%s, context=%s, contextConfiguration=%s, contextVersion=%d, lastExecutedTicket=%s, totalCommandsExecuted=%d, "
                     + "totalCommandExecutionDuration=%d, totalCommandExecutionWaitingDuration=%d}",
-                    m_ctxIdentifier,
-                    m_context,
-                    m_ctxConfiguration,
-                    m_ctxVersion,
-                    m_lastExecutedTicket,
-                    m_totalCommandsExecuted,
-                    m_totalCommandExecutionDuration,
-                    m_totalCommandExecutionWaitingDuration);
+                    contextIdentifier,
+                    context,
+                    contextConfiguration,
+                    contextVersion,
+                    lastExecutedTicket,
+                    totalCommandsExecuted,
+                    totalCommandExecutionDuration,
+                    totalCommandExecutionWaitingDuration);
     }
 }

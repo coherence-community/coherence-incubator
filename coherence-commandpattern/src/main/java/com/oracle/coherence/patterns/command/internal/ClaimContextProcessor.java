@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -28,20 +27,14 @@ package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.Context;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Member;
-
 import com.tangosol.util.InvocableMap.Entry;
-
 import com.tangosol.util.UID;
-
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
@@ -69,7 +62,7 @@ public class ClaimContextProcessor extends AbstractProcessor implements External
     /**
      * The {@link UID} of the {@link Member} on which we should be claiming the {@link Context}.
      */
-    private UID m_memberUID;
+    private UID memberUID;
 
 
     /**
@@ -87,7 +80,7 @@ public class ClaimContextProcessor extends AbstractProcessor implements External
      */
     public ClaimContextProcessor(UID memberUID)
     {
-        m_memberUID = memberUID;
+        this.memberUID = memberUID;
     }
 
 
@@ -96,7 +89,7 @@ public class ClaimContextProcessor extends AbstractProcessor implements External
      */
     public Object process(Entry entry)
     {
-        if (entry.isPresent() && CacheFactory.getCluster().getLocalMember().getUid().equals(m_memberUID))
+        if (entry.isPresent() && CacheFactory.getCluster().getLocalMember().getUid().equals(memberUID))
         {
             ContextWrapper contextWrapper = (ContextWrapper) entry.getValue();
 
@@ -117,7 +110,7 @@ public class ClaimContextProcessor extends AbstractProcessor implements External
      */
     public void readExternal(DataInput in) throws IOException
     {
-        m_memberUID = new UID(in);
+        this.memberUID = new UID(in);
     }
 
 
@@ -126,7 +119,7 @@ public class ClaimContextProcessor extends AbstractProcessor implements External
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        m_memberUID.save(out);
+        memberUID.save(out);
     }
 
 
@@ -135,7 +128,7 @@ public class ClaimContextProcessor extends AbstractProcessor implements External
      */
     public void readExternal(PofReader reader) throws IOException
     {
-        m_memberUID = new UID(reader.readString(0));
+        this.memberUID = new UID(reader.readString(0));
     }
 
 
@@ -144,6 +137,6 @@ public class ClaimContextProcessor extends AbstractProcessor implements External
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeString(0, m_memberUID.toString());
+        writer.writeString(0, memberUID.toString());
     }
 }

@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -29,19 +28,15 @@ package com.oracle.coherence.patterns.command.commands;
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.Context;
 import com.oracle.coherence.patterns.command.ExecutionEnvironment;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +47,7 @@ import java.util.List;
  * NOTE: Any exception caused by a {@link Command} in the {@link CommandBatch} will
  * cause the fail-fast of the processing.  {@link Command}s not yet processed will be discarded.
  * <p>
- * Copyright (c) 2008-2012. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2008. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver
@@ -63,7 +58,7 @@ public class CommandBatch<C extends Context> implements Command<C>, Externalizab
     /**
      * The list of {@link Command}s to be executed.
      */
-    private List<Command<C>> m_listCommands;
+    private List<Command<C>> commands;
 
 
     /**
@@ -81,7 +76,7 @@ public class CommandBatch<C extends Context> implements Command<C>, Externalizab
      */
     public CommandBatch(List<Command<C>> commands)
     {
-        m_listCommands = commands;
+        this.commands = commands;
     }
 
 
@@ -90,7 +85,7 @@ public class CommandBatch<C extends Context> implements Command<C>, Externalizab
      */
     public void execute(ExecutionEnvironment<C> executionEnvironment)
     {
-        for (Command<C> command : m_listCommands)
+        for (Command<C> command : commands)
         {
             command.execute(executionEnvironment);
         }
@@ -106,12 +101,12 @@ public class CommandBatch<C extends Context> implements Command<C>, Externalizab
 
         if (capacity > 0)
         {
-            m_listCommands = new ArrayList<Command<C>>(capacity);
-            ExternalizableHelper.readCollection(in, m_listCommands, this.getClass().getClassLoader());
+            commands = new ArrayList<Command<C>>(capacity);
+            ExternalizableHelper.readCollection(in, commands, this.getClass().getClassLoader());
         }
         else
         {
-            m_listCommands = new ArrayList<Command<C>>();
+            commands = new ArrayList<Command<C>>();
         }
     }
 
@@ -121,11 +116,11 @@ public class CommandBatch<C extends Context> implements Command<C>, Externalizab
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        ExternalizableHelper.writeInt(out, this.m_listCommands.size());
+        ExternalizableHelper.writeInt(out, this.commands.size());
 
-        if (m_listCommands.size() > 0)
+        if (commands.size() > 0)
         {
-            ExternalizableHelper.writeCollection(out, m_listCommands);
+            ExternalizableHelper.writeCollection(out, commands);
         }
     }
 
@@ -139,12 +134,12 @@ public class CommandBatch<C extends Context> implements Command<C>, Externalizab
 
         if (capacity > 0)
         {
-            m_listCommands = new ArrayList<Command<C>>(capacity);
-            reader.readCollection(1, m_listCommands);
+            commands = new ArrayList<Command<C>>(capacity);
+            reader.readCollection(1, commands);
         }
         else
         {
-            m_listCommands = new ArrayList<Command<C>>();
+            commands = new ArrayList<Command<C>>();
         }
     }
 
@@ -154,11 +149,11 @@ public class CommandBatch<C extends Context> implements Command<C>, Externalizab
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeInt(0, m_listCommands.size());
+        writer.writeInt(0, commands.size());
 
-        if (m_listCommands.size() > 0)
+        if (commands.size() > 0)
         {
-            writer.writeCollection(1, m_listCommands);
+            writer.writeCollection(1, commands);
         }
     }
 
@@ -168,6 +163,6 @@ public class CommandBatch<C extends Context> implements Command<C>, Externalizab
      */
     public String toString()
     {
-        return String.format("CommandBatch{commands=%s}", m_listCommands);
+        return String.format("CommandBatch{commands=%s}", commands);
     }
 }

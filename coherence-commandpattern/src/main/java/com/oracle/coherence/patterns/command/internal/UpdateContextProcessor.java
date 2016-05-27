@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,20 +26,14 @@
 package com.oracle.coherence.patterns.command.internal;
 
 import com.oracle.coherence.common.ticketing.Ticket;
-
 import com.oracle.coherence.patterns.command.Command;
 import com.oracle.coherence.patterns.command.Context;
-
 import com.tangosol.io.ExternalizableLite;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.util.ExternalizableHelper;
-
 import com.tangosol.util.InvocableMap.Entry;
-
 import com.tangosol.util.processor.AbstractProcessor;
 
 import java.io.DataInput;
@@ -64,27 +57,27 @@ public class UpdateContextProcessor extends AbstractProcessor implements Externa
     /**
      * The version of the {@link Context} we are expecting.
      */
-    private long m_contextVersion;
+    private long contextVersion;
 
     /**
      * The new {@link Context} value (null means don't update)
      */
-    private Context m_context;
+    private Context context;
 
     /**
      * The {@link Ticket} just executed.
      */
-    private Ticket m_lastExecutedTicket;
+    private Ticket lastExecutedTicket;
 
     /**
      * The time (in milliseconds) that the last executed {@link Command} took to execute.
      */
-    private long m_executionDuration;
+    private long executionDuration;
 
     /**
      * The time (in milliseconds) that the last executed {@link Command} was waiting to be executed.
      */
-    private long m_waitingDuration;
+    private long waitingDuration;
 
 
     /**
@@ -104,17 +97,17 @@ public class UpdateContextProcessor extends AbstractProcessor implements Externa
      * @param executionDuration The time (in milliseconds) that the last executed {@link Ticket} took to execute
      * @param waitingDuration The time (in milliseconds) that the last executed {@link Ticket} waited before being executed
      */
-    public UpdateContextProcessor(long contextVersion,
+    public UpdateContextProcessor(long    contextVersion,
                                   Context context,
-                                  Ticket lastExecutedTicket,
-                                  long executionDuration,
-                                  long waitingDuration)
+                                  Ticket  lastExecutedTicket,
+                                  long    executionDuration,
+                                  long    waitingDuration)
     {
-        m_contextVersion     = contextVersion;
-        m_context            = context;
-        m_lastExecutedTicket = lastExecutedTicket;
-        m_executionDuration  = executionDuration;
-        m_waitingDuration    = waitingDuration;
+        this.contextVersion     = contextVersion;
+        this.context            = context;
+        this.lastExecutedTicket = lastExecutedTicket;
+        this.executionDuration  = executionDuration;
+        this.waitingDuration    = waitingDuration;
     }
 
 
@@ -127,13 +120,13 @@ public class UpdateContextProcessor extends AbstractProcessor implements Externa
         {
             ContextWrapper contextWrapper = (ContextWrapper) entry.getValue();
 
-            if (contextWrapper.getContextVersion() == m_contextVersion)
+            if (contextWrapper.getContextVersion() == contextVersion)
             {
-                contextWrapper.updateExecutionInformation(m_lastExecutedTicket, m_executionDuration, m_waitingDuration);
+                contextWrapper.updateExecutionInformation(lastExecutedTicket, executionDuration, waitingDuration);
 
-                if (m_context != null)
+                if (context != null)
                 {
-                    contextWrapper.setContext(m_context);
+                    contextWrapper.setContext(context);
                 }
 
                 entry.setValue(contextWrapper);
@@ -158,11 +151,11 @@ public class UpdateContextProcessor extends AbstractProcessor implements Externa
      */
     public void readExternal(DataInput in) throws IOException
     {
-        m_contextVersion     = ExternalizableHelper.readLong(in);
-        m_context            = (Context) ExternalizableHelper.readObject(in);
-        m_lastExecutedTicket = (Ticket) ExternalizableHelper.readExternalizableLite(in);
-        m_executionDuration  = ExternalizableHelper.readLong(in);
-        m_waitingDuration    = ExternalizableHelper.readLong(in);
+        this.contextVersion     = ExternalizableHelper.readLong(in);
+        this.context            = (Context) ExternalizableHelper.readObject(in);
+        this.lastExecutedTicket = (Ticket) ExternalizableHelper.readExternalizableLite(in);
+        this.executionDuration  = ExternalizableHelper.readLong(in);
+        this.waitingDuration    = ExternalizableHelper.readLong(in);
     }
 
 
@@ -171,11 +164,11 @@ public class UpdateContextProcessor extends AbstractProcessor implements Externa
      */
     public void writeExternal(DataOutput out) throws IOException
     {
-        ExternalizableHelper.writeLong(out, m_contextVersion);
-        ExternalizableHelper.writeObject(out, m_context);
-        ExternalizableHelper.writeExternalizableLite(out, m_lastExecutedTicket);
-        ExternalizableHelper.writeLong(out, m_executionDuration);
-        ExternalizableHelper.writeLong(out, m_waitingDuration);
+        ExternalizableHelper.writeLong(out, contextVersion);
+        ExternalizableHelper.writeObject(out, context);
+        ExternalizableHelper.writeExternalizableLite(out, lastExecutedTicket);
+        ExternalizableHelper.writeLong(out, executionDuration);
+        ExternalizableHelper.writeLong(out, waitingDuration);
     }
 
 
@@ -184,11 +177,11 @@ public class UpdateContextProcessor extends AbstractProcessor implements Externa
      */
     public void readExternal(PofReader reader) throws IOException
     {
-        m_contextVersion     = reader.readLong(0);
-        m_context            = (Context) reader.readObject(1);
-        m_lastExecutedTicket = (Ticket) reader.readObject(2);
-        m_executionDuration  = reader.readLong(3);
-        m_waitingDuration    = reader.readLong(4);
+        this.contextVersion     = reader.readLong(0);
+        this.context            = (Context) reader.readObject(1);
+        this.lastExecutedTicket = (Ticket) reader.readObject(2);
+        this.executionDuration  = reader.readLong(3);
+        this.waitingDuration    = reader.readLong(4);
     }
 
 
@@ -197,10 +190,10 @@ public class UpdateContextProcessor extends AbstractProcessor implements Externa
      */
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeLong(0, m_contextVersion);
-        writer.writeObject(1, m_context);
-        writer.writeObject(2, m_lastExecutedTicket);
-        writer.writeLong(3, m_executionDuration);
-        writer.writeLong(4, m_waitingDuration);
+        writer.writeLong(0, contextVersion);
+        writer.writeObject(1, context);
+        writer.writeObject(2, lastExecutedTicket);
+        writer.writeLong(3, executionDuration);
+        writer.writeLong(4, waitingDuration);
     }
 }
