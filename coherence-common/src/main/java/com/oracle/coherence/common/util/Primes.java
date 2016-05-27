@@ -38,7 +38,7 @@ import java.util.Arrays;
 public class Primes
 {
     /**
-     * The first 1000 prime numbers.
+     * The prime numbers less than 1000.
      */
     private static final int[] PRIMES = new int[] {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61,
                                                    67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137,

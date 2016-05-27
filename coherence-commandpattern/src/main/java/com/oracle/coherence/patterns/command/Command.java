@@ -60,5 +60,5 @@ public interface Command<C extends Context>
      * @param executionEnvironment The environment in which the {@link Command}
      *                             is being executed.
      */
-    public abstract void execute(ExecutionEnvironment<C> executionEnvironment);
+    public void execute(ExecutionEnvironment<C> executionEnvironment);
 }
