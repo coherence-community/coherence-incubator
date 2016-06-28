@@ -35,11 +35,21 @@ reverse chronological order.
     where the processing pattern cluster-config configuration elements aren't
     correctly included when using introduce-cache-config namespace.
 
+<h4>coherence-eventdistributionpattern</h4>
+
+*   [COHINC-149](http://java.net/jira/browse/COHINC-149): Resolved issue where
+    an Event Channel (controller) may remain in WAITING or DELAYING state when
+    there are pending Events to send.
+
 <h4>coherence-pushreplicationpattern</h4>
 
 *   [COHINC-36](http://java.net/jira/browse/COHINC-36): Fixed an issue where keys
     of replicated entries were being deserialized on the receiving cluster during
     replication.
+
+*   [COHINC-149](http://java.net/jira/browse/COHINC-149): Resolved issue where
+    an Push Replication Event Channels may remain in WAITING or DELAYING state when
+    there are pending Events to send.
 
 --------------------------------------------------------------------------------
 

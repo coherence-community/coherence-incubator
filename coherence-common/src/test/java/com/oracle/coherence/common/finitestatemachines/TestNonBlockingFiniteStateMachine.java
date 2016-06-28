@@ -264,6 +264,54 @@ public class TestNonBlockingFiniteStateMachine
 
 
     /**
+     * Ensure that {@link SubsequentEvent}s containing {@link CoalescedEvent}s are not lost.
+     */
+    @Test
+    public void testSubsequentCoalescedEventProcessing()
+    {
+        SimpleModel<Motor> model = new SimpleModel<Motor>(Motor.class);
+
+        model.addTransition(new Transition<Motor>("Turn On", Motor.STOPPED, Motor.RUNNING, new TraceAction<Motor>()));
+        model.addTransition(new Transition<Motor>("Turn Off", Motor.RUNNING, Motor.STOPPED, new TraceAction<Motor>()));
+
+        NonBlockingFiniteStateMachine<Motor> machine =
+                new NonBlockingFiniteStateMachine<Motor>("Subsequent Testing Model",
+                        model,
+                        Motor.STOPPED,
+                        ExecutorServiceFactory.newSingleThreadScheduledExecutor(),
+                        false);
+
+        // ensure that the first submitted coalesced event is processed
+        // and the others are not
+        TrackingEvent<Motor> event1 = new TrackingEvent<Motor>(MotorEvent.TURN_OFF);
+        TrackingEvent<Motor> event2 = new TrackingEvent<Motor>(MotorEvent.TURN_OFF);
+        TrackingEvent<Motor> event3 = new TrackingEvent<Motor>(MotorEvent.TURN_OFF);
+
+        machine.process(MotorEvent.TURN_ON);
+        machine.processLater(new SubsequentEvent<Motor>(new CoalescedEvent<Motor>(event1, Process.FIRST, MotorEvent.TURN_OFF)), 10, TimeUnit.SECONDS);
+        machine.process(new CoalescedEvent<Motor>(event2, Process.FIRST, MotorEvent.TURN_OFF));
+        machine.process(new CoalescedEvent<Motor>(event3, Process.FIRST, MotorEvent.TURN_OFF));
+
+        Eventually.assertThat(invoking(machine).getTransitionCount(), is(1L));
+        Assert.assertEquals(machine.getState(), Motor.RUNNING);
+
+        Assert.assertEquals(true, event1.accepted());
+        Eventually.assertThat(invoking(event1).evaluated(), is(true));
+        Assert.assertEquals(true, event1.processed());
+
+        Assert.assertEquals(true, event2.accepted());
+        Eventually.assertThat(invoking(event2).evaluated(), is(false));
+        Assert.assertEquals(false, event2.processed());
+
+        Assert.assertEquals(true, event3.accepted());
+        Eventually.assertThat(invoking(event3).evaluated(), is(false));
+        Assert.assertEquals(false, event3.processed());
+
+        Eventually.assertThat(invoking(machine).getTransitionCount(), is(2L));
+    }
+
+
+    /**
      * Ensure that it is possible to transition from a state back to itself,
      * including executing appropriate actions.
      */

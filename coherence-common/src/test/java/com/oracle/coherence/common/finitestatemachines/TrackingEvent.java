@@ -52,25 +52,25 @@ public class TrackingEvent<S extends Enum<S>> implements LifecycleAwareEvent<S>
      * A flag to indicate if the {@link Event} was accepted
      * (with {@link #onAccept(ExecutionContext)}).
      */
-    private boolean m_wasAccepted;
+    private volatile boolean m_wasAccepted;
 
     /**
      * A flag to indicate if the {@link Event} was evaluated
      * (with {@link #getDesiredState(Enum, ExecutionContext)}).
      */
-    private boolean m_wasEvaluated;
+    private volatile boolean m_wasEvaluated;
 
     /**
      * A flag to indicate if the {@link Event} was processed
      * (with {@link #onProcessed(Enum, ExecutionContext)}).
      */
-    private boolean m_wasProcessed;
+    private volatile boolean m_wasProcessed;
 
     /**
      * A flag to indicate if the {@link Event} failed to be processed.
      * (with {@link #onFailure(Enum, ExecutionContext, Exception)}).
      */
-    private boolean m_wasFailed;
+    private volatile boolean m_wasFailed;
 
 
     /**
