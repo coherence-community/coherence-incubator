@@ -26,12 +26,9 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors;
 
 import com.oracle.coherence.common.builders.ParameterizedBuilder;
-
 import com.oracle.coherence.common.cluster.ClusterMetaInfo;
 import com.oracle.coherence.common.cluster.LocalClusterMetaInfo;
-
 import com.oracle.coherence.common.events.Event;
-
 import com.oracle.coherence.common.finitestatemachines.AnnotationDrivenModel;
 import com.oracle.coherence.common.finitestatemachines.ExecutionContext;
 import com.oracle.coherence.common.finitestatemachines.Instruction;
@@ -39,19 +36,14 @@ import com.oracle.coherence.common.finitestatemachines.NonBlockingFiniteStateMac
 import com.oracle.coherence.common.finitestatemachines.annotations.OnEnterState;
 import com.oracle.coherence.common.finitestatemachines.annotations.Transition;
 import com.oracle.coherence.common.finitestatemachines.annotations.Transitions;
-
 import com.oracle.coherence.common.threading.ExecutorServiceFactory;
 import com.oracle.coherence.common.threading.ThreadFactories;
-
 import com.oracle.coherence.common.tuples.Pair;
-
 import com.oracle.coherence.configuration.parameters.MutableParameterProvider;
 import com.oracle.coherence.configuration.parameters.Parameter;
 import com.oracle.coherence.configuration.parameters.ParameterProvider;
 import com.oracle.coherence.configuration.parameters.ScopedParameterProvider;
-
 import com.oracle.coherence.environment.Environment;
-
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
@@ -64,42 +56,33 @@ import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryPropagatedEvent;
 import com.oracle.coherence.patterns.eventdistribution.transformers.MutatingEventIteratorTransformer;
-
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.Serializer;
-
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
-
 import com.tangosol.net.BackingMapManagerContext;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.net.partition.PartitionSet;
-
 import com.tangosol.util.Binary;
 import com.tangosol.util.Converter;
 import com.tangosol.util.ExternalizableHelper;
-
 import com.tangosol.util.filter.PartitionedFilter;
 import com.tangosol.util.filter.PresentFilter;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -162,157 +145,6 @@ import java.util.logging.Logger;
 })
 public abstract class AbstractEventChannelController<T> implements EventChannelController, EventChannelControllerMBean
 {
-    /**
-     * The events that control the internal {@link NonBlockingFiniteStateMachine}.
-     */
-    public static enum ControllerEvent implements com.oracle.coherence.common.finitestatemachines.Event<State>
-    {
-        /**
-         * The <code>{@link #START}</code> event signals that a connection should be made to the
-         * underlying channel.
-         */
-        START(State.STARTING),
-
-        /**
-         * The <code>{@link #STOP}</code> event signals that distribution should stop, never to
-         * be recommenced with this instance.
-         */
-        STOP(State.STOPPED),
-
-        /**
-         * The <code>{@link #DISABLE}</code> event signals that distribution should be disabled.
-         */
-        DISABLE(State.DISABLED),
-
-        /**
-         * The <code>{@link #SUSPEND}</code> event signals that distribution should be suspended.
-         */
-        SUSPEND(State.SUSPENDED),
-
-        /**
-         * The <code>{@link #DRAIN}</code> event signals that distribution queues should be drained.
-         */
-        DRAIN(State.DRAINING),
-
-        /**
-         * The <code>{@link #DISTRIBUTE}</code> event signals that distribution should commence.
-         */
-        DISTRIBUTE(State.DISTRIBUTING),
-
-        /**
-         * The <code>{@link #PROPAGATE}</code> event signals that all {@link NamedCache} entries should be
-         * propagated over an {@link EventChannel}.
-         */
-        PROPAGATE(State.PROPAGATING);
-
-        /**
-         * The desired {@link State} when the {@link ControllerEvent} occurs.
-         */
-        private State desiredState;
-
-
-        /**
-         * Constructs a {@link ControllerEvent}.
-         *
-         * @param desiredState  the desired {@link State} of the {@link NonBlockingFiniteStateMachine}
-         *                      when the event occurs
-         */
-        ControllerEvent(State desiredState)
-        {
-            this.desiredState = desiredState;
-        }
-
-
-        @Override
-        public State getDesiredState(State            state,
-                                     ExecutionContext context)
-        {
-            return desiredState;
-        }
-    }
-
-
-    /**
-     * The {@link State} of the {@link EventChannelController} and internal {@link NonBlockingFiniteStateMachine}.
-     */
-    public static enum State
-    {
-        /**
-         * <code>{@link #DISABLED}</code> indicates that the {@link EventChannelController} has been taken off-line.
-         * Once in this state no distribution will occur for the {@link EventChannelController} until it is
-         * manually restarted (typically via JMX).  Further, <strong>no {@link Event}s</strong> will be queued for
-         * the distribution by the {@link EventChannelController}.
-         * <p>
-         * This is a starting state for an {@link EventChannelController}.
-         */
-        DISABLED,
-
-        /**
-         * <code>{@link #SUSPENDED}</code> indicates that the {@link EventChannelController} is not operational.
-         * It typically means that the {@link EventChannelController} has either failed too many times (and thus was
-         * automatically suspended) or it has been has been manually suspended.  Once in this state no distribution
-         * will occur until it is manually restarted (typically via JMX).  Any {@link Event}s that are pending to be
-         * distributed, or new {@link Event}s arriving via in the associated {@link EventDistributor}, will be queued
-         * for later distribution when the {@link EventChannelController} returns to service.
-         * <p>
-         * This is a starting state for an {@link EventChannelController}.
-         */
-        SUSPENDED,
-
-        /**
-         * <code>{@link #STARTING}</code> indicates that the {@link EventChannelController} is in the process
-         * of starting. Typically this means connecting to the underlying {@link EventChannel}.
-         * <p>
-         * This is a starting state for an {@link EventChannelController}.
-         */
-        STARTING,
-
-        /**
-         * <code>{@link #DISTRIBUTING}</code> indicates that the {@link EventChannelController} is in the
-         * process of distributing {@link Event}s using the {@link EventChannel}.
-         */
-        DISTRIBUTING,
-
-        /**
-         * <code>{@link #WAITING}</code> indicates that the {@link EventChannelController} is in the process
-         * of waiting for {@link Event}s to distribute using the {@link EventChannel}.
-         */
-        WAITING,
-
-        /**
-         * <code>{@link #DELAYING}</code> indicates that the {@link EventChannelController} is in the process of
-         * delaying distribution between batches.  This occurs when there is more than enough events to distribute
-         * in a single batch.  The delay will be {@link Dependencies#getBatchDistributionDelay()} milliseconds.
-         */
-        DELAYING,
-
-        /**
-         * <code>{@link #STOPPED}</code> indicates that the {@link EventChannelController} is stopped and can't be
-         * restarted.
-         */
-        STOPPED,
-
-        /**
-         * <code>{@link #ERROR}</code> indicates that a recoverable error has occurred with the
-         * {@link EventChannelController} and that an attempt to recover has been scheduled.
-         */
-        ERROR,
-
-        /**
-         * <code>{@link #DRAINING}</code> indicated that the {@link EventChannelController} is in the
-         * process of draining internal queues to prevent previously queued {@link DistributableEntryEvent}s from
-         * being distributed.
-         */
-        DRAINING,
-
-        /**
-         * <code>{@link #PROPAGATING}</code> indicates that the {@link EventChannelController} is in the
-         * process of propagating {@link NamedCache} entries over an {@link EventChannel}.
-         */
-        PROPAGATING;
-    }
-
-
     /**
      * The {@link Logger} to use for this class.
      */
@@ -414,6 +246,87 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
 
     /**
+     * The {@link State} of the {@link EventChannelController} and internal {@link NonBlockingFiniteStateMachine}.
+     */
+    public static enum State
+    {
+        /**
+         * <code>{@link #DISABLED}</code> indicates that the {@link EventChannelController} has been taken off-line.
+         * Once in this state no distribution will occur for the {@link EventChannelController} until it is
+         * manually restarted (typically via JMX).  Further, <strong>no {@link Event}s</strong> will be queued for
+         * the distribution by the {@link EventChannelController}.
+         * <p>
+         * This is a starting state for an {@link EventChannelController}.
+         */
+        DISABLED,
+
+        /**
+         * <code>{@link #SUSPENDED}</code> indicates that the {@link EventChannelController} is not operational.
+         * It typically means that the {@link EventChannelController} has either failed too many times (and thus was
+         * automatically suspended) or it has been has been manually suspended.  Once in this state no distribution
+         * will occur until it is manually restarted (typically via JMX).  Any {@link Event}s that are pending to be
+         * distributed, or new {@link Event}s arriving via in the associated {@link EventDistributor}, will be queued
+         * for later distribution when the {@link EventChannelController} returns to service.
+         * <p>
+         * This is a starting state for an {@link EventChannelController}.
+         */
+        SUSPENDED,
+
+        /**
+         * <code>{@link #STARTING}</code> indicates that the {@link EventChannelController} is in the process
+         * of starting. Typically this means connecting to the underlying {@link EventChannel}.
+         * <p>
+         * This is a starting state for an {@link EventChannelController}.
+         */
+        STARTING,
+
+        /**
+         * <code>{@link #DISTRIBUTING}</code> indicates that the {@link EventChannelController} is in the
+         * process of distributing {@link Event}s using the {@link EventChannel}.
+         */
+        DISTRIBUTING,
+
+        /**
+         * <code>{@link #WAITING}</code> indicates that the {@link EventChannelController} is in the process
+         * of waiting for {@link Event}s to distribute using the {@link EventChannel}.
+         */
+        WAITING,
+
+        /**
+         * <code>{@link #DELAYING}</code> indicates that the {@link EventChannelController} is in the process of
+         * delaying distribution between batches.  This occurs when there is more than enough events to distribute
+         * in a single batch.  The delay will be {@link Dependencies#getBatchDistributionDelay()} milliseconds.
+         */
+        DELAYING,
+
+        /**
+         * <code>{@link #STOPPED}</code> indicates that the {@link EventChannelController} is stopped and can't be
+         * restarted.
+         */
+        STOPPED,
+
+        /**
+         * <code>{@link #ERROR}</code> indicates that a recoverable error has occurred with the
+         * {@link EventChannelController} and that an attempt to recover has been scheduled.
+         */
+        ERROR,
+
+        /**
+         * <code>{@link #DRAINING}</code> indicated that the {@link EventChannelController} is in the
+         * process of draining internal queues to prevent previously queued {@link DistributableEntryEvent}s from
+         * being distributed.
+         */
+        DRAINING,
+
+        /**
+         * <code>{@link #PROPAGATING}</code> indicates that the {@link EventChannelController} is in the
+         * process of propagating {@link NamedCache} entries over an {@link EventChannel}.
+         */
+        PROPAGATING;
+    }
+
+
+    /**
      * Standard Constructor.
      */
     public AbstractEventChannelController(EventDistributor.Identifier         distributorIdentifier,
@@ -443,9 +356,9 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
         // setup an executor service to perform background processing
         this.executorService =
-            ExecutorServiceFactory
-                .newSingleThreadScheduledExecutor(ThreadFactories
-                    .newThreadFactory(true, "EventChannelController", new ThreadGroup("EventChannelController")));
+            ExecutorServiceFactory.newSingleThreadScheduledExecutor(ThreadFactories.newThreadFactory(true,
+                                                                                                     "EventChannelController",
+                                                                                                     new ThreadGroup("EventChannelController")));
 
         // realize the serializer
         this.serializer = serializerBuilder.realize(mutableParameterProvider);
@@ -494,6 +407,76 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
         this.cacheName = cacheNameParameter == null
                          ? null : cacheNameParameter.evaluate(parameterProvider).getValue(String.class);
+    }
+
+
+    /**
+     * The events that control the internal {@link NonBlockingFiniteStateMachine}.
+     */
+    public static enum ControllerEvent implements com.oracle.coherence.common.finitestatemachines.Event<State>
+    {
+        /**
+         * The <code>{@link #START}</code> event signals that a connection should be made to the
+         * underlying channel.
+         */
+        START(State.STARTING),
+
+        /**
+         * The <code>{@link #STOP}</code> event signals that distribution should stop, never to
+         * be recommenced with this instance.
+         */
+        STOP(State.STOPPED),
+
+        /**
+         * The <code>{@link #DISABLE}</code> event signals that distribution should be disabled.
+         */
+        DISABLE(State.DISABLED),
+
+        /**
+         * The <code>{@link #SUSPEND}</code> event signals that distribution should be suspended.
+         */
+        SUSPEND(State.SUSPENDED),
+
+        /**
+         * The <code>{@link #DRAIN}</code> event signals that distribution queues should be drained.
+         */
+        DRAIN(State.DRAINING),
+
+        /**
+         * The <code>{@link #DISTRIBUTE}</code> event signals that distribution should commence.
+         */
+        DISTRIBUTE(State.DISTRIBUTING),
+
+        /**
+         * The <code>{@link #PROPAGATE}</code> event signals that all {@link NamedCache} entries should be
+         * propagated over an {@link EventChannel}.
+         */
+        PROPAGATE(State.PROPAGATING);
+
+        /**
+         * The desired {@link State} when the {@link ControllerEvent} occurs.
+         */
+        private State desiredState;
+
+
+        /**
+         * Constructs a {@link ControllerEvent}.
+         *
+         * @param desiredState  the desired {@link State} of the {@link NonBlockingFiniteStateMachine}
+         *                      when the event occurs
+         */
+        ControllerEvent(State desiredState)
+        {
+            this.desiredState = desiredState;
+        }
+
+
+        @Override
+        public State getDesiredState(State            state,
+                                     ExecutionContext context)
+        {
+            return desiredState;
+        }
     }
 
 
@@ -946,8 +929,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     {
         return new NonBlockingFiniteStateMachine
             .ProcessEventLater<State>(new NonBlockingFiniteStateMachine
-                .SubsequentEvent<State>(new NonBlockingFiniteStateMachine
-                    .CoalescedEvent<State>(ControllerEvent.DISTRIBUTE)),
+                .SubsequentEvent<State>(ControllerEvent.DISTRIBUTE),
                                       controllerDependencies.getEventPollingDelay(),
                                       TimeUnit.MILLISECONDS);
     }
@@ -964,8 +946,7 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     {
         return new NonBlockingFiniteStateMachine
             .ProcessEventLater<State>(new NonBlockingFiniteStateMachine
-                .SubsequentEvent<State>(new NonBlockingFiniteStateMachine
-                    .CoalescedEvent<State>(ControllerEvent.DISTRIBUTE)),
+                .SubsequentEvent<State>(ControllerEvent.DISTRIBUTE),
                                       controllerDependencies.getBatchDistributionDelay(),
                                       TimeUnit.MILLISECONDS);
     }
@@ -1097,9 +1078,10 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
                     Binary binaryValue = (Binary) valueConverter.convert(entry.getValue());
 
                     // decorate the binary value with the source cluster
-                    binaryValue =
-                        (Binary) backingMapManagerContext
-                            .addInternalValueDecoration(binaryValue, BackingMapManagerContext.DECO_CUSTOM, decorations);
+                    binaryValue = (Binary) backingMapManagerContext.addInternalValueDecoration(binaryValue,
+                                                                                               BackingMapManagerContext
+                                                                                                   .DECO_CUSTOM,
+                                                                                               decorations);
 
                     // create a distributable entry
                     DistributableEntry distributableEntry = new DistributableEntry(binaryKey,
@@ -1254,26 +1236,32 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
 
                 // (ensure each of the EntryEvents have a correct context)
                 Iterator<Event> events = new MutatingEventIteratorTransformer(new EventTransformer()
-                {
-                    @Override
-                    public Event transform(Event event)
-                    {
-                        if (event instanceof DistributableEntryEvent)
-                        {
-                            DistributableEntryEvent distributableEntryEvent = (DistributableEntryEvent) event;
-                            NamedCache namedCache = CacheFactory.getCache(distributableEntryEvent.getCacheName());
+                                                                              {
+                                                                                  @Override
+                                                                                  public Event transform(Event event)
+                                                                                  {
+                                                                                      if (
+                                                                                      event
+                                                                                      instanceof DistributableEntryEvent)
+                                                                                      {
+                                                                                          DistributableEntryEvent distributableEntryEvent =
+                                                                                              (DistributableEntryEvent) event;
+                                                                                          NamedCache namedCache =
+                                                                                              CacheFactory.getCache(distributableEntryEvent.getCacheName());
 
-                            distributableEntryEvent.getEntry()
-                                .setContext(namedCache.getCacheService().getBackingMapManager().getContext());
+                                                                                          distributableEntryEvent.getEntry()
+                                                                                          .setContext(namedCache.getCacheService()
+                                                                                          .getBackingMapManager()
+                                                                                          .getContext());
 
-                            return distributableEntryEvent;
-                        }
-                        else
-                        {
-                            return event;
-                        }
-                    }
-                }).transform(eventList.iterator());
+                                                                                          return distributableEntryEvent;
+                                                                                      }
+                                                                                      else
+                                                                                      {
+                                                                                          return event;
+                                                                                      }
+                                                                                  }
+                                                                              }).transform(eventList.iterator());
 
                 events = transformer == null ? events : transformer.transform(events);
 
