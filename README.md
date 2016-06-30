@@ -25,6 +25,6 @@ Development Branch: [**develop-12**](https://github.com/coherence-community/cohe
 Coherence Incubator 11 (for Coherence 3.7.1.x)
 ----------------------------------------------
 
-Release Documentation: [http://coherence-community.github.com/coherence-incubator/11.3.3-SNAPSHOT/](http://coherence-community.github.com/coherence-incubator/11.3.2-SNAPSHOT/)
+Release Documentation: [http://coherence-community.github.com/coherence-incubator/11.3.1-SNAPSHOT/](http://coherence-community.github.com/coherence-incubator/11.3.1-SNAPSHOT/)
 
 Development Branch: [**develop-11**](https://github.com/coherence-community/coherence-incubator/tree/develop-11) 
