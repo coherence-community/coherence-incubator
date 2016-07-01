@@ -9,45 +9,76 @@ reverse chronological order.
 <h4>Source and Documentation Contributors</h4>
 
 *   Brian Oliver
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   [Issue #150](https://github.com/coherence-community/coherence-incubator/issues/150): Upgraded to require
+    Java 7 and Java 8.
+
+    Deployed Modules are built against and require Java 7.
+
+    Integration Test Modules are built against and require Java 8.
+
+*   [Issue #151](https://github.com/coherence-community/coherence-incubator/issues/151): Upgraded the following
+    dependencies.
+
+    EasyMock 3.1 to 3.4
+    PowerMock 1.4.12 to 1.6.5
+    JUnit 4.10 to 4.12
+    CGLIB 2.2.2 to 3.2.2
+    Mockito 1.9.0 to 1.10.19
+
+<h4>coherence-processingpattern</h4>
+
+*   [Issue #151](https://github.com/coherence-community/coherence-incubator/issues/151): Refactored the use
+    of EasyMock for the latest version.
+
+--------------------------------------------------------------------------------
+
+<h3>Version: 12.3.2 built on 2016-06-29 10:05</h3>
+
+<h4>Source and Documentation Contributors</h4>
+
+*   Brian Oliver
 *   Jonathan Knight
 *   Jan Vissers
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-125](http://java.net/jira/browse/COHINC-125): Replaced use of
+*   [Issue #125](https://github.com/coherence-community/coherence-incubator/issues/125): Replaced use of
     deprecated DeferredAssert.assertThat(...) methods with Eventually.assertThat(...)
 
-*   [COHINC-146](http://java.net/jira/browse/COHINC-146): Corrected use of
+*   [Issue #146](https://github.com/coherence-community/coherence-incubator/issues/146): Corrected use of
     &lt;connect-timeout&gt; configuration elements for Coherence 12.1.2+.
 
 <h4>coherence-eventdistributionpattern</h4>
 
-*   [COHINC-140](http://java.net/jira/browse/COHINC-140): Optimized (by avoiding)
+*   [Issue #140](https://github.com/coherence-community/coherence-incubator/issues/140): Optimized (by avoiding)
     Event Distribution when all Event Channels are disabled.
 
-*   [COHINC-144](http://java.net/jira/browse/COHINC-144): Introduced the
+*   [Issue #144](https://github.com/coherence-community/coherence-incubator/issues/144): Introduced the
     ability to universally control all EventChannels for a single EventDistributor
     though the new EventDistributor JMX MBeans.
 
-<h4>coherence-processingnpattern</h4>
+<h4>coherence-processingpattern</h4>
 
-*   [COHINC-143](http://java.net/jira/browse/COHINC-143): Resolved issue
+*   [Issue #143](https://github.com/coherence-community/coherence-incubator/issues/143): Resolved issue
     where the processing pattern cluster-config configuration elements aren't
     correctly included when using introduce-cache-config namespace.
 
 <h4>coherence-eventdistributionpattern</h4>
 
-*   [COHINC-149](http://java.net/jira/browse/COHINC-149): Resolved issue where
+*   [Issue #149](https://github.com/coherence-community/coherence-incubator/issues/149): Resolved issue where
     an Event Channel (controller) may remain in WAITING or DELAYING state when
     there are pending Events to send.
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-36](http://java.net/jira/browse/COHINC-36): Fixed an issue where keys
+*   [Issue #36](https://github.com/coherence-community/coherence-incubator/issues/36): Fixed an issue where keys
     of replicated entries were being deserialized on the receiving cluster during
     replication.
 
-*   [COHINC-149](http://java.net/jira/browse/COHINC-149): Resolved issue where
+*   [Issue #149](https://github.com/coherence-community/coherence-incubator/issues/149): Resolved issue where
     an Push Replication Event Channels may remain in WAITING or DELAYING state when
     there are pending Events to send.
 
@@ -61,25 +92,25 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-125](http://java.net/jira/browse/COHINC-125): Upgraded to use Oracle Tools 2.0.0-RC9
+*   [Issue #125](https://github.com/coherence-community/coherence-incubator/issues/125): Upgraded to use Oracle Tools 2.0.0-RC9
 
-*   [COHINC-142](http://java.net/jira/browse/COHINC-142): Upgraded to use Coherence 12.1.2-0-4
+*   [Issue #142](https://github.com/coherence-community/coherence-incubator/issues/142): Upgraded to use Coherence 12.1.2-0-4
     (and certified with Coherence 12.1.3-0-2)
 
 <h4>coherence-processingpattern</h4>
 
-*   [COHINC-132](http://java.net/jira/browse/COHINC-132): Removed use of Coherence internal calls
+*   [Issue #132](https://github.com/coherence-community/coherence-incubator/issues/132): Removed use of Coherence internal calls
     (Base.checkNotNull(...)) to ensure that the pattern works across different versions of Coherence.
 
-*   [COHINC-137](http://java.net/jira/browse/COHINC-137): Repair processing-pattern configuration files
+*   [Issue #137](https://github.com/coherence-community/coherence-incubator/issues/137): Repair processing-pattern configuration files
     (fails validation when enforced)
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-136](http://java.net/jira/browse/COHINC-136): Removed duplicate definition of
+*   [Issue #136](https://github.com/coherence-community/coherence-incubator/issues/136): Removed duplicate definition of
     Coherence*Web dependency.
 
-*   [COHINC-141](http://java.net/jira/browse/COHINC-141): Resolved ClassCastException
+*   [Issue #141](https://github.com/coherence-community/coherence-incubator/issues/141): Resolved ClassCastException
     experienced with Coherence 12.1.2-0-3.
 
 
@@ -93,92 +124,92 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-95](http://java.net/jira/browse/COHINC-95): Upgraded to require Java 7
+*   [Issue #95](https://github.com/coherence-community/coherence-incubator/issues/95): Upgraded to require Java 7
 
-*   [COHINC-99](http://java.net/jira/browse/COHINC-99): Upgraded to use Coherence 12.1.2-0-3
+*   [Issue #99](https://github.com/coherence-community/coherence-incubator/issues/99): Upgraded to use Coherence 12.1.2-0-3
 
-*   [COHINC-109](http://java.net/jira/browse/COHINC-109): Certified against Coherence 12.1.3.
+*   [Issue #109](https://github.com/coherence-community/coherence-incubator/issues/109): Certified against Coherence 12.1.3.
 
-*   [COHINC-125](http://java.net/jira/browse/COHINC-125): Upgraded to use Oracle Tools 2.0.0
+*   [Issue #125](https://github.com/coherence-community/coherence-incubator/issues/125): Upgraded to use Oracle Tools 2.0.0
 
 <h4>coherence-common</h4>
 
-*   [COHINC-124](http://java.net/jira/browse/COHINC-124): Introduced the ability
+*   [Issue #124](https://github.com/coherence-community/coherence-incubator/issues/124): Introduced the ability
     to determine if a FiniteStateMachine is still accepting Events to process
     while performing an StateEntry/StateExit/Transaction Acton through
     the use of the new ExecutionContext.isAcceptingEvents() method.
 
-*   [COHINC-126](http://java.net/jira/browse/COHINC-126): Added support for
+*   [Issue #126](https://github.com/coherence-community/coherence-incubator/issues/126): Added support for
     merging &lt;defaults&gt; elements in a Coherence Cache Configuration
     when using the XmlPreprocessingNamespaceHandler (aka: introduce-cache-config)
 
-*   [COHINC-128](http://java.net/jira/browse/COHINC-128): Removed the dependency
+*   [Issue #128](https://github.com/coherence-community/coherence-incubator/issues/128): Removed the dependency
     on CGLib from the pom.xml file as the code does not actually have a
     dependency on CGLib.
 
-*   [COHINC-129](http://java.net/jira/browse/COHINC-129): Removed unnecessary
+*   [Issue #129](https://github.com/coherence-community/coherence-incubator/issues/129): Removed unnecessary
     Coherence ConfigurableCacheFactory functional test.  These have been part
     of core Coherence functional tests since 3.7.1.
 
 <h4>coherence-messagingpattern</h4>
 
-*   [COHINC-118](http://java.net/jira/browse/COHINC-118): Introduced
+*   [Issue #118](https://github.com/coherence-community/coherence-incubator/issues/118): Introduced
     JMX-based diagnostics for Susbcriptions.  This includes the ability to
     display the internal state of a Subscription.
 
-*   [COHINC-121](http://java.net/jira/browse/COHINC-121): Resolved
+*   [Issue #121](https://github.com/coherence-community/coherence-incubator/issues/121): Resolved
     potential message leaks when publishing to disabled subscriptions
     (subscriptions won't recieve messages, but messages may be left
     unacknowledged)
 
 <h4>coherence-eventdistributionpattern</h4>
 
-*   [COHINC-106](http://java.net/jira/browse/COHINC-106): Added missing @OnArrived
+*   [Issue #106](https://github.com/coherence-community/coherence-incubator/issues/106): Added missing @OnArrived
     and @OnDeparting annotations to the CoherenceEventChannelSubscription and
     JMSEventChannelControllerConfiguration LiveObjects to ensure correct event distribution
     and push replication recovery during fail-over/fail-back/scale-out/scale-down.
 
-*   [COHINC-108](http://java.net/jira/browse/COHINC-108): Resolved ability
+*   [Issue #108](https://github.com/coherence-community/coherence-incubator/issues/108): Resolved ability
     to distribute and replicate Cache Entry expiry timeouts between clusters.
 
     This includes introducing the ability to customize expiry when during
     conflict resolution.
 
-*   [COHINC-110](http://java.net/jira/browse/COHINC-110): Introduced the
+*   [Issue #110](https://github.com/coherence-community/coherence-incubator/issues/110): Introduced the
     ability to control batch-size, inter batch-distribution-delay and
     restart-delay using JMX at runtime.
 
-*   [COHINC-112](http://java.net/jira/browse/COHINC-112): Replaced the
+*   [Issue #112](https://github.com/coherence-community/coherence-incubator/issues/112): Replaced the
     "message out of order" log when using Coherence-based event distribution
     implementations with something more apppropriate.  This log only
     indicates that a recovery is occuring (nothing bad!), because it's
     redistributing messages to an event channel that previously
     failed for some reason.
 
-*   [COHINC-115](http://java.net/jira/browse/COHINC-115): Refactored
+*   [Issue #115](https://github.com/coherence-community/coherence-incubator/issues/115): Refactored
     the "drain" functionality for Coherence-based event distribution
     implementations so that they use the configured batches and delays.
 
-*   [COHINC-120](http://java.net/jira/browse/COHINC-120): Introduced
+*   [Issue #120](https://github.com/coherence-community/coherence-incubator/issues/120): Introduced
     the ability to "propagate" a copy of a NamedCache over an associated
     EventChannel using a JMX operation.   This allows remote clusters
     to be "rebuilt" from another cluster or alternatively allows
     an EventChannel implementation to receive a entire copy of a
     NamedCache.
 
-*   [COHINC-128](http://java.net/jira/browse/COHINC-128): Correct the
+*   [Issue #128](https://github.com/coherence-community/coherence-incubator/issues/128): Correct the
     scope of the dependency on oracle-tools-core to make it test scope.
 
-*   [COHINC-133](http://java.net/jira/browse/COHINC-133): Corrected the
+*   [Issue #133](https://github.com/coherence-community/coherence-incubator/issues/133): Corrected the
     choice of class loader when realizing Event Distribution Channels
     to prevent ClassNotFound exceptions when running in certain containers.
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-64](http://java.net/jira/browse/COHINC-64):  Changed the
+*   [Issue #64](https://github.com/coherence-community/coherence-incubator/issues/64):  Changed the
     coherence-web dependency to be "provided".
 
-*   [COHINC-120](http://java.net/jira/browse/COHINC-120): Introduced
+*   [Issue #120](https://github.com/coherence-community/coherence-incubator/issues/120): Introduced
     the ability to "propagate" a copy of a NamedCache over an associated
     EventChannel using a JMX operation.   This allows remote clusters
     to be "rebuilt" from another cluster or alternatively allows
@@ -187,14 +218,14 @@ reverse chronological order.
 
 <h4>coherence-jvisualvm</h4>
 
-*   [COHINC-107](https://java.net/jira/browse/COHINC-107):  Memory Based Charts Should
+*   [Issue #107](https://java.net/jira/browse/COHINC-107):  Memory Based Charts Should
     use bytes method.
 
 *   Minor UI tweaks for Windows platforms.
 
 <h4>coherence-incubator-site</h4>
 
-*   [COHINC-119](http://java.net/jira/browse/COHINC-119): Modifed pom.xml
+*   [Issue #119](https://github.com/coherence-community/coherence-incubator/issues/119): Modifed pom.xml
     to produce and deploy the documentation to github in the "deploy" phase.
 
 
@@ -208,37 +239,37 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded to use Oracle Tools 1.2.2
+*   [Issue #81](https://github.com/coherence-community/coherence-incubator/issues/81): Upgraded to use Oracle Tools 1.2.2
 
-*   [COHINC-92](http://java.net/jira/browse/COHINC-92): Upgraded Maven Plugins.
+*   [Issue #92](https://github.com/coherence-community/coherence-incubator/issues/92): Upgraded Maven Plugins.
 
 <h4>coherence-incubator-all</h4>
 
-*   [COHINC-90](http://java.net/jira/browse/COHINC-90): (re)Introduced coherence-incubator-all
+*   [Issue #90](https://github.com/coherence-community/coherence-incubator/issues/90): (re)Introduced coherence-incubator-all
     distribution that contains all of the Incubator projects, as a single artifact.
 
 <h4>coherence-common</h4>
 
-*   [COHINC-85](http://java.net/jira/browse/COHINC-85): Improved Annotation-based
+*   [Issue #85](https://github.com/coherence-community/coherence-incubator/issues/85): Improved Annotation-based
     FiniteStateMachine Models to allow for @Transitions defined by super-classes.
 
-*   [COHINC-87](http://java.net/jira/browse/COHINC-87): Introduced the ability to
+*   [Issue #87](https://github.com/coherence-community/coherence-incubator/issues/87): Introduced the ability to
     control whether a NonBlockingFiniteStateMachine autostarts (aka: transitions)
     to its initial state.
 
-*   [COHINC-89](http://java.net/jira/browse/COHINC-89): Refactored to use
+*   [Issue #89](https://github.com/coherence-community/coherence-incubator/issues/89): Refactored to use
     new Coherence 12.1.2-0-1 serializable configuration classes and removed
     internally defined classes.
 
-*   [COHINC-101](http://java.net/jira/browse/COHINC-101): Improved LiveObject test
+*   [Issue #101](https://github.com/coherence-community/coherence-incubator/issues/101): Improved LiveObject test
     isolation.
 
 <h4>coherence-commandpattern</h4>
 
-*   [COHINC-80](http://java.net/jira/browse/COHINC-80): Fixed methods in CommandExecutor
+*   [Issue #80](https://github.com/coherence-community/coherence-incubator/issues/80): Fixed methods in CommandExecutor
     annotated for use with the AnnotationDrivenModel so that they have the correct signature.
 
-*   [COHINC-100](http://java.net/jira/browse/COHINC-100): Resolved issue where
+*   [Issue #100](https://github.com/coherence-community/coherence-incubator/issues/100): Resolved issue where
     Commands may not be executed after adding/removing cluster members.
 
 <h4>coherence-commandpattern-tests</h4>
@@ -247,10 +278,10 @@ reverse chronological order.
 
 <h4>coherence-messagingpattern-tests</h4>
 
-*   [COHINC-81](http://java.net/jira/browse/COHINC-81): Upgraded for Oracle Tools
+*   [Issue #81](https://github.com/coherence-community/coherence-incubator/issues/81): Upgraded for Oracle Tools
     improvements.
 
-*   [COHINC-98](http://java.net/jira/browse/COHINC-98): Removed unnecessary code
+*   [Issue #98](https://github.com/coherence-community/coherence-incubator/issues/98): Removed unnecessary code
     to clean up MessageEngine instances for Destinations upon successful Message
     delivery.   This could cause unnecessary creation of MessageEngines for the
     next Message on the Destination, including the allocation of a new
@@ -258,7 +289,7 @@ reverse chronological order.
 
 <h4>coherence-eventdistributionpattern</h4>
 
-*   [COHINC-83](http://java.net/jira/browse/COHINC-83): Refactored
+*   [Issue #83](https://github.com/coherence-community/coherence-incubator/issues/83): Refactored
     AbstractEventChannelController internals to use a Non-Blocking Finite State
     Machine, instead of Java Synchronization and an ExecutorService.
 
@@ -266,47 +297,47 @@ reverse chronological order.
     "coalescing events", which can help reduce CPU when message subscriptions
     are updated, causing numerous events triggering extraneous distribution requests.
 
-*   [COHINC-93](https://java.net/jira/browse/COHINC-93): Introduced new DELAYED
+*   [Issue #93](https://java.net/jira/browse/COHINC-93): Introduced new DELAYED
     state for the AbstractEventChannelController, together with a new "polling-delay"
     configuration for Event Channels.   This allows separate control of
     polling and inter-batch delays.
 
-*   [COHINC-102](https://java.net/jira/browse/COHINC-102): Corrected
+*   [Issue #102](https://java.net/jira/browse/COHINC-102): Corrected
     &lt;cachestore-scheme&gt; documentation (and implementation).  Such schemes
     must use the namespace.  Standard Coherence cachestore-scheme xml elements are
     not supported directly.
 
-*   [COHINC-103](https://java.net/jira/browse/COHINC-103): Corrected the resolution
+*   [Issue #103](https://java.net/jira/browse/COHINC-103): Corrected the resolution
     of target/destinations caches when using a LocalCacheEventChannel.
 
-*   [COHINC-127](https://java.net/jira/browse/COHINC-127): Corrected expiry-time
+*   [Issue #127](https://java.net/jira/browse/COHINC-127): Corrected expiry-time
     calculation to ensure that "loaded" BinaryEntries can be sent over an
     EventChannel without loss of fidelity.  This allows LocalCacheEventChannels
     to correctly update Entries with the required expiry time.
 
 <h4>coherence-pushreplicationpattern-tests</h4>
 
-*   [COHINC-11](http://java.net/jira/browse/COHINC-11):  Refactored
+*   [Issue #11](https://github.com/coherence-community/coherence-incubator/issues/11):  Refactored
     Push Replication Functional Tests into their own module.
 
 <h4>coherence-jvisualvm</h4>
 
-*   [COHINC-79](http://java.net/jira/browse/COHINC-79): JVisualVM Plugin
+*   [Issue #79](https://github.com/coherence-community/coherence-incubator/issues/79): JVisualVM Plugin
     Does not Report Cache Storage Details when connected to 3.6 and earlier cluster.
 
-*   [COHINC-84](http://java.net/jira/browse/COHINC-84): VisualVMModel
+*   [Issue #84](https://github.com/coherence-community/coherence-incubator/issues/84): VisualVMModel
     generalDataArea should not be editable.
 
-*   [COHINC-91](http://java.net/jira/browse/COHINC-91): Jvisualvm Plugin
+*   [Issue #91](https://github.com/coherence-community/coherence-incubator/issues/91): Jvisualvm Plugin
     Incorrectly Reports Session Counts for Multiple Coh*web Apps.
 
-*   [COHINC-96](https://java.net/jira/browse/COHINC-96): Corrected labels on the
+*   [Issue #96](https://java.net/jira/browse/COHINC-96): Corrected labels on the
     Packet Publisher and Receiver Graphs.
 
-*   [COHINC-97](https://java.net/jira/browse/COHINC-97): Corrected Cache Size
+*   [Issue #97](https://java.net/jira/browse/COHINC-97): Corrected Cache Size
     metrics that failed to take the configured unit-calculator into account.
 
-*   [COHINC-105](https://java.net/jira/browse/COHINC-105): Add Cluster Name and
+*   [Issue #105](https://java.net/jira/browse/COHINC-105): Add Cluster Name and
     Version to "Cluster Information" Header
 
 
@@ -320,10 +351,10 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-74](http://java.net/jira/browse/COHINC-74): Upgraded projects to use
+*   [Issue #74](https://github.com/coherence-community/coherence-incubator/issues/74): Upgraded projects to use
     Oracle Tools 1.1.0
 
-*   [COHINC-75](http://java.net/jira/browse/COHINC-75): Upgraded projects to use
+*   [Issue #75](https://github.com/coherence-community/coherence-incubator/issues/75): Upgraded projects to use
     Oracle Coherence 12.1.2-0-1
 
 <h4>coherence-incubator-site (Documentation)</h4>
@@ -352,7 +383,7 @@ reverse chronological order.
 
 <h4>coherence-processingpattern-examples</h4>
 
-*   [COHINC-82](http://java.net/jira/browse/COHINC-82): Resolved an issue in the Processing Pattern
+*   [Issue #82](https://github.com/coherence-community/coherence-incubator/issues/82): Resolved an issue in the Processing Pattern
     Web Examples Tests where the FunctionalTest could fail due to the storage nodes and web server
     failing to form a cluster.
 
@@ -362,24 +393,24 @@ reverse chronological order.
 
 <h4>coherence-eventdistributionpattern</h4>
 
-*   [COHINC-71](http://java.net/jira/browse/COHINC-71): Introduce the ability to
+*   [Issue #71](https://github.com/coherence-community/coherence-incubator/issues/71): Introduce the ability to
     filter events  prior to queuing them for distribution.  This resolves
     unnecessary queuing of events to be published when we know they will never
     be published.  eg: when using certain HUB and SPOKE or CENTRALIZED
     topologies.
 
-*   [COHINC-73](http://java.net/jira/browse/COHINC-73): Resolves an issue where
+*   [Issue #73](https://github.com/coherence-community/coherence-incubator/issues/73): Resolves an issue where
     the Event Optimizing Transformer may cause NPE with certain topologies.
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-71](http://java.net/jira/browse/COHINC-71): Introduce the ability to
+*   [Issue #71](https://github.com/coherence-community/coherence-incubator/issues/71): Introduce the ability to
     filter events  prior to queuing them for distribution.  This resolves
     unnecessary queuing of events to be published when we know they will never
     be published.  eg: when using certain HUB and SPOKE or CENTRALIZED
     topologies.
 
-*   [COHINC-73](http://java.net/jira/browse/COHINC-73): Resolves an issue where
+*   [Issue #73](https://github.com/coherence-community/coherence-incubator/issues/73): Resolves an issue where
     the Event Optimizing Transformer may cause NPE with certain topologies.
 
 <h4>coherence-pushreplicationpattern-examples</h4>
@@ -494,7 +525,7 @@ reverse chronological order.
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-65](http://java.net/jira/browse/COHINC-65): Resolved issue
+*   [Issue #65](https://github.com/coherence-community/coherence-incubator/issues/65): Resolved issue
     where attempting to remove non-existing or expired entries would not
     be replicated.
 

@@ -74,13 +74,13 @@ public class RoundRobinTaskDispatchPolicyTest
     {
         task                     = EasyMock.createMock(Task.class);
         submissionConfiguration  = EasyMock.createMock(SubmissionConfiguration.class);
-        taskProcessorMediators   = org.easymock.classextension.EasyMock.createMock(ConcurrentHashMap.class);
-        taskProcessorDefinitions = org.easymock.classextension.EasyMock.createMock(ConcurrentHashMap.class);
+        taskProcessorMediators   = org.easymock.EasyMock.createMock(ConcurrentHashMap.class);
+        taskProcessorDefinitions = org.easymock.EasyMock.createMock(ConcurrentHashMap.class);
         entrySet                 = EasyMock.createMock(Set.class);
         iter                     = EasyMock.createMock(Iterator.class);
         entry                    = EasyMock.createMock(Map.Entry.class);
         taskProcessorMediator    = EasyMock.createMock(TaskProcessorMediator.class);
-        key                      = org.easymock.classextension.EasyMock.createMock(TaskProcessorMediatorKey.class);
+        key                      = org.easymock.EasyMock.createMock(TaskProcessorMediatorKey.class);
         identifier               = EasyMock.createMock(Identifier.class);
         definition               = EasyMock.createMock(TaskProcessorDefinition.class);
 
@@ -94,12 +94,12 @@ public class RoundRobinTaskDispatchPolicyTest
     {
         EasyMock.replay(task);
         EasyMock.replay(submissionConfiguration);
-        org.easymock.classextension.EasyMock.replay(taskProcessorMediators);
-        org.easymock.classextension.EasyMock.replay(taskProcessorDefinitions);
+        org.easymock.EasyMock.replay(taskProcessorMediators);
+        org.easymock.EasyMock.replay(taskProcessorDefinitions);
         EasyMock.replay(entrySet);
         EasyMock.replay(iter);
         EasyMock.replay(entry);
-        org.easymock.classextension.EasyMock.replay(key);
+        org.easymock.EasyMock.replay(key);
         EasyMock.replay(identifier);
         EasyMock.replay(definition);
         EasyMock.replay(taskProcessorMediator);
@@ -114,12 +114,12 @@ public class RoundRobinTaskDispatchPolicyTest
     {
         EasyMock.verify(task);
         EasyMock.verify(submissionConfiguration);
-        org.easymock.classextension.EasyMock.verify(taskProcessorMediators);
-        org.easymock.classextension.EasyMock.verify(taskProcessorDefinitions);
+        org.easymock.EasyMock.verify(taskProcessorMediators);
+        org.easymock.EasyMock.verify(taskProcessorDefinitions);
         EasyMock.verify(entrySet);
         EasyMock.verify(iter);
         EasyMock.verify(entry);
-        org.easymock.classextension.EasyMock.verify(key);
+        org.easymock.EasyMock.verify(key);
         EasyMock.verify(identifier);
         EasyMock.verify(definition);
         EasyMock.verify(taskProcessorMediator);
@@ -201,12 +201,12 @@ public class RoundRobinTaskDispatchPolicyTest
         EasyMock.expect(iter.hasNext()).andReturn(false);
         EasyMock.expect(iter.next()).andReturn(entry).times(4);
 
-        TaskProcessorMediatorKey key2 = org.easymock.classextension.EasyMock.createMock(TaskProcessorMediatorKey.class);
+        TaskProcessorMediatorKey key2 = org.easymock.EasyMock.createMock(TaskProcessorMediatorKey.class);
 
         EasyMock.expect(entry.getKey()).andReturn(key2);
 
         replayAll();
-        org.easymock.classextension.EasyMock.replay(key2);
+        org.easymock.EasyMock.replay(key2);
 
         RoundRobinTaskDispatchPolicy pol = new RoundRobinTaskDispatchPolicy();
         Map<TaskProcessorMediatorKey, TaskProcessorMediator> result = pol.selectTaskProcessorSet(task,
@@ -221,7 +221,7 @@ public class RoundRobinTaskDispatchPolicyTest
 
         junit.framework.Assert.assertEquals(resultKey, key2);
         verifyAll();
-        org.easymock.classextension.EasyMock.verify(key2);
+        org.easymock.EasyMock.verify(key2);
 
     }
 }

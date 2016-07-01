@@ -35,7 +35,7 @@ import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMedia
 import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMediatorKey;
 import com.tangosol.util.UID;
 import com.tangosol.util.UUID;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 

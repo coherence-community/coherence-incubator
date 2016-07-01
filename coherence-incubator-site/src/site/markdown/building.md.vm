@@ -4,11 +4,11 @@ Building
 To build the Oracle Coherence Incubator you need to have the following software
 installed:
 
-1.  Java SE Development Kit 6 or 7.  (experimental support for Java 8 is also available).
+1.  Java SE Development Kit 7 **and** 8.
 
     Available from: [Oracle Java SE Downloads](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
-2.  [Apache Maven](http://maven.apache.org/) Version 3.0.4+ (not 3.0.3)
+2.  [Apache Maven](http://maven.apache.org/) Version 3.2.5+
 
     Available here: [Apache Maven Downloads](http://maven.apache.org/download.cgi)
 
@@ -16,11 +16,7 @@ installed:
 
 Additionally you should set your Maven Options as follows:
 
-    MAVEN_OPTS="-Djava.net.preferIPv4Stack=true
-                -XX:MaxPermSize=512M
-                -XX:+UseConcMarkSweepGC
-                -XX:+CMSClassUnloadingEnabled
-                -XX:+CMSClassUnloadingEnabled"
+    MAVEN_OPTS="-Djava.net.preferIPv4Stack=true"
 
 4.  In order to build the Coherence JVisualVM plug-in (available `coherence-jvisualvm` directory)
     you will need to add the following repository in your Maven settings.xml:
@@ -30,6 +26,51 @@ Additionally you should set your Maven Options as follows:
         <name>jvisualvm</name>
         <url>http://bits.netbeans.org/nexus/content/groups/visualvm/</url>
     </repository>
+
+5.  Lastly, you will need to configure the [Maven Tool Chains](https://maven.apache.org/guides/mini/guide-using-toolchains.html)
+    ie: toolchains.xml in your ~/.m2 folder, to define the Java 7 and Java 8 platforms
+    provided by Oracle.
+
+    For example, a ~/.m2/toolchains.xml for macOS may look like:
+
+```xml
+    <?xml version="1.0" encoding="UTF8"?>
+    <toolchains>
+      <!-- JDK toolchains -->
+      <toolchain>
+        <type>jdk</type>
+        <provides>
+          <version>1.6</version>
+          <vendor>oracle</vendor>
+        </provides>
+        <configuration>
+          <jdkHome>/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home</jdkHome>
+        </configuration>
+      </toolchain>
+
+      <toolchain>
+        <type>jdk</type>
+        <provides>
+          <version>1.7</version>
+          <vendor>oracle</vendor>
+        </provides>
+        <configuration>
+          <jdkHome>/Library/Java/JavaVirtualMachines/jdk1.7.0_101.jdk/Contents/Home</jdkHome>
+        </configuration>
+      </toolchain>
+
+      <toolchain>
+        <type>jdk</type>
+        <provides>
+          <version>1.8</version>
+          <vendor>oracle</vendor>
+        </provides>
+        <configuration>
+          <jdkHome>/Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home</jdkHome>
+        </configuration>
+      </toolchain>
+    </toolchains>
+```
 
 Once you have this software and have correctly configured the above Maven options,
 building the entire source tree is as simple as executing the following shell

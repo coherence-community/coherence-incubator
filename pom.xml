@@ -32,12 +32,7 @@
 
     <developers>
         <developer>
-            <name>Noah Arliss</name>
-            <organization>Oracle Corporation</organization>
-        </developer>
-
-        <developer>
-            <name>Paul Mackin</name>
+            <name>Jonathan Knight</name>
             <organization>Oracle Corporation</organization>
         </developer>
 
@@ -46,11 +41,6 @@
             <organization>Oracle Corporation</organization>
         </developer>
 
-        <developer>
-            <name>David Rowlands</name>
-            <organization>Oracle Corporation</organization>
-        </developer>
-        
         <developer>
             <name>Tim Middleton</name>
             <organization>Oracle Corporation</organization>
@@ -95,6 +85,21 @@
     </modules>
 
     <properties>
+        <!-- jdk versions -->
+
+        <!-- the required jdk version for the build tools, including maven itself -->
+        <build.jdk.version>1.8</build.jdk.version>
+
+        <!-- the required jdk version for all non-test source code -->
+        <source.jdk.version>1.7</source.jdk.version>
+        <source.jdk.sniffer.version>java17</source.jdk.sniffer.version>
+
+        <!-- the target jdk version for published artifacts -->
+        <target.jdk.version>1.7</target.jdk.version>
+
+        <!-- the required jdk version for integration testing -->
+        <test.jdk.version>1.8</test.jdk.version>
+
         <!-- project options -->
         <skip-sign-artifacts>true</skip-sign-artifacts>
 
@@ -109,6 +114,9 @@
         <!-- plugin dependency versions (alphabetically) -->
         <doxia.module.markdown.version>1.0</doxia.module.markdown.version>
 
+        <maven.version>3.2.5</maven.version>
+
+        <maven.animal.sniffer.plugin.version>1.15</maven.animal.sniffer.plugin.version>
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
         <maven.dependency.plugin.version>2.6</maven.dependency.plugin.version>
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
@@ -126,22 +134,24 @@
         <maven.site.plugin.version>3.4</maven.site.plugin.version>
         <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
         <maven.surefire.plugin.version>2.17</maven.surefire.plugin.version>
+        <maven.tool.chains.plugin.version>1.1</maven.tool.chains.plugin.version>
         <maven.war.plugin.version>2.4</maven.war.plugin.version>
 
         <!-- dependency versions (alphabetically) -->
         <activemq.version>5.3.1</activemq.version>
         <amazonaws.version>1.3.14</amazonaws.version>
-        <cglib.version>2.2.2</cglib.version>
+        <cglib.version>3.2.2</cglib.version>
         <com.sun.messaging.mq.version>4.6-b01</com.sun.messaging.mq.version>
-        <easymock.version>3.1</easymock.version>
+        <easymock.version>3.4</easymock.version>
         <hamcrest.version>1.3</hamcrest.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
-        <junit.version>4.10</junit.version>
+        <junit.version>4.12</junit.version>
         <miglayout.version>3.6</miglayout.version>
-        <mockito.version>1.9.0</mockito.version>
+        <mockito.version>1.10.19</mockito.version>
+        <oracle.bedrock.version>4.0.1-SNAPSHOT</oracle.bedrock.version>
         <oracle.coherence.version>12.1.2-0-4</oracle.coherence.version>
         <oracle.tools.version>2.0.0-RC9</oracle.tools.version>
-        <powermock.version>1.4.12</powermock.version>
+        <powermock.version>1.6.5</powermock.version>
     </properties>
 
     <dependencyManagement>
@@ -185,10 +195,10 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.0.4</version>
+                                    <version>${maven.version}</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>1.7.0</version>
+                                    <version>${build.jdk.version}</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -201,8 +211,29 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>${source.jdk.version}</source>
+                    <target>${source.jdk.version}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>${maven.tool.chains.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>${source.jdk.version}</version>
+                            <vendor>oracle</vendor>
+                        </jdk>
+                    </toolchains>
                 </configuration>
             </plugin>
 
@@ -211,7 +242,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
-                    <argLine>-Xms1500m -Xmx1500m -XX:MaxPermSize=500m</argLine>
+                    <argLine>-Xms1500m -Xmx1500m</argLine>
                     <includes>
                         <include>**/*FunctionalTest.java</include>
                         <include>**/*Test.java</include>

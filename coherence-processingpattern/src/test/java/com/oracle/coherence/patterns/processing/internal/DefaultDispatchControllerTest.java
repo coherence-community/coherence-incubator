@@ -34,7 +34,7 @@ import com.oracle.coherence.patterns.processing.dispatchers.DispatchOutcome;
 import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
 import com.oracle.coherence.patterns.processing.task.ResumableTask;
 import com.tangosol.net.ConfigurableCacheFactory;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.powermock.api.easymock.PowerMock;
 

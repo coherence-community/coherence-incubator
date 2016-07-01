@@ -31,7 +31,7 @@ import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.MapEvent;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
