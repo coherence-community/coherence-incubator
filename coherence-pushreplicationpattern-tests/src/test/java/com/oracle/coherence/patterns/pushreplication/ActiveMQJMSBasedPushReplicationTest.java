@@ -25,15 +25,16 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
+import com.oracle.bedrock.OptionsByType;
+import com.oracle.bedrock.runtime.LocalPlatform;
+import com.oracle.bedrock.runtime.coherence.options.CacheConfig;
+import com.oracle.bedrock.runtime.coherence.options.ClusterName;
+import com.oracle.bedrock.runtime.java.options.SystemProperty;
+import com.oracle.bedrock.util.Capture;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
-
-import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
-
-import com.oracle.tools.runtime.network.Constants;
-
-import com.oracle.tools.util.Capture;
-
 import org.apache.activemq.broker.BrokerService;
+import org.junit.After;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -60,17 +61,14 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
     private String jndiProviderURL;
 
 
-    @Override
+    @Before
     public void onBeforeEachTest()
     {
-        super.onBeforeEachTest();
+        // determine a port on which to run the Broker
+        int port = LocalPlatform.get().getAvailablePorts().next();
 
         // setup the ActiveMQ Broker
-
-        // determine the port for connections
-        int port = getAvailablePortIterator().next();
-
-        jndiProviderURL = String.format("tcp://%s:%d", Constants.getLocalHost(), port);
+        jndiProviderURL = String.format("tcp://%s:%d", LocalPlatform.get().getLoopbackAddress().getHostAddress(), port);
 
         // determine the file-system location for ActiveMQ files
         // (even turning off persistence will create some files unfortunately!)
@@ -78,7 +76,9 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
 
         File activeMQDir = new File(new File(new File(new File(userDir.getParentFile(),
                                                                "coherence-pushreplicationpattern"),
-                                                      "target"), "tmp"), "port-" + port);
+                                                      "target"),
+                                             "tmp"),
+                                    "port-" + port);
 
         activeMQDir.mkdirs();
 
@@ -102,11 +102,9 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
     }
 
 
-    @Override
+    @After
     public void onAfterEachTest()
     {
-        super.onAfterEachTest();
-
         // tear down the ActiveMQ broker
         try
         {
@@ -121,28 +119,38 @@ public class ActiveMQJMSBasedPushReplicationTest extends AbstractPushReplication
 
 
     @Override
-    protected CoherenceCacheServerSchema newBaseCacheServerSchema(Capture<Integer> clusterPort)
+    protected OptionsByType newBaseCacheServerOptions(Capture<Integer> clusterPort)
     {
-        return super.newBaseCacheServerSchema(clusterPort).setSystemProperty("event.distributor.config",
-                                                                             "test-jms-based-distributor-config.xml")
-                                                                                 .setSystemProperty("proxy.port",
-                                                                                                    getAvailablePortIterator())
-                                                                                                    .setSystemProperty("java.naming.provider.url", jndiProviderURL);
+        OptionsByType optionsByType = super.newBaseCacheServerOptions(clusterPort);
+
+        optionsByType.add(SystemProperty.of("event.distributor.config", "test-jms-based-distributor-config.xml"));
+        optionsByType.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        optionsByType.add(SystemProperty.of("java.naming.provider.url", jndiProviderURL));
+
+        return optionsByType;
     }
 
 
     @Override
-    protected CoherenceCacheServerSchema newPassiveCacheServerSchema(Capture<Integer> clusterPort)
+    protected OptionsByType newPassiveCacheServerOptions(Capture<Integer> clusterPort)
     {
-        return newBaseCacheServerSchema(clusterPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
-            .setClusterName("passive");
+        OptionsByType optionsByType = newBaseCacheServerOptions(clusterPort);
+
+        optionsByType.add(ClusterName.of("passive"));
+        optionsByType.add(CacheConfig.of("test-passive-cluster-cache-config.xml"));
+
+        return optionsByType;
     }
 
 
     @Override
-    protected CoherenceCacheServerSchema newActiveCacheServerSchema(Capture<Integer> clusterPort)
+    protected OptionsByType newActiveCacheServerOptions(Capture<Integer> clusterPort)
     {
-        return newBaseCacheServerSchema(clusterPort)
-            .setCacheConfigURI("test-remotecluster-eventchannel-cache-config.xml").setClusterName("active");
+        OptionsByType optionsByType = newBaseCacheServerOptions(clusterPort);
+
+        optionsByType.add(ClusterName.of("active"));
+        optionsByType.add(CacheConfig.of("test-remotecluster-eventchannel-cache-config.xml"));
+
+        return optionsByType;
     }
 }

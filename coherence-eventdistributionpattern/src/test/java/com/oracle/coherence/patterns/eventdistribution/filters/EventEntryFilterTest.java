@@ -29,7 +29,6 @@ import com.oracle.coherence.common.events.EntryEvent;
 import com.oracle.coherence.common.util.SimpleBinaryEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryInsertedEvent;
-import com.oracle.tools.junit.AbstractTest;
 import com.tangosol.util.filter.EqualsFilter;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -44,7 +43,7 @@ import java.util.Map.Entry;
  *
  * @author Brian Oliver
  */
-public class EventEntryFilterTest extends AbstractTest
+public class EventEntryFilterTest
 {
     /**
      * Ensure that we can extract an {@link Entry} from an {@link EntryEvent}.

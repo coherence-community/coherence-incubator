@@ -29,37 +29,30 @@ import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebTable;
-
+import com.oracle.bedrock.deferred.Deferred;
+import com.oracle.bedrock.deferred.Eventually;
+import com.oracle.bedrock.deferred.PermanentlyUnavailableException;
+import com.oracle.bedrock.deferred.TemporarilyUnavailableException;
+import com.oracle.bedrock.runtime.LocalPlatform;
+import com.oracle.bedrock.runtime.PropertiesBuilder;
+import com.oracle.bedrock.runtime.coherence.CoherenceCluster;
+import com.oracle.bedrock.runtime.java.JavaApplication;
+import com.oracle.bedrock.runtime.java.options.ClassName;
+import com.oracle.bedrock.runtime.java.options.SystemProperties;
+import com.oracle.bedrock.runtime.java.options.SystemProperty;
+import com.oracle.bedrock.runtime.network.AvailablePortIterator;
+import com.oracle.bedrock.runtime.options.Argument;
+import com.oracle.bedrock.runtime.options.Console;
+import com.oracle.bedrock.runtime.options.DisplayName;
 import com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer;
-
-import com.oracle.tools.deferred.Deferred;
-import com.oracle.tools.deferred.Eventually;
-import com.oracle.tools.deferred.PermanentlyUnavailableException;
-import com.oracle.tools.deferred.TemporarilyUnavailableException;
-
-import com.oracle.tools.runtime.LocalPlatform;
-import com.oracle.tools.runtime.PropertiesBuilder;
-
-import com.oracle.tools.runtime.coherence.CoherenceCluster;
-
-import com.oracle.tools.runtime.console.SystemApplicationConsole;
-
-import com.oracle.tools.runtime.java.SimpleJavaApplication;
-import com.oracle.tools.runtime.java.SimpleJavaApplicationSchema;
-import com.oracle.tools.runtime.java.container.Container;
-
-import com.oracle.tools.runtime.network.AvailablePortIterator;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.oracle.tools.deferred.DeferredHelper.ensure;
-import static com.oracle.tools.deferred.DeferredHelper.invoking;
-import static com.oracle.tools.deferred.DeferredHelper.valueOf;
-
+import static com.oracle.bedrock.deferred.DeferredHelper.ensure;
+import static com.oracle.bedrock.deferred.DeferredHelper.invoking;
+import static com.oracle.bedrock.deferred.DeferredHelper.valueOf;
 import static junit.framework.Assert.assertEquals;
-
 import static org.hamcrest.CoreMatchers.is;
 
 /**
@@ -67,12 +60,12 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class FunctionalTest
 {
-    private static CoherenceCluster      cluster1;
-    private static CoherenceCluster      cluster2;
-    private static SimpleJavaApplication site1;
-    private static int                   site1Port;
-    private static SimpleJavaApplication site2;
-    private static int                   site2Port;
+    private static CoherenceCluster cluster1;
+    private static CoherenceCluster cluster2;
+    private static JavaApplication  site1;
+    private static int              site1Port;
+    private static JavaApplication  site2;
+    private static int              site2Port;
 
 
     /**
@@ -81,9 +74,9 @@ public class FunctionalTest
     @BeforeClass
     public static void setup() throws Exception
     {
-        // Staring a process with oracle tools from within an oracle tools process appears to be problematic
+        // Staring a process with oracle bedrock from within an oracle bedrock process appears to be problematic
         // we'll parse the config and start the processes here.
-        AvailablePortIterator portIter      = Container.getAvailablePorts();
+        AvailablePortIterator portIter      = LocalPlatform.get().getAvailablePorts();
 
         int                   acceptor1Port = portIter.next();
         int                   acceptor2Port = portIter.next();
@@ -112,43 +105,41 @@ public class FunctionalTest
         cache2Props.setProperty("client.port", acceptor1Port);
         cache2Props.setProperty("bind.port", acceptor2Port);
 
-        LocalPlatform            platform = LocalPlatform.getInstance();
-
-        SystemApplicationConsole console  = new SystemApplicationConsole();
+        LocalPlatform platform = LocalPlatform.get();
 
         // Startup Site1
         site1Port = portIter.next();
 
-        SimpleJavaApplicationSchema site1schema =
-            new SimpleJavaApplicationSchema("com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer");
+        cluster1  = WebServer.startCluster(cache1Props);
 
-        site1schema.addArgument("site1.properties");
-        site1schema.addArgument(String.valueOf(site1Port));
-        site1schema.setSystemProperties(globalProps1);
-        site1schema.setSystemProperty("client.port", acceptor2Port);
-        site1schema.setSystemProperty("bind.port", acceptor1Port);
-        site1schema.setSystemProperty("proxy.enabled", false);
-
-        cluster1 = WebServer.startCluster(cache1Props);
-        site1    = platform.realize("Site1-Web", site1schema, console);
+        site1 = platform.launch(JavaApplication.class,
+                                DisplayName.of("Site1-Web"),
+                                ClassName.of("com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer"),
+                                Argument.of("site1.properties"),
+                                Argument.of(String.valueOf(site1Port)),
+                                new SystemProperties(globalProps1.realize()),
+                                SystemProperty.of("client.port", acceptor2Port),
+                                SystemProperty.of("bind.port", acceptor1Port),
+                                SystemProperty.of("proxy.enabled", false),
+                                Console.system());
 
         Eventually.assertThat(invoking(cluster1).getClusterSize(), is(2));
 
         // Startup Site2
         site2Port = portIter.next();
 
-        SimpleJavaApplicationSchema site2schema =
-            new SimpleJavaApplicationSchema("com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer");
+        cluster2  = WebServer.startCluster(cache2Props);
 
-        site2schema.addArgument("site2.properties");
-        site2schema.addArgument(String.valueOf(site2Port));
-        site2schema.setSystemProperties(globalProps2);
-        site2schema.setSystemProperty("client.port", acceptor1Port);
-        site2schema.setSystemProperty("bind.port", acceptor2Port);
-        site2schema.setSystemProperty("proxy.enabled", false);
-
-        cluster2 = WebServer.startCluster(cache2Props);
-        site2    = platform.realize("Site2-Web", site2schema, console);
+        site2 = platform.launch(JavaApplication.class,
+                                DisplayName.of("Site2-Web"),
+                                ClassName.of("com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer"),
+                                Argument.of("site2.properties"),
+                                Argument.of(String.valueOf(site2Port)),
+                                new SystemProperties(globalProps2.realize()),
+                                SystemProperty.of("client.port", acceptor1Port),
+                                SystemProperty.of("bind.port", acceptor2Port),
+                                SystemProperty.of("proxy.enabled", false),
+                                Console.system());
 
         Eventually.assertThat(invoking(cluster2).getClusterSize(), is(2));
     }

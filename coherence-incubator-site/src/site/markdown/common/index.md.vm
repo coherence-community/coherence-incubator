@@ -91,7 +91,7 @@ Noteworthy packages, classes and interfaces:
 
 <h4>The Amazon EC2 Address Provider</h4>
 
-*   *[The Amazon EC2 AddressProvider](amazon-ec2-addressprovider.html)*
+*   *[The Amazon EC2 AddressProvider](com.oracle.coherence.cloud.amazon-ec2-addressprovider.html)*
 
     Amazon provides compute power on demand through its Elastic Compute Cloud (EC2). 
     The `EC2AddressProvider` makes it easier to run a Coherence-based application 

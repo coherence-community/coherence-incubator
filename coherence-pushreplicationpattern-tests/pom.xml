@@ -10,7 +10,7 @@
 
     <artifactId>coherence-pushreplicationpattern-tests</artifactId>
 
-    <name>Coherence Incubator Push Replication Pattern (functional tests)</name>
+    <name>Coherence Incubator Push Replication Pattern (integration tests)</name>
 
     <description>
         Functional Tests for the Coherence Incubator Push Replication Pattern.
@@ -57,37 +57,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-core</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-runtime</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-coherence</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-testing-support</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-coherence-testing-support</artifactId>
-            <version>${oracle.tools.version}</version>
+            <groupId>com.oracle.bedrock.coherence</groupId>
+            <artifactId>coherence-${oracle.coherence.base.version}-testing-support</artifactId>
+            <version>${oracle.bedrock.version}</version>
             <scope>test</scope>
         </dependency>
 

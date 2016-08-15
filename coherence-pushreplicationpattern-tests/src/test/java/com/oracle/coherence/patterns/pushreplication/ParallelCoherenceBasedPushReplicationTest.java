@@ -25,9 +25,12 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
-import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
-
-import com.oracle.tools.util.Capture;
+import com.oracle.bedrock.OptionsByType;
+import com.oracle.bedrock.runtime.coherence.options.CacheConfig;
+import com.oracle.bedrock.runtime.coherence.options.ClusterName;
+import com.oracle.bedrock.runtime.java.options.SystemProperty;
+import com.oracle.bedrock.util.Capture;
+import org.junit.Ignore;
 
 /**
  * The {@link com.oracle.coherence.patterns.pushreplication.ParallelCoherenceBasedPushReplicationTest}
@@ -42,27 +45,38 @@ import com.oracle.tools.util.Capture;
  */
 public class ParallelCoherenceBasedPushReplicationTest extends AbstractPushReplicationTest
 {
-    protected CoherenceCacheServerSchema newBaseCacheServerSchema(Capture<Integer> clusterPort)
+    @Override
+    protected OptionsByType newBaseCacheServerOptions(Capture<Integer> clusterPort)
     {
-        return super.newBaseCacheServerSchema(clusterPort).setSystemProperty("event.distributor.config",
-                                                                             "test-coherence-based-distributor-config.xml")
-                                                                                 .setSystemProperty("proxy.port",
-                                                                                                    getAvailablePortIterator());
+        OptionsByType optionsByType = super.newBaseCacheServerOptions(clusterPort);
+
+        optionsByType.add(SystemProperty.of("event.distributor.config", "test-coherence-based-distributor-config.xml"));
+        optionsByType.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+
+        return optionsByType;
     }
 
 
     @Override
-    protected CoherenceCacheServerSchema newPassiveCacheServerSchema(Capture<Integer> clusterPort)
+    protected OptionsByType newPassiveCacheServerOptions(Capture<Integer> clusterPort)
     {
-        return newBaseCacheServerSchema(clusterPort).setCacheConfigURI("test-passive-cluster-cache-config.xml")
-            .setClusterName("passive");
+        OptionsByType optionsByType = newBaseCacheServerOptions(clusterPort);
+
+        optionsByType.add(ClusterName.of("passive"));
+        optionsByType.add(CacheConfig.of("test-passive-cluster-cache-config.xml"));
+
+        return optionsByType;
     }
 
 
     @Override
-    protected CoherenceCacheServerSchema newActiveCacheServerSchema(Capture<Integer> clusterPort)
+    protected OptionsByType newActiveCacheServerOptions(Capture<Integer> clusterPort)
     {
-        return newBaseCacheServerSchema(clusterPort)
-            .setCacheConfigURI("test-remotecluster-paralleleventchannel-cache-config.xml").setClusterName("active");
+        OptionsByType optionsByType = newBaseCacheServerOptions(clusterPort);
+
+        optionsByType.add(ClusterName.of("active"));
+        optionsByType.add(CacheConfig.of("test-remotecluster-paralleleventchannel-cache-config.xml"));
+
+        return optionsByType;
     }
 }

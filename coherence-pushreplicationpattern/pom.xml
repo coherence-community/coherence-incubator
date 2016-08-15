@@ -60,41 +60,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-core</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-runtime</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-coherence</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-testing-support</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-coherence-testing-support</artifactId>
-            <version>${oracle.tools.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>

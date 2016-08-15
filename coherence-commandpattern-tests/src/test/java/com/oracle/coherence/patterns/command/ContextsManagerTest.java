@@ -25,7 +25,30 @@
 
 package com.oracle.coherence.patterns.command;
 
-import com.oracle.tools.junit.AbstractCoherenceTest;
+import com.oracle.bedrock.Option;
+import com.oracle.bedrock.deferred.Deferred;
+import com.oracle.bedrock.deferred.Eventually;
+import com.oracle.bedrock.deferred.PermanentlyUnavailableException;
+import com.oracle.bedrock.deferred.TemporarilyUnavailableException;
+import com.oracle.bedrock.junit.CoherenceClusterOrchestration;
+import com.oracle.bedrock.junit.SessionBuilders;
+import com.oracle.bedrock.runtime.Application;
+import com.oracle.bedrock.runtime.ApplicationListener;
+import com.oracle.bedrock.runtime.coherence.CoherenceCluster;
+import com.oracle.bedrock.runtime.coherence.ServiceStatus;
+import com.oracle.bedrock.runtime.coherence.options.CacheConfig;
+import com.oracle.bedrock.runtime.coherence.options.Logging;
+import com.oracle.bedrock.runtime.coherence.options.Pof;
+import com.oracle.bedrock.runtime.options.StabilityPredicate;
+import com.oracle.coherence.common.identifiers.Identifier;
+import com.tangosol.net.ConfigurableCacheFactory;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.Is.is;
 
 /**
  * Functional tests for the {@link ContextsManager}.
@@ -35,124 +58,94 @@ import com.oracle.tools.junit.AbstractCoherenceTest;
  *
  * @author Brian Oliver
  */
-public class ContextsManagerTest extends AbstractCoherenceTest
+public class ContextsManagerTest
 {
-//TODO: Renamed when we move to Oracle Tools 2.0.0 (it was more reliable rolling restart infrastructure)
-//    @Test
-//    public void shouldOperateDuringRollingRestart() throws IOException
-//    {
-//        Capture<Integer> clusterPort = new Capture<Integer>(Container.getAvailablePorts());
-//
-//        ClusterMemberSchema memberSchema =
-//            new ClusterMemberSchema().useLocalHostMode().setClusterPort(clusterPort).setPofEnabled(true)
-//                .setPofConfigURI("coherence-commandpattern-test-pof-config.xml")
-//                .setCacheConfigURI("coherence-commandpattern-test-cache-config.xml").setJMXSupport(true)
-//                .setJMXPort(Container.getAvailablePorts())
-//                .setJMXManagementMode(ClusterMemberSchema.JMXManagementMode.ALL)
-//                .setRMIServerHostName(Constants.getLocalHost()).setLogLevel(9).setPreferIPv4(true);
-//
-//        JavaApplicationBuilder<ClusterMember, ClusterMemberSchema> memberBuilder =
-//            new NativeJavaApplicationBuilder<ClusterMember, ClusterMemberSchema>();
-//
-//        ApplicationConsole console        = new SystemApplicationConsole();
-//
-//        ClusterBuilder     clusterBuilder = new ClusterBuilder();
-//
-//        clusterBuilder.addBuilder(memberBuilder, memberSchema, "Server", 2);
-//
-//        Cluster cluster = clusterBuilder.realize(console);
-//
-//        assertThat(invoking(cluster).getClusterSize(), is(2));
-//
-//        System.setProperty(ClusterMemberSchema.PROPERTY_CACHECONFIG, "coherence-commandpattern-test-cache-config.xml");
-//        System.setProperty(ClusterMemberSchema.PROPERTY_LOCALHOST_ADDRESS, "127.0.0.1");
-//        System.setProperty(ClusterMemberSchema.PROPERTY_CLUSTER_PORT, Integer.toString(clusterPort.get()));
-//        System.setProperty(ClusterMemberSchema.PROPERTY_MULTICAST_TTL, "0");
-//        System.setProperty(ClusterMemberSchema.PROPERTY_DISTRIBUTED_LOCALSTORAGE, "false");
-//        System.setProperty(ClusterMemberSchema.PROPERTY_POF_ENABLED, "true");
-//        System.setProperty(ClusterMemberSchema.PROPERTY_POF_CONFIG, "coherence-commandpattern-test-pof-config.xml");
-//        System.setProperty(JAVA_NET_PREFER_IPV4_STACK, "true");
-//
-//        ConfigurableCacheFactory configurableCacheFactory =
-//            new ExtensibleConfigurableCacheFactory(ExtensibleConfigurableCacheFactory.DependenciesHelper
-//                .newInstance("coherence-commandpattern-test-cache-config.xml"));
-//
-//        CacheFactory.setConfigurableCacheFactory(configurableCacheFactory);
-//
-//        final ContextsManager manager    = DefaultContextsManager.getInstance();
-//
-//        final Identifier      identifier = manager.registerContext(new GenericContext<Integer>(0));
-//
-//        assertThat(identifier, is(notNullValue()));
-//
-//        CommandSubmitter submitter = DefaultCommandSubmitter.getInstance();
-//
-//        final int        LAST      = 1000;
-//
-//        for (int i = 1; i <= LAST; i++)
-//        {
-//            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
-//        }
-//
-//        Deferred<Integer> deferred = new Deferred<Integer>()
-//        {
-//            @Override
-//            public Integer get() throws UnresolvableInstanceException, InstanceUnavailableException
-//            {
-//                return ((GenericContext<Integer>) manager.getContext(identifier)).getValue();
-//            }
-//
-//            @Override
-//            public Class<Integer> getDeferredClass()
-//            {
-//                return Integer.class;
-//            }
-//        };
-//
-//        assertThat(deferred, is(greaterThan(0)));
-//
-//        // construct the action to restart a cluster member
-//        RestartClusterMemberAction restartAction = new RestartClusterMemberAction("Server",
-//                                                                                  memberBuilder,
-//                                                                                  memberSchema,
-//                                                                                  console,
-//                                                                                  new Predicate<ClusterMember>()
-//        {
-//            @Override
-//            public boolean evaluate(ClusterMember member)
-//            {
-//                ClusterMember.ServiceStatus status = member.getServiceStatus("DistributedCacheForCommandPattern");
-//
-//                return status == ClusterMember.ServiceStatus.NODE_SAFE;
-//            }
-//        });
-//
-//        // let's perpetually restart a cluster member
-//        PerpetualAction<ClusterMember, Cluster> perpetualAction = new PerpetualAction<ClusterMember,
-//                                                                                      Cluster>(restartAction);
-//
-//        InteractiveActionExecutor<ClusterMember, Cluster> executor = new InteractiveActionExecutor<ClusterMember,
-//                                                                                                   Cluster>(cluster,
-//                                                                                                            perpetualAction);
-//
-//        executor.executeNext();
-//
-//        for (int i = LAST; i <= LAST * 2; i++)
-//        {
-//            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
-//        }
-//
-//        executor.executeNext();
-//
-//        for (int i = LAST * 2; i <= LAST * 3; i++)
-//        {
-//            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
-//        }
-//
-//        executor.executeNext();
-//
-//        assertThat(deferred, is(LAST * 3));
-//
-//        cluster.close();
-//    }
+    /**
+     * Field description
+     */
+    @Rule
+    public CoherenceClusterOrchestration orchestration =
+        new CoherenceClusterOrchestration().setStorageMemberCount(3)
+        .withOptions(CacheConfig.of("coherence-commandpattern-test-cache-config.xml"),
+                     Pof.enabled(),
+                     Pof.config("coherence-commandpattern-test-pof-config.xml"),
+                     Logging.at(9));
+
+
+    @Test
+    public void shouldOperateDuringRollingRestart()
+    {
+        ConfigurableCacheFactory factory    = orchestration.getSessionFor(SessionBuilders.storageDisabledMember());
+
+        ContextsManager          manager    = DefaultContextsManager.getInstance();
+
+        Identifier               identifier = manager.registerContext(new GenericContext<Integer>(0));
+
+        assertThat(identifier, is(notNullValue()));
+
+        CommandSubmitter submitter = DefaultCommandSubmitter.getInstance();
+
+        final int        LAST      = 1000;
+
+        for (int i = 1; i <= LAST; i++)
+        {
+            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
+        }
+
+        Deferred<Integer> deferred = new Deferred<Integer>()
+        {
+            @Override
+            public Integer get() throws TemporarilyUnavailableException, PermanentlyUnavailableException
+            {
+                return ((GenericContext<Integer>) manager.getContext(identifier)).getValue();
+            }
+
+            @Override
+            public Class<Integer> getDeferredClass()
+            {
+                return Integer.class;
+            }
+        };
+
+        Eventually.assertThat("Content Value is greater than 0", deferred, greaterThan(0));
+
+        StabilityPredicate<CoherenceCluster> predicate =
+            StabilityPredicate.of((cluster -> cluster.findAny().get()
+            .getServiceStatus("DistributedCacheForCommandPattern") == ServiceStatus.NODE_SAFE));
+
+        CoherenceCluster cluster = orchestration.getCluster();
+
+        // restart a random storage enabled cluster member
+        cluster.filter((member) -> member.getRoleName().contains("storage")).limit(1).relaunch(predicate);
+
+        // submit some more commands
+        for (int i = LAST; i <= LAST * 2; i++)
+        {
+            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
+        }
+
+        // restart a random storage enabled cluster member
+        cluster.filter((member) -> member.getRoleName().contains("storage")).limit(1).relaunch(predicate);
+
+        // submit some more commands
+        for (int i = LAST * 2; i <= LAST * 3; i++)
+        {
+            submitter.submitCommand(identifier, new SetValueCommand<Integer>(i));
+        }
+
+        // restart a random storage enabled cluster member
+        cluster.filter((member) -> member.getRoleName().contains("storage")).limit(1).relaunch(predicate);
+
+        Eventually.assertThat("Content Value is greater than 0", deferred, is(LAST * 3));
+    }
+
+
+    /**
+     * A custom {@link ApplicationListener} that is an {@link Option}.
+     * @param <A>
+     */
+    public static abstract class CustomApplicationListener<A extends Application> implements ApplicationListener<A>,
+                                                                                             Option
+    {
+    }
 }

@@ -26,14 +26,14 @@
     Copyright (c) 2013. All Rights Reserved. Oracle Corporation.
  -->
 <cache-config
-        xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
+		xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config coherence-cache-config.xsd"
 
-        xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler"
-        xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
+		xmlns:event="class://com.oracle.coherence.patterns.eventdistribution.configuration.EventDistributionNamespaceHandler"
+		xmlns:element="class://com.oracle.coherence.common.namespace.preprocessing.XmlPreprocessingNamespaceHandler"
 
-        element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
+		element:introduce-cache-config="coherence-pushreplicationpattern-cache-config.xml">
 
 	<defaults>
 		<serializer>pof</serializer>
@@ -44,12 +44,12 @@
 			<cache-name>publishing-*</cache-name>
 			<scheme-name>distributed-scheme-with-publishing-cachestore</scheme-name>
 
-            <init-params>
-                <init-param>
-                    <param-name>write-behind-delay</param-name>
-                    <param-value system-property="write.behind.delay">0</param-value>
-                </init-param>
-            </init-params>
+			<init-params>
+				<init-param>
+					<param-name>write-behind-delay</param-name>
+					<param-value system-property="write.behind.delay">0</param-value>
+				</init-param>
+			</init-params>
 
 			<event:distributor>
 				<event:distributor-name>{cache-name}</event:distributor-name>
@@ -67,14 +67,14 @@
 								<event:remote-invocation-service-name>remote-site</event:remote-invocation-service-name>
 								<event:remote-channel-scheme>
 									<event:parallel-local-cache-channel-scheme>
-                  <event:target-cache-name>{cache-name}</event:target-cache-name>
-                  <event:conflict-resolver-scheme>
-                      <instance>
-                          <class-name system-property="conflict.resolver.classname">
-                              com.oracle.coherence.patterns.eventdistribution.channels.cache.BruteForceConflictResolver
-                          </class-name>
-                      </instance>
-                  </event:conflict-resolver-scheme>
+										<event:target-cache-name>{cache-name}</event:target-cache-name>
+										<event:conflict-resolver-scheme>
+											<instance>
+												<class-name system-property="conflict.resolver.classname">
+													com.oracle.coherence.patterns.eventdistribution.channels.cache.BruteForceConflictResolver
+												</class-name>
+											</instance>
+										</event:conflict-resolver-scheme>
 									</event:parallel-local-cache-channel-scheme>>
 								</event:remote-channel-scheme>
 							</event:remote-cluster-channel-scheme>
@@ -100,7 +100,7 @@
 				<outgoing-message-handler>
 					<request-timeout>5s</request-timeout>
 				</outgoing-message-handler>
-                <connect-timeout>2s</connect-timeout>
+				<connect-timeout>2s</connect-timeout>
 			</initiator-config>
 		</remote-invocation-scheme>
 

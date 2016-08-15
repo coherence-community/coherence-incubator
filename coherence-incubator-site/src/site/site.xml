@@ -96,7 +96,7 @@
                 <item name="The Element Namespace" href="common/element-namespace.html"/>
                 <item name="The Filter Namespace" href="common/filter-namespace.html"/>
                 <item name="The JNDI Namespace" href="common/jndi-namespace.html"/>
-                <item name="Working with Amazon EC2" href="common/amazon-ec2-addressprovider.html"/>
+                <item name="Working with Amazon EC2" href="common/com.oracle.coherence.cloud.amazon-ec2-addressprovider.html"/>
             </item>
             <item name="The Command Pattern" href="commandpattern/index.html">
                 <item name="Simple Example" href="commandpattern/simple-example.html"/>

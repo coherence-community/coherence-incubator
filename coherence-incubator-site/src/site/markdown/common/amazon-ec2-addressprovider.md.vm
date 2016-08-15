@@ -1,7 +1,7 @@
 Working with Amazon EC2
 -----------------------
 
-Amazon provides computing on demand through its [Elastic Compute Cloud](http://aws.amazon.com/ec2/) 
+Amazon provides computing on demand through its [Elastic Compute Cloud](http://aws.com.oracle.coherence.cloud.amazon.com/ec2/)
 (EC2) service. The EC2 service provides a varirty of Linux and Microsoft Windows 
 virtual machines on demand.
  
@@ -97,5 +97,5 @@ Here is the recommended way of starting a Coherence cluster using EC2.
 
 <h4>Deployment requirements</h4>
 
-The `EC2AddressProvider` requires jars from the [AWS Java SDK](http://aws.amazon.com/sdkforjava/) 
+The `EC2AddressProvider` requires jars from the [AWS Java SDK](http://aws.com.oracle.coherence.cloud.amazon.com/sdkforjava/)
 to be on the classpath.  Failure to provide these will result in runtime exceptions.

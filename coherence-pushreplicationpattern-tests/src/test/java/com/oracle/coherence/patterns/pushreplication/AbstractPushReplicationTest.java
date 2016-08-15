@@ -25,75 +25,64 @@
 
 package com.oracle.coherence.patterns.pushreplication;
 
+import com.oracle.bedrock.Option;
+import com.oracle.bedrock.OptionsByType;
+import com.oracle.bedrock.deferred.Deferred;
+import com.oracle.bedrock.deferred.Eventually;
+import com.oracle.bedrock.deferred.Repetitively;
+import com.oracle.bedrock.deferred.options.RetryFrequency;
+import com.oracle.bedrock.matchers.Equivalence;
+import com.oracle.bedrock.matchers.MapMatcher;
+import com.oracle.bedrock.matchers.PartitionSetMatcher;
+import com.oracle.bedrock.options.Timeout;
+import com.oracle.bedrock.runtime.Application;
+import com.oracle.bedrock.runtime.ApplicationListener;
+import com.oracle.bedrock.runtime.LocalPlatform;
+import com.oracle.bedrock.runtime.coherence.CoherenceCacheServer;
+import com.oracle.bedrock.runtime.coherence.CoherenceClusterMember;
+import com.oracle.bedrock.runtime.coherence.JMXManagementMode;
+import com.oracle.bedrock.runtime.coherence.options.CacheConfig;
+import com.oracle.bedrock.runtime.coherence.options.ClusterPort;
+import com.oracle.bedrock.runtime.coherence.options.Clustering;
+import com.oracle.bedrock.runtime.coherence.options.LocalHost;
+import com.oracle.bedrock.runtime.coherence.options.Pof;
+import com.oracle.bedrock.runtime.coherence.options.SiteName;
+import com.oracle.bedrock.runtime.concurrent.RemoteCallable;
+import com.oracle.bedrock.runtime.java.JavaApplication;
+import com.oracle.bedrock.runtime.java.features.JmxFeature;
+import com.oracle.bedrock.runtime.java.options.ClassName;
+import com.oracle.bedrock.runtime.java.options.IPv4Preferred;
+import com.oracle.bedrock.runtime.java.options.SystemProperty;
+import com.oracle.bedrock.runtime.network.AvailablePortIterator;
+import com.oracle.bedrock.runtime.options.Console;
+import com.oracle.bedrock.runtime.options.DisplayName;
+import com.oracle.bedrock.runtime.options.EnvironmentVariables;
+import com.oracle.bedrock.util.Capture;
 import com.oracle.coherence.patterns.domain.DomainKey;
 import com.oracle.coherence.patterns.domain.DomainValue;
-import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerMBean;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
-import com.oracle.coherence.patterns.eventdistribution.channels.BinaryEntryStoreEventChannel;
-import com.oracle.coherence.patterns.eventdistribution.channels.CacheStoreEventChannel;
 import com.oracle.coherence.patterns.eventdistribution.filters.ExampleEventFilter;
-
-import com.oracle.tools.deferred.Deferred;
-import com.oracle.tools.deferred.Eventually;
-import com.oracle.tools.deferred.PermanentlyUnavailableException;
-
-import com.oracle.tools.junit.AbstractCoherenceTest;
-
-import com.oracle.tools.matchers.Equivalence;
-import com.oracle.tools.matchers.PartitionSetMatcher;
-
-import com.oracle.tools.runtime.ApplicationListener;
-import com.oracle.tools.runtime.LocalPlatform;
-
-import com.oracle.tools.runtime.coherence.CoherenceCacheServer;
-import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
-import com.oracle.tools.runtime.coherence.JMXManagementMode;
-
-import com.oracle.tools.runtime.console.SystemApplicationConsole;
-
-import com.oracle.tools.runtime.java.container.Container;
-
-import com.oracle.tools.runtime.network.AvailablePortIterator;
-import com.oracle.tools.runtime.network.Constants;
-
-import com.oracle.tools.runtime.options.EnvironmentVariables;
-
-import com.oracle.tools.util.Capture;
-
 import com.tangosol.net.CacheFactory;
-import com.tangosol.net.DefaultConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
-
 import com.tangosol.net.partition.PartitionSet;
-
 import com.tangosol.util.Filter;
-
 import org.hamcrest.Matcher;
-
-import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.oracle.tools.deferred.DeferredHelper.invoking;
-import static com.oracle.tools.deferred.DeferredHelper.valueOf;
-import static com.oracle.tools.deferred.DeferredHelper.within;
-
-import static com.oracle.tools.matchers.MapMatcher.sameAs;
-
-import static org.hamcrest.Matchers.is;
-
-import static org.junit.Assert.fail;
-
-import java.net.InetAddress;
+import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
-
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.management.ObjectName;
+import static com.oracle.bedrock.deferred.DeferredHelper.invoking;
+import static com.oracle.bedrock.deferred.DeferredHelper.valueOf;
+import static com.oracle.bedrock.matchers.EntrySetMatcher.sameAs;
+import static org.hamcrest.core.Is.is;
 
 /**
  * The {@link AbstractPushReplicationTest} defines a set of standard tests
@@ -105,7 +94,7 @@ import javax.management.ObjectName;
  *
  * @author Brian Oliver
  */
-public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
+public abstract class AbstractPushReplicationTest
 {
     /**
      * Determines the {@link AvailablePortIterator} to use for locating free ports on the host.
@@ -114,62 +103,75 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
      */
     protected static AvailablePortIterator getAvailablePortIterator()
     {
-        return Container.getAvailablePorts();
+        return LocalPlatform.get().getAvailablePorts();
     }
 
 
     /**
-     * Constructs a new {@link CoherenceCacheServerSchema} on which sub-classes of this class should
-     * configure new {@link CoherenceCacheServerSchema}s.  ie: This method returns a pre-configured
-     * {@link CoherenceCacheServerSchema} that the tests in this class expect to use.
+     * Constructs a new {@link OptionsByType} on which sub-classes of this class can be configured.
      *
-     * @return {@link CoherenceCacheServerSchema}
+     * @return {@link OptionsByType}
      */
-    protected CoherenceCacheServerSchema newBaseCacheServerSchema(Capture<Integer> clusterPort)
+    protected OptionsByType newBaseCacheServerOptions(Capture<Integer> clusterPort)
     {
-        CoherenceCacheServerSchema schema =
-            new CoherenceCacheServerSchema().addOption(EnvironmentVariables.inherited()).useLocalHostMode()
-                .setClusterPort(clusterPort).setPofConfigURI("test-pof-config.xml").setPreferIPv4(true)
-                .setJMXManagementMode(JMXManagementMode.ALL).setJMXPort(getAvailablePortIterator())
-                .setSystemProperty("java.rmi.server.hostname", "127.0.0.1")
-                .setSystemProperty("remote.address",
-                                   Constants.getLocalHost())
-                                       .setSystemProperty("proxy.address", Constants.getLocalHost());
+        OptionsByType optionsByType = OptionsByType.empty();
 
-        schema.addApplicationListener(new ApplicationListener<CoherenceCacheServer>()
-        {
-            @Override
-            public void onClosing(CoherenceCacheServer server)
-            {
-                // SKIP: nothing to do when closing
-            }
+        // establish Bedrock options
+        optionsByType.add(Console.system());
 
-            @Override
-            public void onClosed(CoherenceCacheServer server)
-            {
-                // SKIP: nothing to do when closed
-            }
+        // establish Operating System options
+        optionsByType.add(EnvironmentVariables.inherited());
 
-            @Override
-            public void onRealized(CoherenceCacheServer server)
-            {
-                // ensure that the proxy service has started
-                Eventually.assertThat(invoking(server).isServiceRunning("ExtendTcpProxyService"), is(true));
-            }
-        });
+        // establish Java options
+        optionsByType.add(IPv4Preferred.yes());
+        optionsByType.add(JmxFeature.enabled());
 
-        return schema;
+        // establish Coherence options
+        optionsByType.add(LocalHost.only());
+        optionsByType.add(ClusterPort.of(clusterPort));
+        optionsByType.add(Pof.config("test-pof-config.xml"));
+        optionsByType.add(JMXManagementMode.ALL);
+        optionsByType.add(SystemProperty.of("remote.address",
+                                            LocalPlatform.get().getLoopbackAddress().getHostAddress()));
+        optionsByType.add(SystemProperty.of("proxy.address",
+                                            LocalPlatform.get().getLoopbackAddress().getHostAddress()));
+
+        optionsByType.add(new CustomApplicationListener<CoherenceCacheServer>()
+                          {
+                              @Override
+                              public void onClosing(CoherenceCacheServer server,
+                                                    OptionsByType        optionsByType)
+                              {
+                              }
+
+                              @Override
+                              public void onClosed(CoherenceCacheServer server,
+                                                   OptionsByType        optionsByType)
+                              {
+                              }
+
+                              @Override
+                              public void onLaunched(CoherenceCacheServer server)
+                              {
+                                  // ensure that the proxy service has started
+                                  Eventually.assertThat(invoking(server).isServiceRunning("ExtendTcpProxyService"),
+                                                        is(true));
+                              }
+                          });
+
+        return optionsByType;
     }
 
 
-    protected abstract CoherenceCacheServerSchema newPassiveCacheServerSchema(Capture<Integer> clusterPort);
+    protected abstract OptionsByType newPassiveCacheServerOptions(Capture<Integer> clusterPort);
 
 
-    protected abstract CoherenceCacheServerSchema newActiveCacheServerSchema(Capture<Integer> clusterPort);
+    protected abstract OptionsByType newActiveCacheServerOptions(Capture<Integer> clusterPort);
 
 
     /**
-     * Performs Active-Active topology tests.
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * active-active topology are distributed between the active sites.
      *
      * @throws Exception
      */
@@ -177,264 +179,76 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public final void testActiveActive() throws Exception
     {
-        final String         cacheName     = "publishing-cache";
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
 
-        CoherenceCacheServer londonServer  = null;
-        CoherenceCacheServer newyorkServer = null;
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
 
-        LocalPlatform        platform      = LocalPlatform.getInstance();
+        // establish the london server options
+        OptionsByType londonServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-        try
+        londonServerOptions.add(SiteName.of("london"));
+        londonServerOptions.add(DisplayName.of("london"));
+        londonServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+        londonServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        londonServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
+
+        try (CoherenceCacheServer londonServer = platform.launch(CoherenceCacheServer.class,
+                                                                 londonServerOptions.asArray()))
         {
-            SystemApplicationConsole console = new SystemApplicationConsole();
+            // establish the newyork server options
+            OptionsByType newyorkServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-            // define the london cluster port
-            Capture<Integer> londonClusterPort = new Capture<Integer>(getAvailablePortIterator());
+            newyorkServerOptions.add(SiteName.of("newyork"));
+            newyorkServerOptions.add(DisplayName.of("newyork"));
+            newyorkServerOptions.add(SystemProperty.of("proxy.address",
+                                                       platform.getLoopbackAddress().getHostAddress()));
+            newyorkServerOptions.add(SystemProperty.of("proxy.port", londonServer.getSystemProperty("remote.port")));
+            newyorkServerOptions.add(SystemProperty.of("remote.port", londonServer.getSystemProperty("proxy.port")));
 
-            // establish the london server
-            CoherenceCacheServerSchema londonServerSchema =
-                newActiveCacheServerSchema(londonClusterPort).setSiteName("london").setSystemProperty("proxy.address",
-                                                                                                      Constants
-                                                                                                          .getLocalHost())
-                                                                                                              .setSystemProperty("proxy.port",
-                getAvailablePortIterator()).setSystemProperty("remote.port",
-                                                              getAvailablePortIterator());
-
-            londonServer = platform.realize("LONDON", londonServerSchema, console);
-
-            // define the london cluster port
-            Capture<Integer> newyorkClusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            // establish the newyork server
-            CoherenceCacheServerSchema newyorkServerSchema =
-                newActiveCacheServerSchema(newyorkClusterPort).setSiteName("newyork").setSystemProperty("proxy.port",
-                                                                                                        londonServer
-                                                                                                            .getSystemProperty("remote.port"))
-                                                                                                                .setSystemProperty("remote.port",
-                londonServer.getSystemProperty("proxy.port"));
-
-            newyorkServer = platform.realize("NEWYORK", newyorkServerSchema, console);
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the newyork site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "NEWYORK");
-
-            // grab a copy of the newyork site entries (we'll use this for comparison later)
-            final Map<Object, Object> newyorkCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
-
-            // shutdown our connection to the newyork cluster
-            CacheFactory.shutdown();
-
-            // connect to the london cluster
-            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for %d entries to synchronize between NEWYORK to LONDON.\n",
-                              newyorkCache.size());
-
-            NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), sameAs((Map) newyorkCache));
-
-            // assert that nothing been queued in London (from New York)
-            // (even though this is Active-Active, events from New York to London should not be
-            // re-queued in London for distribution back to New York).
-            Deferred<Integer> deferredMBeanAttribute =
-                londonServer
-                    .getDeferredMBeanAttribute(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
-                                               "EventsDistributedCount",
-                                               Integer.class);
-
-            Eventually.assertThat(valueOf(deferredMBeanAttribute), is(0));
-
-            // update the london site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 1000, 500, "LONDON");
-
-            // grab a copy of the london site entries (we'll use this for comparison later)
-            final Map<Object, Object> londonCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-
-            // assert that the value is in the newyork cluster
-            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for %d entries to synchronize between LONDON and NEWYORK.\n",
-                              londonCache.size());
-
-            namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), sameAs((Map) londonCache));
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (londonServer != null)
+            try (CoherenceCacheServer newyorkServer = platform.launch(CoherenceCacheServer.class,
+                                                                      newyorkServerOptions.asArray()))
             {
-                londonServer.close();
-            }
+                // populate the newyork site
+                NamedCache newyorkCache = newyorkServer.getCache(cacheName);
 
-            if (newyorkServer != null)
-            {
-                newyorkServer.close();
+                randomlyPopulateNamedCache(newyorkCache, 0, 500, "NEWYORK");
+
+                System.out.printf("\nWaiting for %d entries to synchronize between NEWYORK to LONDON.\n",
+                                  newyorkCache.size());
+
+                NamedCache londonCache = londonServer.getCache(cacheName);
+
+                Eventually.assertThat(invoking(londonCache).entrySet(), sameAs(newyorkCache.entrySet()));
+
+                // assert that nothing has been queued in London (from New York)
+                // (even though this is Active-Active, events from New York to London should not be
+                // re-queued in London for distribution back to New York).
+                JmxFeature londonJmx = londonServer.get(JmxFeature.class);
+
+                Deferred<Integer> deferredMBeanAttribute =
+                    londonJmx.getDeferredMBeanAttribute(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
+                                                        "EventsDistributedCount",
+                                                        Integer.class);
+
+                Eventually.assertThat(valueOf(deferredMBeanAttribute), is(0));
+
+                // update the london site
+                randomlyPopulateNamedCache(londonCache, 1000, 500, "LONDON");
+
+                System.out.printf("\nWaiting for %d entries to synchronize between LONDON and NEWYORK.\n",
+                                  londonCache.size());
+
+                Eventually.assertThat(invoking(newyorkCache).entrySet(), sameAs(londonCache.entrySet()));
             }
         }
     }
 
 
     /**
-     * Performs Active-Active topology tests where the two clusters
-     * have different partition counts.
-     *
-     * @throws Exception
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    @Ignore
-    public final void testActiveActiveWithDifferentPartitionCounts() throws Exception
-    {
-        final String         cacheName     = "publishing-cache";
-
-        CoherenceCacheServer londonServer  = null;
-        CoherenceCacheServer newyorkServer = null;
-
-        LocalPlatform        platform      = LocalPlatform.getInstance();
-        InetAddress          localAddress  = platform.getLoopbackAddress();
-
-        try
-        {
-            SystemApplicationConsole console = new SystemApplicationConsole();
-
-            // define the london cluster port
-            Capture<Integer> londonClusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            // establish the london server
-            CoherenceCacheServerSchema londonServerSchema =
-                newActiveCacheServerSchema(londonClusterPort).setSiteName("london")
-                        .setSystemProperty("proxy.address", Constants.getLocalHost())
-                        .setSystemProperty("proxy.port", getAvailablePortIterator())
-                        .setSystemProperty("remote.port", getAvailablePortIterator())
-                        .setSystemProperty("partition.count", 13);
-
-            londonServer = platform.realize("LONDON", londonServerSchema, console);
-
-            // define the london cluster port
-            Capture<Integer> newyorkClusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            // establish the newyork server
-            CoherenceCacheServerSchema newyorkServerSchema =
-                newActiveCacheServerSchema(newyorkClusterPort).setSiteName("newyork")
-                        .setSystemProperty("proxy.port", londonServer.getSystemProperty("remote.port"))
-                        .setSystemProperty("remote.port", londonServer.getSystemProperty("proxy.port"))
-                        .setSystemProperty("partition.count", 257);
-
-            newyorkServer = platform.realize("NEWYORK", newyorkServerSchema, console);
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the new york site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "NEWYORK");
-
-            // grab a copy of the new york site entries (we'll use this for comparison later)
-            final Map<Object, Object> newyorkCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
-
-            // shutdown our connection to the new york cluster
-            CacheFactory.shutdown();
-
-            // connect to the london cluster
-            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for %d entries to synchronize between NEWYORK to LONDON.\n",
-                              newyorkCache.size());
-
-            NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), sameAs((Map) newyorkCache));
-
-            // assert that nothing been queued in London (from New York)
-            // (even though this is Active-Active, events from New York to London should not be
-            // re-queued in London for distribution back to New York).
-            Deferred<Integer> deferredMBeanAttribute =
-                londonServer
-                    .getDeferredMBeanAttribute(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
-                                               "EventsDistributedCount",
-                                               Integer.class);
-
-            Eventually.assertThat(valueOf(deferredMBeanAttribute), is(0));
-
-            // update the london site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 1000, 500, "LONDON");
-
-            // grab a copy of the london site entries (we'll use this for comparison later)
-            final Map<Object, Object> londonCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-
-            // assert that the value is in the newyork cluster
-            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for %d entries to synchronize between LONDON and NEWYORK.\n",
-                              londonCache.size());
-
-            namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), sameAs((Map) londonCache));
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (londonServer != null)
-            {
-                londonServer.close();
-            }
-
-            if (newyorkServer != null)
-            {
-                newyorkServer.close();
-            }
-        }
-    }
-
-
-    /**
-     * Performs Active-Passive topology tests
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * active-passive topology are distributed from the active site to the passive site.
      *
      * @throws Exception
      */
@@ -442,211 +256,122 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActivePassive() throws Exception
     {
-        String                          siteName         = "testActivePassive";
-        final String                    cacheName        = "publishing-cache";
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
 
-        int                             nrPassiveServers = 2;
-        int                             nrActiveServers  = 2;
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
 
-        ArrayList<CoherenceCacheServer> passiveServers   = new ArrayList<CoherenceCacheServer>(nrPassiveServers);
-        ArrayList<CoherenceCacheServer> activeServers    = new ArrayList<CoherenceCacheServer>(nrActiveServers);
+        // establish the passive server options
+        OptionsByType passiveCacheServerOptions =
+            newPassiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-        LocalPlatform                   platform         = LocalPlatform.getInstance();
+        passiveCacheServerOptions.add(SiteName.of("passive"));
+        passiveCacheServerOptions.add(DisplayName.of("passive"));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.address",
+                                                        platform.getLoopbackAddress().getHostAddress()));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        passiveCacheServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
 
-        try
+        try (CoherenceCacheServer passiveServer = platform.launch(CoherenceCacheServer.class,
+                                                                  passiveCacheServerOptions.asArray()))
         {
-            SystemApplicationConsole console = new SystemApplicationConsole();
+            // establish the active server options
+            OptionsByType activeServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-            // establish the passive cluster
-            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+            activeServerOptions.add(SiteName.of("active"));
+            activeServerOptions.add(DisplayName.of("active"));
+            activeServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+            activeServerOptions.add(SystemProperty.of("proxy.port", passiveServer.getSystemProperty("remote.port")));
+            activeServerOptions.add(SystemProperty.of("remote.port", passiveServer.getSystemProperty("proxy.port")));
 
-            for (int i = 0; i < nrPassiveServers; i++)
+            try (CoherenceCacheServer activeServer = platform.launch(CoherenceCacheServer.class,
+                                                                     activeServerOptions.asArray()))
             {
-                CoherenceCacheServerSchema passiveServerSchema =
-                    newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
+                // populate the active site
+                NamedCache activeCache = activeServer.getCache(cacheName);
 
-                passiveServers.add(platform.realize(String.format("PASSIVE %s", i), passiveServerSchema, console));
-            }
+                randomlyPopulateNamedCache(activeCache, 0, 500, "ACTIVE");
 
-            // establish the active cluster
-            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
+                System.out.printf("\nWaiting for %d entries to synchronize from ACTIVE to PASSIVE.\n",
+                                  activeCache.size());
 
-            for (int i = 0; i < nrActiveServers; i++)
-            {
-                CoherenceCacheServerSchema activeServerSchema =
-                    newActiveCacheServerSchema(activeClusterPort).setSiteName(siteName).setSystemProperty("remote.port",
-                                                                                                          passiveServers
-                                                                                                              .get(0)
-                                                                                                              .getSystemProperty("proxy.port"));
+                NamedCache passiveCache = passiveServer.getCache(cacheName);
 
-                activeServers.add(platform.realize(String.format("ACTIVE  %d", i), activeServerSchema, console));
-            }
-
-            // wait for passive cluster to start
-            for (CoherenceCacheServer server : passiveServers)
-            {
-                Eventually.assertThat(invoking(server).getClusterSize(), is(nrPassiveServers));
-            }
-
-            // wait for active server cluster to start
-            for (CoherenceCacheServer server : activeServers)
-            {
-                Eventually.assertThat(invoking(server).getClusterSize(), is(nrActiveServers));
-            }
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", activeServers.get(0).getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", activeServers.get(0).getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the active site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "ACTIVE");
-
-            // grab a copy of the active site entries (we'll use this for comparison later)
-            final Map<Object, Object> activeCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
-
-            // shutdown our connection to the active site
-            CacheFactory.shutdown();
-
-            // assert that the values have arrived in the remote site
-            System.out.printf("Connecting to PASSIVE site.\n");
-            System.setProperty("remote.address", passiveServers.get(0).getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", passiveServers.get(0).getSystemProperty("proxy.port"));
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for %d entries to synchronize between ACTIVE and PASSIVE site.\n",
-                              activeCache.size());
-
-            NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), sameAs((Map) activeCache));
-
-            Assert.assertNotNull(namedCache);
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            for (CoherenceCacheServer server : passiveServers)
-            {
-                server.close();
-            }
-
-            for (CoherenceCacheServer server : activeServers)
-            {
-                server.close();
+                Eventually.assertThat(invoking(passiveCache).entrySet(), sameAs(activeCache.entrySet()));
             }
         }
     }
 
 
     /**
-     * Performs Active-Passive topology tests (but with the channels disabled)
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * active-passive topology are not distributed from the active site to the passive site
+     * when distribution is disabled.
      *
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     @Test
-    public final void testActivePassiveDisabled() throws Exception
+    public void testActivePassiveDisabled() throws Exception
     {
-        CoherenceCacheServer     passiveServer = null;
-        CoherenceCacheServer     activeServer  = null;
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
 
-        LocalPlatform            platform      = LocalPlatform.getInstance();
-        SystemApplicationConsole console       = new SystemApplicationConsole();
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
 
-        try
+        // establish the passive server options
+        OptionsByType passiveCacheServerOptions =
+            newPassiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
+
+        passiveCacheServerOptions.add(SiteName.of("passive"));
+        passiveCacheServerOptions.add(DisplayName.of("passive"));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.address",
+                                                        platform.getLoopbackAddress().getHostAddress()));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        passiveCacheServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
+
+        try (CoherenceCacheServer passiveServer = platform.launch(CoherenceCacheServer.class,
+                                                                  passiveCacheServerOptions.asArray()))
         {
-            // establish the passive cluster
-            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+            // establish the active server options
+            OptionsByType activeServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-            CoherenceCacheServerSchema passiveServerSchema =
-                newPassiveCacheServerSchema(passiveClusterPort).setSiteName("sydney");
+            activeServerOptions.add(SiteName.of("active"));
+            activeServerOptions.add(DisplayName.of("active"));
+            activeServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+            activeServerOptions.add(SystemProperty.of("proxy.port", passiveServer.getSystemProperty("remote.port")));
+            activeServerOptions.add(SystemProperty.of("remote.port", passiveServer.getSystemProperty("proxy.port")));
 
-            passiveServer = platform.realize("PASSIVE", passiveServerSchema, console);
+            activeServerOptions.add(SystemProperty.of("channel.starting.mode", "disabled"));
 
-            // establish the active cluster
-            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            CoherenceCacheServerSchema activeServerSchema =
-                newActiveCacheServerSchema(activeClusterPort).setSiteName("sydney").setSystemProperty("remote.port",
-                                                                                                      passiveServer
-                                                                                                          .getSystemProperty("proxy.port"))
-                                                                                                              .setSystemProperty("channel.starting.mode",
-                "disabled").setJMXManagementMode(JMXManagementMode.ALL);
-
-            activeServer = platform.realize("ACTIVE", activeServerSchema, console);
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", activeServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", activeServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // put a value in the active site
-            CacheFactory.getCache("publishing-cache").put("message", "hello world");
-
-            // shutdown our connection to the active site
-            CacheFactory.shutdown();
-
-            // assert that the value is in the passive site
-            System.setProperty("remote.address", passiveServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", passiveServer.getSystemProperty("proxy.port"));
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("Ensuring ACTIVE and PASSIVE sites don't become synchronized.\n");
-
-            NamedCache namedCache = CacheFactory.getCache("publishing-cache");
-
-            // we only wait a little bit for this
-            Eventually.assertThat(invoking(namedCache).size(), is(1), within(5, TimeUnit.SECONDS));
-
-            fail("The disabled site should not have received any values");
-        }
-        catch (AssertionError error)
-        {
-            if (error.getCause() instanceof PermanentlyUnavailableException)
+            try (CoherenceCacheServer activeServer = platform.launch(CoherenceCacheServer.class,
+                                                                     activeServerOptions.asArray()))
             {
-                // this is actually ok as we should never assert that the disabled site receives information
-            }
-            else
-            {
-                throw error;
-            }
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
+                // populate the active site
+                NamedCache activeCache = activeServer.getCache(cacheName);
 
-            if (passiveServer != null)
-            {
-                passiveServer.close();
-            }
+                // put a value in the active site
+                activeCache.put("message", "hello world");
 
-            if (activeServer != null)
-            {
-                activeServer.close();
+                System.out.printf("Ensuring ACTIVE and PASSIVE sites don't become synchronized.\n");
+
+                NamedCache passiveCache = passiveServer.getCache(cacheName);
+
+                Repetitively.assertThat(invoking(passiveCache).size(),
+                                        is(0),
+                                        Timeout.of(10, TimeUnit.SECONDS),
+                                        RetryFrequency.every(250, TimeUnit.MILLISECONDS));
             }
         }
     }
 
 
     /**
-     * Performs Active-Passive topology tests with Event transformation
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * active-passive topology are distributed from the active site to the passive site
+     * and in the process, are transformed according to a transformer.
      *
      * @throws Exception
      */
@@ -654,114 +379,61 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActivePassiveEventTransformation() throws Exception
     {
-        String                          siteName         = "testActivePassive";
-        final String                    cacheName        = "publishing-cache";
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
 
-        int                             nrPassiveServers = 2;
-        int                             nrActiveServers  = 2;
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
 
-        ArrayList<CoherenceCacheServer> passiveServers   = new ArrayList<CoherenceCacheServer>(nrPassiveServers);
-        ArrayList<CoherenceCacheServer> activeServers    = new ArrayList<CoherenceCacheServer>(nrActiveServers);
+        // establish the passive server options
+        OptionsByType passiveCacheServerOptions =
+            newPassiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-        LocalPlatform                   platform         = LocalPlatform.getInstance();
+        passiveCacheServerOptions.add(SiteName.of("passive"));
+        passiveCacheServerOptions.add(DisplayName.of("passive"));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.address",
+                                                        platform.getLoopbackAddress().getHostAddress()));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        passiveCacheServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
 
-        try
+        try (CoherenceCacheServer passiveServer = platform.launch(CoherenceCacheServer.class,
+                                                                  passiveCacheServerOptions.asArray()))
         {
-            SystemApplicationConsole console = new SystemApplicationConsole();
+            // establish the active server options
+            OptionsByType activeServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-            // establish the passive cluster
-            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+            activeServerOptions.add(SiteName.of("active"));
+            activeServerOptions.add(DisplayName.of("active"));
+            activeServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+            activeServerOptions.add(SystemProperty.of("proxy.port", passiveServer.getSystemProperty("remote.port")));
+            activeServerOptions.add(SystemProperty.of("remote.port", passiveServer.getSystemProperty("proxy.port")));
 
-            for (int i = 0; i < nrPassiveServers; i++)
+            activeServerOptions.add(CacheConfig.of("test-remotecluster-eventtransformation-cache-config.xml"));
+
+            try (CoherenceCacheServer activeServer = platform.launch(CoherenceCacheServer.class,
+                                                                     activeServerOptions.asArray()))
             {
-                CoherenceCacheServerSchema passiveServerSchema =
-                    newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
+                // populate the active site
+                NamedCache activeCache = activeServer.getCache(cacheName);
 
-                passiveServers.add(platform.realize(String.format("PASSIVE %s", i), passiveServerSchema, console));
-            }
+                randomlyPopulateNamedCache(activeCache, 0, 500, "ACTIVE");
 
-            // establish the active cluster
-            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
+                System.out.printf("\nWaiting for %d entries to synchronize from ACTIVE to PASSIVE.\n",
+                                  activeCache.size());
 
-            for (int i = 0; i < nrActiveServers; i++)
-            {
-                CoherenceCacheServerSchema activeServerSchema =
-                    newActiveCacheServerSchema(activeClusterPort)
-                        .setCacheConfigURI("test-remotecluster-eventtransformation-cache-config.xml")
-                        .setSiteName(siteName).setSystemProperty("remote.port",
-                                                                 passiveServers.get(0).getSystemProperty("proxy.port"));
+                NamedCache passiveCache = passiveServer.getCache(cacheName);
 
-                activeServers.add(platform.realize(String.format("ACTIVE  %d", i), activeServerSchema, console));
-            }
-
-            // wait for passive cluster to start
-            for (CoherenceCacheServer server : passiveServers)
-            {
-                Eventually.assertThat(invoking(server).getClusterSize(), is(nrPassiveServers));
-            }
-
-            // wait for active server cluster to start
-            for (CoherenceCacheServer server : activeServers)
-            {
-                Eventually.assertThat(invoking(server).getClusterSize(), is(nrActiveServers));
-            }
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", activeServers.get(0).getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", activeServers.get(0).getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the active site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "ACTIVE");
-
-            // grab a copy of the active site entries (we'll use this for comparison later)
-            final Map<Object, String> activeCache = new HashMap<Object, String>(CacheFactory.getCache(cacheName));
-
-            // shutdown our connection to the active site
-            CacheFactory.shutdown();
-
-            // assert that the values have arrived in the remote site
-            System.out.printf("Connecting to PASSIVE site.\n");
-            System.setProperty("remote.address", passiveServers.get(0).getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", passiveServers.get(0).getSystemProperty("proxy.port"));
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for %d entries to synchronize between ACTIVE and PASSIVE site.\n",
-                              activeCache.size());
-
-            NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), is(sameAs((Map) activeCache, Equivalence.EQUALS_IGNORE_CASE)));
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            for (CoherenceCacheServer server : passiveServers)
-            {
-                server.close();
-            }
-
-            for (CoherenceCacheServer server : activeServers)
-            {
-                server.close();
+                Eventually.assertThat(invoking(passiveCache).entrySet(),
+                                      sameAs(activeCache.entrySet(), Equivalence.EQUALS_IGNORE_CASE));
             }
         }
     }
 
 
     /**
-     * Performs Active-Passive topology tests with Event Filtering
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * active-passive topology are distributed from the active site to the passive site
+     * in accordance with a configured filter.
      *
      * @throws Exception
      */
@@ -769,124 +441,87 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActivePassiveEventFiltering() throws Exception
     {
-        String                   siteName      = "testActivePassiveWithFiltering";
-        final String             cacheName     = "publishing-cache";
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
 
-        CoherenceCacheServer     passiveServer = null;
-        CoherenceCacheServer     activeServer  = null;
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
 
-        LocalPlatform            platform      = LocalPlatform.getInstance();
-        SystemApplicationConsole console       = new SystemApplicationConsole();
+        // establish the passive server options
+        OptionsByType passiveCacheServerOptions =
+            newPassiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-        try
+        passiveCacheServerOptions.add(SiteName.of("passive"));
+        passiveCacheServerOptions.add(DisplayName.of("passive"));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.address",
+                                                        platform.getLoopbackAddress().getHostAddress()));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        passiveCacheServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
+
+        try (CoherenceCacheServer passiveServer = platform.launch(CoherenceCacheServer.class,
+                                                                  passiveCacheServerOptions.asArray()))
         {
-            // establish the passive cluster
-            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+            // establish the active server options
+            OptionsByType activeServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-            CoherenceCacheServerSchema passiveServerSchema =
-                newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
+            activeServerOptions.add(SiteName.of("active"));
+            activeServerOptions.add(DisplayName.of("active"));
+            activeServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+            activeServerOptions.add(SystemProperty.of("proxy.port", passiveServer.getSystemProperty("remote.port")));
+            activeServerOptions.add(SystemProperty.of("remote.port", passiveServer.getSystemProperty("proxy.port")));
 
-            passiveServer = platform.realize("PASSIVE", passiveServerSchema, console);
+            activeServerOptions.add(CacheConfig.of("test-remotecluster-eventfiltering-cache-config.xml"));
 
-            passiveServer.getClusterMBeanInfo();
-            passiveServer.getServiceMBeanInfo("ExtendTcpProxyService", 1);
-
-            // establish the active cluster
-            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            CoherenceCacheServerSchema activeServerSchema =
-                newActiveCacheServerSchema(activeClusterPort)
-                    .setCacheConfigURI("test-remotecluster-eventfiltering-cache-config.xml").setSiteName(siteName)
-                    .setSystemProperty("remote.port",
-                                       passiveServer.getSystemProperty("proxy.port"));
-
-            activeServer = platform.realize("ACTIVE", activeServerSchema, console);
-
-            activeServer.getClusterMBeanInfo();
-            activeServer.getServiceMBeanInfo("ExtendTcpProxyService", 1);
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", activeServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", activeServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the active site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "ACTIVE");
-
-            // grab a copy of the active site entries (we'll use this for comparison later)
-            final Map<Object, String> activeCache = new HashMap<Object, String>(CacheFactory.getCache(cacheName));
-
-            // remove entries that don't satisfy the filter
-            System.out.printf("There are %d entries in the active cache\n", activeCache.size());
-
-            Filter            filter       = new ExampleEventFilter();
-            ArrayList<Object> keysToRemove = new ArrayList<Object>();
-
-            for (Object key : activeCache.keySet())
+            try (CoherenceCacheServer activeServer = platform.launch(CoherenceCacheServer.class,
+                                                                     activeServerOptions.asArray()))
             {
-                String value = activeCache.get(key);
+                // populate the active site
+                NamedCache activeCache = activeServer.getCache(cacheName);
 
-                if (!filter.evaluate(value))
+                randomlyPopulateNamedCache(activeCache, 0, 500, "ACTIVE");
+
+                // grab a copy of the active cache entries so we can filter them locally
+                // (we'll use this for comparison later)
+                final Map activeMap = new HashMap<>(activeCache);
+
+                // remove entries that don't satisfy the filter
+                System.out.printf("There are %d entries in the active cache\n", activeCache.size());
+
+                Filter            filter       = new ExampleEventFilter();
+                ArrayList<Object> keysToRemove = new ArrayList<Object>();
+
+                for (Object key : activeMap.keySet())
                 {
-                    keysToRemove.add(key);
+                    String value = (String) activeMap.get(key);
+
+                    if (!filter.evaluate(value))
+                    {
+                        keysToRemove.add(key);
+                    }
                 }
-            }
 
-            for (Object key : keysToRemove)
-            {
-                activeCache.remove(key);
-            }
+                for (Object key : keysToRemove)
+                {
+                    activeMap.remove(key);
+                }
 
-            System.out.printf("There should be %d entries in the passive cache\n", activeCache.size());
+                System.out.printf("There should be %d entries in the passive cache\n", activeMap.size());
 
-            // shutdown our connection to the active site
-            CacheFactory.shutdown();
+                NamedCache passiveCache = passiveServer.getCache(cacheName);
 
-            // assert that the values have arrived in the remote site
-            System.out.printf("Connecting to PASSIVE site.\n");
-            System.setProperty("remote.address", passiveServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", passiveServer.getSystemProperty("proxy.port"));
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+                Eventually.assertThat(invoking(passiveCache).entrySet(),
+                                      sameAs(activeMap.entrySet(), Equivalence.EQUALS_IGNORE_CASE));
 
-            System.out.printf("\nWaiting for %d entries to synchronize between ACTIVE and PASSIVE site.\n",
-                              activeCache.size());
-
-            NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), is(sameAs((Map) activeCache, Equivalence.EQUALS_IGNORE_CASE)));
-
-            Assert.assertNotNull(namedCache);
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (passiveServer != null)
-            {
-                passiveServer.close();
-            }
-
-            if (activeServer != null)
-            {
-                activeServer.close();
+                System.out.println("The passive cache contains " + passiveCache.size() + " entries");
             }
         }
     }
 
 
     /**
-     * Ensure that we can propagate a passive site from an active site
-     * (that has push replication disabled)
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * active-passive topology are not distributed from the active site to the passive site
+     * when distribution is disabled, but later is when they are "propagated".
      *
      * @throws Exception
      */
@@ -894,191 +529,79 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActivePassivePropagation() throws Exception
     {
-        String                          siteName         = "testActivePassive";
-        final String                    cacheName        = "publishing-cache";
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
 
-        int                             nrPassiveServers = 1;
-        int                             nrActiveServers  = 1;
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
 
-        ArrayList<CoherenceCacheServer> passiveServers   = new ArrayList<CoherenceCacheServer>(nrPassiveServers);
-        ArrayList<CoherenceCacheServer> activeServers    = new ArrayList<CoherenceCacheServer>(nrActiveServers);
+        // establish the passive server options
+        OptionsByType passiveCacheServerOptions =
+            newPassiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-        LocalPlatform                   platform         = LocalPlatform.getInstance();
+        passiveCacheServerOptions.add(SiteName.of("passive"));
+        passiveCacheServerOptions.add(DisplayName.of("passive"));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.address",
+                                                        platform.getLoopbackAddress().getHostAddress()));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        passiveCacheServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
 
-        try
+        try (CoherenceCacheServer passiveServer = platform.launch(CoherenceCacheServer.class,
+                                                                  passiveCacheServerOptions.asArray()))
         {
-            SystemApplicationConsole console = new SystemApplicationConsole();
+            // establish the active server options
+            OptionsByType activeServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-            // establish the passive cluster
-            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+            activeServerOptions.add(SiteName.of("active"));
+            activeServerOptions.add(DisplayName.of("active"));
+            activeServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+            activeServerOptions.add(SystemProperty.of("proxy.port", passiveServer.getSystemProperty("remote.port")));
+            activeServerOptions.add(SystemProperty.of("remote.port", passiveServer.getSystemProperty("proxy.port")));
 
-            for (int i = 0; i < nrPassiveServers; i++)
+            activeServerOptions.add(SystemProperty.of("channel.starting.mode", "disabled"));
+
+            try (CoherenceCacheServer activeServer = platform.launch(CoherenceCacheServer.class,
+                                                                     activeServerOptions.asArray()))
             {
-                CoherenceCacheServerSchema passiveServerSchema =
-                    newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
+                // populate the active site
+                NamedCache activeCache = activeServer.getCache(cacheName);
 
-                passiveServers.add(platform.realize(String.format("PASSIVE %s", i), passiveServerSchema, console));
-            }
+                // populate the active site
+                randomlyPopulateNamedCache(activeCache, 0, 500, "ACTIVE");
 
-            // establish the active cluster
-            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
+                System.out.printf("Ensuring ACTIVE and PASSIVE sites don't become synchronized.\n");
 
-            for (int i = 0; i < nrActiveServers; i++)
-            {
-                CoherenceCacheServerSchema activeServerSchema =
-                    newActiveCacheServerSchema(activeClusterPort).setSiteName(siteName).setSystemProperty("remote.port",
-                                                                                                          passiveServers
-                                                                                                              .get(0)
-                                                                                                              .getSystemProperty("proxy.port"))
-                                                                                                                  .setSystemProperty("channel.starting.mode",
-                    "disabled").setJMXManagementMode(JMXManagementMode.ALL);
+                NamedCache passiveCache = passiveServer.getCache(cacheName);
 
-                activeServers.add(platform.realize(String.format("ACTIVE  %d", i), activeServerSchema, console));
-            }
+                Repetitively.assertThat(invoking(passiveCache).size(),
+                                        is(0),
+                                        Timeout.of(10, TimeUnit.SECONDS),
+                                        RetryFrequency.every(250, TimeUnit.MILLISECONDS));
 
-            // wait for passive cluster to start
-            for (CoherenceCacheServer server : passiveServers)
-            {
-                Eventually.assertThat(invoking(server).getClusterSize(), is(nrPassiveServers));
-            }
+                System.out.println("Requesting propagation of ACTIVE site to the PASSIVE site");
 
-            // wait for active server cluster to start
-            for (CoherenceCacheServer server : activeServers)
-            {
-                Eventually.assertThat(invoking(server).getClusterSize(), is(nrActiveServers));
-            }
+                // using JMX, ask the active channel to propagate
+                JmxFeature jmxActive = activeServer.get(JmxFeature.class);
 
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
+                EventChannelControllerMBean controllerMBean =
+                    jmxActive.getMBeanProxy(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
+                                            EventChannelControllerMBean.class);
 
-            System.setProperty("remote.address", activeServers.get(0).getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", activeServers.get(0).getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
+                controllerMBean.propagate();
 
-            // populate the active site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "ACTIVE");
+                System.out.printf("\nWaiting for %d entries to propagate from the ACTIVE site to the PASSIVE site\n",
+                                  activeCache.size());
 
-            // grab a copy of the active site entries (we'll use this for comparison later)
-            final Map<Object, Object> activeCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
-
-            // using JMX, ask the channel to propagate
-            EventChannelControllerMBean controllerMBean =
-                activeServers.get(0)
-                    .getMBeanProxy(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
-                                   EventChannelControllerMBean.class);
-
-            controllerMBean.propagate();
-
-            // shutdown our connection to the active site
-            CacheFactory.shutdown();
-
-            // assert that the values have arrived in the remote site
-            System.out.printf("Connecting to PASSIVE site.\n");
-            System.setProperty("remote.address", passiveServers.get(0).getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", passiveServers.get(0).getSystemProperty("proxy.port"));
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for %d entries to propagate from the ACTIVE site to the PASSIVE site\n",
-                              activeCache.size());
-
-            NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), sameAs((Map) activeCache));
-
-            Assert.assertNotNull(namedCache);
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            for (CoherenceCacheServer server : passiveServers)
-            {
-                server.close();
-            }
-
-            for (CoherenceCacheServer server : activeServers)
-            {
-                server.close();
+                Eventually.assertThat(invoking(passiveCache).entrySet(), sameAs(activeCache.entrySet()));
             }
         }
     }
 
 
     /**
-     * Test that the {@link CacheStoreEventChannel} publishes entries.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testCacheStoreEventChannel() throws Exception
-    {
-        CoherenceCacheServer londonServer = null;
-
-        LocalPlatform        platform     = LocalPlatform.getInstance();
-
-        try
-        {
-            // define the cluster port
-            Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            // establish the london server
-            CoherenceCacheServerSchema londonServerSchema =
-                newBaseCacheServerSchema(clusterPort).setSiteName("london")
-                    .setCacheConfigURI("test-cachestore-eventchannel-cache-config.xml").setClusterName("passive");
-
-            londonServer = platform.realize("LONDON", londonServerSchema, new SystemApplicationConsole());
-
-            final String cacheName = "publishing-cache";
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the london site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "LONDON");
-
-            System.out.printf("Waiting for Event Distribution to complete.\n");
-
-            NamedCache testCache  = CacheFactory.getCache(cacheName);
-            NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
-
-            Eventually.assertThat(invoking(testCache), is(sameAs(otherCache)));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (londonServer != null)
-            {
-                londonServer.close();
-            }
-        }
-    }
-
-
-    /**
-     * Performs Active-Passive topology tests using expiry
+     * Ensure cache entries created with expiry timeouts in {@link NamedCache} configured with an
+     * active-passive topology are distributed from the active site to the passive site and that
+     * the expiry timeouts are included.
      *
      * @throws Exception
      */
@@ -1086,643 +609,516 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
     @Test
     public void testActivePassiveWithExpiry() throws Exception
     {
-        String                          siteName         = "testActivePassiveWithExpiry";
-        final String                    cacheName        = "publishing-cache";
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
 
-        int                             nrPassiveServers = 2;
-        int                             nrActiveServers  = 2;
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
 
-        ArrayList<CoherenceCacheServer> passiveServers   = new ArrayList<CoherenceCacheServer>(nrPassiveServers);
-        ArrayList<CoherenceCacheServer> activeServers    = new ArrayList<CoherenceCacheServer>(nrActiveServers);
+        // establish the passive server options
+        OptionsByType passiveCacheServerOptions =
+            newPassiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-        LocalPlatform                   platform         = LocalPlatform.getInstance();
+        passiveCacheServerOptions.add(SiteName.of("passive"));
+        passiveCacheServerOptions.add(DisplayName.of("passive"));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.address",
+                                                        platform.getLoopbackAddress().getHostAddress()));
+        passiveCacheServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        passiveCacheServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
 
-        try
+        try (CoherenceCacheServer passiveServer = platform.launch(CoherenceCacheServer.class,
+                                                                  passiveCacheServerOptions.asArray()))
         {
-            SystemApplicationConsole console = new SystemApplicationConsole();
+            // establish the active server options
+            OptionsByType activeServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-            // establish the passive cluster
-            Capture<Integer> passiveClusterPort = new Capture<Integer>(getAvailablePortIterator());
+            activeServerOptions.add(SiteName.of("active"));
+            activeServerOptions.add(DisplayName.of("active"));
+            activeServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+            activeServerOptions.add(SystemProperty.of("proxy.port", passiveServer.getSystemProperty("remote.port")));
+            activeServerOptions.add(SystemProperty.of("remote.port", passiveServer.getSystemProperty("proxy.port")));
 
-            for (int i = 0; i < nrPassiveServers; i++)
+            try (CoherenceCacheServer activeServer = platform.launch(CoherenceCacheServer.class,
+                                                                     activeServerOptions.asArray()))
             {
-                CoherenceCacheServerSchema passiveServerSchema =
-                    newPassiveCacheServerSchema(passiveClusterPort).setSiteName(siteName);
+                // populate the active site
+                NamedCache activeCache = activeServer.getCache(cacheName);
 
-                passiveServers.add(platform.realize(String.format("PASSIVE %s", i), passiveServerSchema, console));
-            }
+                activeCache.put("5", "5", 5000);
+                activeCache.put("10", "10", 10000);
+                activeCache.put("15", "15", 15000);
 
-            // establish the active cluster
-            Capture<Integer> activeClusterPort = new Capture<Integer>(getAvailablePortIterator());
+                System.out.printf("\nWaiting for entries to synchronize from ACTIVE to PASSIVE.\n", activeCache.size());
 
-            for (int i = 0; i < nrActiveServers; i++)
-            {
-                CoherenceCacheServerSchema activeServerSchema =
-                    newActiveCacheServerSchema(activeClusterPort).setSiteName(siteName).setSystemProperty("remote.port",
-                                                                                                          passiveServers
-                                                                                                              .get(0)
-                                                                                                              .getSystemProperty("proxy.port"));
+                NamedCache passiveCache = passiveServer.getCache(cacheName);
 
-                activeServers.add(platform.realize(String.format("ACTIVE  %d", i), activeServerSchema, console));
-            }
+                Eventually.assertThat(invoking(passiveCache).get("5"), is((Object) "5"));
+                Eventually.assertThat(invoking(passiveCache).get("10"), is((Object) "10"));
+                Eventually.assertThat(invoking(passiveCache).get("15"), is((Object) "15"));
 
-            // wait for passive cluster to start
-            for (CoherenceCacheServer server : passiveServers)
-            {
-                Eventually.assertThat(invoking(server).getClusterSize(), is(nrPassiveServers));
-            }
+                // now we must ensure that the entries have expired
+                System.out.printf("\nEnsuring entries have expired in the PASSIVE site.\n");
 
-            // wait for active server cluster to start
-            for (CoherenceCacheServer server : activeServers)
-            {
-                Eventually.assertThat(invoking(server).getClusterSize(), is(nrActiveServers));
-            }
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", activeServers.get(0).getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", activeServers.get(0).getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the active site
-            NamedCache cache = CacheFactory.getCache(cacheName);
-
-            cache.put("5", "5", 5000);
-            cache.put("10", "10", 10000);
-            cache.put("15", "15", 15000);
-
-            // shutdown our connection to the active site
-            CacheFactory.shutdown();
-
-            // assert that the values have arrived in the remote site
-            System.out.printf("Connecting to PASSIVE site.\n");
-            System.setProperty("remote.address", passiveServers.get(0).getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", passiveServers.get(0).getSystemProperty("proxy.port"));
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for entries to synchronize between ACTIVE and PASSIVE site.\n");
-
-            NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache).get("5"), is((Object) "5"));
-            Eventually.assertThat(invoking(namedCache).get("10"), is((Object) "10"));
-            Eventually.assertThat(invoking(namedCache).get("15"), is((Object) "15"));
-
-            // now we must ensure that the entries have expired
-            System.out.printf("\nEnsuring entries have expired in the PASSIVE site.\n");
-
-            Eventually.assertThat(invoking(namedCache).containsKey("5"), is(false));
-            Eventually.assertThat(invoking(namedCache).containsKey("10"), is(false));
-            Eventually.assertThat(invoking(namedCache).containsKey("15"), is(false));
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            for (CoherenceCacheServer server : passiveServers)
-            {
-                server.close();
-            }
-
-            for (CoherenceCacheServer server : activeServers)
-            {
-                server.close();
+                Eventually.assertThat(invoking(passiveCache).containsKey("5"), is(false));
+                Eventually.assertThat(invoking(passiveCache).containsKey("10"), is(false));
+                Eventually.assertThat(invoking(passiveCache).containsKey("15"), is(false));
             }
         }
     }
 
 
     /**
-     * Test that the {@link BinaryEntryStoreEventChannel} publishes entries.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testBinaryEntryStoreEventChannel() throws Exception
-    {
-        CoherenceCacheServer     londonServer = null;
-
-        LocalPlatform            platform     = LocalPlatform.getInstance();
-        SystemApplicationConsole console      = new SystemApplicationConsole();
-
-        try
-        {
-            // define the cluster port
-            Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            // establish the london server
-            CoherenceCacheServerSchema londonServerSchema =
-                newBaseCacheServerSchema(clusterPort).setSiteName("london")
-                    .setCacheConfigURI("test-binaryentrystore-eventchannel-cache-config.xml").setClusterName("passive");
-
-            londonServer = platform.realize("LONDON", londonServerSchema, console);
-
-            final String cacheName = "publishing-cache";
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the london site
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 500, "LONDON");
-
-            System.out.printf("Waiting for Event Distribution to complete.\n");
-
-            NamedCache testCache  = CacheFactory.getCache(cacheName);
-            NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
-
-            Eventually.assertThat(invoking(testCache), is(sameAs(otherCache)));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (londonServer != null)
-            {
-                londonServer.close();
-            }
-        }
-    }
-
-
-    /**
-     * Test that a Custom {@link EventChannel} dispatches entries.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testCustomEventChannel() throws Exception
-    {
-        CoherenceCacheServer     londonServer = null;
-
-        LocalPlatform            platform     = LocalPlatform.getInstance();
-        SystemApplicationConsole console      = new SystemApplicationConsole();
-
-        try
-        {
-            // define the cluster port
-            Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            // establish the london server
-            CoherenceCacheServerSchema londonServerSchema =
-                newBaseCacheServerSchema(clusterPort).setSiteName("london")
-                    .setCacheConfigURI("test-custom-eventchannel-cache-config.xml").setClusterName("passive");
-
-            londonServer = platform.realize("LONDON", londonServerSchema, console);
-
-            final String cacheName = "publishing-cache";
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the london site
-            final int changes = randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, 1000, "LONDON");
-
-            // get the MBean for the EventChannel
-            final Deferred<EventChannelControllerMBean> mBean =
-                londonServer
-                    .getDeferredMBeanProxy(new ObjectName(String
-                        .format("Coherence:type=EventChannels,id=%s,nodeId=1",
-                                cacheName + "-" + "Custom Event Channel")),
-                                           EventChannelControllerMBean.class);
-
-            System.out.printf("Waiting for Event Distribution to complete.\n");
-
-            Eventually.assertThat(invoking(mBean).getEventsDistributedCount(), is(changes));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (londonServer != null)
-            {
-                londonServer.close();
-            }
-        }
-    }
-
-
-    /**
-     * Performs Active-Active topology testing using a custom Conflict Resolver
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testActiveActiveConflictResolution() throws Exception
-    {
-        final String             cacheName     = "publishing-cache";
-
-        CoherenceCacheServer     londonServer  = null;
-        CoherenceCacheServer     newyorkServer = null;
-
-        LocalPlatform            platform      = LocalPlatform.getInstance();
-        SystemApplicationConsole console       = new SystemApplicationConsole();
-
-        try
-        {
-            // establish the london server
-            Capture<Integer> londonClusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            CoherenceCacheServerSchema londonServerSchema =
-                newActiveCacheServerSchema(londonClusterPort).setSiteName("london").setSystemProperty("proxy.port",
-                                                                                                      getAvailablePortIterator())
-                                                                                                          .setSystemProperty("remote.port",
-                getAvailablePortIterator()).setSystemProperty("conflict.resolver.classname",
-                                                              "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver");
-
-            londonServer = platform.realize("LONDON", londonServerSchema, console);
-
-            // establish the newyork server
-            Capture<Integer> newyorkClusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            CoherenceCacheServerSchema newyorkServerSchema =
-                newActiveCacheServerSchema(newyorkClusterPort).setSiteName("newyork").setSystemProperty("proxy.port",
-                                                                                                        londonServer
-                                                                                                            .getSystemProperty("remote.port"))
-                                                                                                                .setSystemProperty("remote.port",
-                londonServer.getSystemProperty("proxy.port")).setSystemProperty("conflict.resolver.classname",
-                                                                                "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver");
-
-            newyorkServer = platform.realize("NEWYORK", newyorkServerSchema, console);
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            // connect to the newyork cluster
-            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // place a partition set into NEWYORK
-            PartitionSet setPartitions = new PartitionSet(3);
-
-            setPartitions.add(0);
-            CacheFactory.getCache(cacheName).put("partitions", setPartitions);
-
-            // shutdown our connection to the newyork cluster
-            CacheFactory.shutdown();
-
-            // connect to the london cluster
-            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // place a partition set into LONDON
-            setPartitions = new PartitionSet(3);
-            setPartitions.add(1);
-            CacheFactory.getCache(cacheName).put("partitions", setPartitions);
-
-            NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache).get("partitions"), (Matcher) PartitionSetMatcher.contains(0, 1));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-
-            // connect to the newyork cluster
-            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache).get("partitions"), (Matcher) PartitionSetMatcher.contains(0, 1));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (londonServer != null)
-            {
-                londonServer.close();
-            }
-
-            if (newyorkServer != null)
-            {
-                newyorkServer.close();
-            }
-        }
-    }
-
-
-    /**
-     * Test asynchronous {@link PublishingCacheStore} configuration with a {@link CacheStoreEventChannel}.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testAsyncCacheStoreEventChannel() throws Exception
-    {
-        CoherenceCacheServer     londonServer = null;
-
-        LocalPlatform            platform     = LocalPlatform.getInstance();
-        SystemApplicationConsole console      = new SystemApplicationConsole();
-
-        try
-        {
-            // define the cluster port
-            Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            // establish the london server
-            CoherenceCacheServerSchema londonServerSchema =
-                newBaseCacheServerSchema(clusterPort).setSiteName("london")
-                    .setCacheConfigURI("test-cachestore-eventchannel-cache-config.xml").setClusterName("passive")
-                    .setSystemProperty("write.behind.delay",
-                                       1);
-
-            londonServer = platform.realize("LONDON", londonServerSchema, console);
-
-            final String cacheName = "publishing-cache";
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the london site
-            final int ENTRY_COUNT = 500;
-
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, ENTRY_COUNT, "LONDON");
-
-            System.out.printf("Waiting for Event Distribution to complete.\n");
-
-            NamedCache testCache  = CacheFactory.getCache(cacheName);
-            NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
-
-            Eventually.assertThat(invoking(testCache), is(sameAs(otherCache)));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (londonServer != null)
-            {
-                londonServer.close();
-            }
-        }
-    }
-
-
-    /**
-     * Test performing an asynchronous putAll using a CacheStoreChannel
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testAsyncPutAllWithCacheStoreChannel() throws Exception
-    {
-        CoherenceCacheServer     londonServer = null;
-
-        LocalPlatform            platform     = LocalPlatform.getInstance();
-        SystemApplicationConsole console      = new SystemApplicationConsole();
-
-        try
-        {
-            // define the cluster port
-            Capture<Integer> clusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            // establish the london server
-            CoherenceCacheServerSchema londonServerSchema =
-                newBaseCacheServerSchema(clusterPort).setSiteName("london")
-                    .setCacheConfigURI("test-cachestore-eventchannel-cache-config.xml").setClusterName("passive")
-                    .setSystemProperty("write.behind.delay",
-                                       1);
-
-            londonServer = platform.realize("LONDON", londonServerSchema, console);
-
-            final String cacheName = "publishing-cache";
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the london site
-            final int ENTRY_COUNT = 500;
-
-            randomlyPopulateNamedCache(CacheFactory.getCache(cacheName), 0, ENTRY_COUNT, "LONDON", true);
-
-            System.out.printf("Waiting for Event Distribution to complete.\n");
-
-            NamedCache testCache  = CacheFactory.getCache(cacheName);
-            NamedCache otherCache = CacheFactory.getCache("test-" + cacheName);
-
-            Eventually.assertThat(invoking(testCache), is(sameAs(otherCache)));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-        }
-        catch (Exception exception)
-        {
-            throw exception;
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (londonServer != null)
-            {
-                londonServer.close();
-            }
-        }
-    }
-
-
-    /**
-     * Performs Active-Active topology tests with PortableObject keys and values
-     * where the classes are only defined in the client's POF configuration file
-     * to ensure that the keys and values are not deserialized or serialized on
-     * the server.
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * active-active topology are distributed between the active sites and when conflicts
+     * occur, they are resolved using a conflict resolver.
      *
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void testShouldNotDeserializeKeysOrValuesInCluster() throws Exception
+    public final void testActiveActiveConflictResolution() throws Exception
     {
-        final int            entryCount    = 3;
-        final String         cacheName     = "publishing-cache";
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
 
-        CoherenceCacheServer londonServer  = null;
-        CoherenceCacheServer newyorkServer = null;
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
 
-        LocalPlatform        platform      = LocalPlatform.getInstance();
+        // establish the london server options
+        OptionsByType londonServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-        try
+        londonServerOptions.add(SiteName.of("london"));
+        londonServerOptions.add(DisplayName.of("london"));
+        londonServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+        londonServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        londonServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
+
+        londonServerOptions.add(SystemProperty.of("conflict.resolver.classname",
+                                                  "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver"));
+
+        try (CoherenceCacheServer londonServer = platform.launch(CoherenceCacheServer.class,
+                                                                 londonServerOptions.asArray()))
         {
-            SystemApplicationConsole console = new SystemApplicationConsole();
+            // establish the newyork server options
+            OptionsByType newyorkServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-            // define the london cluster port
-            Capture<Integer> londonClusterPort = new Capture<Integer>(getAvailablePortIterator());
+            newyorkServerOptions.add(SiteName.of("newyork"));
+            newyorkServerOptions.add(DisplayName.of("newyork"));
+            newyorkServerOptions.add(SystemProperty.of("proxy.address",
+                                                       platform.getLoopbackAddress().getHostAddress()));
+            newyorkServerOptions.add(SystemProperty.of("proxy.port", londonServer.getSystemProperty("remote.port")));
+            newyorkServerOptions.add(SystemProperty.of("remote.port", londonServer.getSystemProperty("proxy.port")));
 
-            // establish the london server
-            CoherenceCacheServerSchema londonServerSchema =
-                newActiveCacheServerSchema(londonClusterPort)
-                        .setSiteName("london")
-                        .setSystemProperty("proxy.address", Constants.getLocalHost())
-                        .setSystemProperty("proxy.port", getAvailablePortIterator())
-                        .setSystemProperty("remote.port", getAvailablePortIterator());
+            newyorkServerOptions.add(SystemProperty.of("conflict.resolver.classname",
+                                                       "com.oracle.coherence.patterns.pushreplication.MergingConflictResolver"));
 
-            londonServer = platform.realize("LONDON", londonServerSchema, console);
-
-            // define the london cluster port
-            Capture<Integer> newyorkClusterPort = new Capture<Integer>(getAvailablePortIterator());
-
-            // establish the new york server
-            CoherenceCacheServerSchema newyorkServerSchema =
-                newActiveCacheServerSchema(newyorkClusterPort)
-                        .setSiteName("newyork")
-                        .setSystemProperty("proxy.port", londonServer.getSystemProperty("remote.port"))
-                        .setSystemProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-
-            newyorkServer = platform.realize("NEWYORK", newyorkServerSchema, console);
-
-            // turn off local clustering so we don't connect with the process just started
-            System.setProperty("tangosol.coherence.tcmp.enabled", "false");
-
-            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-client-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            // populate the new york site
-            NamedCache newYorkCache = CacheFactory.getCache(cacheName);
-            randomlyPopulateNamedCacheWithDomainValues(newYorkCache, 0, entryCount, "NEWYORK", false);
-
-            // grab a copy of the new york site entries (we'll use this for comparison later)
-            final Map<Object, Object> newyorkCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
-
-            // shutdown our connection to the new york cluster
-            CacheFactory.shutdown();
-
-            // connect to the london cluster
-            System.setProperty("remote.address", londonServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", londonServer.getSystemProperty("proxy.port"));
-            System.setProperty("tangosol.pof.config", "test-client-pof-config.xml");
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for %d entries to synchronize between NEWYORK to LONDON.\n",
-                              newyorkCache.size());
-
-            NamedCache namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), sameAs((Map) newyorkCache));
-
-            // assert that nothing been queued in London (from New York)
-            // (even though this is Active-Active, events from New York to London should not be
-            // re-queued in London for distribution back to New York).
-            Deferred<Integer> deferredMBeanAttribute =
-                londonServer
-                    .getDeferredMBeanAttribute(new ObjectName("Coherence:type=EventChannels,id=publishing-cache-Remote Cluster Channel,nodeId=1"),
-                                               "EventsDistributedCount",
-                                               Integer.class);
-
-            Eventually.assertThat(valueOf(deferredMBeanAttribute), is(0));
-
-            // update the london site
-            randomlyPopulateNamedCacheWithDomainValues(CacheFactory.getCache(cacheName), 1000, entryCount, "LONDON", false);
-
-            // grab a copy of the london site entries (we'll use this for comparison later)
-            final Map<Object, Object> londonCache = new HashMap<Object, Object>(CacheFactory.getCache(cacheName));
-
-            // shutdown our connection to the london cluster
-            CacheFactory.shutdown();
-
-            // assert that the value is in the new york cluster
-            System.setProperty("remote.address", newyorkServer.getSystemProperty("proxy.address"));
-            System.setProperty("remote.port", newyorkServer.getSystemProperty("proxy.port"));
-            CacheFactory
-                .setConfigurableCacheFactory(new DefaultConfigurableCacheFactory("test-client-cache-config.xml"));
-
-            System.out.printf("\nWaiting for %d entries to synchronize between LONDON and NEWYORK.\n",
-                              londonCache.size());
-
-            namedCache = CacheFactory.getCache(cacheName);
-
-            Eventually.assertThat(invoking(namedCache), sameAs((Map) londonCache));
-        }
-        finally
-        {
-            // shutdown our local use of coherence
-            CacheFactory.shutdown();
-
-            if (londonServer != null)
+            try (CoherenceCacheServer newyorkServer = platform.launch(CoherenceCacheServer.class,
+                                                                      newyorkServerOptions.asArray()))
             {
-                londonServer.close();
+                // place a partition set (containing 0) into NEWYORK
+                NamedCache   newyorkCache  = newyorkServer.getCache(cacheName);
+                PartitionSet setPartitions = new PartitionSet(3);
+
+                setPartitions.add(0);
+
+                newyorkCache.put("partitions", setPartitions);
+
+                // place a partition set (containing 1) into LONDON
+                NamedCache londonCache = londonServer.getCache(cacheName);
+
+                setPartitions = new PartitionSet(3);
+
+                setPartitions.add(1);
+
+                londonCache.put("partitions", setPartitions);
+
+                System.out.println("\nWaiting for NEWYORK to LONDON to synchronize\n");
+
+                // ensure that NEWYORK and LONDON contain merged partition sets
+                Eventually.assertThat(invoking(newyorkCache).get("partitions"),
+                                      (Matcher) PartitionSetMatcher.contains(0, 1));
+                Eventually.assertThat(invoking(londonCache).get("partitions"),
+                                      (Matcher) PartitionSetMatcher.contains(0, 1));
             }
+        }
+    }
 
-            if (newyorkServer != null)
+
+    /**
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * a cache-store event channel are distributed.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testCacheStoreEventChannel() throws Exception
+    {
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
+
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
+
+        // establish the london server options
+        OptionsByType londonServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
+
+        londonServerOptions.add(SiteName.of("london"));
+        londonServerOptions.add(DisplayName.of("london"));
+        londonServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+        londonServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        londonServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
+
+        londonServerOptions.add(CacheConfig.of("test-cachestore-eventchannel-cache-config.xml"));
+        londonServerOptions.add(Pof.config("test-pof-config.xml"));
+
+        try (CoherenceCacheServer londonServer = platform.launch(CoherenceCacheServer.class,
+                                                                 londonServerOptions.asArray()))
+        {
+            // populate the london cache
+            NamedCache londonCache = londonServer.getCache(cacheName);
+
+            randomlyPopulateNamedCache(londonCache, 0, 500, "LONDON");
+
+            System.out.printf("\nWaiting distribution to complete.\n");
+
+            NamedCache otherCache = londonServer.getCache("test-" + cacheName);
+
+            Eventually.assertThat(invoking(otherCache).entrySet(), sameAs(londonCache.entrySet()));
+        }
+    }
+
+
+    /**
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * a binary-entry cache-store event channel are distributed.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testBinaryEntryCacheStoreEventChannel() throws Exception
+    {
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
+
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
+
+        // establish the london server options
+        OptionsByType londonServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
+
+        londonServerOptions.add(SiteName.of("london"));
+        londonServerOptions.add(DisplayName.of("london"));
+        londonServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+        londonServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        londonServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
+
+        londonServerOptions.add(CacheConfig.of("test-binaryentrystore-eventchannel-cache-config.xml"));
+        londonServerOptions.add(Pof.config("test-pof-config.xml"));
+
+        try (CoherenceCacheServer londonServer = platform.launch(CoherenceCacheServer.class,
+                                                                 londonServerOptions.asArray()))
+        {
+            // populate the london cache
+            NamedCache londonCache = londonServer.getCache(cacheName);
+
+            randomlyPopulateNamedCache(londonCache, 0, 500, "LONDON");
+
+            System.out.printf("\nWaiting distribution to complete.\n");
+
+            NamedCache otherCache = londonServer.getCache("test-" + cacheName);
+
+            Eventually.assertThat(invoking(otherCache).entrySet(), sameAs(londonCache.entrySet()));
+        }
+    }
+
+
+    /**
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * an async cache-store event channel are distributed.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testAsyncCacheStoreEventChannel() throws Exception
+    {
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
+
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
+
+        // establish the london server options
+        OptionsByType londonServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
+
+        londonServerOptions.add(SiteName.of("london"));
+        londonServerOptions.add(DisplayName.of("london"));
+        londonServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+        londonServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        londonServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
+
+        londonServerOptions.add(CacheConfig.of("test-cachestore-eventchannel-cache-config.xml"));
+        londonServerOptions.add(Pof.config("test-pof-config.xml"));
+        londonServerOptions.add(SystemProperty.of("write.behind.delay", 1));
+
+        try (CoherenceCacheServer londonServer = platform.launch(CoherenceCacheServer.class,
+                                                                 londonServerOptions.asArray()))
+        {
+            // populate the london cache
+            NamedCache londonCache = londonServer.getCache(cacheName);
+
+            randomlyPopulateNamedCache(londonCache, 0, 500, "LONDON");
+
+            System.out.printf("\nWaiting distribution to complete.\n");
+
+            NamedCache otherCache = londonServer.getCache("test-" + cacheName);
+
+            Eventually.assertThat(invoking(otherCache).entrySet(), sameAs(londonCache.entrySet()));
+        }
+    }
+
+
+    /**
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} (using putAll for inserts and updates)
+     * configured with an an async cache-store event channel are distributed.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testAsyncPutAllCacheStoreEventChannel() throws Exception
+    {
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
+
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
+
+        // establish the london server options
+        OptionsByType londonServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
+
+        londonServerOptions.add(SiteName.of("london"));
+        londonServerOptions.add(DisplayName.of("london"));
+        londonServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+        londonServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        londonServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
+
+        londonServerOptions.add(CacheConfig.of("test-cachestore-eventchannel-cache-config.xml"));
+        londonServerOptions.add(Pof.config("test-pof-config.xml"));
+        londonServerOptions.add(SystemProperty.of("write.behind.delay", 1));
+
+        try (CoherenceCacheServer londonServer = platform.launch(CoherenceCacheServer.class,
+                                                                 londonServerOptions.asArray()))
+        {
+            // populate the london cache
+            NamedCache londonCache = londonServer.getCache(cacheName);
+
+            randomlyPopulateNamedCache(londonCache, 0, 500, "LONDON", true);
+
+            System.out.printf("\nWaiting distribution to complete.\n");
+
+            NamedCache otherCache = londonServer.getCache("test-" + cacheName);
+
+            Eventually.assertThat(invoking(otherCache).entrySet(), sameAs(londonCache.entrySet()));
+        }
+    }
+
+
+    /**
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * a custom event channel are distributed.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testCustomEventChannel() throws Exception
+    {
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
+
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
+
+        // establish the london server options
+        OptionsByType londonServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
+
+        londonServerOptions.add(SiteName.of("london"));
+        londonServerOptions.add(DisplayName.of("london"));
+        londonServerOptions.add(SystemProperty.of("proxy.address", platform.getLoopbackAddress().getHostAddress()));
+        londonServerOptions.add(SystemProperty.of("proxy.port", getAvailablePortIterator()));
+        londonServerOptions.add(SystemProperty.of("remote.port", getAvailablePortIterator()));
+
+        londonServerOptions.add(CacheConfig.of("test-custom-eventchannel-cache-config.xml"));
+
+        try (CoherenceCacheServer londonServer = platform.launch(CoherenceCacheServer.class,
+                                                                 londonServerOptions.asArray()))
+        {
+            // populate the london cache
+            NamedCache londonCache = londonServer.getCache(cacheName);
+
+            int        changes     = randomlyPopulateNamedCache(londonCache, 0, 1000, "LONDON");
+
+            JmxFeature londonJmx   = londonServer.get(JmxFeature.class);
+
+            // get the MBean for the EventChannel
+            final Deferred<EventChannelControllerMBean> mBean =
+                londonJmx.getDeferredMBeanProxy(new ObjectName(String.format("Coherence:type=EventChannels,id=%s,nodeId=1",
+                                                                             cacheName + "-" + "Custom Event Channel")),
+                                                EventChannelControllerMBean.class);
+
+            System.out.printf("Waiting for Event Distribution to complete.\n");
+
+            Eventually.assertThat(invoking(mBean).getEventsDistributedCount(), is(changes));
+        }
+    }
+
+
+    /**
+     * Ensure Insert/Update/Deletes against a {@link NamedCache} configured with an
+     * active-active topology are distributed between the active sites when the keys and values
+     * are only POF serializable and the servers don't have a POF configuration, thus
+     * ensuring they can't be deserialized server-side.
+     * <p>
+     * The intent of this test is to ensure that applications purely using .NET or C++
+     * (no Java) operate correctly.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testShouldNotDeserializeKeysOrValuesDuringDistribution() throws Exception
+    {
+        // the name of the cache we'll use for testing
+        final String cacheName = "publishing-cache";
+
+        // obtain the platform on which we'll launch the clusters
+        LocalPlatform platform = LocalPlatform.get();
+
+        // determine london and newyork proxy ports
+        Capture<Integer> londonProxyPort  = new Capture<>(getAvailablePortIterator());
+        Capture<Integer> newyorkProxyPort = new Capture<>(getAvailablePortIterator());
+
+        // both london and newyork share the same proxy address
+        String proxyAddress = platform.getLoopbackAddress().getHostAddress();
+
+        // establish the london server options
+        OptionsByType londonServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
+
+        londonServerOptions.add(SiteName.of("london"));
+        londonServerOptions.add(DisplayName.of("london"));
+        londonServerOptions.add(SystemProperty.of("proxy.address", proxyAddress));
+        londonServerOptions.add(SystemProperty.of("proxy.port", londonProxyPort));
+        londonServerOptions.add(SystemProperty.of("remote.port", newyorkProxyPort));
+
+        try (CoherenceCacheServer londonServer = platform.launch(CoherenceCacheServer.class,
+                                                                 londonServerOptions.asArray());
+            JavaApplication londonClient = platform.launch(JavaApplication.class,
+                                                           ClassName.of(KeepAliveApplication.class),
+                                                           DisplayName.of("london-client"),
+                                                           Clustering.disabled(),
+                                                           SystemProperty.of("remote.address", proxyAddress),
+                                                           SystemProperty.of("remote.port", londonProxyPort),
+                                                           Pof.config("test-client-pof-config.xml"),
+                                                           CacheConfig.of("test-client-cache-config.xml"),
+                                                           Console.system()))
+        {
+            londonClient.submit(() -> System.out.println("LONDON Cache [" + cacheName + "] Size:"
+                                                         + CacheFactory.getCache(cacheName).size()));
+
+            // establish the newyork server options
+            OptionsByType newyorkServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
+
+            newyorkServerOptions.add(SiteName.of("newyork"));
+            newyorkServerOptions.add(DisplayName.of("newyork"));
+            newyorkServerOptions.add(SystemProperty.of("proxy.address", proxyAddress));
+            newyorkServerOptions.add(SystemProperty.of("proxy.port", newyorkProxyPort));
+            newyorkServerOptions.add(SystemProperty.of("remote.port", londonProxyPort));
+
+            try (CoherenceClusterMember newyorkServer = platform.launch(CoherenceCacheServer.class,
+                                                                        newyorkServerOptions.asArray());
+                JavaApplication newyorkClient = platform.launch(JavaApplication.class,
+                                                                ClassName.of(KeepAliveApplication.class),
+                                                                DisplayName.of("newyork-client"),
+                                                                Clustering.disabled(),
+                                                                SystemProperty.of("remote.address", proxyAddress),
+                                                                SystemProperty.of("remote.port", newyorkProxyPort),
+                                                                Pof.config("test-client-pof-config.xml"),
+                                                                CacheConfig.of("test-client-cache-config.xml"),
+                                                                Console.system()))
             {
-                newyorkServer.close();
+                // a RemoteCallable that will populate a NamedCache and return the number of entries in the populated cache
+                RemoteCallable<Integer> populateCacheCallable = () -> {
+                                                                    NamedCache cache = CacheFactory.getCache(cacheName);
+
+                                                                    randomlyPopulateNamedCacheWithDomainValues(cache,
+                                                                                                               0,
+                                                                                                               500,
+                                                                                                               cacheName,
+                                                                                                               false);
+
+                                                                    return cache.size();
+                                                                };
+
+                // a RemoteCallable that will return a HashMap containing string representations
+                // of the keys and values of a NamedCache (to allow us to compare them without serializing the classes)
+                RemoteCallable<HashMap<String, String>> getCacheCallable = () -> {
+                                                                               NamedCache cache =
+                                                                                   CacheFactory.getCache(cacheName);
+
+                                                                               HashMap<String, String> results =
+                                                                                   new HashMap<>();
+
+                                                                               for (Iterator<Map.Entry> iterator =
+                                                                                   cache.entrySet().iterator();
+                                                                                   iterator.hasNext(); )
+                                                                               {
+                                                                                   Map.Entry entry = iterator.next();
+
+                                                                                   results.put(entry.getKey()
+                                                                                   .toString(),
+                                                                                               entry.getValue()
+                                                                                               .toString());
+                                                                               }
+
+                                                                               return results;
+                                                                           };
+
+                // use the newyork client to populate the newyork site
+                CompletableFuture<Integer> newyorkCount = newyorkClient.submit(populateCacheCallable);
+
+                System.out.println("Waiting for " + newyorkCount.get()
+                                   + " entries to distribute from NEWYORK to LONDON");
+
+                // ensure that the london and newyork caches are the same size
+                Eventually.assertThat(londonClient,
+                                      () -> CacheFactory.getCache(cacheName).size(),
+                                      is(newyorkCount.get()));
+
+                // acquire a representation of the newyork cache (via the newyork client)
+                HashMap<String, String> newyorkMap = newyorkClient.submit(getCacheCallable).get();
+
+                // ensure that the london cache is the same as the newyork cache
+                Eventually.assertThat(londonClient, getCacheCallable, MapMatcher.sameAs(newyorkMap));
+
+                // use the london client to populate the london site
+                CompletableFuture<Integer> londonCount = londonClient.submit(populateCacheCallable);
+
+                System.out.println("Waiting for " + londonCount.get()
+                                   + " entries to distribute from LONDON to NEWYORK");
+
+                // ensure that the london and newyork caches are the same size
+                Eventually.assertThat(newyorkClient,
+                                      () -> CacheFactory.getCache(cacheName).size(),
+                                      is(londonCount.get()));
+
+                // acquire a representation of the london cache (via the london client)
+                HashMap<String, String> londonMap = londonClient.submit(getCacheCallable).get();
+
+                // ensure that the newyork cache is the same as the london cache
+                Eventually.assertThat(newyorkClient, getCacheCallable, MapMatcher.sameAs(londonMap));
             }
         }
     }
@@ -1771,9 +1167,9 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
         // insert a number of random entries
         System.out.printf("Inserting %d random entries into %s site.\n", nrEntries, siteName);
 
-        @SuppressWarnings("unchecked") Map<Integer, String> mapInserts = usePutAll
-                                                                         ? new HashMap<Integer, String>()
-                                                                         : (Map<Integer, String>) namedCache;
+        @SuppressWarnings("unchecked")
+        Map<Integer, String> mapInserts = usePutAll
+                                          ? new HashMap<Integer, String>() : (Map<Integer, String>) namedCache;
 
         for (int i = 0; i < nrEntries; i++)
         {
@@ -1842,20 +1238,21 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
      *
      * @return The number of entries in the {@link NamedCache} that were inserted/updated/removed (ie: changed)
      */
-    public int randomlyPopulateNamedCacheWithDomainValues(NamedCache namedCache,
-                                          int        minimumKey,
-                                          int        nrEntries,
-                                          String     siteName,
-                                          boolean    usePutAll)
+    public static int randomlyPopulateNamedCacheWithDomainValues(NamedCache namedCache,
+                                                                 int        minimumKey,
+                                                                 int        nrEntries,
+                                                                 String     siteName,
+                                                                 boolean    usePutAll)
     {
         Random random = new Random();
 
         // insert a number of random entries
         System.out.printf("Inserting %d random entries into %s site.\n", nrEntries, siteName);
 
-        @SuppressWarnings("unchecked") Map<DomainKey, DomainValue> mapInserts = usePutAll
-                                                                         ? new HashMap<DomainKey, DomainValue>()
-                                                                         : (Map<DomainKey, DomainValue>) namedCache;
+        @SuppressWarnings("unchecked")
+        Map<DomainKey, DomainValue> mapInserts = usePutAll
+                                                 ? new HashMap<DomainKey, DomainValue>()
+                                                 : (Map<DomainKey, DomainValue>) namedCache;
 
         for (int i = 0; i < nrEntries; i++)
         {
@@ -1923,9 +1320,9 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
      *
      * @return a pseudo random {@link String}
      */
-    public String randomString(Random random,
-                               String sFrom,
-                               int    cLength)
+    public static String randomString(Random random,
+                                      String sFrom,
+                                      int    cLength)
     {
         assert sFrom != null && sFrom.length() > 0;
 
@@ -1937,5 +1334,15 @@ public abstract class AbstractPushReplicationTest extends AbstractCoherenceTest
         }
 
         return bldrRandomized.toString();
+    }
+
+
+    /**
+     * A custom {@link ApplicationListener} that is an {@link Option}.
+     * @param <A>
+     */
+    public static abstract class CustomApplicationListener<A extends Application> implements ApplicationListener<A>,
+                                                                                             Option
+    {
     }
 }

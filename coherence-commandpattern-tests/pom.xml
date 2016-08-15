@@ -10,7 +10,7 @@
 
     <artifactId>coherence-commandpattern-tests</artifactId>
 
-    <name>Coherence Incubator Command Pattern (functional tests)</name>
+    <name>Coherence Incubator Command Pattern (integration tests)</name>
 
     <description>
         Functional Tests for the Command Pattern.
@@ -37,9 +37,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>oracle-tools-all</artifactId>
-            <version>${oracle.tools.version}</version>
+            <groupId>com.oracle.bedrock.coherence</groupId>
+            <artifactId>coherence-${oracle.coherence.base.version}-testing-support</artifactId>
+            <version>${oracle.bedrock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

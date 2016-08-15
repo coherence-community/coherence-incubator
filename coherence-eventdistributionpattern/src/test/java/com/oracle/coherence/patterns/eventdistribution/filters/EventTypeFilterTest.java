@@ -32,7 +32,6 @@ import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntry
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryRemovedEvent;
 import com.oracle.coherence.patterns.eventdistribution.events.DistributableEntryUpdatedEvent;
 import com.oracle.coherence.patterns.eventdistribution.filters.EventTypeFilter.EventType;
-import com.oracle.tools.junit.AbstractTest;
 import com.tangosol.util.Filter;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -45,7 +44,7 @@ import org.junit.Test;
  *
  * @author Brian Oliver
  */
-public class EventTypeFilterTest extends AbstractTest
+public class EventTypeFilterTest
 {
     /**
      * Ensure that an empty {@link EventTypeFilter} evaluates to <code>false</code>.
@@ -69,19 +68,19 @@ public class EventTypeFilterTest extends AbstractTest
 
         DistributableEntryEvent eventInserted = new DistributableEntryInsertedEvent("simple",
                                                                                     new DistributableEntry(new SimpleBinaryEntry("message",
-            "gudday")));
+                                                                                        "gudday")));
 
         Assert.assertTrue(filter.evaluate(eventInserted));
 
         DistributableEntryEvent eventUpdated = new DistributableEntryUpdatedEvent("simple",
                                                                                   new DistributableEntry(new SimpleBinaryEntry("message",
-            "gudday")));
+                                                                                      "gudday")));
 
         Assert.assertFalse(filter.evaluate(eventUpdated));
 
         DistributableEntryEvent eventRemoved = new DistributableEntryRemovedEvent("simple",
                                                                                   new DistributableEntry(new SimpleBinaryEntry("message",
-            "gudday")));
+                                                                                      "gudday")));
 
         Assert.assertFalse(filter.evaluate(eventRemoved));
     }
@@ -97,19 +96,19 @@ public class EventTypeFilterTest extends AbstractTest
 
         DistributableEntryEvent eventInserted = new DistributableEntryInsertedEvent("simple",
                                                                                     new DistributableEntry(new SimpleBinaryEntry("message",
-            "gudday")));
+                                                                                        "gudday")));
 
         Assert.assertTrue(filter.evaluate(eventInserted));
 
         DistributableEntryEvent eventUpdated = new DistributableEntryUpdatedEvent("simple",
                                                                                   new DistributableEntry(new SimpleBinaryEntry("message",
-            "gudday")));
+                                                                                      "gudday")));
 
         Assert.assertFalse(filter.evaluate(eventUpdated));
 
         DistributableEntryEvent eventRemoved = new DistributableEntryRemovedEvent("simple",
                                                                                   new DistributableEntry(new SimpleBinaryEntry("message",
-            "gudday")));
+                                                                                      "gudday")));
 
         Assert.assertTrue(filter.evaluate(eventRemoved));
     }

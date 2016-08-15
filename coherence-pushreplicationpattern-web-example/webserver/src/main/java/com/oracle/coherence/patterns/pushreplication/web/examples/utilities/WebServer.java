@@ -25,30 +25,25 @@
 
 package com.oracle.coherence.patterns.pushreplication.web.examples.utilities;
 
-import com.oracle.tools.runtime.LocalPlatform;
-import com.oracle.tools.runtime.PropertiesBuilder;
-
-import com.oracle.tools.runtime.coherence.CoherenceCacheServerSchema;
-import com.oracle.tools.runtime.coherence.CoherenceCluster;
-import com.oracle.tools.runtime.coherence.CoherenceClusterBuilder;
-
-import com.oracle.tools.runtime.console.SystemApplicationConsole;
-
-import com.oracle.tools.runtime.options.EnvironmentVariables;
-
+import com.oracle.bedrock.predicate.Predicates;
+import com.oracle.bedrock.runtime.PropertiesBuilder;
+import com.oracle.bedrock.runtime.coherence.CoherenceCacheServer;
+import com.oracle.bedrock.runtime.coherence.CoherenceCluster;
+import com.oracle.bedrock.runtime.coherence.CoherenceClusterBuilder;
+import com.oracle.bedrock.runtime.coherence.options.RoleName;
+import com.oracle.bedrock.runtime.java.options.SystemProperties;
+import com.oracle.bedrock.runtime.options.Console;
+import com.oracle.bedrock.runtime.options.DisplayName;
+import com.oracle.bedrock.runtime.options.StabilityPredicate;
 import org.eclipse.jetty.server.Server;
-
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.net.URL;
-
 import java.security.ProtectionDomain;
-
 import java.util.Properties;
 
 /**
@@ -140,7 +135,7 @@ public class WebServer
         {
             if (cluster != null)
             {
-                cluster.destroy();
+                cluster.close();
                 cluster = null;
             }
         }
@@ -158,18 +153,16 @@ public class WebServer
      */
     public static CoherenceCluster startCluster(PropertiesBuilder propertiesBuilder)
     {
-        CoherenceCacheServerSchema serverSchema =
-            new CoherenceCacheServerSchema().addOption(EnvironmentVariables.inherited())
-                .setSystemProperties(propertiesBuilder).setRoleName("CacheServer");
-
         CoherenceClusterBuilder builder = new CoherenceClusterBuilder();
 
-        builder.addSchema(propertiesBuilder.getProperty("tangosol.coherence.site") + "-CacheServer",
-                          serverSchema,
-                          1,
-                          LocalPlatform.getInstance());
+        builder.include(1,
+                        CoherenceCacheServer.class,
+                        new SystemProperties(propertiesBuilder.realize()),
+                        RoleName.of("CacheServer"),
+                        DisplayName.of(propertiesBuilder.getProperty("tangosol.coherence.site") + "-CacheServer"),
+                        StabilityPredicate.of(null));
 
-        return builder.realize(new SystemApplicationConsole());
+        return builder.build(Console.system());
     }
 
 
