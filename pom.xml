@@ -9,7 +9,7 @@
 
     <artifactId>coherence-incubator</artifactId>
     <groupId>com.oracle.coherence.incubator</groupId>
-    <version>12.3.3-SNAPSHOT</version>
+    <version>13.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Coherence Incubator</name>
@@ -93,11 +93,11 @@
         <build.jdk.version>1.8</build.jdk.version>
 
         <!-- the required jdk version for all non-test source code -->
-        <source.jdk.version>1.7</source.jdk.version>
-        <source.jdk.sniffer.version>java17</source.jdk.sniffer.version>
+        <source.jdk.version>1.8</source.jdk.version>
+        <source.jdk.sniffer.version>java18</source.jdk.sniffer.version>
 
         <!-- the target jdk version for published artifacts -->
-        <target.jdk.version>1.7</target.jdk.version>
+        <target.jdk.version>1.8</target.jdk.version>
 
         <!-- the required jdk version for integration testing -->
         <test.jdk.version>1.8</test.jdk.version>
@@ -151,8 +151,8 @@
         <miglayout.version>3.6</miglayout.version>
         <mockito.version>1.10.19</mockito.version>
         <oracle.bedrock.version>4.1.0-SNAPSHOT</oracle.bedrock.version>
-        <oracle.coherence.base.version>12.1.2</oracle.coherence.base.version>
-        <oracle.coherence.version>${oracle.coherence.base.version}-0-5</oracle.coherence.version>
+        <oracle.coherence.base.version>12.2.1</oracle.coherence.base.version>
+        <oracle.coherence.version>${oracle.coherence.base.version}-0-2</oracle.coherence.version>
         <powermock.version>1.6.5</powermock.version>
     </properties>
 

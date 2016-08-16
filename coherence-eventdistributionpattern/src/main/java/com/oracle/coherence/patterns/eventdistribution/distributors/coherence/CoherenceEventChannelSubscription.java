@@ -36,6 +36,7 @@ import com.oracle.coherence.common.liveobjects.OnArrived;
 import com.oracle.coherence.common.liveobjects.OnDeparting;
 import com.oracle.coherence.common.liveobjects.OnInserted;
 import com.oracle.coherence.common.liveobjects.OnRemoved;
+import com.oracle.coherence.common.liveobjects.OnRestored;
 import com.oracle.coherence.common.liveobjects.OnUpdated;
 
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControlled;
@@ -221,6 +222,7 @@ public class CoherenceEventChannelSubscription extends Subscription implements E
      */
     @OnInserted
     @OnArrived
+    @OnRestored
     public void onEntryInserted(BinaryEntry entry)
     {
         if (logger.isLoggable(Level.FINE))

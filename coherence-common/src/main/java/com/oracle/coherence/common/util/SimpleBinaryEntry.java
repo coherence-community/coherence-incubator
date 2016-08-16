@@ -189,9 +189,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Binary getBinaryKey()
     {
@@ -199,9 +196,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Binary getBinaryValue()
     {
@@ -209,9 +203,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Binary getOriginalBinaryValue()
     {
@@ -219,9 +210,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Serializer getSerializer()
     {
@@ -229,9 +217,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isReadOnly()
     {
@@ -239,9 +224,18 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    public boolean isSynthetic()
+    {
+        return false;
+    }
+
+
+    public long getExpiry()
+    {
+        return CacheMap.EXPIRY_NEVER;
+    }
+
+
     @Override
     public void expire(long durationMS)
     {
@@ -249,18 +243,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    public long getExpiry()
-    {
-        return CacheMap.EXPIRY_NEVER;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public BackingMapContext getBackingMapContext()
     {
@@ -268,9 +250,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isPresent()
     {
@@ -278,9 +257,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object getKey()
     {
@@ -302,9 +278,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object getValue()
     {
@@ -326,9 +299,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object getOriginalValue()
     {
@@ -350,9 +320,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void remove(boolean isSynthetic)
     {
@@ -360,9 +327,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object setValue(Object value)
     {
@@ -384,9 +348,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setValue(Object  value,
                          boolean isSynthetic)
@@ -395,9 +356,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object extract(ValueExtractor extractor)
     {
@@ -405,9 +363,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateBinaryValue(Binary binaryValue)
     {
@@ -415,9 +370,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void update(ValueUpdater valueUpdater,
                        Object       value)
@@ -433,9 +385,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateBinaryValue(Binary  binaryValue,
                                   boolean fSynthetic)
@@ -444,9 +393,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ObservableMap getBackingMap()
     {
@@ -454,9 +400,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public BackingMapManagerContext getContext()
     {
@@ -464,9 +407,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode()
     {
@@ -476,9 +416,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object obj)
     {
@@ -539,9 +476,6 @@ public class SimpleBinaryEntry implements BinaryEntry
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString()
     {

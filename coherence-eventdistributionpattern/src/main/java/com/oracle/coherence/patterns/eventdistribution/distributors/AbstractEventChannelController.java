@@ -508,7 +508,9 @@ public abstract class AbstractEventChannelController<T> implements EventChannelC
     @Override
     public String getEventChannelControllerState()
     {
-        return machine.getState().toString();
+        State state = machine.getState();
+
+        return state == null ? "INITIALIZING" : state.toString();
     }
 
 

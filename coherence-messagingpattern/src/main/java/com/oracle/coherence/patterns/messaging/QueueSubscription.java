@@ -35,6 +35,7 @@ import com.oracle.coherence.common.liveobjects.OnArrived;
 import com.oracle.coherence.common.liveobjects.OnDeparting;
 import com.oracle.coherence.common.liveobjects.OnInserted;
 import com.oracle.coherence.common.liveobjects.OnRemoved;
+import com.oracle.coherence.common.liveobjects.OnRestored;
 import com.oracle.coherence.common.liveobjects.OnUpdated;
 
 import com.oracle.coherence.patterns.messaging.management.MessagingMBeanManager;
@@ -173,6 +174,7 @@ public class QueueSubscription extends LeasedSubscription
     @OnInserted
     @OnUpdated
     @OnArrived
+    @OnRestored
     public void onChanged(BinaryEntry entry)
     {
         if (logger.isLoggable(Level.FINER))

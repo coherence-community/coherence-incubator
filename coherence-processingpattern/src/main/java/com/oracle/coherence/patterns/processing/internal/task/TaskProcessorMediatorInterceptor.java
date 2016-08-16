@@ -67,7 +67,7 @@ public class TaskProcessorMediatorInterceptor
      *
      * @param event  the EntryEvent
      */
-    private void processEntryEvent(EntryEvent event)
+    private void processEntryEvent(EntryEvent<Object, Object> event)
     {
         for (BinaryEntry entry : event.getEntrySet())
         {
@@ -113,12 +113,13 @@ public class TaskProcessorMediatorInterceptor
 
             switch (event.getType())
             {
-                case ARRIVED:
+                case ARRIVED   :
+                case RECOVERED :
                     ProcessingPattern.ensureInfrastructureStarted(entry.getContext().getManager().getCacheFactory());
                     mediator.onArrived(entry);
                     break;
 
-                case DEPARTING:
+                case DEPARTING :
                     mediator.onDeparted(entry);
                     break;
             }

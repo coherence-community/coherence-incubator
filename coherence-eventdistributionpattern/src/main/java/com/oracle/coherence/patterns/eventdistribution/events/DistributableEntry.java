@@ -290,6 +290,12 @@ public class DistributableEntry implements Entry, BinaryEntry, ExternalizableLit
     }
 
 
+    public boolean isSynthetic()
+    {
+        return false;
+    }
+
+
     @Override
     public boolean isReadOnly()
     {

@@ -136,29 +136,6 @@ public abstract class AbstractPushReplicationTest
         optionsByType.add(SystemProperty.of("proxy.address",
                                             LocalPlatform.get().getLoopbackAddress().getHostAddress()));
 
-        optionsByType.add(new CustomApplicationListener<CoherenceCacheServer>()
-                          {
-                              @Override
-                              public void onClosing(CoherenceCacheServer server,
-                                                    OptionsByType        optionsByType)
-                              {
-                              }
-
-                              @Override
-                              public void onClosed(CoherenceCacheServer server,
-                                                   OptionsByType        optionsByType)
-                              {
-                              }
-
-                              @Override
-                              public void onLaunched(CoherenceCacheServer server)
-                              {
-                                  // ensure that the proxy service has started
-                                  Eventually.assertThat(invoking(server).isServiceRunning("ExtendTcpProxyService"),
-                                                        is(true));
-                              }
-                          });
-
         return optionsByType;
     }
 
@@ -1014,111 +991,128 @@ public abstract class AbstractPushReplicationTest
         londonServerOptions.add(SystemProperty.of("remote.port", newyorkProxyPort));
 
         try (CoherenceCacheServer londonServer = platform.launch(CoherenceCacheServer.class,
-                                                                 londonServerOptions.asArray());
-            JavaApplication londonClient = platform.launch(JavaApplication.class,
-                                                           ClassName.of(KeepAliveApplication.class),
-                                                           DisplayName.of("london-client"),
-                                                           Clustering.disabled(),
-                                                           SystemProperty.of("remote.address", proxyAddress),
-                                                           SystemProperty.of("remote.port", londonProxyPort),
-                                                           Pof.config("test-client-pof-config.xml"),
-                                                           CacheConfig.of("test-client-cache-config.xml"),
-                                                           Console.system()))
+                                                                 londonServerOptions.asArray()))
         {
-            londonClient.submit(() -> System.out.println("LONDON Cache [" + cacheName + "] Size:"
-                                                         + CacheFactory.getCache(cacheName).size()));
+            Eventually.assertThat(invoking(londonServer).getClusterSize(), is(1));
 
-            // establish the newyork server options
-            OptionsByType newyorkServerOptions = newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
-
-            newyorkServerOptions.add(SiteName.of("newyork"));
-            newyorkServerOptions.add(DisplayName.of("newyork"));
-            newyorkServerOptions.add(SystemProperty.of("proxy.address", proxyAddress));
-            newyorkServerOptions.add(SystemProperty.of("proxy.port", newyorkProxyPort));
-            newyorkServerOptions.add(SystemProperty.of("remote.port", londonProxyPort));
-
-            try (CoherenceClusterMember newyorkServer = platform.launch(CoherenceCacheServer.class,
-                                                                        newyorkServerOptions.asArray());
-                JavaApplication newyorkClient = platform.launch(JavaApplication.class,
+            try (JavaApplication londonClient = platform.launch(JavaApplication.class,
                                                                 ClassName.of(KeepAliveApplication.class),
-                                                                DisplayName.of("newyork-client"),
+                                                                SiteName.of("london"),
+                                                                DisplayName.of("london-client"),
                                                                 Clustering.disabled(),
                                                                 SystemProperty.of("remote.address", proxyAddress),
-                                                                SystemProperty.of("remote.port", newyorkProxyPort),
+                                                                SystemProperty.of("remote.port", londonProxyPort),
                                                                 Pof.config("test-client-pof-config.xml"),
                                                                 CacheConfig.of("test-client-cache-config.xml"),
                                                                 Console.system()))
             {
-                // a RemoteCallable that will populate a NamedCache and return the number of entries in the populated cache
-                RemoteCallable<Integer> populateCacheCallable = () -> {
-                                                                    NamedCache cache = CacheFactory.getCache(cacheName);
+                londonClient.submit(() -> System.out.println("LONDON Cache [" + cacheName + "] Size:"
+                                                             + CacheFactory.getCache(cacheName).size()));
 
-                                                                    randomlyPopulateNamedCacheWithDomainValues(cache,
-                                                                                                               0,
-                                                                                                               500,
-                                                                                                               cacheName,
-                                                                                                               false);
+                // establish the newyork server options
+                OptionsByType newyorkServerOptions =
+                    newActiveCacheServerOptions(new Capture<>(getAvailablePortIterator()));
 
-                                                                    return cache.size();
-                                                                };
+                newyorkServerOptions.add(SiteName.of("newyork"));
+                newyorkServerOptions.add(DisplayName.of("newyork"));
+                newyorkServerOptions.add(SystemProperty.of("proxy.address", proxyAddress));
+                newyorkServerOptions.add(SystemProperty.of("proxy.port", newyorkProxyPort));
+                newyorkServerOptions.add(SystemProperty.of("remote.port", londonProxyPort));
 
-                // a RemoteCallable that will return a HashMap containing string representations
-                // of the keys and values of a NamedCache (to allow us to compare them without serializing the classes)
-                RemoteCallable<HashMap<String, String>> getCacheCallable = () -> {
-                                                                               NamedCache cache =
-                                                                                   CacheFactory.getCache(cacheName);
+                try (CoherenceClusterMember newyorkServer = platform.launch(CoherenceCacheServer.class,
+                                                                            newyorkServerOptions.asArray()))
+                {
+                    Eventually.assertThat(invoking(newyorkServer).getClusterSize(), is(1));
 
-                                                                               HashMap<String, String> results =
-                                                                                   new HashMap<>();
+                    try (JavaApplication newyorkClient = platform.launch(JavaApplication.class,
+                                                                         ClassName.of(KeepAliveApplication.class),
+                                                                         SiteName.of("newyork"),
+                                                                         DisplayName.of("newyork-client"),
+                                                                         Clustering.disabled(),
+                                                                         SystemProperty.of("remote.address",
+                                                                                           proxyAddress),
+                                                                         SystemProperty.of("remote.port",
+                                                                                           newyorkProxyPort),
+                                                                         Pof.config("test-client-pof-config.xml"),
+                                                                         CacheConfig.of("test-client-cache-config.xml"),
+                                                                         Console.system()))
+                    {
+                        // a RemoteCallable that will populate a NamedCache and return the number of entries in the populated cache
+                        RemoteCallable<Integer> populateCacheCallable = () -> {
+                                                                            NamedCache cache =
+                                                                                CacheFactory.getCache(cacheName);
 
-                                                                               for (Iterator<Map.Entry> iterator =
-                                                                                   cache.entrySet().iterator();
-                                                                                   iterator.hasNext(); )
-                                                                               {
-                                                                                   Map.Entry entry = iterator.next();
+                                                                            randomlyPopulateNamedCacheWithDomainValues(cache,
+                                                                                                                       0,
+                                                                                                                       500,
+                                                                                                                       cacheName,
+                                                                                                                       false);
 
-                                                                                   results.put(entry.getKey()
-                                                                                   .toString(),
-                                                                                               entry.getValue()
-                                                                                               .toString());
-                                                                               }
+                                                                            return cache.size();
+                                                                        };
 
-                                                                               return results;
-                                                                           };
+                        // a RemoteCallable that will return a HashMap containing string representations
+                        // of the keys and values of a NamedCache (to allow us to compare them without serializing the classes)
+                        RemoteCallable<HashMap<String, String>> getCacheCallable = () -> {
+                                                                                       NamedCache cache =
+                                                                                           CacheFactory.getCache(cacheName);
 
-                // use the newyork client to populate the newyork site
-                CompletableFuture<Integer> newyorkCount = newyorkClient.submit(populateCacheCallable);
+                                                                                       HashMap<String, String> results =
+                                                                                           new HashMap<>();
 
-                System.out.println("Waiting for " + newyorkCount.get()
-                                   + " entries to distribute from NEWYORK to LONDON");
+                                                                                       for (Iterator<Map
+                                                                                           .Entry> iterator =
+                                                                                               cache.entrySet()
+                                                                                               .iterator();
+                                                                                           iterator.hasNext(); )
+                                                                                       {
+                                                                                           Map.Entry entry =
+                                                                                               iterator.next();
 
-                // ensure that the london and newyork caches are the same size
-                Eventually.assertThat(londonClient,
-                                      () -> CacheFactory.getCache(cacheName).size(),
-                                      is(newyorkCount.get()));
+                                                                                           results.put(entry.getKey()
+                                                                                           .toString(),
+                                                                                                       entry.getValue()
+                                                                                                       .toString());
+                                                                                       }
 
-                // acquire a representation of the newyork cache (via the newyork client)
-                HashMap<String, String> newyorkMap = newyorkClient.submit(getCacheCallable).get();
+                                                                                       return results;
+                                                                                   };
 
-                // ensure that the london cache is the same as the newyork cache
-                Eventually.assertThat(londonClient, getCacheCallable, MapMatcher.sameAs(newyorkMap));
+                        // use the newyork client to populate the newyork site
+                        CompletableFuture<Integer> newyorkCount = newyorkClient.submit(populateCacheCallable);
 
-                // use the london client to populate the london site
-                CompletableFuture<Integer> londonCount = londonClient.submit(populateCacheCallable);
+                        System.out.println("Waiting for " + newyorkCount.get()
+                                           + " entries to distribute from NEWYORK to LONDON");
 
-                System.out.println("Waiting for " + londonCount.get()
-                                   + " entries to distribute from LONDON to NEWYORK");
+                        // ensure that the london and newyork caches are the same size
+                        Eventually.assertThat(londonClient,
+                                              () -> CacheFactory.getCache(cacheName).size(),
+                                              is(newyorkCount.get()));
 
-                // ensure that the london and newyork caches are the same size
-                Eventually.assertThat(newyorkClient,
-                                      () -> CacheFactory.getCache(cacheName).size(),
-                                      is(londonCount.get()));
+                        // acquire a representation of the newyork cache (via the newyork client)
+                        HashMap<String, String> newyorkMap = newyorkClient.submit(getCacheCallable).get();
 
-                // acquire a representation of the london cache (via the london client)
-                HashMap<String, String> londonMap = londonClient.submit(getCacheCallable).get();
+                        // ensure that the london cache is the same as the newyork cache
+                        Eventually.assertThat(londonClient, getCacheCallable, MapMatcher.sameAs(newyorkMap));
 
-                // ensure that the newyork cache is the same as the london cache
-                Eventually.assertThat(newyorkClient, getCacheCallable, MapMatcher.sameAs(londonMap));
+                        // use the london client to populate the london site
+                        CompletableFuture<Integer> londonCount = londonClient.submit(populateCacheCallable);
+
+                        System.out.println("Waiting for " + londonCount.get()
+                                           + " entries to distribute from LONDON to NEWYORK");
+
+                        // ensure that the london and newyork caches are the same size
+                        Eventually.assertThat(newyorkClient,
+                                              () -> CacheFactory.getCache(cacheName).size(),
+                                              is(londonCount.get()));
+
+                        // acquire a representation of the london cache (via the london client)
+                        HashMap<String, String> londonMap = londonClient.submit(getCacheCallable).get();
+
+                        // ensure that the newyork cache is the same as the london cache
+                        Eventually.assertThat(newyorkClient, getCacheCallable, MapMatcher.sameAs(londonMap));
+                    }
+                }
             }
         }
     }

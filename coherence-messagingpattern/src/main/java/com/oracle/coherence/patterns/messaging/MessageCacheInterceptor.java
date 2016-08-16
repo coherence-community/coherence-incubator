@@ -40,6 +40,8 @@ import com.tangosol.net.events.partition.TransferEvent;
 import com.tangosol.net.events.partition.cache.EntryEvent;
 
 import com.tangosol.util.BinaryEntry;
+import com.tangosol.util.Builder;
+import com.tangosol.util.RegistrationBehavior;
 import com.tangosol.util.ResourceRegistry;
 
 import java.util.Iterator;
@@ -96,7 +98,9 @@ public class MessageCacheInterceptor implements EventInterceptor
         {
             int partitionId = ((TransferEvent) event).getPartitionId();
 
-            if (event.getType() == TransferEvent.Type.ARRIVED)
+
+            if (event.getType() == TransferEvent.Type.ARRIVED ||
+                event.getType() == TransferEvent.Type.RECOVERED)
             {
                 // Cache entry event processing
                 onCacheEntryArrived((TransferEvent) event);
@@ -121,7 +125,7 @@ public class MessageCacheInterceptor implements EventInterceptor
      *
      * @param event Entry event triggered by cache insert.
      */
-    private void onCacheEntryInserted(EntryEvent event)
+    private void onCacheEntryInserted(EntryEvent<Object, Object> event)
     {
         for (BinaryEntry binaryEntry : event.getEntrySet())
         {
@@ -202,15 +206,23 @@ public class MessageCacheInterceptor implements EventInterceptor
 
                     // The finite state machine will coalesce processor requests.  Without coalescing the requests
                     // the event queue backs up eventually causing an out of memory error.
-                    MessageEngine mEngine = new MessageEngine(publisher.getDestinationIdentifier());
+                    ResourceRegistry resourceRegistry = CacheFactory.getConfigurableCacheFactory().getResourceRegistry();
 
-                    CacheFactory.getConfigurableCacheFactory().getResourceRegistry()
+                    String resourceName = resourceRegistry
                         .registerResource(MessageEngine.class,
                                           message.getDestinationIdentifier().toString(),
-                                          mEngine);
+                                          new Builder<MessageEngine>()
+                                          {
+                                          @Override
+                                          public MessageEngine realize()
+                                              {
+                                              return new MessageEngine(
+                                                      publisher.getDestinationIdentifier());
+                                              }
+                                          }, RegistrationBehavior.IGNORE, null);
 
-                    mEngine.processRunEvent(publisher);
-
+                    resourceRegistry.getResource(MessageEngine.class, resourceName).processRunEvent(
+                            publisher);
                 }
             }
         }
@@ -222,7 +234,7 @@ public class MessageCacheInterceptor implements EventInterceptor
      *
      * @param event Entry event triggered by cache removal.
      */
-    private void onCacheEntryRemoved(EntryEvent event)
+    private void onCacheEntryRemoved(EntryEvent<Object, Object> event)
     {
         for (BinaryEntry binaryEntry : event.getEntrySet())
         {

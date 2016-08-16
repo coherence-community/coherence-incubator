@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -27,28 +26,20 @@
 package com.oracle.coherence.common.liveobjects;
 
 import com.oracle.coherence.common.tuples.Pair;
-
 import com.tangosol.config.annotation.Injectable;
-
 import com.tangosol.net.events.Event;
 import com.tangosol.net.events.EventInterceptor;
-
 import com.tangosol.net.events.annotation.Interceptor;
-
 import com.tangosol.net.events.partition.TransferEvent;
 import com.tangosol.net.events.partition.cache.EntryEvent;
-
 import com.tangosol.util.BinaryEntry;
 
 import java.lang.annotation.Annotation;
-
 import java.lang.reflect.Method;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -73,7 +64,7 @@ import java.util.concurrent.ConcurrentMap;
         EntryEvent.Type.INSERTING, EntryEvent.Type.INSERTED, EntryEvent.Type.REMOVING, EntryEvent.Type.REMOVED,
         EntryEvent.Type.UPDATING, EntryEvent.Type.UPDATED
     },
-    transferEvents = {TransferEvent.Type.ARRIVED, TransferEvent.Type.DEPARTING}
+    transferEvents = {TransferEvent.Type.ARRIVED, TransferEvent.Type.RECOVERED, TransferEvent.Type.DEPARTING}
 )
 public class LiveObjectEventInterceptor implements EventInterceptor
 {
@@ -99,6 +90,8 @@ public class LiveObjectEventInterceptor implements EventInterceptor
             put(OnRemoved.class, new Pair<Class<? extends Event>, Enum<?>>(EntryEvent.class, EntryEvent.Type.REMOVED));
             put(OnArrived.class,
                 new Pair<Class<? extends Event>, Enum<?>>(TransferEvent.class, TransferEvent.Type.ARRIVED));
+            put(OnRestored.class,
+                new Pair<Class<? extends Event>, Enum<?>>(TransferEvent.class, TransferEvent.Type.RECOVERED));
             put(OnDeparting.class,
                 new Pair<Class<? extends Event>, Enum<?>>(TransferEvent.class, TransferEvent.Type.DEPARTING));
         }
@@ -155,7 +148,8 @@ public class LiveObjectEventInterceptor implements EventInterceptor
     @Override
     public void onEvent(Event event)
     {
-        @SuppressWarnings("unchecked") Set<BinaryEntry> setBinaryEntries = Collections.EMPTY_SET;
+        @SuppressWarnings("unchecked")
+        Set<BinaryEntry> setBinaryEntries = Collections.EMPTY_SET;
 
         if (event instanceof EntryEvent)
         {
@@ -212,8 +206,8 @@ public class LiveObjectEventInterceptor implements EventInterceptor
                         }
                         catch (Exception e)
                         {
-                            throw new RuntimeException("Failed to process event [" + event + "] for LiveObject [" + oValue
-                                                       + "]",
+                            throw new RuntimeException("Failed to process event [" + event + "] for LiveObject ["
+                                                       + oValue + "]",
                                                        e);
                         }
                     }

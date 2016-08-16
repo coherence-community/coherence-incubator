@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -335,9 +334,10 @@ public class DefaultMessagingSession implements MessagingSession
     {
         // NOTE: we should use the Command Pattern to provide infrastructure for
         // this...
-        Set<Identifier> identifiers =
-            (Set<Identifier>) CacheFactory.getCache(Destination.CACHENAME).keySet(new LikeFilter("getClass.getName",
-                                                                                                 "%Topic%"));
+        NamedCache      namedCache  = CacheFactory.getCache(Destination.CACHENAME);
+
+        Set<Identifier> identifiers = (Set<Identifier>) namedCache.keySet(new LikeFilter("getClass.getName",
+                                                                                         "%Topic%"));
 
         return identifiers;
     }
@@ -351,9 +351,10 @@ public class DefaultMessagingSession implements MessagingSession
     {
         // NOTE: we should use the Command Pattern to provide infrastructure for
         // this...
-        Set<Identifier> identifiers =
-            (Set<Identifier>) CacheFactory.getCache(Destination.CACHENAME).keySet(new LikeFilter("getClass.getName",
-                                                                                                 "%Queue%"));
+        NamedCache      namedCache  = CacheFactory.getCache(Destination.CACHENAME);
+
+        Set<Identifier> identifiers = (Set<Identifier>) namedCache.keySet(new LikeFilter("getClass.getName",
+                                                                                         "%Queue%"));
 
         return identifiers;
     }

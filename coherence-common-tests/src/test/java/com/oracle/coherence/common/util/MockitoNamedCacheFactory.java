@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -31,6 +30,8 @@ import com.tangosol.net.CacheFactoryBuilder;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.Service;
+
+import com.tangosol.net.cache.TypeAssertion;
 
 import com.tangosol.net.events.InterceptorRegistry;
 
@@ -146,7 +147,24 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
     }
 
 
-    // ----- helper methods -------------------------------------------------
+    @Override
+    public <K, V> NamedCache<K, V> ensureTypedCache(String              s,
+                                                    ClassLoader         classLoader,
+                                                    TypeAssertion<K, V> typeAssertion)
+    {
+        return (NamedCache<K, V>) ensureCache(s, classLoader);
+    }
+
+
+    @Override
+    public boolean isCacheActive(String      s,
+                                 ClassLoader classLoader)
+    {
+        return false;
+    }
+
+
+//  ----- helper methods -------------------------------------------------
 
     /**
      * Helper method to configure {@link CacheFactory} to return a

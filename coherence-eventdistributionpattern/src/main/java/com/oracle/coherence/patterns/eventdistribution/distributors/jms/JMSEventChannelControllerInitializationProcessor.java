@@ -26,16 +26,29 @@
 package com.oracle.coherence.patterns.eventdistribution.distributors.jms;
 
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode;
-import com.tangosol.config.expression.PropertiesParameterResolver;
+
+import com.tangosol.config.expression.SystemPropertyParameterResolver;
+
 import com.tangosol.io.ExternalizableLite;
+
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+
 import com.tangosol.util.Base;
 import com.tangosol.util.ExternalizableHelper;
+
 import com.tangosol.util.InvocableMap.Entry;
 import com.tangosol.util.InvocableMap.EntryProcessor;
+
 import com.tangosol.util.processor.AbstractProcessor;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -43,11 +56,6 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A {@link JMSEventChannelControllerInitializationProcessor} is an {@link EntryProcessor} that creates and initializes
@@ -118,8 +126,10 @@ public class JMSEventChannelControllerInitializationProcessor extends AbstractPr
                 {
                     // create a connection factory from the configuration
                     ConnectionFactory connectionFactory =
-                        configuration.getConnectionFactoryBuilder().realize(new PropertiesParameterResolver(System.getProperties()),
-                                JMSEventChannelControllerInitializationProcessor.class.getClassLoader(), null);
+                        configuration.getConnectionFactoryBuilder().realize(SystemPropertyParameterResolver.INSTANCE,
+                                                                            JMSEventChannelControllerInitializationProcessor.class
+                                                                                .getClassLoader(),
+                                                                            null);
 
                     // create a new connection for the subscription
                     Connection connection = connectionFactory.createConnection();

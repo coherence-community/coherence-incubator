@@ -33,12 +33,12 @@ import com.oracle.coherence.common.liveobjects.OnDeparting;
 import com.oracle.coherence.common.liveobjects.OnInserted;
 import com.oracle.coherence.common.liveobjects.OnRemoved;
 
+import com.oracle.coherence.common.liveobjects.OnRestored;
 import com.oracle.coherence.patterns.eventdistribution.EventChannel;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControlled;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Dependencies;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Identifier;
-import com.oracle.coherence.patterns.eventdistribution.EventChannelController.Mode;
 import com.oracle.coherence.patterns.eventdistribution.EventChannelControllerBuilder;
 import com.oracle.coherence.patterns.eventdistribution.EventDistributor;
 import com.oracle.coherence.patterns.eventdistribution.distributors.EventChannelControllerManager;
@@ -209,6 +209,7 @@ public class JMSEventChannelControllerConfiguration implements ExternalizableLit
 
     @OnInserted
     @OnArrived
+    @OnRestored
     public void onEntryInserted(BinaryEntry entry)
     {
         if (logger.isLoggable(Level.FINE))

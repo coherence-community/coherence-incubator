@@ -65,7 +65,7 @@ import java.util.logging.Logger;
 @Interceptor(
     identifier     = "command-contexts-interceptor",
     entryEvents    = {EntryEvent.Type.INSERTING, EntryEvent.Type.REMOVING},
-    transferEvents = {TransferEvent.Type.ARRIVED, TransferEvent.Type.DEPARTING}
+    transferEvents = {TransferEvent.Type.ARRIVED, TransferEvent.Type.RECOVERED, TransferEvent.Type.DEPARTING}
 )
 public class ContextEventInterceptor implements EventInterceptor
 {
@@ -115,7 +115,8 @@ public class ContextEventInterceptor implements EventInterceptor
 
             setBinaryEntries = transferEvent.getEntries().get(m_cacheName);
 
-            if (transferEvent.getType() == TransferEvent.Type.ARRIVED)
+            if (transferEvent.getType() == TransferEvent.Type.ARRIVED ||
+                transferEvent.getType() == TransferEvent.Type.RECOVERED)
             {
                 type = EntryEvent.Type.INSERTING;
             }

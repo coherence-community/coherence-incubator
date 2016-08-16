@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,7 +24,6 @@
  */
 
 package com.oracle.coherence.patterns.processing.internal;
-
 
 import com.tangosol.net.events.Event;
 import com.tangosol.net.events.EventInterceptor;
@@ -66,7 +64,7 @@ public class SubmissionInterceptor implements EventInterceptor
      *
      * @param event  the EntryEvent
      */
-    private void processEntryEvent(EntryEvent event)
+    private void processEntryEvent(EntryEvent<Object, Object> event)
     {
         for (BinaryEntry entry : event.getEntrySet())
         {
@@ -108,6 +106,7 @@ public class SubmissionInterceptor implements EventInterceptor
             switch (event.getType())
             {
             case ARRIVED :
+            case RECOVERED :
                 ProcessingPattern.ensureInfrastructureStarted(entry.getContext().getManager().getCacheFactory());
                 submission.onArrived(entry);
                 break;
