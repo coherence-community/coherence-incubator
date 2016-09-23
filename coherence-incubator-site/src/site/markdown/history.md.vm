@@ -13,12 +13,12 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-157](https://github.com/coherence-community/coherence-incubator/issues/157): Upgraded to use
+*   [Issue #157](https://github.com/coherence-community/coherence-incubator/issues/157): Upgraded to use
     Oracle Coherence 3.7.1.14
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-156](https://github.com/coherence-community/coherence-incubator/issues/156): Event Channels may
+*   [Issue #156](https://github.com/coherence-community/coherence-incubator/issues/156): Event Channels may
     transition to "paused" state when encountering an Entry without meta-data, which may be caused by attempting
     to remove a non-existent entry.   Such requests will log a warning and will be ignored.
 
@@ -32,12 +32,12 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-104](https://github.com/coherence-community/coherence-incubator/issues/104):
+*   [Issue #104](https://github.com/coherence-community/coherence-incubator/issues/104):
     Upgraded to use Oracle Coherence 3.7.1.13
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-36](https://github.com/coherence-community/coherence-incubator/issues/36): Fixed an issue where keys
+*   [Issue #36](https://github.com/coherence-community/coherence-incubator/issues/36): Fixed an issue where keys
     of replicated entries were being deserialized on the receiving cluster during replication.
 
 --------------------------------------------------------------------------------
@@ -50,50 +50,50 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-81](https://github.com/coherence-community/coherence-incubator/issues/81): Upgraded to use
+*   [Issue #81](https://github.com/coherence-community/coherence-incubator/issues/81): Upgraded to use
     Oracle Tools 1.2.2
 
-*   [COHINC-86](https://github.com/coherence-community/coherence-incubator/issues/86): Upgraded to use
+*   [Issue #86](https://github.com/coherence-community/coherence-incubator/issues/86): Upgraded to use
     Oracle Coherence 3.7.1.11
 
-*   [COHINC-92](https://github.com/coherence-community/coherence-incubator/issues/92): Upgraded Maven Plugins.
+*   [Issue #92](https://github.com/coherence-community/coherence-incubator/issues/92): Upgraded Maven Plugins.
 
 <h4>coherence-incubator-site</h4>
 
-*   [COHINC-119](https://github.com/coherence-community/coherence-incubator/issues/119): Modifed pom.xml
+*   [Issue #119](https://github.com/coherence-community/coherence-incubator/issues/119): Modifed pom.xml
     to produce and deploy the documentation to github in the "deploy" phase.
 
 <h4>coherence-messagingpattern</h4>
 
-*   [COHINC-118](https://github.com/coherence-community/coherence-incubator/issues/118): Introduce the
+*   [Issue #118](https://github.com/coherence-community/coherence-incubator/issues/118): Introduce the
     JMX-based diagnostics for Susbcriptions.  This includes the ability to
     display the internal state of a Subscription.
 
-*   [COHINC-121](https://github.com/coherence-community/coherence-incubator/issues/121): Resolved
+*   [Issue #121](https://github.com/coherence-community/coherence-incubator/issues/121): Resolved
     potential message leaks when publishing to disabled subscriptions
     (subscriptions won't recieve messages, but messages may be left
     unacknowledged)
 
 <h4>coherence-eventdistributionpattern</h4>
 
-*   [COHINC-108](https://github.com/coherence-community/coherence-incubator/issues/108): Resolved ability
+*   [Issue #108](https://github.com/coherence-community/coherence-incubator/issues/108): Resolved ability
     to distribute and replicate Cache Entry expiry timeouts between clusters.
 
     This includes introducing the ability to customize expiry when during
     conflict resolution.
 
-*   [COHINC-110](https://github.com/coherence-community/coherence-incubator/issues/110): Introduce the
+*   [Issue #110](https://github.com/coherence-community/coherence-incubator/issues/110): Introduce the
     ability to control batch-size, inter batch-distribution-delay and
     restart-delay using JMX at runtime.
 
-*   [COHINC-112](https://github.com/coherence-community/coherence-incubator/issues/112): Replace the
+*   [Issue #112](https://github.com/coherence-community/coherence-incubator/issues/112): Replace the
     "message out of order" log when using Coherence-based event distribution
     implementations with something more apppropriate.  This log only
     indicates that a recovery is occuring (nothing bad!), because it's
     redistributing messages to an event channel that previously
     failed for some reason.
 
-*   [COHINC-115](https://github.com/coherence-community/coherence-incubator/issues/115): Refactored
+*   [Issue #115](https://github.com/coherence-community/coherence-incubator/issues/115): Refactored
     the "drain" functionality for Coherence-based event distribution
     implementations so that they use the configured batches and delays.
 
@@ -108,16 +108,16 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-72](https://github.com/coherence-community/coherence-incubator/issues/72): Upgraded to use
+*   [Issue #72](https://github.com/coherence-community/coherence-incubator/issues/72): Upgraded to use
     Oracle Coherence 3.7.1.10
 
-*   [COHINC-74](https://github.com/coherence-community/coherence-incubator/issues/74): Upgraded to use
+*   [Issue #74](https://github.com/coherence-community/coherence-incubator/issues/74): Upgraded to use
     Oracle Tools 1.1.0 including a). refactoring the use of deprecated classes and b). removing the requirement
     for JMX enabled Coherence cluster members.
 
 <h4>coherence-common</h4>
 
-*   [COHINC-69](https://github.com/coherence-community/coherence-incubator/issues/69): Resolved issue
+*   [Issue #69](https://github.com/coherence-community/coherence-incubator/issues/69): Resolved issue
     where Coherence Xml Elements that produced custom instances would
     introduce a "use-scheme" attribute.   This should only occur for custom
     namespace elements.  This would cause some patterns, especially those
@@ -125,31 +125,31 @@ reverse chronological order.
 
 <h4>coherence-eventdistributionpattern</h4>
 
-*   [COHINC-71](https://github.com/coherence-community/coherence-incubator/issues/71): Introduce the
+*   [Issue #71](https://github.com/coherence-community/coherence-incubator/issues/71): Introduce the
     ability to filter events prior to queuing them for distribution.
 
     Introduced EventChannelEventFilter interface that can be used to filter
     Events.  Implemented filtering for InterClusterEventChannels
     in the AbstractInterClusterEventChannelBuilder class.
 
-*   [COHINC-71](https://github.com/coherence-community/coherence-incubator/issues/73): Resolves NullPointerException
+*   [Issue #71](https://github.com/coherence-community/coherence-incubator/issues/73): Resolves NullPointerException
     that may occur when attempting to use EntryEventOptimizingTransformers
     with Hub & Spoke or Centralized replication topologies.
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-65](https://github.com/coherence-community/coherence-incubator/issues/65): Resolved issue
+*   [Issue #65](https://github.com/coherence-community/coherence-incubator/issues/65): Resolved issue
     where attempting to remove non-existing or expired entries would not
     be replicated.
 
-*   [COHINC-71](https://github.com/coherence-community/coherence-incubator/issues/71): Introduce the
+*   [Issue #71](https://github.com/coherence-community/coherence-incubator/issues/71): Introduce the
     ability to filter events prior to queuing them for distribution.
 
     Refactored PublishingCacheStore to consult the EventChannelEventFilters
     for each configured EventChannel(Builder) priority to distributing
     an Event.
 
-*   [COHINC-73](https://github.com/coherence-community/coherence-incubator/issues/73): Resolves NullPointerException
+*   [Issue #73](https://github.com/coherence-community/coherence-incubator/issues/73): Resolves NullPointerException
     that may occur when attempting to use EntryEventOptimizingTransformers
     with Hub & Spoke or Centralized replication topologies.
 
@@ -163,10 +163,10 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [COHINC-33](https://github.com/coherence-community/coherence-incubator/issues/33): Upgraded to use JUnit 4.10
+*   [Issue #33](https://github.com/coherence-community/coherence-incubator/issues/33): Upgraded to use JUnit 4.10
     and Hamcrest 1.3
 
-*   [COHINC-42](https://github.com/coherence-community/coherence-incubator/issues/42): Upgraded to use Oracle Tools 1.0.0
+*   [Issue #42](https://github.com/coherence-community/coherence-incubator/issues/42): Upgraded to use Oracle Tools 1.0.0
 
 <h4>coherence-incubator-all</h4>
 
@@ -174,52 +174,52 @@ reverse chronological order.
 
 <h4>coherence-common</h4>
 
-*   [COHINC-18](https://github.com/coherence-community/coherence-incubator/issues/18): Resolved incorrect
+*   [Issue #18](https://github.com/coherence-community/coherence-incubator/issues/18): Resolved incorrect
     PortableObject.writeExternal(...) implementation for the
     `StaticFactoryClassSchemeBasedParameterizedBuilder` class.
 
-*   [COHINC-29](https://github.com/coherence-community/coherence-incubator/issues/29): Improved `LifecycleAwareEvent`
+*   [Issue #29](https://github.com/coherence-community/coherence-incubator/issues/29): Improved `LifecycleAwareEvent`
     information when using a `NonBlockingFiniteStateMachine`.
 
     This is a **breaking** change for the `LifecycleAwareEvent` interface.  However
     as we are only using this interface **only** with in an inner class of
     `NonBlockingFiniteStateMachine`, it **does not** break any public interfaces.
 
-*   [COHINC-35](https://github.com/coherence-community/coherence-incubator/issues/35): Corrected use of printf
+*   [Issue #35](https://github.com/coherence-community/coherence-incubator/issues/35): Corrected use of printf
     in the `Runner` class that may prevent examples running on some platforms
     (like Windows).
 
-*   [COHINC-38](https://github.com/coherence-community/coherence-incubator/issues/38): Enhanced ConfigurableCacheFactory
+*   [Issue #38](https://github.com/coherence-community/coherence-incubator/issues/38): Enhanced ConfigurableCacheFactory
     Tests.
 
 <h4>coherence-commandpattern</h4>
 
-*   [COHINC-34](https://github.com/coherence-community/coherence-incubator/issues/34): Added missing pof-type
+*   [Issue #34](https://github.com/coherence-community/coherence-incubator/issues/34): Added missing pof-type
     declaration for the `CommandBatch` class.
 
-*   [COHINC-48](https://github.com/coherence-community/coherence-incubator/issues/48): Refactored calls to
+*   [Issue #48](https://github.com/coherence-community/coherence-incubator/issues/48): Refactored calls to
     CacheFactory.ensureCluster() that prevent redeployment in a Container.
 
 <h4>coherence-messagingpattern</h4>
 
-*   [COHINC-28](https://github.com/coherence-community/coherence-incubator/issues/28): Migrated Functional Test
+*   [Issue #28](https://github.com/coherence-community/coherence-incubator/issues/28): Migrated Functional Test
     from internal Oracle Testing Framework.  These are contained in the new
     coherence-messagingpattern-tests module.
 
-*   [COHINC-37](https://github.com/coherence-community/coherence-incubator/issues/37): Changed JMS Dependency
+*   [Issue #37](https://github.com/coherence-community/coherence-incubator/issues/37): Changed JMS Dependency
     to one that includes a jar artifact.
 
 <h4>coherence-pushreplicationpattern</h4>
 
-*   [COHINC-19](https://github.com/coherence-community/coherence-incubator/issues/19): Fixed Active-Active
+*   [Issue #19](https://github.com/coherence-community/coherence-incubator/issues/19): Fixed Active-Active
     Push Replication Example - now correctly terminates.
 
-*   [COHINC-30](https://github.com/coherence-community/coherence-incubator/issues/30): Removed hardcoded logging
+*   [Issue #30](https://github.com/coherence-community/coherence-incubator/issues/30): Removed hardcoded logging
     path from Push Replication tests.
 
 <h4>coherence-pushreplicationpattern-web-example</h4>
 
-*   [COHINC-40](https://github.com/coherence-community/coherence-incubator/issues/40): Introduced new Coherence*Web
+*   [Issue #40](https://github.com/coherence-community/coherence-incubator/issues/40): Introduced new Coherence*Web
     examples.
 
 --------------------------------------------------------------------------------
