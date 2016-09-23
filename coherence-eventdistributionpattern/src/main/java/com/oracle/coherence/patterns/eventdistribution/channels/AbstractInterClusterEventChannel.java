@@ -199,43 +199,54 @@ public abstract class AbstractInterClusterEventChannel implements InterClusterEv
      */
     private boolean isDistributable(DistributableEntryEvent entryEvent)
     {
-        // determine the source ClusterMetaInfo
-        ClusterMetaInfo sourceClusterMetaInfo = getSourceClusterMetaInfo(entryEvent);
-
-        // determine if we should distribute
-        boolean isLocal = localClusterMetaInfo.equals(sourceClusterMetaInfo);
-
-        if (isLocal)
+        try
         {
-            // The entry is local, meaning it is the result of some update from an application running on this cluster.
-            // (hence it is always distributed)
-            if (logger.isLoggable(Level.FINEST))
-            {
-                logger.log(Level.FINEST,
-                           String.format("Distributing a local event from %s", sourceClusterMetaInfo.getUniqueName()));
-            }
+            // determine the source ClusterMetaInfo
+            ClusterMetaInfo sourceClusterMetaInfo = getSourceClusterMetaInfo(entryEvent);
 
-            return true;
-        }
-        else
-        {
-            // The entry is a result of some other cluster distributing to this cluster. If this a leaf cluster we don't
-            // further distributed the entry. If it's not, we distribute to other EventChannels that are not the source event
-            if (getDistributionRole() == InterClusterEventChannel.DistributionRole.LEAF)
+            // determine if we should distribute
+            boolean isLocal = localClusterMetaInfo.equals(sourceClusterMetaInfo);
+
+            if (isLocal)
             {
+                // The entry is local, meaning it is the result of some update from an application running on this cluster.
+                // (hence it is always distributed)
                 if (logger.isLoggable(Level.FINEST))
                 {
                     logger.log(Level.FINEST,
-                               String.format("Won't distribute the non-local event %s from %s", entryEvent,
-                                             sourceClusterMetaInfo.getUniqueName()));
+                            String.format("Distributing a local event from %s",
+                                    sourceClusterMetaInfo.getUniqueName()));
                 }
 
-                return false;
+                return true;
             }
             else
             {
-                return (!sourceClusterMetaInfo.equals(getTargetClusterMetaInfo()));
+                // The entry is a result of some other cluster distributing to this cluster. If this a leaf cluster we don't
+                // further distributed the entry. If it's not, we distribute to other EventChannels that are not the source event
+                if (getDistributionRole() == InterClusterEventChannel.DistributionRole.LEAF)
+                {
+                    if (logger.isLoggable(Level.FINEST))
+                    {
+                        logger.log(Level.FINEST,
+                                String.format("Won't distribute the non-local event %s from %s",
+                                        entryEvent,
+                                        sourceClusterMetaInfo.getUniqueName()));
+                    }
+
+                    return false;
+                }
+                else
+                {
+                    return (!sourceClusterMetaInfo.equals(getTargetClusterMetaInfo()));
+                }
             }
+        }
+        catch (IllegalStateException e)
+        {
+            logger.warning("Failed to determine the cluster source information for " + entryEvent + ".  Perhaps your attempting to remove a non-existent entry?");
+
+            return false;
         }
     }
 

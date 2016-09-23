@@ -12,26 +12,14 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
-*   [Issue #150](https://github.com/coherence-community/coherence-incubator/issues/150): Upgraded to require
-    Java 7 and Java 8.
+*   [Issue #152](https://github.com/coherence-community/coherence-incubator/issues/152): Upgraded to require
+    Coherence 12.2.1 Java 8.
 
-    Deployed Modules are built against and require Java 7.
+<h4>coherence-eventdistributionpattern</h4>
 
-    Integration Test Modules are built against and require Java 8.
-
-*   [Issue #151](https://github.com/coherence-community/coherence-incubator/issues/151): Upgraded the following
-    dependencies.
-
-    EasyMock 3.1 to 3.4
-    PowerMock 1.4.12 to 1.6.5
-    JUnit 4.10 to 4.12
-    CGLIB 2.2.2 to 3.2.2
-    Mockito 1.9.0 to 1.10.19
-
-<h4>coherence-processingpattern</h4>
-
-*   [Issue #151](https://github.com/coherence-community/coherence-incubator/issues/151): Refactored the use
-    of EasyMock for the latest version.
+*   [Issue #156](https://github.com/coherence-community/coherence-incubator/issues/156): Event Channels may
+    transition to "paused" state when encountering an Entry without meta-data, which may be caused by attempting
+    to remove a non-existent entry.   Such requests will log a warning and will be ignored.
 
 --------------------------------------------------------------------------------
 
