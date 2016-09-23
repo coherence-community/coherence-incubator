@@ -241,8 +241,7 @@ public abstract class AbstractInterClusterEventChannel implements InterClusterEv
         }
         catch (IllegalStateException e)
         {
-            logger.severe("Failed to determine the cluster source information for " + entryEvent);
-            logger.throwing(AbstractInterClusterEventChannel.class.getName(), "isDistributable", e);
+            logger.warning("Failed to determine the cluster source information for " + entryEvent + ".  Perhaps your attempting to remove a non-existent entry?");
 
             return false;
         }
