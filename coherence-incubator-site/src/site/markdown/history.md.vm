@@ -16,7 +16,7 @@ reverse chronological order.
 *   [Issue #157](https://github.com/coherence-community/coherence-incubator/issues/157): Upgraded to use
     Oracle Coherence 3.7.1.14
 
-<h4>coherence-pushreplicationpattern</h4>
+<h4>coherence-eventdistributionpattern</h4>
 
 *   [Issue #156](https://github.com/coherence-community/coherence-incubator/issues/156): Event Channels may
     transition to "paused" state when encountering an Entry without meta-data, which may be caused by attempting
