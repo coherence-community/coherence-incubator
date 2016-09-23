@@ -4,7 +4,7 @@
     <parent>
         <artifactId>coherence-incubator</artifactId>
         <groupId>com.oracle.coherence.incubator</groupId>
-        <version>11.3.3-SNAPSHOT</version>
+        <version>11.3.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
