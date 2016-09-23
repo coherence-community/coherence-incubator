@@ -33,6 +33,12 @@ reverse chronological order.
 *   [Issue #151](https://github.com/coherence-community/coherence-incubator/issues/151): Refactored the use
     of EasyMock for the latest version.
 
+<h4>coherence-eventdistributionpattern</h4>
+
+*   [Issue #156](https://github.com/coherence-community/coherence-incubator/issues/156): Event Channels may
+    transition to "paused" state when encountering an Entry without meta-data, which may be caused by attempting
+    to remove a non-existent entry.   Such requests will log a warning and will be ignored.
+
 --------------------------------------------------------------------------------
 
 <h3>Version: 12.3.2 built on 2016-06-29 10:05</h3>
