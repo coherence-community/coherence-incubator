@@ -62,14 +62,6 @@ public interface TaskProcessorMediator
 
 
     /**
-     * The lease has expired for this {@link TaskProcessorMediator}.
-     *
-     * @param lease the Lease that has expired.
-     */
-    void leaseExpired(Lease lease);
-
-
-    /**
      * Enqueue a particular task for this executor.
      *
      * @param taskId   the {@link SubmissionKey} of the Task to be enqueued.

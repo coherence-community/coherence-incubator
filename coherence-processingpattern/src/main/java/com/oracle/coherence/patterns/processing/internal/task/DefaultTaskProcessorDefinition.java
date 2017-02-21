@@ -33,6 +33,7 @@ import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+import com.tangosol.util.Base;
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -212,7 +213,7 @@ public class DefaultTaskProcessorDefinition implements TaskProcessorDefinition,
         taskProcessorType = TaskProcessorType.valueOf(in.readUTF());
         taskProcessor     = (TaskProcessor) ExternalizableHelper.readObject(in);
         attributeMap      = new HashMap<String, String>();
-        ExternalizableHelper.readMap(in, attributeMap, this.getClass().getClassLoader());
+        ExternalizableHelper.readMap(in, attributeMap, Base.getContextClassLoader());
 
     }
 

@@ -31,6 +31,7 @@ import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+import com.tangosol.util.Base;
 import com.tangosol.util.ExternalizableHelper;
 
 import java.io.DataInput;
@@ -231,7 +232,7 @@ public class DefaultSubmissionConfiguration implements ExternalizableLite, Porta
     {
         this.submissionDelay      = ExternalizableHelper.readLong(in);
         this.configurationDataMap = new HashMap();
-        ExternalizableHelper.readMap(in, this.configurationDataMap, Thread.currentThread().getContextClassLoader());
+        ExternalizableHelper.readMap(in, this.configurationDataMap, Base.getContextClassLoader());
         this.groupAffinity = ExternalizableHelper.readObject(in);
     }
 

@@ -25,17 +25,19 @@
 
 package com.oracle.coherence.patterns.processing.internal.task;
 
-
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.common.leasing.Lease;
 import com.oracle.coherence.common.leasing.Leasing;
 import com.oracle.coherence.common.util.ChangeIndication;
+import com.oracle.coherence.patterns.processing.internal.ProcessingPattern;
 import com.oracle.coherence.patterns.processing.internal.SubmissionKey;
 import com.oracle.coherence.patterns.processing.internal.SubmissionKeyPair;
 import com.tangosol.io.ExternalizableLite;
 import com.tangosol.io.pof.PofReader;
 import com.tangosol.io.pof.PofWriter;
 import com.tangosol.io.pof.PortableObject;
+import com.tangosol.net.CacheFactory;
+import com.tangosol.util.Base;
 import com.tangosol.util.BinaryEntry;
 import com.tangosol.util.ExternalizableHelper;
 
@@ -47,6 +49,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,6 +70,16 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
                                                      ChangeIndication
 {
     /**
+     * The name of the Coherence Cache that will store {@link DefaultTaskProcessorMediator}s.
+     */
+    public static final String CACHENAME = "coherence.patterns.processing.taskprocessormediator";
+
+    /**
+     * The {@link Logger} to use.
+     */
+    private static final Logger logger = Logger.getLogger(DefaultTaskProcessorMediator.class.getName());
+
+    /**
      * The MBean manager for this class.
      */
     private static TaskProcessorMBeanManager m_mgrMbean;
@@ -76,16 +89,6 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
      * {@link com.oracle.coherence.patterns.processing.task.TaskProcessor} expires.
      */
     private static ServerLeaseMonitor leaseMonitor;
-
-    /**
-     * The name of the Coherence Cache that will store {@link DefaultTaskProcessorMediator}s.
-     */
-    public static final String CACHENAME = "coherence.patterns.processing.taskprocessormediator";
-
-    /**
-     * The {@link Logger} to use.
-     */
-    private static final Logger logger = Logger.getLogger(DefaultTaskProcessorMediator.class.getName());
 
     /**
      * Key for the Executor this queue belongs to.
@@ -204,6 +207,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         initialize();
     }
 
+
     /**
      * Set the MBean manager.
      *
@@ -214,6 +218,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         m_mgrMbean = mgr;
     }
 
+
     /**
      * Sets the {@link ServerLeaseMonitor} to use for this class.
      *
@@ -223,6 +228,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
     {
         DefaultTaskProcessorMediator.leaseMonitor = leaseMonitor;
     }
+
 
     /**
      * {@inheritDoc}
@@ -433,17 +439,25 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
     @Override
     public String toString()
     {
-        return "DefaultTaskProcessorMediator [" + (attributeMap != null ? "attributeMap=" + attributeMap + ", " : "")
-               + "lastTaskExecutionDuration=" + lastTaskExecutionDuration + ", maximumTaskExecutionDuration="
-               + maximumTaskExecutionDuration + ", minimumTaskExecutionDuration=" + minimumTaskExecutionDuration
-               + ", noAcceptedTasks=" + noAcceptedTasks + ", noExecutedTasks=" + noExecutedTasks + ", "
-               + (stateEnum != null ? "stateEnum=" + stateEnum + ", " : "")
-               + (taskProcessorKey != null ? "taskProcessorKey=" + taskProcessorKey + ", " : "")
-               + (taskProcessorLease != null ? "taskProcessorLease=" + taskProcessorLease + ", " : "")
-               + (tasks != null ? "tasks=" + tasks + ", " : "")
-               + (tasksInProgress != null ? "tasksInProgress=" + tasksInProgress + ", " : "")
-               + "totalTaskExecutionDuration=" + totalTaskExecutionDuration + ", yieldTaskCount=" + yieldTaskCount
-               + "]";
+        return "DefaultTaskProcessorMediator ["
+            + (attributeMap != null ? "attributeMap=" + attributeMap + ", " : "") + "lastTaskExecutionDuration="
+                + lastTaskExecutionDuration + ", maximumTaskExecutionDuration=" + maximumTaskExecutionDuration
+                    + ", minimumTaskExecutionDuration=" + minimumTaskExecutionDuration + ", noAcceptedTasks="
+                        + noAcceptedTasks + ", noExecutedTasks=" + noExecutedTasks + ", "
+                            + (stateEnum != null
+                                ? "stateEnum=" + stateEnum + ", "
+                                    : "") + (taskProcessorKey != null
+                                        ? "taskProcessorKey=" + taskProcessorKey + ", "
+                                            : "") + (taskProcessorLease != null
+                                                ? "taskProcessorLease=" + taskProcessorLease + ", "
+                                                    : "") + (tasks != null
+                                                        ? "tasks=" + tasks + ", "
+                                                            : "") + (tasksInProgress != null
+                                                                ? "tasksInProgress=" + tasksInProgress + ", "
+                                                                    : "") + "totalTaskExecutionDuration="
+                                                                        + totalTaskExecutionDuration
+                                                                            + ", yieldTaskCount=" + yieldTaskCount
+                                                                                + "]";
     }
 
 
@@ -644,44 +658,32 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
 
 
     /**
-     * {@inheritDoc}
-     */
-    public void leaseExpired(Lease lease)
-    {
-        if (logger.isLoggable(Level.FINEST))
-        {
-            logger.log(Level.FINEST,
-                       "Lease {0} expired for TaskProcessor {1} setting to INACTIVE",
-                       new Object[] {lease, this});
-        }
-
-        stateEnum = TaskProcessorStateEnum.INACTIVE;
-        recoverTasks();
-        setChanged();
-    }
-
-
-    /**
      * Start the recovery of the tasks for this {@link DefaultTaskProcessorMediator}.
      */
     @SuppressWarnings("unchecked")
-    private void recoverTasks()
+    public void recoverTasks()
     {
         if (logger.isLoggable(Level.INFO))
         {
             logger.log(Level.INFO, "Recovering tasks {0}", tasks);
         }
 
-        LinkedList<SubmissionKeyPair> mergedlist = (LinkedList<SubmissionKeyPair>) tasks.clone();
+        // this task processor is now inactive and won't perform any more processing
+        stateEnum = TaskProcessorStateEnum.INACTIVE;
 
+        // collect the list of tasks to recover
+        LinkedList<SubmissionKeyPair> mergedlist = new LinkedList<>();
+
+        mergedlist.addAll(tasks);
         mergedlist.addAll(tasksInProgress);
 
-        RecoverTasks task          = new RecoverTasks(mergedlist);
-        Thread       recoverthread = new Thread(task);
+        // have the Processing Pattern Executor Service perform the recovery asynchronously
+        ExecutorService executorService =
+            CacheFactory.getConfigurableCacheFactory().getResourceRegistry().getResource(ExecutorService.class,
+                                                                                         ProcessingPattern.RESOURCE);
 
-        recoverthread.start();
-        tasks.clear();
-        tasksInProgress.clear();
+        executorService.submit(new RecoverTasks(taskProcessorKey, mergedlist));
+
         setChanged();
     }
 
@@ -690,7 +692,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
      * {@inheritDoc}
      */
     public void entryArrived()
-    {
+    {                                                                          
         if (logger.isLoggable(Level.FINE))
         {
             logger.log(Level.FINE, "TaskProcessorMediator {0} arrived to this member.", this);
@@ -730,6 +732,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
     {
         return stateEnum;
     }
+
 
     /**
      * {@inheritDoc}
@@ -798,6 +801,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         }
     }
 
+
     /**
      * {@inheritDoc}
      */
@@ -814,6 +818,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         }
     }
 
+
     /**
      * {@inheritDoc}
      */
@@ -821,6 +826,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
     {
         // placeholder
     }
+
 
     /**
      * Called if this entry has arrived to this node due to partitions moving or failover.
@@ -831,6 +837,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         onInserted(entry);
     }
 
+
     /**
      * Called if this entry has departed from this node due to partitions moving or failover.
      */
@@ -839,6 +846,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         entryDeparted();
         onRemoved(entry);
     }
+
 
     /**
      * {@inheritDoc}
@@ -859,7 +867,7 @@ public class DefaultTaskProcessorMediator implements ExternalizableLite,
         lastTaskExecutionDuration    = in.readLong();
         yieldTaskCount               = in.readInt();
         attributeMap                 = new HashMap();
-        ExternalizableHelper.readMap(in, attributeMap, this.getClass().getClassLoader());
+        ExternalizableHelper.readMap(in, attributeMap, Base.getContextClassLoader());
     }
 
 

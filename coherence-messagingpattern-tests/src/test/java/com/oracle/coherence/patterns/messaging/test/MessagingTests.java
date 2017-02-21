@@ -1,9 +1,9 @@
 /*
- * File: QueueTests.java
+ * File: MessagingTests.java
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * The contents of this file are subject to the terms and conditions of 
+ * The contents of this file are subject to the terms and conditions of
  * the Common Development and Distribution License 1.0 (the "License").
  *
  * You may not use this file except in compliance with the License.
@@ -25,16 +25,16 @@
 
 package com.oracle.coherence.patterns.messaging.test;
 
-import com.oracle.bedrock.junit.CoherenceClusterOrchestration;
+import com.oracle.bedrock.junit.CoherenceClusterResource;
 import com.oracle.bedrock.junit.SessionBuilders;
 import com.oracle.bedrock.options.Diagnostics;
-import com.oracle.bedrock.runtime.LocalPlatform;
 import com.oracle.bedrock.runtime.coherence.CoherenceCluster;
 import com.oracle.bedrock.runtime.coherence.options.CacheConfig;
+import com.oracle.bedrock.runtime.coherence.options.LocalStorage;
 import com.oracle.bedrock.runtime.coherence.options.Pof;
 import com.oracle.bedrock.runtime.java.options.IPv4Preferred;
-import com.oracle.bedrock.runtime.java.options.SystemProperty;
 import com.oracle.bedrock.runtime.options.Console;
+import com.oracle.bedrock.runtime.options.DisplayName;
 import com.oracle.coherence.common.identifiers.Identifier;
 import com.oracle.coherence.patterns.messaging.DefaultMessagingSession;
 import com.oracle.coherence.patterns.messaging.MessagingSession;
@@ -65,20 +65,18 @@ import java.util.concurrent.atomic.AtomicLong;
 public class MessagingTests
 {
     /**
-     * Establish a {@link CoherenceClusterOrchestration} to orchestrate a {@link CoherenceCluster}.
+     * Establish a {@link CoherenceClusterResource} to orchestrate a {@link CoherenceCluster}.
      */
     @ClassRule
-    public static CoherenceClusterOrchestration orchestration =
-        new CoherenceClusterOrchestration().withOptions(CacheConfig.of("coherence-messagingpattern-cache-config.xml"),
-                                                        Diagnostics.enabled(),
-                                                        Console.system(),
-                                                        IPv4Preferred.yes(),
-                                                        Pof.config("coherence-messagingpattern-test-pof-config.xml"),
-                                                        Pof.enabled())
-                                                        .withProxyMemberOptions(CacheConfig.of("coherence-messagingpattern-test-cache-config.xml"),
-                                                                                SystemProperty.of("proxy.port",
-                                                                                                  LocalPlatform.get()
-                                                                                                  .getAvailablePorts()));
+    public static CoherenceClusterResource clusterResource =
+        new CoherenceClusterResource().with(CacheConfig.of("coherence-messagingpattern-cache-config.xml"),
+                                            Diagnostics.enabled(),
+                                            Console.system(),
+                                            IPv4Preferred.yes(),
+                                            Pof.config("coherence-messagingpattern-test-pof-config.xml"),
+                                            Pof.enabled()).include(2,
+                                                                   LocalStorage.enabled(),
+                                                                   DisplayName.of("storage"));
 
     /**
      * The {@link ConfigurableCacheFactory} for the tests.
@@ -92,10 +90,10 @@ public class MessagingTests
 
 
     @Before
-    public void setup()
+    public void setup()                                                           
     {
         // establish the CCF to interact with Coherence
-        factory = orchestration.getSessionFor(SessionBuilders.storageDisabledMember());
+        factory = clusterResource.createSession(SessionBuilders.storageDisabledMember());
 
         // create a shared MessagingSession for the tests
         messagingSession = DefaultMessagingSession.getInstance();

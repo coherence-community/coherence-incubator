@@ -138,7 +138,7 @@ public class TaskProcessorMBeanManager
     {
         if (!shuttingDown)
         {
-            Registry registry = CacheFactory.ensureCluster().getManagement();
+            Registry registry = CacheFactory.getCluster().getManagement();
 
             if (registry != null)
             {
@@ -147,7 +147,7 @@ public class TaskProcessorMBeanManager
                         .ensureGlobalName(String
                             .format("type=ProcessingPattern,subType=TaskProcessor,id=%s",
                                     key.getTaskProcessorDefinitionIdentifier().toString() + ":" + key.getMemberId()
-                                    + ":" + +CacheFactory.ensureCluster().getLocalMember().getId())));
+                                    + ":" + +CacheFactory.getCluster().getLocalMember().getId())));
 
                 if (logger.isLoggable(Level.FINER))
                 {
@@ -171,7 +171,7 @@ public class TaskProcessorMBeanManager
     {
         if (!shuttingDown)
         {
-            Registry registry = CacheFactory.ensureCluster().getManagement();
+            Registry registry = CacheFactory.getCluster().getManagement();
 
             if (registry != null)
             {

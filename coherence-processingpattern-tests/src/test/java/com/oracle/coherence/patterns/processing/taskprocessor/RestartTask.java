@@ -33,18 +33,19 @@ import com.tangosol.io.pof.PortableObject;
 import com.tangosol.net.CacheFactory;
 
 import java.io.IOException;
+import java.util.Random;
 
 /**
- * A simple restartable task.
+ * A simple restartable task that delays a random amount of time between 0 and 1 seconds.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2017. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
- * @author Christer Fahlgren
+ * @author Brian Oliver
  */
 public class RestartTask implements ResumableTask, PortableObject
 {
-    private String sName;
+    private String name;
 
 
     /**
@@ -58,56 +59,53 @@ public class RestartTask implements ResumableTask, PortableObject
     /**
      * Constructs a {@link RestartTask}.
      *
-     * @param sName
+     * @param name  the name of the task (that is returned)
      */
-    public RestartTask(String sName)
+    public RestartTask(String name)
     {
-        this.sName = sName;
+        this.name = name;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString()
     {
-        return "RestartTask [" + (sName != null ? "sName=" + sName : "") + "]";
+        return "RestartTask [" + (name != null ? "sName=" + name : "") + "]";
     }
 
 
-    /**
-     * Method description
-     *
-     * @param oEnvironment
-     *
-     * @return
-     */
     @Override
     public Object run(TaskExecutionEnvironment oEnvironment)
     {
-        CacheFactory.log(sName + " processed...", CacheFactory.LOG_ALWAYS);
+        CacheFactory.log(name + " processing...", CacheFactory.LOG_ALWAYS);
 
-        return sName;
+        Random random = new Random();
+
+        try
+        {
+            Thread.sleep(random.nextInt(1000));
+        }
+        catch (InterruptedException e)
+        {
+            CacheFactory.log(name + " interrupted!");
+        }
+
+        CacheFactory.log(name + " processed...", CacheFactory.LOG_ALWAYS);
+         
+        return name;
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void readExternal(PofReader reader) throws IOException
     {
-        this.sName = reader.readString(0);
+        this.name = reader.readString(0);
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void writeExternal(PofWriter writer) throws IOException
     {
-        writer.writeString(0, sName);
+        writer.writeString(0, name);
     }
 }

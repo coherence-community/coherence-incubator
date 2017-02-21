@@ -240,9 +240,7 @@ public class DefaultServerLeaseMonitor
                         }
 
                         taskProcessorMediatorCache.invoke(leaseOwner,
-                                                          new InvokeMethodProcessor("leaseExpired",
-                                                                                    new Object[] {lease}));
-                        taskProcessorMediatorCache.remove(leaseOwner);
+                                                          new InvokeMethodProcessor("recoverTasks"));
                         deregisterLease = true;
                     }
 
