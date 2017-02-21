@@ -115,7 +115,7 @@ public abstract class AbstractDispatcher implements Dispatcher, PortableObject, 
      */
     protected void registerMBean()
     {
-        Registry registry = CacheFactory.ensureCluster().getManagement();
+        Registry registry = CacheFactory.getCluster().getManagement();
 
         if (registry != null)
         {
@@ -136,7 +136,7 @@ public abstract class AbstractDispatcher implements Dispatcher, PortableObject, 
      */
     protected void unregisterMBean()
     {
-        Registry registry = CacheFactory.ensureCluster().getManagement();
+        Registry registry = CacheFactory.getCluster().getManagement();
 
         if (registry != null)
         {

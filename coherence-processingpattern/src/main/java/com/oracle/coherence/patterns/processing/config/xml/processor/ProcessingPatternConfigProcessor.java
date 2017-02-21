@@ -9,8 +9,7 @@
  * You may not use this file except in compliance with the License.
  *
  * You can obtain a copy of the License by consulting the LICENSE.txt file
- * distributed with this file, or by consulting
- * or https://oss.oracle.com/licenses/CDDL
+ * distributed with this file, or by consulting https://oss.oracle.com/licenses/CDDL
  *
  * See the License for the specific language governing permissions
  * and limitations under the License.
@@ -26,16 +25,23 @@
 
 package com.oracle.coherence.patterns.processing.config.xml.processor;
 
-
+import com.oracle.coherence.common.threading.ThreadFactories;
 import com.oracle.coherence.patterns.processing.config.ProcessingPatternConfig;
 import com.oracle.coherence.patterns.processing.config.builder.ProcessingPatternConfigBuilder;
 import com.oracle.coherence.patterns.processing.internal.DefaultEnvironment;
 import com.oracle.coherence.patterns.processing.internal.Environment;
+import com.oracle.coherence.patterns.processing.internal.ProcessingPattern;
 import com.tangosol.config.ConfigurationException;
 import com.tangosol.config.xml.ElementProcessor;
 import com.tangosol.config.xml.ProcessingContext;
 import com.tangosol.config.xml.XmlSimpleName;
 import com.tangosol.run.xml.XmlElement;
+import com.tangosol.util.Builder;
+import com.tangosol.util.RegistrationBehavior;
+import com.tangosol.util.ResourceRegistry;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A {@link ProcessingPatternConfigProcessor} is responsible for processing a
@@ -66,8 +72,31 @@ public class ProcessingPatternConfigProcessor implements ElementProcessor<Proces
         // may customize the processing pattern config
         context.processForeignElementsOf(element);
 
+        // establish an ExecutorService that the Processing Pattern can use for background tasks
+        context.getResourceRegistry().registerResource(ExecutorService.class,
+                                                       ProcessingPattern.RESOURCE,
+                                                       new Builder<ExecutorService>()
+                                                       {
+                                                           @Override
+                                                           public ExecutorService realize()
+                                                           {
+                                                               return Executors.newSingleThreadExecutor(ThreadFactories.newThreadFactory(true,
+                                                                   "ProcessingPattern",
+                                                                   null));
+                                                           }
+                                                       },
+                                                       RegistrationBehavior.IGNORE,
+                                                       new ResourceRegistry.ResourceLifecycleObserver<ExecutorService>()
+                                                       {
+                                                           @Override
+                                                           public void onRelease(ExecutorService executorService)
+                                                           {
+                                                               executorService.shutdownNow();
+                                                           }
+                                                       });
+
         // Add the environment since it is accessed by the PP session
-        Environment env = new DefaultEnvironment();
+        Environment env = new DefaultEnvironment();            
 
         context.getResourceRegistry().registerResource(Environment.class, env);
 

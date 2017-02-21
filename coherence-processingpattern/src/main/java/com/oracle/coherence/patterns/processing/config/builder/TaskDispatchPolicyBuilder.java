@@ -34,6 +34,7 @@ import com.tangosol.coherence.config.builder.BuilderCustomization;
 import com.tangosol.coherence.config.builder.ParameterizedBuilder;
 import com.tangosol.config.annotation.Injectable;
 import com.tangosol.config.expression.NullParameterResolver;
+import com.tangosol.util.Base;
 
 /**
  * The TaskDispatcherBuilder is responsible for building a
@@ -72,7 +73,7 @@ public class TaskDispatchPolicyBuilder implements BuilderCustomization<TaskDispa
             else
             {
                 policy = m_bldrCustom.realize(new NullParameterResolver(),
-                                              Thread.currentThread().getContextClassLoader(),
+                                              Base.getContextClassLoader(),
                                               new ResolvableParameterList());
             }
         }

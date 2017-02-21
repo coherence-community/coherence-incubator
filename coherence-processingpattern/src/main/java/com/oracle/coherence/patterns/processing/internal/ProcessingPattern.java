@@ -43,6 +43,7 @@ import com.oracle.coherence.patterns.processing.taskprocessor.ClientLeaseMaintai
 import com.oracle.coherence.patterns.processing.taskprocessor.DefaultClientLeaseMaintainer;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.util.Base;
+import com.tangosol.util.ResourceRegistry;
 
 
 /**
@@ -53,6 +54,11 @@ import com.tangosol.util.Base;
  */
 public class ProcessingPattern
 {
+    /**
+     * The resource name for resources added to the Coherence {@link ResourceRegistry}.
+     */
+    public static String RESOURCE = "ProcessingPattern";
+
     ConfigurableCacheFactory m_ccf;
     Environment              m_env;
     ProcessingPatternConfig  m_config;
@@ -96,9 +102,6 @@ public class ProcessingPattern
      */
     public static void ensureInfrastructureStarted(ConfigurableCacheFactory ccf)
     {
-        if (m_fStarted)
-            return;
-
         synchronized (ProcessingPatternConfig.class)
         {
             if (!m_fStarted)

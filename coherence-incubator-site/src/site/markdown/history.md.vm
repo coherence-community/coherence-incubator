@@ -10,6 +10,35 @@ reverse chronological order.
 
 *   Brian Oliver
 
+<h4>coherence-processingpattern</h4>
+
+*   [Issue #49](https://github.com/coherence-community/coherence-incubator/issues/49):
+    Resolved inappropriate use of CacheFactory.ensureCluster(), replacing with CacheFactory.getCluster().
+
+*   [Issue #159](https://github.com/coherence-community/coherence-incubator/issues/159):
+    Introduced ability to provide a ConfigurableCacheFactory when creating a ProcessingSession.
+
+*   [Issue #160](https://github.com/coherence-community/coherence-incubator/issues/160):
+    Ensure consistent use of ClassLoaders based on calling context.
+
+*   [Issue #161](https://github.com/coherence-community/coherence-incubator/issues/161):
+    Ensure Processing Pattern is initialized using the Cache Configuration LifecycleEvents.
+
+*   [Issue #162](https://github.com/coherence-community/coherence-incubator/issues/162):
+    Introduce Shared ExecutorService for internal background tasks.
+
+*   [Issue #163](https://github.com/coherence-community/coherence-incubator/issues/163):
+    Resolves fail-over/fail-back of Grid-based Tasks.
+
+
+--------------------------------------------------------------------------------
+
+<h3>Version: 12.4.0 built on 2017-09-28</h3>
+
+<h4>Source and Documentation Contributors</h4>
+
+*   Brian Oliver
+
 <h4>Global and Cross-Module Changes</h4>
 
 *   [Issue #150](https://github.com/coherence-community/coherence-incubator/issues/150): Upgraded to require

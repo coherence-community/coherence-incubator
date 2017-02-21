@@ -175,13 +175,13 @@ public class DefaultTaskProcessorDefinitionManager implements TaskProcessorDefin
                 if (cs instanceof DistributedCacheService)
                 {
                     // We know now that we are on a cluster node
-                    tps.setAttribute("machinename", CacheFactory.ensureCluster().getLocalMember().getMachineName());
+                    tps.setAttribute("machinename", CacheFactory.getCluster().getLocalMember().getMachineName());
                     tps.setAttribute("hostname",
-                                     CacheFactory.ensureCluster().getLocalMember().getAddress().getHostName());
-                    tps.setAttribute("rackname", CacheFactory.ensureCluster().getLocalMember().getRackName());
-                    tps.setAttribute("membername", CacheFactory.ensureCluster().getLocalMember().getMemberName());
-                    tps.setAttribute("processname", CacheFactory.ensureCluster().getLocalMember().getProcessName());
-                    tps.setAttribute("rolename", CacheFactory.ensureCluster().getLocalMember().getRoleName());
+                                     CacheFactory.getCluster().getLocalMember().getAddress().getHostName());
+                    tps.setAttribute("rackname", CacheFactory.getCluster().getLocalMember().getRackName());
+                    tps.setAttribute("membername", CacheFactory.getCluster().getLocalMember().getMemberName());
+                    tps.setAttribute("processname", CacheFactory.getCluster().getLocalMember().getProcessName());
+                    tps.setAttribute("rolename", CacheFactory.getCluster().getLocalMember().getRoleName());
                     tps.setAttribute("taskprocessortype", "single");
                 }
 

@@ -32,6 +32,7 @@ import com.oracle.coherence.patterns.processing.internal.SubmissionKeyPair;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
+import com.tangosol.util.Base;
 
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -58,40 +59,27 @@ public class RecoverTasks implements Runnable
     private static final Logger logger = Logger.getLogger(RecoverTasks.class.getName());
 
     /**
+     * The key for the {@link TaskProcessorMediator} being recovered.
+     */
+    private TaskProcessorMediatorKey taskProcessorMediatorKey;
+
+    /**
      * The tasks to recover.
      */
     private LinkedList<SubmissionKeyPair> tasks;
-
-    /**
-     * The {@link ConfigurableCacheFactory} to use.
-     */
-    private ConfigurableCacheFactory ccFactory;
-
-    /**
-     * The {@link NamedCache} where {@link com.oracle.coherence.patterns.processing.internal.SubmissionResult}s are
-     * stored.
-     */
-    private NamedCache submissionResultCache;
-
-    /**
-     * The {@link NamedCache} where {@link com.oracle.coherence.patterns.processing.internal.Submission}s are stored.
-     */
-    private NamedCache submissionCache;
 
 
     /**
      * Standard constructor.
      *
-     * @param tasks the Tasks to recover
+     * @param taskProcessorMediatorKey  the key of the {@link TaskProcessorMediator} being recovered
+     * @param tasks                     the keys of the tasks to recover
      */
-    public RecoverTasks(LinkedList<SubmissionKeyPair> tasks)
+    public RecoverTasks(TaskProcessorMediatorKey      taskProcessorMediatorKey,
+                        LinkedList<SubmissionKeyPair> tasks)
     {
-        this.tasks = tasks;
-        this.ccFactory =
-            CacheFactory.getCacheFactoryBuilder().getConfigurableCacheFactory(this.getClass().getClassLoader());
-        this.submissionResultCache = ccFactory.ensureCache(DefaultSubmissionResult.CACHENAME, null);
-        this.submissionCache       = ccFactory.ensureCache(DefaultSubmission.CACHENAME, null);
-
+        this.taskProcessorMediatorKey = taskProcessorMediatorKey;
+        this.tasks                    = tasks;
     }
 
 
@@ -100,6 +88,20 @@ public class RecoverTasks implements Runnable
      */
     public void run()
     {
+        ConfigurableCacheFactory ccFactory =
+            CacheFactory.getCacheFactoryBuilder().getConfigurableCacheFactory(Base.getContextClassLoader());
+
+        // obtain the submissions result cache to update
+        NamedCache submissionResultCache = ccFactory.ensureCache(DefaultSubmissionResult.CACHENAME,
+                                                                 Base.getContextClassLoader());
+
+        // obtain the submissions cache to update
+        NamedCache submissionCache = ccFactory.ensureCache(DefaultSubmission.CACHENAME, Base.getContextClassLoader());
+
+        // obtain the task mediator cache to update
+        NamedCache taskProcessorMediatorCache = ccFactory.ensureCache(DefaultTaskProcessorMediator.CACHENAME,
+                                                                      Base.getContextClassLoader());
+
         if (logger.isLoggable(Level.INFO))
         {
             logger.log(Level.INFO, "Starting recovery of {0,number} tasks.", tasks.size());
@@ -112,7 +114,9 @@ public class RecoverTasks implements Runnable
                 logger.log(Level.FINER, "Recovering {0}", keyPair);
             }
 
-            submissionResultCache.invoke(keyPair.getResultId(), new InvokeMethodProcessor("retry", new Object[]
+            submissionResultCache.invoke(keyPair.getResultId(),
+                                         new InvokeMethodProcessor("retry",
+                                                                   new Object[]
             {
             }));
 
@@ -134,5 +138,9 @@ public class RecoverTasks implements Runnable
                 }
             }
         }
+
+        // remove the TaskProcessorMediator as it's been recovered
+        taskProcessorMediatorCache.remove(taskProcessorMediatorKey);
     }
 }
+                                                                    

@@ -443,6 +443,15 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
                                                                                    pendingSubmission
                                                                                        .getResultIdentifier());
 
+                            if (logger.isLoggable(Level.INFO))
+                            {
+                                logger.log(Level.INFO,
+                                        "Task {0} with result id {1} was offered the Task and returned {2}.",
+                                        new Object[] {pendingSubmission.getSubmissionKey(),
+                                                pendingSubmission.getResultIdentifier(), offerTaskResult});
+                            }
+
+
                             if (!offerTaskResult)
                             {
                                 setSubmissionToRetryStatus(pendingSubmission, taskProcessorKey, submissionResult);
@@ -779,12 +788,12 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
                                                                                                            oTaskProcessorDefinition
                                                                                                                .getAttributeMap()});
 
-                tps.setAttribute("machinename", CacheFactory.ensureCluster().getLocalMember().getMachineName());
-                tps.setAttribute("hostname", CacheFactory.ensureCluster().getLocalMember().getAddress().getHostName());
-                tps.setAttribute("rackname", CacheFactory.ensureCluster().getLocalMember().getRackName());
-                tps.setAttribute("membername", CacheFactory.ensureCluster().getLocalMember().getMemberName());
-                tps.setAttribute("processname", CacheFactory.ensureCluster().getLocalMember().getProcessName());
-                tps.setAttribute("rolename", CacheFactory.ensureCluster().getLocalMember().getRoleName());
+                tps.setAttribute("machinename", CacheFactory.getCluster().getLocalMember().getMachineName());
+                tps.setAttribute("hostname", CacheFactory.getCluster().getLocalMember().getAddress().getHostName());
+                tps.setAttribute("rackname", CacheFactory.getCluster().getLocalMember().getRackName());
+                tps.setAttribute("membername", CacheFactory.getCluster().getLocalMember().getMemberName());
+                tps.setAttribute("processname", CacheFactory.getCluster().getLocalMember().getProcessName());
+                tps.setAttribute("rolename", CacheFactory.getCluster().getLocalMember().getRoleName());
 
                 if (oTaskProcessorDefinition.getTaskProcessorType() == TaskProcessorType.GRID)
                 {

@@ -36,7 +36,6 @@ import com.oracle.coherence.patterns.processing.SubmissionOutcome;
 import com.oracle.coherence.patterns.processing.SubmissionOutcomeListener;
 import com.oracle.coherence.patterns.processing.SubmissionRetentionPolicy;
 import com.oracle.coherence.patterns.processing.SubmissionState;
-import com.oracle.coherence.patterns.processing.config.ProcessingPatternConfig;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.NamedCache;
@@ -133,28 +132,41 @@ public class DefaultProcessingSession implements ProcessingSession
     @SuppressWarnings("unchecked")
     public DefaultProcessingSession(Identifier sessionIdentifier)
     {
-        ConfigurableCacheFactory ccFactory   = CacheFactory.getConfigurableCacheFactory();
+        this(sessionIdentifier, CacheFactory.getConfigurableCacheFactory());
+    }
 
+
+    /**
+     * Standard Constructor.
+     *
+     * @param sessionIdentifier is the {@link Identifier} for this Session.
+     */
+    @SuppressWarnings("unchecked")
+    public DefaultProcessingSession(Identifier               sessionIdentifier,
+                                    ConfigurableCacheFactory ccFactory)
+    {
         try
         {
-        	ccFactory.activate();
+            ccFactory.activate();
         }
         catch (IllegalStateException e)
         {
-        	// Could already be active, in which case just move on. 
+            // Could already be active, in which case just move on.
         }
 
         Environment environment = ccFactory.getResourceRegistry().getResource(Environment.class);
+
         if (environment == null)
         {
-        	environment = new DefaultEnvironment();
+            environment = new DefaultEnvironment();
             ProcessingPattern.createClientSideObjects(environment);
-        	ccFactory.getResourceRegistry().registerResource(Environment.class, environment);           	
+            ccFactory.getResourceRegistry().registerResource(Environment.class, environment);
         }
 
-
-        this.executorService = ExecutorServiceFactory.newSingleThreadScheduledExecutor(ThreadFactories
-                    .newThreadFactory(true, "DefaultProcessingSession", null));
+        this.executorService =
+            ExecutorServiceFactory.newSingleThreadScheduledExecutor(ThreadFactories.newThreadFactory(true,
+                                                                                                     "DefaultProcessingSession",
+                                                                                                     null));
 
         this.shutdownSync         = new Object();
         this.sessionId            = sessionIdentifier;
@@ -185,9 +197,9 @@ public class DefaultProcessingSession implements ProcessingSession
                                     Identifier                           sessionIdentifier)
     {
         this.executorService =
-            ExecutorServiceFactory
-                .newSingleThreadScheduledExecutor(ThreadFactories
-                    .newThreadFactory(true, "DefaultProcessingSession", null));
+            ExecutorServiceFactory.newSingleThreadScheduledExecutor(ThreadFactories.newThreadFactory(true,
+                                                                                                     "DefaultProcessingSession",
+                                                                                                     null));
         this.shutdownSync                 = new Object();
         this.sessionId                    = sessionIdentifier;
         this.submissionOutcomeMap         = new ConcurrentHashMap<Object, DefaultSubmissionOutcome>();
@@ -342,25 +354,25 @@ public class DefaultProcessingSession implements ProcessingSession
                                           final Identifier    resultId)
     {
         executorService.execute(new Runnable()
-        {
-            public void run()
-            {
-                synchronized (shutdownSync)
-                {
-                    try
-                    {
-                        submissionProxyFactory.destroyRemoteObject(submissionKey);
-                        submissionResultProxyFactory.destroyRemoteObject(resultId);
-                    }
-                    catch (Throwable e)
-                    {
-                        logger.log(Level.SEVERE,
-                                   "Failed to remove cache objects with result key {0} and submission key {1} due to {2}",
-                                   new Object[] {resultId, submissionKey, e});
-                    }
-                }
-            }
-        });
+                                {
+                                    public void run()
+                                    {
+                                        synchronized (shutdownSync)
+                                        {
+                                            try
+                                            {
+                                                submissionProxyFactory.destroyRemoteObject(submissionKey);
+                                                submissionResultProxyFactory.destroyRemoteObject(resultId);
+                                            }
+                                            catch (Throwable e)
+                                            {
+                                                logger.log(Level.SEVERE,
+                                                           "Failed to remove cache objects with result key {0} and submission key {1} due to {2}",
+                                                           new Object[] {resultId, submissionKey, e});
+                                            }
+                                        }
+                                    }
+                                });
     }
 
 
