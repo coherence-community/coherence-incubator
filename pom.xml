@@ -150,7 +150,7 @@
         <junit.version>4.12</junit.version>
         <miglayout.version>3.6</miglayout.version>
         <mockito.version>1.10.19</mockito.version>
-        <oracle.bedrock.version>4.3.0-SNAPSHOT</oracle.bedrock.version>
+        <oracle.bedrock.version>4.3.0</oracle.bedrock.version>
         <oracle.coherence.base.version>12.1.3</oracle.coherence.base.version>
         <oracle.coherence.version>${oracle.coherence.base.version}-0-5</oracle.coherence.version>
         <powermock.version>1.6.5</powermock.version>
