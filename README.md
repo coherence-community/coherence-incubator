@@ -1,18 +1,14 @@
 Coherence Incubator Source Repository
 =====================================
 
-The Oracle [Coherence Incubator](http://cohinc.java.net) Project defines a collection of
+The Oracle Coherence Incubator Project defines a collection of
 examples, organized as [Apache Maven](http://maven.apache.org/) modules, demonstrating
 advanced uses of [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html).
-
-Official information about this project including the definition, licensing, contributors, 
-maintainers, issue tracking, releases, source code and contact information is available at:
-[http://cohinc.java.net](http://cohinc.java.net)
 
 Repository Structure
 ====================
 
-This repository contains many branches of development for the Oracle [Coherence Incubator](http://cohinc.java.net), 
+This repository contains many branches of development for the Oracle Coherence Incubator, 
 each based on different major revisions of [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html).
 
 Coherence Incubator 13 (for Coherence 12.2.x)
