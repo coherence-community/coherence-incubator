@@ -1,10 +1,19 @@
 <cache-config
-	xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
-    xmlns:test="class://com.oracle.coherence.common.namespace.preprocessing.TestNamespaceHandler">
+        xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+        xmlns:test="class://com.oracle.coherence.common.namespace.preprocessing.TestNamespaceHandler" xmlns="">
 
     <defaults>
         <serializer>pof</serializer>
     </defaults>
+
+    <interceptors>
+        <interceptor>
+            <name>interceptor-a</name>
+            <instance>
+                <class-name>some.class.name</class-name>
+            </instance>
+        </interceptor>
+    </interceptors>
 
     <test:element>
         <test:id>test-a-1</test:id>

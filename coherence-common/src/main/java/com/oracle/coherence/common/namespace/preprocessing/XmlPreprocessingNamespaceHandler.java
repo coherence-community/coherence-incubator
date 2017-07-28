@@ -26,39 +26,28 @@
 package com.oracle.coherence.common.namespace.preprocessing;
 
 import com.tangosol.coherence.config.CacheConfig;
-
 import com.tangosol.config.ConfigurationException;
-
 import com.tangosol.config.expression.Expression;
 import com.tangosol.config.expression.ExpressionParser;
-
 import com.tangosol.config.xml.AbstractNamespaceHandler;
 import com.tangosol.config.xml.DocumentElementPreprocessor;
-
 import com.tangosol.config.xml.DocumentElementPreprocessor.ElementPreprocessor;
-
 import com.tangosol.config.xml.ElementProcessor;
 import com.tangosol.config.xml.NamespaceHandler;
 import com.tangosol.config.xml.ProcessingContext;
-
 import com.tangosol.run.xml.QualifiedName;
 import com.tangosol.run.xml.XmlElement;
 import com.tangosol.run.xml.XmlHelper;
 import com.tangosol.run.xml.XmlValue;
-
 import com.tangosol.util.Base;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.text.ParseException;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import java.util.Map.Entry;
-
 import java.util.Set;
 
 /**
@@ -103,6 +92,16 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
      * The 'defaults' {@link XmlElement}.
      */
     private static final String DEFAULTS = "defaults";
+
+    /**
+     * The 'interceptors' {@link XmlElement}.
+     */
+    private static final String INTERCEPTORS = "interceptors";
+
+    /**
+     * The 'name' {@link XmlElement} (for interceptors).
+     */
+    private static final String NAME = "name";
 
     /**
      * The 'originated-from' {@link XmlElement}.
@@ -230,9 +229,9 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
                     }
                     catch (URISyntaxException uriSyntaxException)
                     {
-                        throw new ConfigurationException(String
-                            .format("Invalid URI '%s' specified for Xml Namespace '%s'", sURI,
-                                    qualifiedName.getPrefix()),
+                        throw new ConfigurationException(String.format("Invalid URI '%s' specified for Xml Namespace '%s'",
+                                                                       sURI,
+                                                                       qualifiedName.getPrefix()),
                                                          "You must specify a valid URI for the Xml Namespace.",
                                                          uriSyntaxException);
                     }
@@ -253,6 +252,10 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
             else if (element.getName().equals(DEFAULTS))
             {
                 mergeDefaults(context, sFromURI, element, xmlIntoCacheConfig);
+            }
+            else if (element.getName().equals(INTERCEPTORS))
+            {
+                mergeInterceptors(context, sFromURI, element, xmlIntoCacheConfig);
             }
             else
             {
@@ -311,7 +314,7 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
                             xmlMergeElement.addAttribute(qnOriginatedFrom.getName()).setString(sFromURI);
 
                             xmlIntoCacheConfig.ensureElement(CACHING_SCHEME_MAPPING).getElementList()
-                                .add(xmlMergeElement);
+                            .add(xmlMergeElement);
                         }
                     }
                 }
@@ -419,6 +422,66 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
 
                     // add the merged element
                     xmlIntoDefaults.getElementList().add(xmlMergeElement);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Merges the interceptors from one cache config into another cache config
+     * (mutating the "into" cache config).
+     *
+     * @param sFromURI             the URI to which the from element belongs
+     * @param xmlFromInterceptors  the interceptors element from which the merge should occur
+     * @param xmlIntoCacheConfig   the cache config into which the merge should occur
+     */
+    @SuppressWarnings("unchecked")
+    private void mergeInterceptors(ProcessingContext context,
+                                   String            sFromURI,
+                                   XmlElement        xmlFromInterceptors,
+                                   XmlElement        xmlIntoCacheConfig)
+    {
+        if (xmlFromInterceptors != null)
+        {
+            for (XmlElement xmlInterceptor : (List<XmlElement>) xmlFromInterceptors.getElementList())
+            {
+                QualifiedName qualifiedName = xmlInterceptor.getQualifiedName();
+
+                if (qualifiedName.hasPrefix())
+                {
+                    mergeForeignElement(context,
+                                        sFromURI,
+                                        xmlInterceptor,
+                                        xmlIntoCacheConfig.ensureElement(INTERCEPTORS));
+                }
+                else
+                {
+                    XmlElement xmlInterceptorName = xmlInterceptor.getElement(NAME);
+
+                    // assume we can merge the interceptor
+                    boolean mergeInterceptor = true;
+
+                    // check that the interceptor name is unique
+                    // (we can only merge uniquely named interceptors)
+                    if (xmlInterceptorName != null)
+                    {
+                        String sInterceptorName = xmlInterceptorName.getString().trim();
+
+                        mergeInterceptor = !isInterceptorDefinedFor(sInterceptorName, xmlIntoCacheConfig);
+                    }
+
+                    if (mergeInterceptor)
+                    {
+                        // clone the element to merge
+                        XmlElement xmlMergeElement = (XmlElement) xmlInterceptor.clone();
+
+                        // annotate the origin of the merging element
+                        xmlMergeElement.addAttribute(qnOriginatedFrom.getName()).setString(sFromURI);
+
+                        xmlIntoCacheConfig.ensureElement(INTERCEPTORS).getElementList().add(xmlMergeElement);
+                    }
+
                 }
             }
         }
@@ -557,6 +620,47 @@ public class XmlPreprocessingNamespaceHandler extends AbstractNamespaceHandler
                 if (sDefinedSchemeName != null)
                 {
                     if (sDefinedSchemeName.equals(sSchemeName))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+
+
+    /**
+     * Determines if there is an <interceptor> defined with the specified name
+     * in the {@link XmlElement} representing a <interceptor>
+     *
+     * @param sInterceptorName
+     * @param xmlCacheConfig
+     *
+     * @return  <code>true</code> if the interceptor is defined, <code>false</code> otherwise
+     */
+    @SuppressWarnings("unchecked")
+    public boolean isInterceptorDefinedFor(String     sInterceptorName,
+                                           XmlElement xmlCacheConfig)
+    {
+        XmlElement xmlInterceptors = xmlCacheConfig.getElement(INTERCEPTORS);
+
+        if (xmlInterceptors == null)
+        {
+            return false;
+        }
+        else
+        {
+            for (XmlElement xmlInteceptor : (List<XmlElement>) xmlInterceptors.getElementList())
+            {
+                XmlElement xmlInterceptorName = xmlInteceptor.getElement(NAME);
+
+                if (xmlInterceptorName != null)
+                {
+                    String sDefinedInteceptorName = xmlInterceptorName.getString().trim();
+
+                    if (sDefinedInteceptorName.trim().equals(sInterceptorName))
                     {
                         return true;
                     }

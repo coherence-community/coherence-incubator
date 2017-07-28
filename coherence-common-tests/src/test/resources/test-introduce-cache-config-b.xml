@@ -9,6 +9,15 @@
         <serializer>pof</serializer>
     </defaults>
 
+    <interceptors>
+        <interceptor>
+            <name>interceptor-b</name>
+            <instance>
+                <class-name>some.class.name</class-name>
+            </instance>
+        </interceptor>
+    </interceptors>
+
     <test:element>
         <test:id>test-b-1</test:id>
     </test:element>

@@ -84,13 +84,17 @@ public class XmlPreprocessingNamespaceHandlerTest
 
         Assert.assertNotNull(cacheConfig.getServiceSchemeRegistry().findSchemeBySchemeName("distributed-scheme"));
         Assert.assertNotNull(cacheConfig.getServiceSchemeRegistry().findSchemeBySchemeName("a-distributed-scheme"));
+
+        Assert.assertThat(cacheConfig.getEventInterceptorBuilders().size(), is(2));
+        Assert.assertThat(cacheConfig.getEventInterceptorBuilders().get(0).getName(), is("interceptor-a"));
+        Assert.assertThat(cacheConfig.getEventInterceptorBuilders().get(1).getName(), is("interceptor-b"));
     }
 
 
     /**
      * Ensure that we can replace elements in a cache config.
      */
-    @Test
+    @Test                             
     public void testReplaceWithFile()
     {
         DefaultDependencies dependencies = new DocumentProcessor.DefaultDependencies(new CacheConfigNamespaceHandler());
