@@ -10,6 +10,11 @@ reverse chronological order.
 
 *   Brian Oliver
 
+<h4>Global and Cross-Module Changes</h4>
+
+*   [Issue #165](https://github.com/coherence-community/coherence-incubator/issues/165):
+    Updated pom.xml files to support publishing to Maven Central instead of maven.java.net
+
 <h4>coherence-processingpattern</h4>
 
 *   [Issue #49](https://github.com/coherence-community/coherence-incubator/issues/49):
