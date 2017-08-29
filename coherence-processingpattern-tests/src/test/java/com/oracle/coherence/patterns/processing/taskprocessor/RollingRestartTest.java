@@ -48,6 +48,7 @@ import com.oracle.coherence.patterns.processing.SubmissionRetentionPolicy;
 import com.oracle.coherence.patterns.processing.internal.DefaultProcessingSession;
 import com.oracle.coherence.patterns.processing.internal.DefaultSubmissionConfiguration;
 import com.tangosol.net.ConfigurableCacheFactory;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -102,6 +103,7 @@ public class RollingRestartTest
      * Ensure that the Processing Pattern can recover tests during a rolling restart.
      */
     @Test
+    @Ignore
     public void shouldRecoverTasksDuringRollingRestart() throws Throwable
     {
         // acquire a storage disabled cache factory for the cluster
