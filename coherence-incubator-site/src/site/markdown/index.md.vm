@@ -3,9 +3,9 @@
 **Version: ${project.version} built on ${timestamp}**
 
 >   This release of the Coherence Incubator is designed specifically for use
->   with **Oracle Coherence 12.1.2 and above**.   If you require a release of the
+>   with **Oracle Coherence 12.2.x and above**.   If you require a release of the
 >   Coherence Incubator for previous releases of Oracle Coherence you should
->   look for these on the project site: [https://java.net/projects/cohinc/](https://java.net/projects/cohinc/)
+>   look for these on the project site: [https://github.com/coherence-community/coherence-incubator](https://github.com/coherence-community/coherence-incubator)
 
 <h4>Overview</h4>
 
