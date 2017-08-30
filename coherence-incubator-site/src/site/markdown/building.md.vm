@@ -33,7 +33,7 @@ Additionally you should set your Maven Options as follows:
 
     For example, a ~/.m2/toolchains.xml for macOS may look like:
 
-```xml
+```
     <?xml version="1.0" encoding="UTF8"?>
     <toolchains>
       <!-- JDK toolchains -->
