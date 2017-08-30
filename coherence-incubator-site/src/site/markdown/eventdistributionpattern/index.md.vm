@@ -1,6 +1,11 @@
 The Event Distribution Pattern
 ------------------------------
 
+>   **DEPRECATION NOTICE:**
+>
+>   This pattern is now *deprecated* as inter-cluster event replication is
+>   now directly supported by Coherence through the use of Federated Caching.
+
 <h4>Overview</h4>
 
 The Event Distribution Pattern provides a simple mechanism distribute application 

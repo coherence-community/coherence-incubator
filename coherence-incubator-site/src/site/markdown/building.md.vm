@@ -93,7 +93,7 @@ simply change to `$COHERENCE_HOME/lib` directory and run the following command:
     $ mvn install:install-file  \
           -DgroupId=com.oracle.coherence  \
           -DartifactId=coherence  \
-          -Dversion=12.1.2-0-1  \
+          -Dversion=12.2.1-0-0  \
           -Dfile=coherence.jar  \
           -Dpackaging=jar \
           -DgeneratePom=true
@@ -104,7 +104,7 @@ simply change to `$COHERENCE_HOME/lib` directory and run the following command:
     $ mvn install:install-file  \
           -DgroupId=com.oracle.coherence  \
           -DartifactId=coherence-web  \
-          -Dversion=12.1.2-0-1  \
+          -Dversion=12.2.1-0-0  \
           -Dfile=coherence-web.jar  \
           -Dpackaging=jar \
           -DgeneratePom=true
@@ -112,7 +112,7 @@ simply change to `$COHERENCE_HOME/lib` directory and run the following command:
 >   The `groupId`, `artifactId` and `version` properties are critically important.
 >   They must be as indicated above otherwise the Oracle Coherence Incubator won't build.
 
-Of course the above assumes that you are installing the Coherence 12.1.2-0-1 `jar`s
+Of course the above assumes that you are installing the Coherence 12.2.1-0-0 `jar`s
 If you want to install one of the more recent releases, change the version
 number in the command above accordingly.
 

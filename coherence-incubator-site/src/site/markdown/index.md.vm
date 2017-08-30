@@ -29,6 +29,10 @@ plug-ins and extensions to third-party products.
 
 [**The JVisualVM Plug-In:**](jvisualvm/index.html)
 
+>   **DEPRECATION NOTICE:**
+>
+>   This plugin is now *deprecated* as it is shipped with and supported directly by Coherence 12.2.1+
+
 Provides a [JVisualVM](http://visualvm.java.net/) Plug-In (ie: Dashboard) allowing
 developers to view summarized statistics and information when connected to a JMX
 enabled Coherence cluster.
@@ -62,11 +66,21 @@ Provides a simple implementation of Store and Forward Messaging.
 
 [**The Event Distribution:**](eventdistributionpattern/index.html)
 
+>   **DEPRECATION NOTICE:**
+>
+>   This pattern is now *deprecated* as inter-cluster event distribution is
+>   now directly supported by Coherence through the use of Federated Caching.
+
 Provides a mechanism to distribute application events over multiple channels. 
 This is core infrastructure for the Push Replication Pattern, but may be used 
 directly with in applications for local or global event distribution.
 
 [**The Push Replication Pattern:**](pushreplicationpattern/index.html)
+
+>   **DEPRECATION NOTICE:**
+>
+>   This pattern is now *deprecated* as inter-cluster replication is
+>   now directly supported by Coherence through the use of Federated Caching.
 
 Provides a mechanism to replicate cache entry events to other clusters and 
 devices (including other clusters separated by WANs).

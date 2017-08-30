@@ -1,6 +1,11 @@
 The Event Distribution Namespace
 --------------------------------
 
+>   **DEPRECATION NOTICE:**
+>
+>   This pattern is now *deprecated* as inter-cluster event replication is
+>   now directly supported by Coherence through the use of Federated Caching.
+
 The Event Namespace provides the ability to declare `EventDistributors` and associated 
 `EventChannels` with in a Cache Configuration.  It is typically used for configuring 
 the [Push Replication Pattern](../pushreplicationpattern/index.html).

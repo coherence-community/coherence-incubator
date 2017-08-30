@@ -76,9 +76,9 @@ as follows:
 The logging level for an individual class logger can be configured by adding 
 an entry in the `JRE/lib/logging.properties` file:
 
-￼￼    com.oracle.coherence.patterns.pushreplication.CachePublisher.level=FINE
-￼
-￼￼An Incubator class logger logging level is independent of the Coherence Logging 
+    com.oracle.coherence.patterns.pushreplication.CachePublisher.level=FINE
+
+An Incubator class logger logging level is independent of the Coherence Logging
 Level (i.e. `tangosol.coherence.log.level`). This allows for detailed class 
 logging without impacting the entire Coherence/Incubator stack's logging.
 
@@ -182,10 +182,10 @@ but not lifecycles or entry-exit. Examples include:
 5.  A task that has been created/submitted
 
 6.  A namespace handler that has been created
-￼￼
+
 In most cases, `Level.FINE` will be the most common level of logging seen.
 
-￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼The method logger.fine(...) should be used for logging at the fine level
+The method logger.fine(...) should be used for logging at the fine level
 
 ------------------------------------------------------------------------------
 

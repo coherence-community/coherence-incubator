@@ -1,6 +1,10 @@
 The JVisualVM Plug-In
 ---------------------
 
+>   **DEPRECATION NOTICE:**
+>
+>   This plugin is now *deprecated* as JVisual VM support is now directly shipped with Coherence.
+
 <h4>Overview</h4>
 
 Provides a [JVisualVM](http://visualvm.java.net/) Plug-in allowing developers to view

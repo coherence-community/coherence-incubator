@@ -22,7 +22,8 @@ For example:
     10 = Oracle Coherence versions 3.7.0.x and 3.7.1.x
     11 = Oracle Coherence versions 3.7.1.x  (first CDDL release)
     12 = Oracle Coherence versions 12.1.x
-    
+    13 = Oracle Coherence versions 12.2.x
+
 This number is also used to identify the "edition" of the Oracle Coherence
 Incubator.  For example:  Oracle Coherence Incubator 11.    
     

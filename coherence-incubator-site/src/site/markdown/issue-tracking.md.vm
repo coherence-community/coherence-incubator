@@ -1,21 +1,19 @@
 Issue Tracking
 --------------
 
-The [Issue Tracking][ISSUES] system for Coherence Incubator is hosted by [java.net][JAVANET].
+The [Issue Tracking][ISSUES] system for Coherence Incubator is hosted at [github][GITHUB].
 
-It can be found here: [http://java.net/jira/browse/COHINC][ISSUES]
+It can be found here: [https://github.com/coherence-community/coherence-incubator/issues][ISSUES]
 
 <h4>Raising Issues:</h4>
 
 To raise an issue representing a defect or feature request in the issue tracking
-system you need to have a [java.net][JAVANET] account.  These are free.  They
-don't require any personal information beyond that of an email address to confirm
-registration.
+system you need to have a [github][GIHUB] account.  These are free.
 
 <h4>Modifying and Closing Issues:</h4>
 
 To resolve and close issues with the issue tracking system you will
 need to be a [contributor](contributions.html).
 
-[ISSUES]:       http://java.net/jira/browse/COHINC "Issue Tracking"
-[JAVANET]:      http://java.net "java.net"
+[ISSUES]:       https://github.com/coherence-community/coherence-incubator/issues "Issue Tracking"
+[GITHUB]:       https://github.com/coherence-community "GitHub - Coherence Community"

@@ -12,6 +12,17 @@ reverse chronological order.
 
 <h4>Global and Cross-Module Changes</h4>
 
+*   Coherence Incubator 13 is based on Coherence 12, upgrade to require Coherence 12.2.x+.
+
+*   Coherence Incubator 13 deprecates the following modules/patterns as equivalent and/or
+    more advanced functionality is now available in Coherence itself.   The deprecated
+    modules include:
+
+    JVisualVM Plugin (now shipped with Coherence)
+    Push Replication Pattern (see Coherence Federated Caching)
+    Event Distribution Pattern (previously used by the new deprecated Push Replication Pattern)
+    Processing Pattern (no longer supported)
+
 *   [Issue #166](https://github.com/coherence-community/coherence-incubator/issues/166):
     Updated pom.xml files to support publishing to Maven Central instead of maven.java.net
 

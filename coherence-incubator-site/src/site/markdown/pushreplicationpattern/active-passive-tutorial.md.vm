@@ -1,6 +1,11 @@
 The Push Replication Pattern Active-Passive Tutorial
 ----------------------------------------------------
 
+>   **DEPRECATION NOTICE:**
+>
+>   This pattern is now *deprecated* as inter-cluster replication is
+>   now directly supported by Coherence through the use of Federated Caching.
+
 The following is a brief tutorial outlining the use of the Push Replication Pattern
 in a simple "active-passive" topology.  In this topology one cluster, the
 "active" cluster, uses an application that performs read/write operations.  These

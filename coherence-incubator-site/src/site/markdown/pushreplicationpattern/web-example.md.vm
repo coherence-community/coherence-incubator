@@ -1,6 +1,11 @@
 The Coherence*Web Example
 ------------------------------------
 
+>   **DEPRECATION NOTICE:**
+>
+>   This pattern is now *deprecated* as inter-cluster replication is
+>   now directly supported by Coherence through the use of Federated Caching.
+
 <h4>Prerequisites</h4>
 
 To run this example the Oracle Coherence Incubator must be built and

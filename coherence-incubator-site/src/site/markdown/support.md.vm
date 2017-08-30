@@ -10,11 +10,8 @@ The Discussion Forums for the Coherence Incubator are the best place to start
 asking questions - should you need to.   These forums are hosted by Oracle and
 are typically monitored by the community.
 
-The *new* java.net-based forums are hosted here:
-[https://java.net/projects/cohinc/forums](https://java.net/projects/cohinc/forums)
-
-The old Oracle-based forums (now defunct) were hosted here:
-[https://forums.oracle.com/forums/forum.jspa?forumID=558](https://forums.oracle.com/forums/forum.jspa?forumID=558)
+The support forums are hosted here:
+[https://community.oracle.com/community/fusion_middleware/coherence/the_coherence_incubator_forum][SUPPORT]
 
 <h4>Source Code, Tests and Examples</h4>
 
@@ -33,9 +30,7 @@ If you find an issue with the Coherence Incubator or have an idea for a new feat
 the best place to start is with the Issue Tracking System.  All issues, both current and
 past are publicly viewable.
 
-The Issue Tracking System can be found here: [http://java.net/jira/browse/COHINC][ISSUES]
-
->   To raise new issues you will need a [java.net][JAVANET] account (these are free).
+The Issue Tracking System can be found here: [https://github.com/coherence-community/coherence-incubator/issues][ISSUES]
 
 <h4>Oracle Support</h4>
 
@@ -51,8 +46,8 @@ raise a defect for Oracle Coherence.  Should Oracle determine that the root caus
 a third-party product, Oracle will advise the customer to raise an issue with said product
 manufacturer and after which will work with both to resolve the said issue.
 
-[ISSUES]:       http://java.net/jira/browse/COHINC "Issue Tracking"
-[JAVANET]:      http://java.net "java.net"
+[ISSUES]:       https://github.com/coherence-community/coherence-incubator/issues "Issue Tracking"
+[SUPPORT]:      https://community.oracle.com/community/fusion_middleware/coherence/the_coherence_incubator_forum "Support Forum"
 [SOURCE]:       https://github.com/coherence-community/coherence-incubator "Source Code"
 
 
