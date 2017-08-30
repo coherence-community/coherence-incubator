@@ -3,7 +3,7 @@
 
     <artifactId>coherence-incubator</artifactId>
     <groupId>com.oracle.coherence.incubator</groupId>
-    <version>13.0.1-SNAPSHOT</version>
+    <version>13.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Coherence Incubator</name>
