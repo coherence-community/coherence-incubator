@@ -47,6 +47,7 @@ import com.oracle.bedrock.runtime.options.DisplayName;
 import com.oracle.coherence.patterns.pushreplication.web.examples.utilities.WebServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.oracle.bedrock.deferred.DeferredHelper.ensure;
@@ -165,6 +166,7 @@ public class FunctionalTest
      * @throws Exception
      */
     @Test
+    @Ignore("Session Replication no longer supported")
     public void testSessionReplication() throws Exception
     {
         try
