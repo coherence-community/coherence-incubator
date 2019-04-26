@@ -33,6 +33,16 @@
         <rhino.version>1.6R5</rhino.version>
     </properties>
 
+    <!-- module dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.2</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

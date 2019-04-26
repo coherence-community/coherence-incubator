@@ -123,7 +123,7 @@ public class FunctionalTest
                                 SystemProperty.of("proxy.enabled", false),
                                 Console.system());
 
-        Eventually.assertThat(invoking(cluster1).getClusterSize(), is(2));
+        Eventually.assertThat(invoking(cluster1).getClusterSize(), is(1));
 
         // Startup Site2
         site2Port = portIter.next();
@@ -141,7 +141,7 @@ public class FunctionalTest
                                 SystemProperty.of("proxy.enabled", false),
                                 Console.system());
 
-        Eventually.assertThat(invoking(cluster2).getClusterSize(), is(2));
+        Eventually.assertThat(invoking(cluster2).getClusterSize(), is(1));
     }
 
 

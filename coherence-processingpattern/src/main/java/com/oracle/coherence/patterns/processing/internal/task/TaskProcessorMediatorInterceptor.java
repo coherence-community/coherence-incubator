@@ -222,9 +222,9 @@ public class TaskProcessorMediatorInterceptor implements EventInterceptor, Membe
             {
                 HashSet<TaskProcessorMediatorKey> keys = mediatorKeys.get(memberUID);
 
-                if (keys == null)
+                synchronized (mediatorKeys)
                 {
-                    synchronized (mediatorKeys)
+                    if (keys == null)
                     {
                         keys = mediatorKeys.putIfAbsent(memberUID, new HashSet<TaskProcessorMediatorKey>());
 
@@ -232,9 +232,9 @@ public class TaskProcessorMediatorInterceptor implements EventInterceptor, Membe
                         {
                             keys = mediatorKeys.get(memberUID);
                         }
-
-                        keys.add(key);
                     }
+
+                    keys.add(key);
                 }
             }
             else

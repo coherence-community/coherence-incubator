@@ -25,7 +25,6 @@
 
 package com.oracle.coherence.patterns.pushreplication.web.examples.utilities;
 
-import com.oracle.bedrock.predicate.Predicates;
 import com.oracle.bedrock.runtime.PropertiesBuilder;
 import com.oracle.bedrock.runtime.coherence.CoherenceCacheServer;
 import com.oracle.bedrock.runtime.coherence.CoherenceCluster;
@@ -160,7 +159,7 @@ public class WebServer
                         new SystemProperties(propertiesBuilder.realize()),
                         RoleName.of("CacheServer"),
                         DisplayName.of(propertiesBuilder.getProperty("tangosol.coherence.site") + "-CacheServer"),
-                        StabilityPredicate.of(null));
+                        StabilityPredicate.none());
 
         return builder.build(Console.system());
     }
