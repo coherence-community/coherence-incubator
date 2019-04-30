@@ -94,7 +94,7 @@
                 <configuration>
                     <sourceManifestFile>src/main/nbm/manifest.mf</sourceManifestFile>
 
-                    <homePageUrl>https://java.net/projects/cohinc/</homePageUrl>
+                    <homePageUrl>http://www.mojohaus.org/nbm-maven-plugin/</homePageUrl>
                     <licenseName>Common Development and Distribution License (CDDL), Version 1.0</licenseName>
                     <licenseFile>license.txt</licenseFile>
 
