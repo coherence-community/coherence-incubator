@@ -3,7 +3,7 @@
     
     <artifactId>coherence-incubator</artifactId>
     <groupId>com.oracle.coherence.incubator</groupId>
-    <version>12.6.0</version>
+    <version>12.6.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Coherence Incubator</name>
@@ -45,7 +45,7 @@
         <connection>scm:git:https://github.com/coherence-community/coherence-incubator.git</connection>
         <developerConnection>scm:git:https://github.com/coherence-community/coherence-incubator.git</developerConnection>
         <url>https://github.com/coherence-community/coherence-incubator.git</url>
-      <tag>coherence-incubator-12.6.0</tag>
+      <tag>coherence-incubator-12.6.0-SNAPSHOT</tag>
   </scm>
 
     <modules>
