@@ -77,7 +77,7 @@ import java.util.logging.Logger;
  * for Tasks. It needs to be registered with the processing pattern. The Dispatching policy can be customized by
  * supplying a {@link TaskDispatchPolicy}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

@@ -31,7 +31,7 @@ package com.oracle.coherence.patterns.processing.task;
  * to the Task. A Delay can be passed in to indicate that resumption should
  * wait at least Delay milliseconds.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

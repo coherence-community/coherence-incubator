@@ -54,7 +54,7 @@ import java.util.logging.Logger;
  * The {@link DefaultTaskProcessor} executes {@link com.oracle.coherence.patterns.processing.task.ResumableTask}s on the
  * node.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

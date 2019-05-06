@@ -30,7 +30,7 @@ import com.oracle.coherence.patterns.processing.task.TaskProcessorDefinition;
 /**
  * The {@link TaskProcessorDefinitionManager} defines how to register {@link TaskProcessorDefinition}s.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

@@ -57,6 +57,9 @@ import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Test that the CoherenceWeb Examples Work
+ * <p>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
+ * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  */
 public class FunctionalTest
 {

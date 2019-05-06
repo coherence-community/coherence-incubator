@@ -35,7 +35,7 @@ import java.util.Map;
  * {@link EntryProcessor}s, without explicitly requiring a reference to an
  * underlying {@link com.tangosol.net.NamedCache} and/or {@link com.tangosol.util.InvocableMap}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @see com.tangosol.util.InvocableMap.EntryProcessor

@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  * <p>
  * The current accepted tasks for the {@link TaskProcessorMediator} are reset and redispatched.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

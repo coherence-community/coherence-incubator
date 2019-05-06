@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  * A {@link TaskRunner} is responsible for claiming ownership of, running and returning the result of an executed
  * {@link com.oracle.coherence.patterns.processing.task.Task}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

@@ -33,7 +33,7 @@ import com.oracle.coherence.patterns.processing.SubmissionState;
  * the grid object representing the result of a
  * {@link com.oracle.coherence.patterns.processing.internal.SubmissionResult}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

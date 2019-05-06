@@ -32,7 +32,7 @@ import java.util.Map.Entry;
  * An {@link EntryRemovedEvent} is an {@link EntryEvent} that
  * represents when an {@link Entry} was removed from a {@link com.tangosol.net.NamedCache}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

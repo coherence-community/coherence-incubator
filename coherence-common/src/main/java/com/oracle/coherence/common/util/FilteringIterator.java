@@ -34,7 +34,7 @@ import java.util.Iterator;
  * A {@link FilteringIterator} will (lazily) filter the results of a provided
  * {@link Iterable} with a provided {@link Filter}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

@@ -40,7 +40,7 @@ import com.oracle.coherence.patterns.processing.internal.Submission;
  *      <li>DONE is the <b>final</b> state where execution was successful.</li>
  * </ul>
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

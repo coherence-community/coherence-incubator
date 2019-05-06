@@ -42,7 +42,7 @@ import java.io.Serializable;
  * The {@link TaskProcessorMediatorKey} is the key for a {@link TaskProcessorMediator}
  * object in the grid.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

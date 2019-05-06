@@ -40,7 +40,7 @@ import java.io.IOException;
  * {@link SubmissionKeyPair} groups the keys to the {@link com.oracle.coherence.patterns.processing.internal.Submission} and to the
  * {@link com.oracle.coherence.patterns.processing.internal.SubmissionResult} in one object.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

@@ -31,7 +31,7 @@ package com.oracle.coherence.common.leasing;
  * a {@link LeaseExpiryCoordinator} will use when a {@link Lease} expires, is canceled
  * or is suspended.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

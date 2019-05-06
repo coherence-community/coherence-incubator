@@ -32,7 +32,7 @@ import com.oracle.coherence.patterns.processing.internal.task.TaskProcessorMedia
  * The {@link ClientLeaseMaintainer} maintains a registered {@link Lease}
  * automatically, by extending it well before the expiry.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

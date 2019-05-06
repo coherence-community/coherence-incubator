@@ -30,7 +30,7 @@ package com.oracle.coherence.patterns.processing.exceptions;
  * {@link com.oracle.coherence.patterns.processing.dispatchers.Dispatcher}
  * could dispatch a {@link com.oracle.coherence.patterns.processing.internal.DefaultSubmission}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren
