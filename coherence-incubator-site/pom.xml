@@ -80,6 +80,7 @@
                 <artifactId>site-maven-plugin</artifactId>
                 <version>${maven.github.site.plugin.version}</version>
                 <configuration>
+		    <server>github</server>
                     <message>${project.version} Site</message>
                     <path>${project.version}</path>
                     <merge>true</merge>
