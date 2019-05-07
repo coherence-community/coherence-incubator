@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  * The {@link NamedCacheObjectProxy} implements the Java Dynamic Proxy
  * pattern for objects residing in a {@link NamedCache}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @param <InterfaceType> is the type of the interface the proxy implements

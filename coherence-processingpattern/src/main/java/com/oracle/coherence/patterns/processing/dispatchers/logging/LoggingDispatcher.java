@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  * A simple {@link com.oracle.coherence.patterns.processing.dispatchers.Dispatcher}
  * that logs {@link PendingSubmission} information to the configured Java Logger
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

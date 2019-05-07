@@ -31,7 +31,7 @@ import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
  * A {@link DispatcherManager} is responsible for registering and
  * unregistering {@link Dispatcher}s for the processing pattern.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Noah Arliss

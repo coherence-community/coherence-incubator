@@ -52,7 +52,7 @@ import java.util.logging.Logger;
 /**
  * An abstract Executor class helping the implementation of an {@link TaskProcessor}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

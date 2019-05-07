@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  * A {@link Lease} represents the mutable conditions (typically time)
  * that the owner of the said {@link Lease} may use an entity.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

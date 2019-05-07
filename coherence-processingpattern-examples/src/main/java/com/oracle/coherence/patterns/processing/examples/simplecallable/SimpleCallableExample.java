@@ -39,7 +39,7 @@ import java.util.concurrent.Callable;
 /**
  * A sample demonstrating a Callable using the processing pattern.
  *  <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

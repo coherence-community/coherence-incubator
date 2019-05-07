@@ -52,6 +52,9 @@ import java.util.concurrent.ExecutorService;
 /**
  * The TaskProcessorMediatorInterceptor intercepts events for the TaskProcessorMediator.\
  * and processes both cache events and transfer events.
+ * <p>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
+ * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Paul Mackin
  */
@@ -222,9 +225,9 @@ public class TaskProcessorMediatorInterceptor implements EventInterceptor, Membe
             {
                 HashSet<TaskProcessorMediatorKey> keys = mediatorKeys.get(memberUID);
 
-                if (keys == null)
+                synchronized (mediatorKeys)
                 {
-                    synchronized (mediatorKeys)
+                    if (keys == null)
                     {
                         keys = mediatorKeys.putIfAbsent(memberUID, new HashSet<TaskProcessorMediatorKey>());
 
@@ -232,9 +235,9 @@ public class TaskProcessorMediatorInterceptor implements EventInterceptor, Membe
                         {
                             keys = mediatorKeys.get(memberUID);
                         }
-
-                        keys.add(key);
                     }
+
+                    keys.add(key);
                 }
             }
             else

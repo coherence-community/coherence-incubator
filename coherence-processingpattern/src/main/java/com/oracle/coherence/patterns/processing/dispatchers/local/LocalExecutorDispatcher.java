@@ -62,7 +62,7 @@ import java.util.logging.Logger;
  * executed locally (in the JVM that is hosting {@link LocalExecutorDispatcher})
  * by an {@link ExecutorService}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Brian Oliver

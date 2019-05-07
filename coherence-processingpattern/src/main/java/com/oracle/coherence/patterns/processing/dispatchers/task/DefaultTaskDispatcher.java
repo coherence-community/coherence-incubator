@@ -30,6 +30,7 @@ import com.oracle.coherence.common.util.ObjectProxyFactory;
 import com.oracle.coherence.patterns.processing.dispatchers.AbstractDispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchController;
 import com.oracle.coherence.patterns.processing.dispatchers.DispatchOutcome;
+import com.oracle.coherence.patterns.processing.dispatchers.Dispatcher;
 import com.oracle.coherence.patterns.processing.dispatchers.PendingSubmission;
 import com.oracle.coherence.patterns.processing.internal.Environment;
 import com.oracle.coherence.patterns.processing.internal.Submission;
@@ -76,7 +77,7 @@ import java.util.logging.Logger;
  * for Tasks. It needs to be registered with the processing pattern. The Dispatching policy can be customized by
  * supplying a {@link TaskDispatchPolicy}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren
@@ -128,7 +129,7 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
     private transient ConcurrentHashMap<Identifier, TaskProcessorDefinition> taskProcessorDefinitionList;
 
     /**
-     * A list of local {@link TaskProcessors} on this JVM.
+     * A list of local {@link Dispatcher} on this JVM.
      */
     private transient LinkedBlockingQueue<TaskProcessor> localTaskProcessors;
 
@@ -173,7 +174,7 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
     private transient int noAcceptedSubmissions;
 
     /**
-     * The {@link Environment} for this {@link TaskDispatcher}.
+     * The {@link Environment} for this {@link Dispatcher}.
      */
     private transient Environment environment;
 
@@ -698,18 +699,32 @@ public class DefaultTaskDispatcher extends AbstractDispatcher implements Externa
                     {
                         TaskProcessorMediator mediator = (TaskProcessorMediator) mapEvent.getNewValue();
 
-                        if (mediator.getProcessorState() == TaskProcessorStateEnum.ACTIVE)
+                        if (mediator != null)
                         {
-                            taskProcessorMediators.put(oTaskProcessorKey, mediator);
+                            if (mediator.getProcessorState() == TaskProcessorStateEnum.ACTIVE)
+                            {
+                                taskProcessorMediators.put(oTaskProcessorKey, mediator);
+                            }
+                            else
+                            {
+                                taskProcessorMediators.remove(oTaskProcessorKey);
+                            }
+
+                            if (logger.isLoggable(Level.FINER))
+                            {
+                                logger.log(Level.FINER, "TaskProcessorMediator updated: {0}", oTaskProcessorKey.toString());
+                            }
                         }
                         else
                         {
-                            taskProcessorMediators.remove(oTaskProcessorKey);
-                        }
-
-                        if (logger.isLoggable(Level.FINER))
-                        {
-                            logger.log(Level.FINER, "TaskProcessorMediator updated: {0}", oTaskProcessorKey.toString());
+                            if (mapEvent.getOldValue() != null)
+                            {
+                                taskProcessorMediators.remove(oTaskProcessorKey);
+                                if (logger.isLoggable(Level.FINER))
+                                {
+                                    logger.log(Level.FINER, "TaskProcessorMediator removed: {0}", oTaskProcessorKey.toString());
+                                }
+                            }
                         }
                     }
                 }

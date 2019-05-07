@@ -4,7 +4,7 @@
     <parent>
         <artifactId>coherence-incubator</artifactId>
         <groupId>com.oracle.coherence.incubator</groupId>
-        <version>12.6.0-SNAPSHOT</version>
+        <version>12.6.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -94,7 +94,7 @@
                 <configuration>
                     <sourceManifestFile>src/main/nbm/manifest.mf</sourceManifestFile>
 
-                    <homePageUrl>https://java.net/projects/cohinc/</homePageUrl>
+                    <homePageUrl>http://www.mojohaus.org/nbm-maven-plugin/</homePageUrl>
                     <licenseName>Common Development and Distribution License (CDDL), Version 1.0</licenseName>
                     <licenseFile>license.txt</licenseFile>
 

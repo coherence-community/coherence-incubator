@@ -38,7 +38,7 @@ import java.util.concurrent.Callable;
 /**
  * A Simple {@link Callable} that sleeps for a second and writes to system out.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren

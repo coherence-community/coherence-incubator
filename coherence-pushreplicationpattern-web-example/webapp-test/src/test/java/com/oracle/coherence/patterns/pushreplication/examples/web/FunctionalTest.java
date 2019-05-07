@@ -57,6 +57,9 @@ import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Test that the CoherenceWeb Examples Work
+ * <p>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
+ * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  */
 public class FunctionalTest
 {
@@ -123,7 +126,7 @@ public class FunctionalTest
                                 SystemProperty.of("proxy.enabled", false),
                                 Console.system());
 
-        Eventually.assertThat(invoking(cluster1).getClusterSize(), is(2));
+        Eventually.assertThat(invoking(cluster1).getClusterSize(), is(1));
 
         // Startup Site2
         site2Port = portIter.next();
@@ -141,7 +144,7 @@ public class FunctionalTest
                                 SystemProperty.of("proxy.enabled", false),
                                 Console.system());
 
-        Eventually.assertThat(invoking(cluster2).getClusterSize(), is(2));
+        Eventually.assertThat(invoking(cluster2).getClusterSize(), is(1));
     }
 
 

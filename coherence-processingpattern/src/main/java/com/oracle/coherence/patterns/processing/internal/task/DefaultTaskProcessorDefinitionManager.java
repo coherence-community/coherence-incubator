@@ -37,6 +37,7 @@ import com.tangosol.net.CacheFactory;
 import com.tangosol.net.CacheService;
 import com.tangosol.net.ConfigurableCacheFactory;
 import com.tangosol.net.DistributedCacheService;
+import com.tangosol.net.Member;
 import com.tangosol.net.NamedCache;
 import com.tangosol.util.Filter;
 import com.tangosol.util.UID;
@@ -57,7 +58,7 @@ import java.util.logging.Logger;
  * {@link TaskProcessorDefinition}s in the cache and creates
  * {@link TaskProcessorMediator} objects for TaskProcessors of type SINGLE.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Christer Fahlgren
@@ -158,9 +159,10 @@ public class DefaultTaskProcessorDefinitionManager implements TaskProcessorDefin
                 (ObjectProxyFactory<SubmissionResult>) environment.getResource(SubmissionResult.class);
             ObjectProxyFactory<TaskProcessorMediator> taskProcessorMediatorProxyFactory =
                 (ObjectProxyFactory<TaskProcessorMediator>) environment.getResource(TaskProcessorMediator.class);
-            ClientLeaseMaintainer    clientLeaseMaintainer = environment.getResource(ClientLeaseMaintainer.class);
+            ClientLeaseMaintainer clientLeaseMaintainer = environment.getResource(ClientLeaseMaintainer.class);
 
-            TaskProcessorMediatorKey key = new TaskProcessorMediatorKey(definition.getIdentifier(), 0, new UID());
+            Member member = taskProcessorMediatorProxyFactory.getNamedCache().getCacheService().getCluster().getLocalMember();
+            TaskProcessorMediatorKey key = new TaskProcessorMediatorKey(definition.getIdentifier(), member.getId(), member.getUid());
 
             try
             {

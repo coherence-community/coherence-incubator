@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * ) of a {@link com.oracle.coherence.patterns.processing.internal.DefaultSubmission}
  * that has yet to be dispatched for processing using a {@link Dispatcher}.
  * <p>
- * Copyright (c) 2009. All Rights Reserved. Oracle Corporation.<br>
+ * Copyright (c) 2009, 2019. All Rights Reserved. Oracle Corporation.<br>
  * Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
  *
  * @author Noah Arliss

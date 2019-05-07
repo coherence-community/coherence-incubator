@@ -6,6 +6,28 @@ reverse chronological order.
 
 <h3>Version ${project.version} built on ${timestamp} </h3>
 
+
+<h4>Source and Documentation Contributors</h4>
+
+*   Luk Ho, Patrick Fry
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   No Changes
+
+<h4>coherence-processingpattern</h4>
+
+*   [Issue #171](https://github.com/coherence-community/coherence-incubator/issues/171):
+    Added dependency on asp-api for coherence-pushreplicationpattern-web-example.
+
+*   [Issue #168](https://github.com/coherence-community/coherence-incubator/issues/168):
+    When there are multiple processing servers in a cluster, shutdown down one of them may cause task execution to hang.
+
+
+--------------------------------------------------------------------------------
+
+<h3>Version: 12.5.0 built on 2017-02-22</h3>
+
 <h4>Source and Documentation Contributors</h4>
 
 *   Brian Oliver
