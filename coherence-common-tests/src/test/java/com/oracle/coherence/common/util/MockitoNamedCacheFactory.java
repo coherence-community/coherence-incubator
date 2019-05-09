@@ -103,6 +103,16 @@ public class MockitoNamedCacheFactory implements ConfigurableCacheFactory
         return mockNamedCache;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NamedCache ensureCache(String sCacheName,
+                                  ClassLoader loader,
+                                  NamedCache.Option... options)
+    {
+        return ensureCache(sCacheName, loader);
+    }
 
     /**
      * {@inheritDoc}
