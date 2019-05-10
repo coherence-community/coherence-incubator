@@ -8,6 +8,24 @@ reverse chronological order.
 
 <h4>Source and Documentation Contributors</h4>
 
+*   Luk Ho
+
+<h4>Global and Cross-Module Changes</h4>
+
+*   No Changes
+
+<h4>coherence-processingpattern</h4>
+
+*   [Issue #169](https://github.com/coherence-community/coherence-incubator/issues/169):
+    Fixed an issue when there are multiple processing servers in a cluster, shutdown down one of them may cause task execution to hang.
+
+
+--------------------------------------------------------------------------------
+
+<h3>Version 13.0.0 built on 2017-08-30 20:50 </h3>
+
+<h4>Source and Documentation Contributors</h4>
+
 *   Brian Oliver
 
 <h4>Global and Cross-Module Changes</h4>
