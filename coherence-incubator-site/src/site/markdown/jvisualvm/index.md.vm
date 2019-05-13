@@ -35,7 +35,7 @@ Maven settings.xml:
 
 <h4>Compatibility</h4>
 
-While this plug-in is distributed as part of Coherence Incubator 12, it is routinely
+While this plug-in is distributed as part of Coherence Incubator 13, it is routinely
 tested with Coherence 3.5.x, 3.6.x, 3.7.1.x and 12.1.2.0.x.
 
 <h4>Installing the Plug-in in JVisualVM</h4>
