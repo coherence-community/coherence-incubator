@@ -12,28 +12,24 @@ installed:
 
     Available here: [Apache Maven Downloads](http://maven.apache.org/download.cgi)
 
-3.  The [source code](source-code.html).
+3. The [source code](source-code.html).
 
-Additionally you should set your Maven Options as follows:
+    Additionally you should set your Maven Options as follows:
 
-    MAVEN_OPTS="-Djava.net.preferIPv4Stack=true"
+    ```MAVEN_OPTS="-Djava.net.preferIPv4Stack=true"```
 
-4.  In order to build the Coherence JVisualVM plug-in (available `coherence-jvisualvm` directory)
-    you will need to add the following repository in your Maven settings.xml:
+4.  In order to build the Coherence JVisualVM plug-in (available `coherence-jvisualvm` directory), you will need to add the following repository in your Maven settings.xml:
 
-    <repository>
-        <id>jvisualvm</id>
-        <name>jvisualvm</name>
-        <url>http://bits.netbeans.org/nexus/content/groups/visualvm/</url>
-    </repository>
+        <repository>
+            <id>jvisualvm</id>
+            <name>jvisualvm</name>
+            <url>http://bits.netbeans.org/nexus/content/groups/visualvm/</url>
+        </repository>
 
-5.  Lastly, you will need to configure the [Maven Tool Chains](https://maven.apache.org/guides/mini/guide-using-toolchains.html)
-    ie: toolchains.xml in your ~/.m2 folder, to define the Java 7 and Java 8 platforms
-    provided by Oracle.
+5.  Lastly, you will need to configure the [Maven Tool Chains](https://maven.apache.org/guides/mini/guide-using-toolchains.html), ie: toolchains.xml in your ~/.m2 folder, to define the Java 7 and Java 8 platforms provided by Oracle.
 
-    For example, a ~/.m2/toolchains.xml for macOS may look like:
+For example, a ~/.m2/toolchains.xml for macOS may look like:
 
-```
     <?xml version="1.0" encoding="UTF8"?>
     <toolchains>
       <!-- JDK toolchains -->
@@ -70,7 +66,6 @@ Additionally you should set your Maven Options as follows:
         </configuration>
       </toolchain>
     </toolchains>
-```
 
 Once you have this software and have correctly configured the above Maven options,
 building the entire source tree is as simple as executing the following shell
@@ -79,7 +74,7 @@ command (from the root of the source directory):
     $ mvn clean install
 
 **Important:** The fact that the Oracle Coherence Incubator depends on a commercial product,
-namely [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html) 
+namely [Oracle Coherence](http://www.oracle.com/technology/products/coherence/index.html)
 that of which is not available in a public Maven Repository, probably means that your
 first build is likely to fail because of a missing dependency on `coherence.jar`.
 
@@ -118,3 +113,60 @@ number in the command above accordingly.
 
 Once theses are properly installed into your Apache Maven repository, you should be able
 to build the Oracle Coherence Incubator.
+
+---
+
+Releasing
+---------
+
+### Requirements
+
+1. You need an account to login to oss.sonatype.org.  Once you get the sonatype account, you need to create a JIRA to be added to the com.oracle group to be able to release artifacts to coherence repository.
+
+2. You need to have a pgp key to sign the artifacts.  See https://central.sonatype.org/pages/working-with-pgp-signatures.html for more information on how to generate a pgp key and register your public key with a key server.
+
+3. In your Maven settings.xml, add the following:
+
+        <server>
+            <id>github</id>
+            <password>${your github access token}</password>
+        </server>
+
+### Steps to publish a Coherence Incubator release
+
+1. Update the "Change History" with the issue(s) fixed for this release. It is the file, coherence-incubator-site/src/site/markdown/history.md.vm.
+
+2. Commit and push all the changes.
+
+3. Clean up files from any release command(s) previously run.
+
+        mvn release:clean -DperformRelease=true -Dskip-sign-artifacts=false -Drelease.arguments=""
+
+4. Prepare release.
+
+  Release prepare askes you to enter some input. The default value is usually fine.  It changes the version from SNAPSHOT to release version in all the pom.xml files and push the changes to the remote repo. It then update the pom.xml files with next SNAPSHOT version and push the changes to the remote repo.
+So, to be on the safe side, perform a dry run with the "-DdryRun=true" option first to make sure everything looks good. Dry run does not push the changes to the remote repo.
+
+        mvn release:prepare -DperformRelease=true -DdryRun=true -Dskip-sign-artifacts=false -Drelease.arguments="" -Darguments="-DskipTests"
+
+  Once you are happy with release:prepare, then run release:clean and releaes:prepare again without "-DdryRun":
+
+        mvn release:prepare -DperformRelease=true -Dskip-sign-artifacts=false -Drelease.arguments="" -Darguments="-DskipTests"
+
+5. Perform release
+
+  Run the following command to deploy your artifacts to nexus staging area:
+
+        mvn release:perform verify -DskipTests -Dskip-sign-artifacts=false -Drelease.arguments="-DskipTests -Dskip-sign-artifacts=false" -Darguments="-DskipTests -Dskip-sign-artifacts=false"
+
+6. After step 5 completes successfully, login to oss.snoatype.org using the account you created in Requirements section.
+
+    a. select "Staging Repositories" on the left side panel.
+at the bottom, you should see the repository you just staged.  Our repository would be something like "comoraclecoherence-xxxx".  You can select it and exam the content.  If it looks good, then you can close the staging repository.
+
+    b. select Close button at the top panel.
+Close performs a series of validation to ensure artifacts are signed and there is no dependencies on SNAPSHOT, etc.
+
+    c. Once close completes, you will be able to select "Release" button to release Coherence Incubator to maven central.
+
+    d. Verify that your artifacts are in maven central: http://central.maven.org
