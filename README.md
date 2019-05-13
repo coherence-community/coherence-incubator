@@ -14,14 +14,14 @@ each based on different major revisions of [Oracle Coherence](http://www.oracle.
 Coherence Incubator 13 (for Coherence 12.2.x)
 ----------------------------------------------
 
-Release Documentation: [http://coherence-community.github.com/coherence-incubator/13.0.0/](http://coherence-community.github.com/coherence-incubator/13.0.0/)
+Release Documentation: [http://coherence-community.github.com/coherence-incubator/13.0.1/](http://coherence-community.github.com/coherence-incubator/13.0.1/)
 
 Development Branch: [**develop-13**](https://github.com/coherence-community/coherence-incubator/tree/develop-13) 
 
 Coherence Incubator 12 (for Coherence 12.1.x)
 ----------------------------------------------
 
-Release Documentation: [http://coherence-community.github.com/coherence-incubator/12.5.0/](http://coherence-community.github.com/coherence-incubator/12.5.0/)
+Release Documentation: [http://coherence-community.github.com/coherence-incubator/12.6.1/](http://coherence-community.github.com/coherence-incubator/12.6.1/)
 
 Development Branch: [**develop-12**](https://github.com/coherence-community/coherence-incubator/tree/develop-12) 
 
