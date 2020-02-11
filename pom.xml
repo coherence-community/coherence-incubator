@@ -117,6 +117,7 @@
         <maven.dependency.plugin.version>2.6</maven.dependency.plugin.version>
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
         <maven.enforcer.plugin.version>1.3.1</maven.enforcer.plugin.version>
+        <maven.failsafe.plugin.version>2.19.1</maven.failsafe.plugin.version>
         <maven.github.site.plugin.version>0.12</maven.github.site.plugin.version>
         <maven.gpg.plugin.version>1.5</maven.gpg.plugin.version>
         <maven.install.plugin.version>2.5.2</maven.install.plugin.version>
@@ -129,7 +130,7 @@
         <maven.shade.plugin.version>2.3</maven.shade.plugin.version>
         <maven.site.plugin.version>3.4</maven.site.plugin.version>
         <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
-        <maven.surefire.plugin.version>2.17</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
         <maven.tool.chains.plugin.version>1.1</maven.tool.chains.plugin.version>
         <maven.war.plugin.version>2.4</maven.war.plugin.version>
 
@@ -255,6 +256,24 @@
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
                     </includes>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <systemPropertyVariables>
+                        <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe.plugin.version}</version>
+                <configuration>
+                    <argLine>-Xms1500m -Xmx1500m</argLine>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                    <reuseForks>false</reuseForks>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
                     <systemPropertyVariables>
