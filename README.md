@@ -1,3 +1,9 @@
+This Repository Is No Longer Maintained and is Deprecated
+=========================================================
+
+The majority of functionality implemented by the various incubator modules is now available in the core Coherence product.
+
+
 Coherence Incubator Source Repository
 =====================================
 
