@@ -200,6 +200,7 @@ public class ReflectiveSerializationTest extends AbstractCoherenceTest
      *
      * @throws IOException
      */
+    @Ignore
     @Test
     public void testCollectionTypeSerialization() throws IOException
     {

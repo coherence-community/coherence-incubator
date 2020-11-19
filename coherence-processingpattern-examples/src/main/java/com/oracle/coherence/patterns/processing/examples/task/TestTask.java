@@ -117,14 +117,16 @@ public class TestTask implements ResumableTask, ExternalizableLite, PortableObje
      */
     public Object run(TaskExecutionEnvironment environment)
     {
+        Cluster cluster = CacheFactory.getCluster();
+
         if (!environment.isResuming())
         {
-            Cluster cluster = CacheFactory.getCluster();
             String MemberID = "Member ID:" + cluster.getLocalMember().getId() + " Cluster name:"
                               + cluster.getClusterName();
 
-            System.out.println(MemberID);
+            System.out.println("Initial run:" + m_sMessage + ": " + MemberID);
             environment.reportProgress(50);
+            environment.saveCheckpoint(MemberID);
 
             return new Yield(MemberID, 1000);
         }
@@ -132,9 +134,15 @@ public class TestTask implements ResumableTask, ExternalizableLite, PortableObje
         {
             String messageToReturn = (String) environment.loadCheckpoint();
 
+            if (messageToReturn == null)
+                {
+                messageToReturn = "Recomputed Member ID:" + cluster.getLocalMember().getId() + " Cluster name:"
+                    + cluster.getClusterName();
+                }
+
             environment.reportProgress(100);
 
-            return messageToReturn;
+            return toString() + ": " + messageToReturn;
         }
     }
 
