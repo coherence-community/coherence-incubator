@@ -102,7 +102,7 @@ public class TaskRunner implements Runnable, TaskExecutionEnvironment, ObjectCha
 
     /**
      * Whether the current job has been cancelled during execution.
-     *  of Submissions offered to this {@link TaskExecutor}.
+     *  of Submissions offered to this {@link TaskRunner}.
      */
     private transient volatile boolean isCancelled;
 

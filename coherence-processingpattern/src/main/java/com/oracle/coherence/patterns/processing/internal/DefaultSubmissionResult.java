@@ -489,10 +489,18 @@ public class DefaultSubmissionResult implements ExternalizableLite, PortableObje
     {
         SubmissionState state = getSubmissionState();
 
+        boolean isOwnershipChanged = owner != null && this.owner != null && !owner.equals(this.owner);
+
+        if (isOwnershipChanged)
+            {
+            logger.info("DefaultSubmissionResult.assign isOwnershipChanged=" + isOwnershipChanged +
+                " DefaultSubmissionResult: " + this + " originialOwner: " + this.owner + " owner parameter: " + owner);
+            }
+
         if ((state == SubmissionState.SUBMITTED) || (state == SubmissionState.SUSPENDED)
-            || (state == SubmissionState.RETRY))
+            || (state == SubmissionState.RETRY) || isOwnershipChanged)
         {
-            if ((state == SubmissionState.SUSPENDED) || (state == SubmissionState.RETRY))
+            if ((state == SubmissionState.SUSPENDED) || (state == SubmissionState.RETRY) || isOwnershipChanged)
             {
                 isResuming = true;
             }

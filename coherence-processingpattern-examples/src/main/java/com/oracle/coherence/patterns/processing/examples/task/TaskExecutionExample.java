@@ -30,6 +30,7 @@ import com.oracle.coherence.patterns.processing.ProcessingSession;
 import com.oracle.coherence.patterns.processing.SubmissionOutcome;
 import com.oracle.coherence.patterns.processing.internal.DefaultProcessingSession;
 import com.oracle.coherence.patterns.processing.internal.DefaultSubmissionConfiguration;
+import com.oracle.coherence.patterns.processing.internal.DefaultSubmissionOutcome;
 import com.tangosol.net.CacheFactory;
 
 import java.text.DateFormat;
@@ -85,43 +86,66 @@ public class TaskExecutionExample
                 .newInstance("TaskExecutionSample"
                              + DateFormat.getDateTimeInstance().format(System.currentTimeMillis())));
 
-        // We submit 10 TestTasks of type "grid"
         ArrayList<SubmissionOutcome> tasklist = new ArrayList<SubmissionOutcome>();
 
-        for (int i = 0; i < 10; i++)
-        {
-            String              taskName = "Grid Testtask:" + Integer.toString(i);
-            Map<String, String> attrMap  = new HashMap<String, String>();
+        // submit 3 iterations of TestTasks
+        for (int n = 0 ; n < 3; n++)
+            {
+            System.out.println("Iteration " + n);
 
-            attrMap.put("type", "grid");
+            // We submit 10 TestTasks of type "grid"
+            for (int i = 0; i < 10; i++)
+                {
+                String taskName = "Grid Testtask:" + Integer.toString(n) + "_" + Integer.toString(i);
+                Map<String, String> attrMap = new HashMap<String, String>();
 
-            SubmissionOutcome outcome = session.submit(new TestTask(taskName),
-                                                       new DefaultSubmissionConfiguration(attrMap),
-                                                       new SubmissionCallback(taskName));
+                attrMap.put("type", "grid");
 
-            tasklist.add(outcome);
-        }
+                SubmissionOutcome outcome = session.submit(new TestTask(taskName),
+                    new DefaultSubmissionConfiguration(attrMap),
+                    new SubmissionCallback(taskName));
 
-        // And then we will submit 10 TestTasks of type "single"
-        for (int i = 0; i < 10; i++)
-        {
-            String              taskName = "Single Testtask:" + Integer.toString(i);
-            Map<String, String> attrMap  = new HashMap<String, String>();
+                tasklist.add(outcome);
+                }
 
-            attrMap.put("type", "single");
+            // And then we will submit 10 TestTasks of type "single"
+            for (int i = 0; i < 10; i++)
+                {
+                String taskName = "Single Testtask:" +  Integer.toString(n) + "_" + Integer.toString(i);
+                Map<String, String> attrMap = new HashMap<String, String>();
 
-            SubmissionOutcome outcome = session.submit(new TestTask(taskName),
-                                                       new DefaultSubmissionConfiguration(),
-                                                       new SubmissionCallback(taskName));
+                attrMap.put("type", "single");
 
-            tasklist.add(outcome);
-        }
+                SubmissionOutcome outcome = session.submit(new TestTask(taskName),
+                    new DefaultSubmissionConfiguration(),
+                    new SubmissionCallback(taskName));
+
+                tasklist.add(outcome);
+                }
+
+            // pause 5 seconds between submissions
+            Thread.sleep(5000L);
+            }
+
+        // wait for all to complete before reporting results
+        System.out.println("Waiting for all submitted task to complete before reporting results...");
+        for (int i = 0; i < tasklist.size(); i++)
+            {
+            // only returns after submitted task completes
+            tasklist.get(i).get();
+            }
 
         // And then we get all the results.
         // Calling get on the SubmissionOutcome will wait for the Task to finish.
         for (int i = 0; i < tasklist.size(); i++)
         {
-            System.out.println("Result:" + Integer.toString(i) + ":" + tasklist.get(i).get().toString());
+            DefaultSubmissionOutcome outcome = (DefaultSubmissionOutcome)tasklist.get(i);
+            Object                   result  = outcome.get();
+
+            System.out.println("Result:" + Integer.toString(i) + ":" +
+                ((result == null) ?
+                    " missing result for submission " +  outcome.toString() :
+                    result.toString()));
         }
 
         System.out.println("Finished");
